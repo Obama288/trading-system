@@ -1,0 +1,4 @@
+environment: local
+system_mode: approval
+paper_mode: true
+trading_enabled: false

@@ -1,0 +1,6 @@
+telegram:
+  enabled: true
+  mode: polling
+  admin_user_ids: []
+  operator_user_ids: []
+  viewer_user_ids: []

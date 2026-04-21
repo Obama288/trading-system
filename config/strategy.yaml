@@ -1,0 +1,5 @@
+strategy:
+  default_symbol: BTCUSDT
+  default_timeframe: 15m
+  setup_types:
+    - breakout_retest

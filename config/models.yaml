@@ -1,0 +1,19 @@
+orchestrator:
+  provider: openai
+  model: gpt-5.4-thinking
+
+signal_reasoning:
+  provider: anthropic
+  model: claude-3-7-sonnet-latest
+
+review:
+  provider: anthropic
+  model: claude-3-7-sonnet-latest
+
+alerts:
+  provider: anthropic
+  model: claude-3-5-haiku-latest
+
+journal_review:
+  provider: anthropic
+  model: claude-3-7-sonnet-latest

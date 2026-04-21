@@ -1,0 +1,4 @@
+exchange:
+  venue: bybit
+  category: linear
+  default_time_in_force: GTC
