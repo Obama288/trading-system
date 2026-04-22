@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import logging
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, Request
@@ -8,22 +10,75 @@ from sqlalchemy.orm import Session
 from apps.position_manager.application.close_position import close_position_use_case
 from apps.position_manager.application.open_position import open_position_use_case
 from apps.position_manager.application.reconcile import reconcile_positions_use_case
+from apps.position_manager.application.reconcile_scheduler import run_reconcile_scheduler_loop
 from apps.position_manager.config import get_config
 from apps.position_manager.infrastructure.journal_client import HttpAlertClient, HttpJournalClient, NoopAlertClient
 from apps.position_manager.infrastructure.position_repo import PositionRepository
 from apps.position_manager.schemas.requests import PositionCloseRequest, PositionOpenRequest, ReconcileRequest
-from libs.db.session import get_db
+from libs.db.session import get_db, get_session_factory
 from libs.logging.context import get_correlation_id, set_correlation_id
 from libs.schemas.common import ServiceEnvelope
+from research.hypothesis_agent.data.fetcher import OkxMarketDataFetcher
 
 app = FastAPI(title="position-manager")
 CONFIG = get_config()
+LOGGER = logging.getLogger(__name__)
 JOURNAL_CLIENT = HttpJournalClient(base_url=CONFIG.journal_service_base_url)
 ALERT_CLIENT = (
     HttpAlertClient(base_url=CONFIG.alerts_service_base_url)
     if CONFIG.alerts_enabled
     else NoopAlertClient()
 )
+RECONCILE_TASK: asyncio.Task | None = None
+RECONCILE_STOP: asyncio.Event | None = None
+
+
+@app.on_event("startup")
+async def startup_reconcile_scheduler() -> None:
+    global RECONCILE_TASK, RECONCILE_STOP
+    if not CONFIG.reconcile_scheduler_enabled:
+        return
+    if CONFIG.execution_mode != "paper":
+        LOGGER.warning(
+            "position reconcile scheduler requested but skipped because execution mode is not paper",
+            extra={"execution_mode": CONFIG.execution_mode},
+        )
+        return
+    RECONCILE_STOP = asyncio.Event()
+    RECONCILE_TASK = asyncio.create_task(
+        run_reconcile_scheduler_loop(
+            session_factory=get_session_factory(),
+            journal_client=JOURNAL_CLIENT,
+            alert_client=ALERT_CLIENT,
+            market_fetcher=OkxMarketDataFetcher(),
+            interval_seconds=CONFIG.reconcile_scheduler_interval_seconds,
+            timeframe=CONFIG.reconcile_scheduler_timeframe,
+            candle_limit=CONFIG.reconcile_scheduler_candle_limit,
+            continue_on_error=CONFIG.reconcile_scheduler_continue_on_error,
+            stop_event=RECONCILE_STOP,
+        ),
+        name="position_reconcile_scheduler",
+    )
+    LOGGER.info(
+        "position reconcile scheduler started",
+        extra={
+            "interval_seconds": CONFIG.reconcile_scheduler_interval_seconds,
+            "timeframe": CONFIG.reconcile_scheduler_timeframe,
+            "candle_limit": CONFIG.reconcile_scheduler_candle_limit,
+            "continue_on_error": CONFIG.reconcile_scheduler_continue_on_error,
+        },
+    )
+
+
+@app.on_event("shutdown")
+async def shutdown_reconcile_scheduler() -> None:
+    global RECONCILE_TASK, RECONCILE_STOP
+    if RECONCILE_STOP is not None:
+        RECONCILE_STOP.set()
+    if RECONCILE_TASK is not None:
+        await RECONCILE_TASK
+    RECONCILE_TASK = None
+    RECONCILE_STOP = None
 
 
 @app.middleware("http")
