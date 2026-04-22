@@ -201,4 +201,6 @@ They can inform analysis, filtering, and future paper-trading work, but they are
 | TD-09 | hardcoded URLs | ✅ closed |
 | TD-10 | JournalClient duplicate | ✅ closed |
 | TD-11 | DbJournalClient → libs/messaging/ | P1 OPEN, blocker Live |
-| TD-12 | journal gap after candidate persistence | P1 OPEN, blocker Live |
+| TD-12 | journal gap after candidate persistence — candidate row exists without matching journal event. This is a data consistency issue, not response consistency. | P1 OPEN, blocker Live |
+| TD-13 | response consistency under downstream failure — candidate may persist while runner receives timeout/error. No idempotent key per signal -> runner retry creates duplicate. | P1 OPEN, blocker Live |
+| TD-14 | sync httpx audit across money-path — all sync httpx calls in async handlers must be audited. Any blocking call = potential hang under downstream failure. | P1 OPEN, blocker Live |
