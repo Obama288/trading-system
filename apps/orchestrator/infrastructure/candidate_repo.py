@@ -76,6 +76,13 @@ class TradeCandidateRepository:
         self.db.refresh(model)
         return model
 
+    def mark_execution_failed(self, model: TradeCandidateModel) -> TradeCandidateModel:
+        model.status = "failed_execution"
+        model.execution_id = None
+        self.db.commit()
+        self.db.refresh(model)
+        return model
+
     def reject_candidate(self, model: TradeCandidateModel, telegram_user_id: int) -> TradeCandidateModel:
         model.status = "rejected"
         model.rejected_by_user_id = telegram_user_id

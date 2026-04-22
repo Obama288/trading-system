@@ -14,10 +14,15 @@ def build_market_snapshot(
     closes: list[float],
     highs: list[float],
     lows: list[float],
+    opens: list[float] | None = None,
     news_risk: bool = False,
     session: str = "unknown",
 ) -> MarketSnapshot:
     if len(closes) < 50 or len(highs) < 50 or len(lows) < 50:
+        raise ValueError("Insufficient candle data: need at least 50 candles")
+    if opens is None:
+        opens = [closes[0], *closes[:-1]]
+    if len(opens) < 50:
         raise ValueError("Insufficient candle data: need at least 50 candles")
 
     spread_bps = round((ask - bid) / last_price * 10000, 4) if last_price > 0 else 0.0
@@ -55,4 +60,8 @@ def build_market_snapshot(
         session=session,
         indicators=IndicatorSnapshot(ema_20=ema_20, ema_50=ema_50, rsi_14=rsi_14, atr_14=atr_14),
         market_flags=MarketFlags(news_risk=news_risk, liquidity_ok=liquidity_ok, spread_ok=spread_ok),
+        recent_opens=list(opens),
+        recent_highs=list(highs),
+        recent_lows=list(lows),
+        recent_closes=list(closes),
     )

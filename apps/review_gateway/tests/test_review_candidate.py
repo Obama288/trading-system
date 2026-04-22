@@ -82,3 +82,21 @@ def test_review_candidate_fails_on_unapproved_risk():
     decision = review_candidate_use_case(make_signal(), make_risk(False), make_snapshot(False), stale_threshold_seconds=30)
     assert decision.passed is False
     assert decision.execution_candidate is None
+
+
+def test_review_uses_risk_entry_price_not_zone_edge():
+    # Risk is the source of truth for entry_price (authority rule #2).
+    # candidate_builder must not recompute from signal.entry_zone edges.
+    from libs.schemas.common import EntryZone
+
+    signal = make_signal()  # entry_zone min=100.0, max=101.0, side=LONG
+    risk = make_risk(True)
+    risk.entry_price = 100.5  # midpoint — differs from both zone.min and zone.max
+
+    decision = review_candidate_use_case(signal, risk, make_snapshot(False), stale_threshold_seconds=30)
+
+    assert decision.passed is True
+    assert decision.execution_candidate is not None
+    assert decision.execution_candidate.entry_price == 100.5
+    assert decision.execution_candidate.entry_price != signal.entry_zone.max  # not zone edge
+    assert decision.execution_candidate.entry_price != signal.entry_zone.min

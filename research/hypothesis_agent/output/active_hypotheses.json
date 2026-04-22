@@ -1,0 +1,49 @@
+{
+  "updated_at": "2026-04-21T21:29:11.711866+00:00",
+  "active_hypotheses": [
+    {
+      "pattern": "trend_continuation",
+      "symbol": "BTC-USDT",
+      "timeframe": "1H",
+      "direction": "BOTH",
+      "best_session": "asia",
+      "win_rate": 47.02,
+      "avg_rr": 0.46,
+      "sample_count": 336,
+      "confidence": "LOW",
+      "statement": "trend_continuation on BTC-USDT 1H performs best in asia with 47.02% win_rate."
+    },
+    {
+      "pattern": "trend_continuation",
+      "symbol": "SOL-USDT",
+      "timeframe": "1H",
+      "direction": "BOTH",
+      "best_session": "asia",
+      "win_rate": 41.88,
+      "avg_rr": 0.3,
+      "sample_count": 351,
+      "confidence": "LOW",
+      "statement": "trend_continuation on SOL-USDT 1H performs best in asia with 41.88% win_rate."
+    },
+    {
+      "pattern": "trend_continuation",
+      "symbol": "ETH-USDT",
+      "timeframe": "1H",
+      "direction": "BOTH",
+      "best_session": "asia",
+      "win_rate": 39.23,
+      "avg_rr": 0.29,
+      "sample_count": 339,
+      "confidence": "LOW",
+      "statement": "trend_continuation on ETH-USDT 1H performs best in asia with 39.23% win_rate."
+    }
+  ],
+  "regime_by_market": {
+    "BTC-USDT:15m": "ranging",
+    "BTC-USDT:1H": "ranging",
+    "ETH-USDT:15m": "ranging",
+    "ETH-USDT:1H": "ranging",
+    "SOL-USDT:15m": "ranging",
+    "SOL-USDT:1H": "ranging"
+  }
+}

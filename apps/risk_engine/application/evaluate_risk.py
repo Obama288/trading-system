@@ -37,6 +37,7 @@ def evaluate_risk_use_case(req: RiskRequestLike) -> dict:
     if equity <= 0:
         return {
             "approved": False,
+            "entry_price": 0.0,
             "position_size": 0.0,
             "notional_usdt": 0.0,
             "max_loss_usdt": 0.0,
@@ -63,6 +64,7 @@ def evaluate_risk_use_case(req: RiskRequestLike) -> dict:
     if req.entry_zone.max <= 0 or req.stop_loss <= 0:
         return {
             "approved": False,
+            "entry_price": 0.0,
             "position_size": 0.0,
             "notional_usdt": 0.0,
             "max_loss_usdt": 0.0,
@@ -91,6 +93,7 @@ def evaluate_risk_use_case(req: RiskRequestLike) -> dict:
     except ValueError:
         return {
             "approved": False,
+            "entry_price": 0.0,
             "position_size": 0.0,
             "notional_usdt": 0.0,
             "max_loss_usdt": max_loss_usdt,
@@ -113,6 +116,7 @@ def evaluate_risk_use_case(req: RiskRequestLike) -> dict:
 
     return {
         "approved": approved,
+        "entry_price": entry_price if approved else 0.0,
         "position_size": position_size if approved else 0.0,
         "notional_usdt": notional if approved else 0.0,
         "max_loss_usdt": max_loss_usdt,

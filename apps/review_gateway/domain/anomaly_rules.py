@@ -1,12 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
+from apps.market_data.domain.freshness import is_stale
 from libs.schemas.common import AnomalyFlag, MarketSnapshot, RiskDecision, SignalDecision
-
-
-def snapshot_age_seconds(snapshot: MarketSnapshot) -> int:
-    return int((datetime.now(timezone.utc) - snapshot.timestamp).total_seconds())
 
 
 def detect_anomalies(
@@ -17,7 +12,7 @@ def detect_anomalies(
 ) -> list[AnomalyFlag]:
     flags: list[AnomalyFlag] = []
 
-    if snapshot_age_seconds(snapshot) > stale_threshold_seconds:
+    if is_stale(snapshot.timestamp, threshold_seconds=stale_threshold_seconds):
         flags.append(AnomalyFlag.MARKET_DATA_STALE)
 
     if signal.symbol != risk.symbol or signal.signal_id != risk.signal_id:

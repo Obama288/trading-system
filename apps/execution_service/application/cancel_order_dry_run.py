@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from apps.execution_service.infrastructure.execution_store import InMemoryExecutionStore
+from apps.execution_service.infrastructure.execution_store import ExecutionStore
 
 
 def cancel_order_dry_run_use_case(
     *,
     execution_id: str,
-    store: InMemoryExecutionStore,
+    store: ExecutionStore,
 ) -> dict:
     row = store.mark_cancelled(execution_id)
     if row is None:

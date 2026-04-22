@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from typing import Protocol
 
 
 @dataclass
@@ -13,6 +14,19 @@ class StoredExecution:
     mode: str
     created_at: str
     payload: dict
+
+
+class ExecutionStore(Protocol):
+    def get_by_key(self, key: str) -> StoredExecution | None: ...
+
+    def get_by_execution_id(self, execution_id: str) -> StoredExecution | None: ...
+
+    def save(self, execution: StoredExecution) -> StoredExecution: ...
+
+    def mark_cancelled(self, execution_id: str) -> StoredExecution | None: ...
+
+    @staticmethod
+    def now_iso() -> str: ...
 
 
 class InMemoryExecutionStore:

@@ -9,7 +9,7 @@ def build_execution_candidate(signal: SignalDecision, risk: RiskDecision) -> Exe
     if risk.position_size <= 0:
         raise ValueError("Risk position size must be positive")
 
-    entry_price = signal.entry_zone.max if signal.side.value == "long" else signal.entry_zone.min
+    entry_price = risk.entry_price
 
     return ExecutionCandidate(
         symbol=signal.symbol,

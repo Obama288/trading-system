@@ -11,12 +11,13 @@ from apps.orchestrator.application.reject_candidate import reject_candidate_use_
 from apps.orchestrator.infrastructure.candidate_repo import TradeCandidateRepository
 from apps.orchestrator.infrastructure.execution_client import HttpExecutionClient
 from apps.orchestrator.infrastructure.journal_client import HttpJournalClient
-from apps.orchestrator.infrastructure.operator_action_repo import OperatorActionRepository
 from apps.orchestrator.schemas.pipeline_requests import (
     ApproveCandidateRequest,
     EvaluatePipelineRequest,
     RejectCandidateRequest,
 )
+from libs.clients.kill_switch_client import HttpKillSwitchClient
+from libs.db.repositories.operator_action_repo import OperatorActionRepository
 from libs.db.session import get_db
 from libs.logging.context import set_correlation_id
 
@@ -26,6 +27,9 @@ EXECUTION_CLIENT = HttpExecutionClient(
 )
 JOURNAL_CLIENT = HttpJournalClient(
     base_url=os.getenv("JOURNAL_SERVICE_BASE_URL", "http://journal-ingest:8000")
+)
+KILL_SWITCH_CLIENT = HttpKillSwitchClient(
+    base_url=os.getenv("KILL_SWITCH_BASE_URL", "http://kill-switch:8000")
 )
 
 
@@ -72,11 +76,12 @@ def list_pending(db: Session = Depends(get_db)) -> dict:
 
 
 @app.post("/v1/pipeline/approve")
-def approve(req: ApproveCandidateRequest, db: Session = Depends(get_db)) -> dict:
+async def approve(req: ApproveCandidateRequest, db: Session = Depends(get_db)) -> dict:
     repo = TradeCandidateRepository(db)
     operator_action_repo = OperatorActionRepository(db)
-    return approve_candidate_use_case(
+    return await approve_candidate_use_case(
         repo=repo,
+        kill_switch_client=KILL_SWITCH_CLIENT,
         execution_client=EXECUTION_CLIENT,
         operator_action_repo=operator_action_repo,
         journal_client=JOURNAL_CLIENT,

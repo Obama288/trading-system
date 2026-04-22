@@ -1,5 +1,12 @@
 strategy:
-  default_symbol: BTCUSDT
+  symbols:
+    - BTC-USDT
+    - ETH-USDT
+    - BNB-USDT
+    - SOL-USDT
+    - AVAX-USDT
+    - LINK-USDT
   default_timeframe: 15m
   setup_types:
     - breakout_retest
+    - trend_continuation

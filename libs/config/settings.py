@@ -15,6 +15,7 @@ class AppSettings(BaseSettings):
     environment: str = "local"
     system_mode: str = "approval"
     paper_mode: bool = True
+    execution_mode: str = "paper"
     postgres_dsn: SecretStr
     redis_url: SecretStr
     openai_api_key: SecretStr | None = None

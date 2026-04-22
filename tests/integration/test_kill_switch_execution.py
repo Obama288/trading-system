@@ -1,10 +1,13 @@
+import pytest
+
 from apps.execution_service.application.place_order_dry_run import place_order_dry_run_use_case
 from apps.execution_service.infrastructure.execution_store import InMemoryExecutionStore
 from apps.execution_service.infrastructure.kill_switch_client import StubKillSwitchClient
 from libs.schemas.common import ExecutionCandidate, OrderSide
 
 
-def test_kill_switch_active_blocks_execution():
+@pytest.mark.asyncio
+async def test_kill_switch_active_blocks_execution():
     store = InMemoryExecutionStore()
     ks = StubKillSwitchClient(trading_enabled=False, incident_code="manual_halt")
 
@@ -19,7 +22,7 @@ def test_kill_switch_active_blocks_execution():
         time_in_force="GTC",
     )
 
-    result = place_order_dry_run_use_case(
+    result = await place_order_dry_run_use_case(
         candidate_id="cand_001",
         execution_candidate=candidate,
         execution_idempotency_key="idem_001",

@@ -81,6 +81,22 @@ class ExecutionStatus(str, Enum):
     EXPIRED = "expired"
 
 
+class PositionStatus(str, Enum):
+    OPEN = "open"
+    CLOSED = "closed"
+    CANCELLED = "cancelled"
+    EXPIRED = "expired"
+
+
+class PositionCloseReason(str, Enum):
+    STOP_LOSS = "stop_loss"
+    TAKE_PROFIT = "take_profit"
+    MANUAL = "manual"
+    CANCELLED = "cancelled"
+    EXPIRED = "expired"
+    RECONCILE = "reconcile"
+
+
 class ServiceEnvelope(BaseModel, Generic[T]):
     ok: bool
     service: str
@@ -121,6 +137,10 @@ class MarketSnapshot(BaseModel):
     session: str
     indicators: IndicatorSnapshot
     market_flags: MarketFlags
+    recent_opens: list[float] = Field(default_factory=list)
+    recent_highs: list[float] = Field(default_factory=list)
+    recent_lows: list[float] = Field(default_factory=list)
+    recent_closes: list[float] = Field(default_factory=list)
 
 
 class SignalDecision(BaseModel):
@@ -160,6 +180,7 @@ class RiskDecision(BaseModel):
     notional_usdt: float = 0.0
     max_loss_usdt: float = 0.0
     risk_pct_of_equity: float = 0.0
+    entry_price: float = 0.0
     leverage: float = 0.0
     portfolio_exposure_pct: float = 0.0
     daily_loss_limit_status: str

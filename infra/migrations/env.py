@@ -7,7 +7,16 @@ from sqlalchemy import create_engine, pool
 
 from libs.config.settings import AppSettings
 from libs.db.base import Base
-from libs.db.models import JournalEventModel, OperatorActionModel, SystemStateModel, TradeCandidateModel  # noqa: F401
+from libs.db.models import (  # noqa: F401
+    ExecutionModel,
+    IncidentModel,
+    JournalEventModel,
+    OperatorActionModel,
+    PositionEventModel,
+    PositionModel,
+    SystemStateModel,
+    TradeCandidateModel,
+)
 
 config = context.config
 

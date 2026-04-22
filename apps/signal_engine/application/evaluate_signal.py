@@ -4,6 +4,7 @@ from uuid import uuid4
 
 from apps.signal_engine.application.detect_setup import detect_setup_use_case
 from apps.signal_engine.application.run_filters import run_filters_use_case
+from apps.signal_engine.domain.trend_continuation import detect_trend_continuation
 from libs.schemas.common import MarketSnapshot, SignalDecision, SignalStatus, TradeDirection
 
 
@@ -22,14 +23,17 @@ def evaluate_signal_use_case(snapshot: MarketSnapshot) -> SignalDecision:
 
     found, direction, entry_zone = detect_setup_use_case(snapshot)
     if not found or direction == TradeDirection.NONE:
+        fallback = detect_trend_continuation(snapshot)
+        if fallback is not None:
+            return fallback
         return SignalDecision(
             signal_id=f"sig_{uuid4().hex}",
             status=SignalStatus.NO_TRADE,
             symbol=snapshot.symbol,
             side=TradeDirection.NONE,
-            setup_type="breakout_retest",
+            setup_type="none",
             confidence=0.0,
-            reasoning_summary="No valid setup detected by Python rules.",
+            reasoning_summary="No valid breakout_retest or trend_continuation setup detected by Python rules.",
         )
 
     atr = snapshot.indicators.atr_14

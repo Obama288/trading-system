@@ -4,19 +4,20 @@ from uuid import uuid4
 
 from apps.execution_service.domain.execution_policy import validate_execution_candidate
 from apps.execution_service.domain.idempotency import validate_idempotency_key
-from apps.execution_service.infrastructure.execution_store import InMemoryExecutionStore, StoredExecution
-from apps.execution_service.infrastructure.kill_switch_client import KillSwitchClient
+from apps.execution_service.infrastructure.execution_store import ExecutionStore, StoredExecution
+from libs.clients.kill_switch_client import KillSwitchClient
 from libs.schemas.common import ExecutionCandidate
 
 
-def place_order_dry_run_use_case(
+async def place_order_dry_run_use_case(
     *,
     candidate_id: str,
     execution_candidate: ExecutionCandidate,
     execution_idempotency_key: str,
     correlation_id: str,
     kill_switch_client: KillSwitchClient,
-    store: InMemoryExecutionStore,
+    store: ExecutionStore,
+    execution_mode: str = "paper",
 ) -> dict:
     validate_idempotency_key(execution_idempotency_key)
     validate_execution_candidate(execution_candidate)
@@ -33,7 +34,7 @@ def place_order_dry_run_use_case(
             "payload": existing.payload,
         }
 
-    ks = kill_switch_client.get_status(correlation_id=correlation_id)
+    ks = await kill_switch_client.get_status(correlation_id=correlation_id)
     ks_data = ks["data"]
     if not ks_data["trading_enabled"]:
         return {
@@ -42,7 +43,7 @@ def place_order_dry_run_use_case(
             "execution_id": None,
             "candidate_id": candidate_id,
             "status": "blocked",
-            "mode": "dry_run",
+            "mode": execution_mode,
             "payload": None,
             "error": {
                 "code": "KILL_SWITCH_ACTIVE",
@@ -67,8 +68,8 @@ def place_order_dry_run_use_case(
             execution_id=execution_id,
             idempotency_key=execution_idempotency_key,
             candidate_id=candidate_id,
-            status="accepted",
-            mode="dry_run",
+            status="filled",
+            mode=execution_mode,
             created_at=store.now_iso(),
             payload=payload,
         )

@@ -1,5 +1,8 @@
 from datetime import datetime, timedelta, timezone
 
+import httpx
+import pytest
+
 from apps.orchestrator.application.approve_candidate import approve_candidate_use_case
 from apps.orchestrator.application.create_candidate import create_candidate_use_case
 from apps.orchestrator.application.reject_candidate import reject_candidate_use_case
@@ -17,11 +20,38 @@ from libs.schemas.common import (
 
 
 class DummyExecutionClient:
-    def __init__(self, execution_id: str | None = "exe_001") -> None:
+    def __init__(self, execution_id: str | None = "exe_001", *, ok: bool = True, raises: bool = False) -> None:
         self.execution_id = execution_id
+        self.ok = ok
+        self.raises = raises
+        self.calls = 0
 
-    def place(self, *, candidate_id: str, execution_candidate: dict, correlation_id: str) -> dict:
-        return {"ok": True, "data": {"execution_id": self.execution_id}}
+    async def place(self, *, candidate_id: str, execution_candidate: dict, correlation_id: str) -> dict:
+        self.calls += 1
+        if self.raises:
+            raise httpx.HTTPError("execution request failed")
+        return {"ok": self.ok, "data": {"execution_id": self.execution_id}, "error": None if self.ok else {"code": "EXECUTION_REJECTED"}}
+
+
+class DummyKillSwitchClient:
+    def __init__(self, *, kill_switch_active: bool = False) -> None:
+        self.kill_switch_active = kill_switch_active
+        self.calls = 0
+
+    async def get_status(self, correlation_id: str) -> dict:
+        self.calls += 1
+        return {
+            "ok": True,
+            "service": "kill-switch",
+            "version": "v1",
+            "correlation_id": correlation_id,
+            "data": {
+                "trading_enabled": not self.kill_switch_active,
+                "kill_switch_active": self.kill_switch_active,
+                "incident_code": "manual_halt" if self.kill_switch_active else None,
+            },
+            "error": None,
+        }
 
 
 class DummyJournalClient:
@@ -52,6 +82,8 @@ class DummyCandidate:
 class DummyRepo:
     def __init__(self, candidate):
         self.candidate = candidate
+        self.marked_failed = False
+        self.approve_calls = 0
 
     def create_candidate(self, **kwargs):
         class Row:
@@ -69,6 +101,7 @@ class DummyRepo:
         return model
 
     def approve_candidate(self, model, telegram_user_id: int):
+        self.approve_calls += 1
         model.status = "approved"
         return model
 
@@ -79,6 +112,12 @@ class DummyRepo:
     def attach_execution(self, model, execution_id: str):
         model.execution_id = execution_id
         model.status = "submitted"
+        return model
+
+    def mark_execution_failed(self, model):
+        model.status = "failed_execution"
+        model.execution_id = None
+        self.marked_failed = True
         return model
 
 
@@ -147,34 +186,97 @@ def test_create_candidate_success_and_writes_journal():
     assert len(journal.writes) == 1
 
 
-def test_approve_candidate_submits_execution_and_writes_audit_and_journal():
+@pytest.mark.asyncio
+async def test_approve_candidate_submits_execution_and_writes_audit_and_journal():
     repo = DummyRepo(DummyCandidate())
     journal = DummyJournalClient()
     audit = DummyOperatorActionRepo()
-    result = approve_candidate_use_case(repo, DummyExecutionClient(), audit, journal, "cand_001", 123, "corr_001")
+    result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(), audit, journal, "cand_001", 123, "corr_001")
     assert result["ok"] is True
     assert result["execution_id"] == "exe_001"
     assert len(audit.records) == 1
     assert len(journal.writes) == 1
 
 
-def test_approve_candidate_missing_execution_id_writes_failure_journal():
+@pytest.mark.asyncio
+async def test_approve_candidate_missing_execution_id_writes_failure_journal():
     repo = DummyRepo(DummyCandidate())
     journal = DummyJournalClient()
     audit = DummyOperatorActionRepo()
-    result = approve_candidate_use_case(repo, DummyExecutionClient(execution_id=None), audit, journal, "cand_001", 123, "corr_001")
+    result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(execution_id=None), audit, journal, "cand_001", 123, "corr_001")
     assert result["ok"] is False
     assert result["code"] == "EXECUTION_SUBMISSION_NO_ID"
+    assert repo.candidate.status == "failed_execution"
+    assert repo.candidate.execution_id is None
+    assert repo.marked_failed is True
     assert len(audit.records) == 1
     assert len(journal.writes) == 1
-    assert journal.writes[0]["event_type"] == "candidate_approve_handoff_failed"
+    assert journal.writes[0]["event_type"] == "execution_failed_after_approval"
 
 
-def test_approve_candidate_expired():
+@pytest.mark.asyncio
+async def test_approve_candidate_execution_not_accepted_rolls_back_candidate():
+    repo = DummyRepo(DummyCandidate())
+    journal = DummyJournalClient()
+    audit = DummyOperatorActionRepo()
+    result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(ok=False), audit, journal, "cand_001", 123, "corr_001")
+    assert result["ok"] is False
+    assert result["code"] == "EXECUTION_REJECTED"
+    assert repo.candidate.status == "failed_execution"
+    assert repo.candidate.execution_id is None
+    assert len(audit.records) == 1
+    assert len(journal.writes) == 1
+    assert journal.writes[0]["event_type"] == "execution_failed_after_approval"
+
+
+@pytest.mark.asyncio
+async def test_approve_candidate_execution_http_error_rolls_back_candidate():
+    repo = DummyRepo(DummyCandidate())
+    journal = DummyJournalClient()
+    audit = DummyOperatorActionRepo()
+    result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(raises=True), audit, journal, "cand_001", 123, "corr_001")
+    assert result["ok"] is False
+    assert result["code"] == "EXECUTION_REQUEST_FAILED"
+    assert repo.candidate.status == "failed_execution"
+    assert repo.candidate.execution_id is None
+    assert len(audit.records) == 1
+    assert len(journal.writes) == 1
+    assert journal.writes[0]["event_type"] == "execution_failed_after_approval"
+
+
+@pytest.mark.asyncio
+async def test_approve_candidate_expired():
     repo = DummyRepo(DummyCandidate(expired=True))
-    result = approve_candidate_use_case(repo, DummyExecutionClient(), DummyOperatorActionRepo(), DummyJournalClient(), "cand_001", 123, "corr_001")
+    result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(), DummyOperatorActionRepo(), DummyJournalClient(), "cand_001", 123, "corr_001")
     assert result["ok"] is False
     assert result["code"] == "EXPIRED"
+
+
+@pytest.mark.asyncio
+async def test_approve_candidate_failed_execution_is_terminal():
+    repo = DummyRepo(DummyCandidate(status="failed_execution"))
+    result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(), DummyOperatorActionRepo(), DummyJournalClient(), "cand_001", 123, "corr_001")
+    assert result["ok"] is False
+    assert result["code"] == "EXECUTION_FAILED"
+
+
+@pytest.mark.asyncio
+async def test_approve_candidate_blocked_when_kill_switch_active():
+    repo = DummyRepo(DummyCandidate())
+    kill_switch = DummyKillSwitchClient(kill_switch_active=True)
+    execution = DummyExecutionClient()
+    audit = DummyOperatorActionRepo()
+    journal = DummyJournalClient()
+    result = await approve_candidate_use_case(repo, kill_switch, execution, audit, journal, "cand_001", 123, "corr_001")
+    assert result["ok"] is False
+    assert result["code"] == "KILL_SWITCH_ACTIVE"
+    assert repo.candidate.status == "pending"
+    assert getattr(repo.candidate, "execution_id", None) is None
+    assert repo.approve_calls == 0
+    assert execution.calls == 0
+    assert kill_switch.calls == 1
+    assert audit.records == []
+    assert journal.writes == []
 
 
 def test_reject_candidate_already_approved():
@@ -184,8 +286,9 @@ def test_reject_candidate_already_approved():
     assert result["code"] == "ALREADY_APPROVED"
 
 
-def test_approve_candidate_not_found():
+@pytest.mark.asyncio
+async def test_approve_candidate_not_found():
     repo = DummyRepo(None)
-    result = approve_candidate_use_case(repo, DummyExecutionClient(), DummyOperatorActionRepo(), DummyJournalClient(), "cand_missing", 123, "corr_001")
+    result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(), DummyOperatorActionRepo(), DummyJournalClient(), "cand_missing", 123, "corr_001")
     assert result["ok"] is False
     assert result["code"] == "NOT_FOUND"

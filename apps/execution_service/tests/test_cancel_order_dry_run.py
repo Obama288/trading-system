@@ -1,3 +1,5 @@
+import pytest
+
 from apps.execution_service.application.cancel_order_dry_run import cancel_order_dry_run_use_case
 from apps.execution_service.application.place_order_dry_run import place_order_dry_run_use_case
 from apps.execution_service.infrastructure.execution_store import InMemoryExecutionStore
@@ -18,11 +20,12 @@ def make_candidate() -> ExecutionCandidate:
     )
 
 
-def test_cancel_order_dry_run_ok():
+@pytest.mark.asyncio
+async def test_cancel_order_dry_run_ok():
     store = InMemoryExecutionStore()
     ks = StubKillSwitchClient(trading_enabled=True)
 
-    placed = place_order_dry_run_use_case(
+    placed = await place_order_dry_run_use_case(
         candidate_id="cand_001",
         execution_candidate=make_candidate(),
         execution_idempotency_key="idem_001",

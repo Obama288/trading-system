@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from apps.orchestrator.infrastructure.candidate_repo import TradeCandidateRepository
 from apps.orchestrator.infrastructure.journal_client import JournalClient
-from apps.orchestrator.infrastructure.operator_action_repo import OperatorActionRepository
+from libs.db.repositories.operator_action_repo import OperatorActionRepository
 
 
 def reject_candidate_use_case(
@@ -32,7 +32,11 @@ def reject_candidate_use_case(
         target_type="trade_candidate",
         target_id=rejected.candidate_id,
         correlation_id=correlation_id,
-        payload_json={"status": rejected.status},
+        payload_json={
+            "status": rejected.status,
+            "candidate_id": rejected.candidate_id,
+            "operator_user_id": telegram_user_id,
+        },
     )
     journal_client.write(
         {
