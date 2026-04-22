@@ -37,7 +37,7 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 ## Current State
 
 Last updated: 2026-04-22
-Current pytest: 68 passed
+Current pytest: 88 passed
 Alembic head: 0007_create_executions
 
 ## Readiness
@@ -190,6 +190,15 @@ They can inform analysis, filtering, and future paper-trading work, but they are
 
 | ID | Description | Status |
 |----|-------------|--------|
-| TD-01 | Approve -> execution rollback is MVP rollback only, not a full outbox pattern. | mitigated in MVP |
-| TD-02 | Kill switch enforcement must remain hard-blocking before execution. | implemented |
-| TD-04 | Reconciliation layer still pending for stronger exchange/state consistency. | open |
+| TD-01 | execution rollback | ✅ closed |
+| TD-02 | kill switch enforcement | ✅ closed |
+| TD-03 | InMemoryExecutionStore → DB | ✅ closed |
+| TD-04 | journal write best-effort | ✅ closed |
+| TD-05 | Risk↔Review price contract | ✅ closed |
+| TD-06 | httpx AsyncClient | ✅ closed |
+| TD-07 | journal persistence | ✅ closed |
+| TD-08 | freshness duplicate | ✅ closed |
+| TD-09 | hardcoded URLs | ✅ closed |
+| TD-10 | JournalClient duplicate | ✅ closed |
+| TD-11 | DbJournalClient → libs/messaging/ | P1 OPEN, blocker Live |
+| TD-12 | journal gap after candidate persistence | P1 OPEN, blocker Live |

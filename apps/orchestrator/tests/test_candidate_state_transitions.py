@@ -62,6 +62,11 @@ class DummyJournalClient:
         self.writes.append(payload)
 
 
+class FailingJournalClient:
+    def write(self, payload: dict) -> None:
+        raise RuntimeError("journal host unavailable")
+
+
 class DummyOperatorActionRepo:
     def __init__(self) -> None:
         self.records: list[dict] = []
@@ -183,7 +188,26 @@ def test_create_candidate_success_and_writes_journal():
     result = create_candidate_use_case(repo, journal, make_signal(), make_risk(), make_review(True), "corr_001", ttl_seconds=120)
     assert result["ok"] is True
     assert result["code"] == "CANDIDATE_CREATED"
+    assert result["journal_write_ok"] is True
+    assert result["journal_error"] is None
     assert len(journal.writes) == 1
+
+
+def test_create_candidate_succeeds_when_journal_write_fails():
+    repo = DummyRepo(None)
+    result = create_candidate_use_case(
+        repo,
+        FailingJournalClient(),
+        make_signal(),
+        make_risk(),
+        make_review(True),
+        "corr_001",
+        ttl_seconds=120,
+    )
+    assert result["ok"] is True
+    assert result["code"] == "CANDIDATE_CREATED"
+    assert result["journal_write_ok"] is False
+    assert result["journal_error"] == "journal host unavailable"
 
 
 @pytest.mark.asyncio

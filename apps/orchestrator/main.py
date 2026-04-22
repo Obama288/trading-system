@@ -26,7 +26,9 @@ EXECUTION_CLIENT = HttpExecutionClient(
     base_url=os.getenv("EXECUTION_SERVICE_BASE_URL", "http://execution-service:8000")
 )
 JOURNAL_CLIENT = HttpJournalClient(
-    base_url=os.getenv("JOURNAL_SERVICE_BASE_URL", "http://journal-ingest:8000")
+    base_url=os.getenv("JOURNAL_SERVICE_BASE_URL", "http://journal-ingest:8000"),
+    retries=0,
+    timeout_seconds=0.5,
 )
 KILL_SWITCH_CLIENT = HttpKillSwitchClient(
     base_url=os.getenv("KILL_SWITCH_BASE_URL", "http://kill-switch:8000")
