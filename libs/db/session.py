@@ -19,6 +19,7 @@ def get_engine():
     return create_engine(
         get_settings().postgres_dsn.get_secret_value(),
         pool_pre_ping=True,
+        connect_args={"connect_timeout": 5},
     )
 
 
