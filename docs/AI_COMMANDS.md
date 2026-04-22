@@ -202,5 +202,6 @@ They can inform analysis, filtering, and future paper-trading work, but they are
 | TD-10 | JournalClient duplicate | âœ… closed |
 | TD-11 | DbJournalClient â†’ libs/messaging/ | P1 OPEN, blocker Live |
 | TD-12 | journal gap after candidate persistence â€” candidate row exists without matching journal event. This is a data consistency issue, not response consistency. | P1 OPEN, blocker Live |
-| TD-13 | response consistency under downstream failure â€” candidate may persist while runner receives timeout/error. No idempotent key per signal -> runner retry creates duplicate. | P1 OPEN, blocker Live |
-| TD-14 | sync httpx audit across money-path â€” all sync httpx calls in async handlers must be audited. Any blocking call = potential hang under downstream failure. | P1 OPEN, blocker Live |
+| TD-13 | response consistency under downstream failure — candidate may persist while runner receives timeout/error. No deduplication on signal_id in create_candidate — runner retry on timeout creates duplicate candidate for same signal. In live: duplicate candidate = double position risk. | P1 OPEN, blocker Live |
+| TD-14 | sync httpx audit across money-path — all external HTTP calls in money-path async handlers (evaluate, approve, execution) must use fail-fast async client. Any blocking sync call = potential hang under downstream failure. | P1 OPEN, blocker Live |
+| TD-15 | evaluate_pipeline response contract undefined — caller cannot distinguish: candidate created / candidate created but journal failed / candidate not created. Without explicit contract runner cannot safely decide to retry. | P1 OPEN, blocker Live |
