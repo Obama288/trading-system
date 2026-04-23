@@ -3,10 +3,11 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from sqlalchemy import select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from apps.position_manager.domain.position import Position
+from libs.db.models.execution import ExecutionModel
 from libs.db.models.position import PositionModel
 from libs.db.models.position_event import PositionEventModel
 from libs.schemas.common import PositionCloseReason, PositionStatus, TradeDirection
@@ -31,6 +32,31 @@ class PositionRepository:
             .order_by(PositionModel.opened_at.desc(), PositionModel.position_id.desc())
         )
         return list(self.db.execute(stmt).scalars().all())
+
+    def count_open_positions(self) -> int:
+        stmt = select(func.count()).select_from(PositionModel).where(PositionModel.status == PositionStatus.OPEN.value)
+        return int(self.db.execute(stmt).scalar_one())
+
+    def count_pending_open_admissions(self, *, mode: str) -> int:
+        # "Pending admission" = execution already created/filled but position row not created yet.
+        # This closes the check-then-admit gap where concurrent admissions can overrun max_open_positions.
+        stmt = (
+            select(func.count())
+            .select_from(ExecutionModel)
+            .outerjoin(PositionModel, PositionModel.execution_id == ExecutionModel.execution_id)
+            .where(ExecutionModel.mode == mode)
+            .where(ExecutionModel.status == "filled")
+            .where(PositionModel.execution_id.is_(None))
+        )
+        return int(self.db.execute(stmt).scalar_one())
+
+    def acquire_open_position_admission_lock(self) -> None:
+        # Transaction-scoped global lock for max-open admission checks.
+        # Lock is released automatically when the current transaction commits/rolls back.
+        dialect = self.db.bind.dialect.name if self.db.bind else ""
+        if dialect != "postgresql":
+            return  # advisory locks are PostgreSQL-only; skip on SQLite (tests)
+        self.db.execute(text("SELECT pg_advisory_xact_lock(:key)"), {"key": 5319001})
 
     def create_position(
         self,
