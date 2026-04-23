@@ -1,6 +1,6 @@
 # Progress Log
 ## Session: 2026-04-22
-pytest: 88 passed
+pytest: 96 passed
 alembic head: 0007_create_executions
 Shadow trading: COMPLETE
 Paper trading: VALIDATED CONTOUR (Stage 52B.41)
@@ -9,6 +9,7 @@ Live trading: NOT READY
 ## Completed stages
 23-42, 38c, 38d, 43, 44, 45, 46, 47, 48, 49, 50, 51
 52A, 52C, 52B.3, 52B.4, 52B.23, 52B.27
+53A.1, 53A.3
 Research: B1, B4, B4.1, B4.2
 
 ## Active
@@ -139,4 +140,4 @@ Stage 53A.12 confirmed risk:
 ## Open TD
 TD-11: DbJournalClient -> libs/messaging/ (P1, blocker Live)
 TD-12: journal gap on failure after candidate persistence (P1, blocker Live)
-TD-19: max-open authoritative enforcement gap (TOCTOU / stale state) — cap checked only in runner pre-risk flow, not re-enforced transactionally at approve/execution/position-open boundary; burst can exceed `max_open_positions` (confirmed with 6 opens under cap=1). (P1, blocker Live)
+TD-19: max_open_positions TOCTOU enforcement ✅ closed (Stage 53A)

@@ -37,7 +37,7 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 ## Current State
 
 Last updated: 2026-04-22
-Current pytest: 88 passed
+Current pytest: 96 passed
 Alembic head: 0007_create_executions
 
 ## Readiness
@@ -202,9 +202,10 @@ They can inform analysis, filtering, and future paper-trading work, but they are
 | TD-10 | JournalClient duplicate | âœ… closed |
 | TD-11 | DbJournalClient â†’ libs/messaging/ | P1 OPEN, blocker Live |
 | TD-12 | journal gap after candidate persistence â€” candidate row exists without matching journal event. This is a data consistency issue, not response consistency. | P1 OPEN, blocker Live |
-| TD-13 | response consistency under downstream failure — candidate may persist while runner receives timeout/error. No deduplication on signal_id in create_candidate — runner retry on timeout creates duplicate candidate for same signal. In live: duplicate candidate = double position risk. | P1 OPEN, blocker Live |
-| TD-14 | sync httpx audit across money-path — all external HTTP calls in money-path async handlers (evaluate, approve, execution) must use fail-fast async client. Any blocking sync call = potential hang under downstream failure. | P1 OPEN, blocker Live |
-| TD-15 | evaluate_pipeline response contract undefined — caller cannot distinguish: candidate created successfully / candidate created but journal failed (TD-12) / candidate not created at all. Without explicit contract runner cannot safely decide to retry. | P1 OPEN, blocker Live |
-| TD-16 | DB startup health check absent — services start without verifying DB reachability. First request fails instead of startup failing fast. | P2 OPEN, recommended before production |
-| TD-17 | reconcile scheduler absent — position_manager has no background loop for periodic reconcile_positions_use_case calls. Without it: stop_loss, take_profit, ttl do not trigger automatically. Open positions accumulate without closing. Stats endpoint shows 0 closed trades. | ? CLOSED (Stage 53A.1) |
-| TD-18 | paper runtime fetcher coupling — position_manager scheduler imports OkxMarketDataFetcher from research.hypothesis_agent. Move to libs/clients or apps/market_data before live hardening. | P2 OPEN, recommended before live |
+| TD-13 | response consistency under downstream failure ï¿½ candidate may persist while runner receives timeout/error. No deduplication on signal_id in create_candidate ï¿½ runner retry on timeout creates duplicate candidate for same signal. In live: duplicate candidate = double position risk. | P1 OPEN, blocker Live |
+| TD-14 | sync httpx audit across money-path ï¿½ all external HTTP calls in money-path async handlers (evaluate, approve, execution) must use fail-fast async client. Any blocking sync call = potential hang under downstream failure. | P1 OPEN, blocker Live |
+| TD-15 | evaluate_pipeline response contract undefined ï¿½ caller cannot distinguish: candidate created successfully / candidate created but journal failed (TD-12) / candidate not created at all. Without explicit contract runner cannot safely decide to retry. | P1 OPEN, blocker Live |
+| TD-16 | DB startup health check absent ï¿½ services start without verifying DB reachability. First request fails instead of startup failing fast. | P2 OPEN, recommended before production |
+| TD-17 | reconcile scheduler absent ï¿½ position_manager has no background loop for periodic reconcile_positions_use_case calls. Without it: stop_loss, take_profit, ttl do not trigger automatically. Open positions accumulate without closing. Stats endpoint shows 0 closed trades. | ? CLOSED (Stage 53A.1) |
+| TD-18 | paper runtime fetcher coupling â€” position_manager scheduler imports OkxMarketDataFetcher from research.hypothesis_agent. Move to libs/clients or apps/market_data before live hardening. | P2 OPEN, recommended before live |
+| TD-19 | max_open_positions TOCTOU â€” cap-gate at execution admission | âœ… closed |
