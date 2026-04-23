@@ -4,6 +4,9 @@ import time
 from typing import Protocol
 
 import httpx
+from sqlalchemy.orm import Session
+
+from libs.db.models.journal_event import JournalEventModel
 
 
 class JournalClient(Protocol):
@@ -41,3 +44,19 @@ class HttpJournalClient:
         if last_error is None:
             raise RuntimeError("journal write failed without a captured exception")
         raise last_error
+
+
+class DbJournalClient:
+    def __init__(self, db: Session) -> None:
+        self.db = db
+
+    def write(self, payload: dict) -> None:
+        row = JournalEventModel(
+            event_id=payload["event_id"],
+            event_type=payload["event_type"],
+            severity=payload["severity"],
+            correlation_id=payload["correlation_id"],
+            payload=payload.get("payload", {}),
+        )
+        self.db.add(row)
+        self.db.commit()
