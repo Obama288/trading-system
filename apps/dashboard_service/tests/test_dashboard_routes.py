@@ -101,7 +101,7 @@ def seed_dashboard_rows(session_factory: sessionmaker[Session]) -> None:
                     idempotency_key="idem_001",
                     candidate_id="cand_001",
                     status="filled",
-                    mode="dry_run",
+                    mode="paper",
                     payload={"symbol": "BTCUSDT"},
                     created_at=now - timedelta(hours=1),
                     updated_at=now - timedelta(hours=1),
@@ -111,10 +111,30 @@ def seed_dashboard_rows(session_factory: sessionmaker[Session]) -> None:
                     idempotency_key="idem_002",
                     candidate_id="cand_002",
                     status="filled",
-                    mode="dry_run",
+                    mode="paper",
                     payload={"symbol": "ETHUSDT"},
                     created_at=now - timedelta(days=2),
                     updated_at=now - timedelta(days=1),
+                ),
+                ExecutionModel(
+                    execution_id="exe_003",
+                    idempotency_key="idem_003",
+                    candidate_id="cand_003",
+                    status="filled",
+                    mode="live",
+                    payload={"symbol": "SOLUSDT"},
+                    created_at=now - timedelta(days=3),
+                    updated_at=now - timedelta(days=3),
+                ),
+                ExecutionModel(
+                    execution_id="exe_004",
+                    idempotency_key="idem_004",
+                    candidate_id="cand_001",
+                    status="expired",
+                    mode="paper",
+                    payload={"symbol": "BTCUSDT", "setup_type": "breakout_retest"},
+                    created_at=now - timedelta(hours=4),
+                    updated_at=now - timedelta(hours=2),
                 ),
             ]
         )
@@ -159,6 +179,46 @@ def seed_dashboard_rows(session_factory: sessionmaker[Session]) -> None:
                     ttl_expires_at=None,
                     created_at=now - timedelta(days=2),
                     updated_at=now - timedelta(days=1),
+                ),
+                PositionModel(
+                    position_id="pos_003",
+                    execution_id="exe_003",
+                    candidate_id="cand_003",
+                    signal_id="sig_003",
+                    symbol="SOLUSDT",
+                    side="long",
+                    status=PositionStatus.CLOSED.value,
+                    quantity=1.0,
+                    entry_price=50.0,
+                    stop_loss=45.0,
+                    take_profit=[60.0],
+                    opened_at=now - timedelta(days=3),
+                    closed_at=now - timedelta(days=2),
+                    close_price=60.0,
+                    close_reason="take_profit",
+                    ttl_expires_at=None,
+                    created_at=now - timedelta(days=3),
+                    updated_at=now - timedelta(days=2),
+                ),
+                PositionModel(
+                    position_id="pos_004",
+                    execution_id="exe_004",
+                    candidate_id="cand_001",
+                    signal_id="sig_001",
+                    symbol="BTCUSDT",
+                    side="long",
+                    status=PositionStatus.EXPIRED.value,
+                    quantity=1.0,
+                    entry_price=100.0,
+                    stop_loss=95.0,
+                    take_profit=[110.0],
+                    opened_at=now - timedelta(hours=4),
+                    closed_at=now - timedelta(hours=2),
+                    close_price=100.0,
+                    close_reason="expired",
+                    ttl_expires_at=now - timedelta(hours=2),
+                    created_at=now - timedelta(hours=4),
+                    updated_at=now - timedelta(hours=2),
                 ),
             ]
         )
@@ -306,14 +366,18 @@ def test_dashboard_stats_returns_aggregated_metrics():
         body = response.json()
         assert body["ok"] is True
         data = body["data"]
-        assert data["total_trades"] == 1
-        assert data["win_rate_pct"] == 100.0
-        assert data["avg_rr"] == 1.0
+        assert data["total_trades"] == 2
+        assert data["win_rate_pct"] == 50.0
+        assert data["avg_rr"] == 0.5
         assert data["total_pnl_usdt"] == 20.0
         assert data["avg_hold_candles"] == 0.0
         assert data["by_symbol"]["ETHUSDT"]["total_trades"] == 1
         assert data["by_symbol"]["ETHUSDT"]["total_pnl_usdt"] == 20.0
+        assert data["by_symbol"]["BTCUSDT"]["total_trades"] == 1
+        assert data["by_symbol"]["BTCUSDT"]["total_pnl_usdt"] == 0.0
         assert data["by_setup_type"]["trend_continuation"]["total_trades"] == 1
         assert data["by_setup_type"]["trend_continuation"]["avg_rr"] == 1.0
+        assert data["by_setup_type"]["breakout_retest"]["total_trades"] == 1
+        assert "SOLUSDT" not in data["by_symbol"]
     finally:
         teardown_client(client)

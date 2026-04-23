@@ -60,6 +60,10 @@ async def approve_candidate_use_case(
         )
     except httpx.HTTPError as exc:
         repo.mark_execution_failed(approved)
+        error_payload = {
+            "code": "EXECUTION_REQUEST_FAILED",
+            "message": str(exc),
+        }
         journal_client.write(
             {
                 "event_id": f"evt_execution_failed_after_approval_{approved.candidate_id}",
@@ -70,11 +74,18 @@ async def approve_candidate_use_case(
                 "payload": {
                     "operator_user_id": telegram_user_id,
                     "reason": "execution_request_failed",
-                    "error": str(exc),
+                    "execution_error_code": "EXECUTION_REQUEST_FAILED",
+                    "execution_error": error_payload,
                 },
             }
         )
-        return {"ok": False, "code": "EXECUTION_REQUEST_FAILED", "candidate_id": approved.candidate_id}
+        return {
+            "ok": False,
+            "code": "EXECUTION_REQUEST_FAILED",
+            "candidate_id": approved.candidate_id,
+            "execution_error_code": "EXECUTION_REQUEST_FAILED",
+            "execution_error": error_payload,
+        }
 
     execution_id = execution_result.get("data", {}).get("execution_id") if execution_result.get("ok") else None
     if not execution_id:
@@ -92,11 +103,19 @@ async def approve_candidate_use_case(
                 "payload": {
                     "operator_user_id": telegram_user_id,
                     "reason": failure_reason,
+                    "execution_error_code": error_code,
+                    "execution_error": error_data,
                     "execution_result": execution_result,
                 },
             }
         )
-        return {"ok": False, "code": error_code, "candidate_id": approved.candidate_id}
+        return {
+            "ok": False,
+            "code": error_code,
+            "candidate_id": approved.candidate_id,
+            "execution_error_code": error_code,
+            "execution_error": error_data,
+        }
 
     repo.attach_execution(approved, execution_id)
     journal_client.write(

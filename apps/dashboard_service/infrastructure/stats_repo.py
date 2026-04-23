@@ -28,7 +28,16 @@ class StatsRepository:
             select(PositionModel, TradeCandidateModel, ExecutionModel)
             .outerjoin(TradeCandidateModel, TradeCandidateModel.candidate_id == PositionModel.candidate_id)
             .outerjoin(ExecutionModel, ExecutionModel.execution_id == PositionModel.execution_id)
-            .where(PositionModel.status == PositionStatus.CLOSED.value)
+            .where(
+                ExecutionModel.mode == "paper",
+                PositionModel.status.in_(
+                    [
+                        PositionStatus.CLOSED.value,
+                        PositionStatus.CANCELLED.value,
+                        PositionStatus.EXPIRED.value,
+                    ]
+                ),
+            )
         )
         rows = self.db.execute(stmt).all()
         return [self._to_trade_row(position, candidate, execution) for position, candidate, execution in rows]

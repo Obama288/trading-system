@@ -20,17 +20,25 @@ from libs.schemas.common import (
 
 
 class DummyExecutionClient:
-    def __init__(self, execution_id: str | None = "exe_001", *, ok: bool = True, raises: bool = False) -> None:
+    def __init__(
+        self,
+        execution_id: str | None = "exe_001",
+        *,
+        ok: bool = True,
+        raises: bool = False,
+        error_payload: dict | None = None,
+    ) -> None:
         self.execution_id = execution_id
         self.ok = ok
         self.raises = raises
+        self.error_payload = error_payload or {"code": "EXECUTION_REJECTED"}
         self.calls = 0
 
     async def place(self, *, candidate_id: str, execution_candidate: dict, correlation_id: str) -> dict:
         self.calls += 1
         if self.raises:
             raise httpx.HTTPError("execution request failed")
-        return {"ok": self.ok, "data": {"execution_id": self.execution_id}, "error": None if self.ok else {"code": "EXECUTION_REJECTED"}}
+        return {"ok": self.ok, "data": {"execution_id": self.execution_id}, "error": None if self.ok else self.error_payload}
 
 
 class DummyKillSwitchClient:
@@ -246,11 +254,14 @@ async def test_approve_candidate_execution_not_accepted_rolls_back_candidate():
     result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(ok=False), audit, journal, "cand_001", 123, "corr_001")
     assert result["ok"] is False
     assert result["code"] == "EXECUTION_REJECTED"
+    assert result["execution_error_code"] == "EXECUTION_REJECTED"
+    assert result["execution_error"]["code"] == "EXECUTION_REJECTED"
     assert repo.candidate.status == "failed_execution"
     assert repo.candidate.execution_id is None
     assert len(audit.records) == 1
     assert len(journal.writes) == 1
     assert journal.writes[0]["event_type"] == "execution_failed_after_approval"
+    assert journal.writes[0]["payload"]["execution_error_code"] == "EXECUTION_REJECTED"
 
 
 @pytest.mark.asyncio
@@ -261,11 +272,49 @@ async def test_approve_candidate_execution_http_error_rolls_back_candidate():
     result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(raises=True), audit, journal, "cand_001", 123, "corr_001")
     assert result["ok"] is False
     assert result["code"] == "EXECUTION_REQUEST_FAILED"
+    assert result["execution_error_code"] == "EXECUTION_REQUEST_FAILED"
+    assert result["execution_error"]["code"] == "EXECUTION_REQUEST_FAILED"
     assert repo.candidate.status == "failed_execution"
     assert repo.candidate.execution_id is None
     assert len(audit.records) == 1
     assert len(journal.writes) == 1
     assert journal.writes[0]["event_type"] == "execution_failed_after_approval"
+    assert journal.writes[0]["payload"]["execution_error_code"] == "EXECUTION_REQUEST_FAILED"
+
+
+@pytest.mark.asyncio
+async def test_approve_candidate_propagates_max_open_reject_reason():
+    repo = DummyRepo(DummyCandidate())
+    journal = DummyJournalClient()
+    audit = DummyOperatorActionRepo()
+    execution = DummyExecutionClient(
+        ok=False,
+        error_payload={
+            "code": "MAX_OPEN_POSITIONS_REACHED",
+            "max_open_positions": 1,
+            "current_load": 1,
+        },
+    )
+
+    result = await approve_candidate_use_case(
+        repo,
+        DummyKillSwitchClient(),
+        execution,
+        audit,
+        journal,
+        "cand_001",
+        123,
+        "corr_001",
+    )
+
+    assert result["ok"] is False
+    assert result["code"] == "MAX_OPEN_POSITIONS_REACHED"
+    assert result["execution_error_code"] == "MAX_OPEN_POSITIONS_REACHED"
+    assert result["execution_error"]["current_load"] == 1
+    assert repo.candidate.status == "failed_execution"
+    assert len(journal.writes) == 1
+    assert journal.writes[0]["payload"]["execution_error_code"] == "MAX_OPEN_POSITIONS_REACHED"
+    assert journal.writes[0]["payload"]["execution_error"]["max_open_positions"] == 1
 
 
 @pytest.mark.asyncio

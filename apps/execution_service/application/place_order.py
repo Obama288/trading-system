@@ -8,6 +8,7 @@ from apps.position_manager.application.open_position import open_position_use_ca
 from apps.position_manager.infrastructure.position_repo import PositionRepository
 from apps.position_manager.schemas.requests import PositionOpenRequest
 from libs.clients.kill_switch_client import KillSwitchClient
+from libs.config.settings import load_all_configs
 from libs.schemas.common import ExecutionCandidate, ExecutionStatus, OrderSide, TradeDirection
 
 
@@ -15,6 +16,22 @@ def _order_side_to_trade_direction(side: OrderSide) -> TradeDirection:
     if side == OrderSide.BUY:
         return TradeDirection.LONG
     return TradeDirection.SHORT
+
+
+def _duplicate_execution_result(existing) -> dict:
+    return {
+        "accepted": True,
+        "duplicate": True,
+        "execution_id": existing.execution_id,
+        "candidate_id": existing.candidate_id,
+        "status": existing.status,
+        "mode": existing.mode,
+        "payload": existing.payload,
+    }
+
+
+def _max_open_positions_limit() -> int:
+    return int(load_all_configs()["risk"]["risk"]["max_open_positions"])
 
 
 async def place_order_use_case(
@@ -32,6 +49,34 @@ async def place_order_use_case(
 ) -> dict:
     if execution_mode != "paper":
         raise ValueError(f"Unsupported execution mode: {execution_mode}")
+
+    existing = store.get_by_key(execution_idempotency_key)
+    if existing is not None:
+        return _duplicate_execution_result(existing)
+
+    # Authoritative max-open gate at execution boundary (prevents stale pre-check over-admission).
+    position_repo.acquire_open_position_admission_lock()
+    existing_after_lock = store.get_by_key(execution_idempotency_key)
+    if existing_after_lock is not None:
+        return _duplicate_execution_result(existing_after_lock)
+
+    current_load = position_repo.count_open_positions() + position_repo.count_pending_open_admissions(mode=execution_mode)
+    max_open_positions = _max_open_positions_limit()
+    if current_load >= max_open_positions:
+        return {
+            "accepted": False,
+            "duplicate": False,
+            "execution_id": None,
+            "candidate_id": candidate_id,
+            "status": "blocked",
+            "mode": execution_mode,
+            "payload": None,
+            "error": {
+                "code": "MAX_OPEN_POSITIONS_REACHED",
+                "max_open_positions": max_open_positions,
+                "current_load": current_load,
+            },
+        }
 
     result = await place_order_dry_run_use_case(
         candidate_id=candidate_id,
