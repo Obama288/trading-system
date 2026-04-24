@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 from typing import Protocol
 
 import httpx
 
 from libs.messaging.journal_client import HttpJournalClient, JournalClient
+
+LOGGER = logging.getLogger(__name__)
 
 
 class AlertClient(Protocol):
@@ -39,7 +42,10 @@ class HttpAlertClient:
                 if attempt < self.retries:
                     await asyncio.sleep(self.retry_delay_seconds)
         if last_error is not None:
-            raise last_error
+            LOGGER.warning(
+                "alert notify failed (advisory — position state unaffected)",
+                extra={"event_type": payload.get("event_type"), "error": str(last_error)},
+            )
 
 
 class NoopAlertClient:

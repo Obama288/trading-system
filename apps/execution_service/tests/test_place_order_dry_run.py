@@ -3,7 +3,21 @@ import pytest
 from apps.execution_service.application.place_order_dry_run import place_order_dry_run_use_case
 from apps.execution_service.infrastructure.execution_store import InMemoryExecutionStore
 from apps.execution_service.infrastructure.kill_switch_client import StubKillSwitchClient
+from libs.clients.kill_switch_client import (
+    KillSwitchAuthError,
+    KillSwitchTimeoutError,
+    KillSwitchUnavailableError,
+    KillSwitchError,
+)
 from libs.schemas.common import ExecutionCandidate, OrderSide
+
+
+class _ErrorKillSwitchClient:
+    def __init__(self, exc: Exception) -> None:
+        self._exc = exc
+
+    async def get_status(self, correlation_id: str) -> dict:
+        raise self._exc
 
 
 def make_candidate() -> ExecutionCandidate:
@@ -99,3 +113,28 @@ async def test_place_order_dry_run_rejects_empty_idempotency_key():
             kill_switch_client=ks,
             store=store,
         )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("exc,expected_code", [
+    (KillSwitchAuthError("auth failed"), "AUTH_FAILURE"),
+    (KillSwitchTimeoutError("timed out"), "KILL_SWITCH_TIMEOUT"),
+    (KillSwitchUnavailableError("unreachable"), "KILL_SWITCH_UNAVAILABLE"),
+    (KillSwitchError("generic error"), "KILL_SWITCH_ERROR"),
+])
+async def test_kill_switch_error_taxonomy(exc, expected_code):
+    store = InMemoryExecutionStore()
+    ks = _ErrorKillSwitchClient(exc)
+
+    result = await place_order_dry_run_use_case(
+        candidate_id="cand_ks_err",
+        execution_candidate=make_candidate(),
+        execution_idempotency_key="idem_ks_err",
+        correlation_id="corr_ks_err",
+        kill_switch_client=ks,
+        store=store,
+    )
+
+    assert result["accepted"] is False
+    assert result["status"] == "blocked"
+    assert result["error"]["code"] == expected_code

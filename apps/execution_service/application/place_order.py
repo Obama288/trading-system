@@ -158,6 +158,21 @@ async def place_order_use_case(
         execution_mode=execution_mode,
     )
     if not result["accepted"]:
+        error_code = (result.get("error") or {}).get("code", "")
+        if error_code in {"AUTH_FAILURE", "KILL_SWITCH_TIMEOUT", "KILL_SWITCH_UNAVAILABLE", "KILL_SWITCH_ERROR"}:
+            await journal_client.write(
+                {
+                    "event_id": f"evt_ks_check_failed_exec_{candidate_id}",
+                    "event_type": "kill_switch_check_failed",
+                    "severity": "error",
+                    "correlation_id": correlation_id,
+                    "payload": {
+                        "candidate_id": candidate_id,
+                        "error_code": error_code,
+                        "boundary": "execution_service",
+                    },
+                }
+            )
         return result
 
     if not result.get("duplicate"):

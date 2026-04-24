@@ -1,8 +1,52 @@
 # How We Work
-Human: owner, makes all decisions
-Claude (browser): code reviewer, architecture guardian
-GPT: executor (plans, analysis)
-Codex: executor (code in repo)
+
+## Core Principle
+
+No AI agent has authority to approve trading readiness.
+AI agents may inspect, implement, review, summarize, and recommend.
+Only the human owner can make final project decisions:
+- accept / reject a diff
+- move to the next stage
+- start or stop a probe
+- declare GO / NO-GO
+- accept or reject known risk
+
+## Roles
+
+**Human Owner:**
+Owns final GO/NO-GO, START/HOLD, stage transitions, risk acceptance, accepting/rejecting diffs.
+
+**GPT:**
+Project control assistant and prompt architect.
+Helps interpret roadmap from docs, drafts prompts, separates docs-ready/code-ready/test-ready/runtime-ready, summarizes findings into decision options.
+Does not own roadmap, approve readiness, or make GO/NO-GO decisions.
+
+**Codex:**
+Repo executor.
+Reads code, makes minimal safe fixes, adds focused tests, runs repo commands, reports exact changed files and test results.
+Does not self-approve readiness or expand scope.
+
+**Claude:**
+Independent reviewer / architecture guardian.
+Challenges assumptions, finds stale docs vs code reality, reviews transaction/source-of-truth boundaries, finds adjacent same-class bugs.
+Does not make final owner decision.
+
+## No Self-Approval Rule
+
+The agent that writes code cannot be the final approver of readiness.
+Required flow:
+1. Codex implements.
+2. Independent review checks.
+3. GPT structures decision options.
+4. Human owner decides.
+5. PROGRESS.md checkpoint records confirmed reality.
+
+## Readiness Levels
+
+- **Docs-ready:** documented, not necessarily implemented.
+- **Code-ready:** code inspection confirms implementation.
+- **Test-ready:** tests prove expected behavior.
+- **Runtime-ready:** deployed environment proves expected behavior.
 
 ## Engineering Rules v2 (Keep The Codebase Stable)
 These are project-wide rules that prevent the failure classes we already hit (TOCTOU, partial commits, event-loop hangs).

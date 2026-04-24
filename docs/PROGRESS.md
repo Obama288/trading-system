@@ -1,6 +1,198 @@
 # Progress Log
+
+## Current Gate Status
+
+Date: 2026-04-25
+
+Stage:
+LH-1 live-hardening / pre-probe hardening.
+
+Target:
+Controlled paper probe with live market data.
+
+Not target:
+- Real live exchange execution
+- Unsupervised production live
+- Signal quality work
+- Media/AI advisory work
+- LH-2 accumulation/stats work
+
+Readiness levels:
+- Docs-ready: GO — Current Gate Status reflects confirmed reality
+- Code-ready: GO for controlled paper probe with live market data
+- Test-ready: GO — 215 passed, 5 warnings
+- Runtime-ready: PENDING — VPS proof blocked, access not yet provided
+
+Current verdict:
+- Real live execution: NO-GO
+- Controlled paper probe with live market data: CONDITIONALLY GO
+- Unsupervised production live: NO-GO
+
+Last accepted evidence:
+- Final Gate Diff Review completed
+- pytest: 215 passed, 5 warnings
+- alembic head: 0008_unique_trade_candidates_signal_id
+- docker-compose binds postgres/redis to 127.0.0.1
+- .env.example uses postgresql+psycopg
+- EXECUTION_MODE guard raises RuntimeError at startup if not paper/dry_run (code-verified)
+- validate_startup_auth enforces ≥32 char tokens + denylist at startup (code-verified)
+- secrets.compare_digest used for all token comparisons (code-verified)
+- kill-switch fail-closed for all 4 error classes (AUTH_FAILURE / TIMEOUT / UNAVAILABLE / ERROR) — test-proven
+- open_position and close_position journal/alert failures are fail-soft after authoritative DB commit
+- halt/resume state + operator_action + journal use one DB commit
+- halt/resume failure-injection tests added
+- execution-boundary kill-switch typed errors preserved and journaled
+- stop-loss / take-profit direction validation enforced at execution boundary
+- recover_position journal/alert failures are fail-soft after authoritative DB commit
+- no active production call-sites remain for old commit-based position repo methods
+
+Open owner decision:
+- H-1 recover_position_use_case: CLOSED.
+- Remaining owner decision: START / HOLD after VPS Runtime Proof.
+
+Allowed work:
+- VPS runtime proof (requires owner to provide access)
+- docs checkpoint
+
+Blocked work:
+- VPS Runtime Proof — BLOCKED: owner has not yet provided VPS IP/hostname, SSH username, SSH key, repo path, service launch method
+- LH-2 paper accumulation
+- Stage 53 real exchange integration
+- signal quality
+- AI/media analysis
+- real live execution
+
+Next gate:
+VPS Runtime Proof.
+
+Required owner input to unblock:
+- VPS IP or hostname
+- SSH username
+- SSH key (which key from ~/.ssh/)
+- repo path on VPS
+- service launch method (docker compose / systemd / uvicorn manually)
+
+Next owner decision:
+START / HOLD controlled paper probe after runtime proof.
+
+Constraints:
+- Do not claim Runtime-ready.
+- Do not claim live-ready.
+- Do not start paper probe.
+- Do not mark LH-1 fully closed until VPS runtime proof is done.
+- Keep docs consistent with source-of-truth rules.
+
+---
+
+## Session: 2026-04-25 (updated — VPS Runtime Proof partial)
+pytest: 215 passed, 5 warnings — H-1 closed (recover_position fail-soft fix + 2 regression tests)
+
+### VPS Runtime Proof — Static Proof Complete / Runtime Checks Pending
+
+**Scope limitation:** Docker and Linux system commands are not available in the current Windows dev environment.
+Static/code-level proof is complete. VPS-level runtime checks require direct VPS access.
+
+---
+
+#### SECTION 1 — Repo Proof (VERIFIED)
+
+| Check | Result |
+|-------|--------|
+| `git status` | 19 expected session files modified/untracked. No unwanted changes. |
+| `git diff --check` | CLEAN. LF warning on .env.example only (not a blocker). |
+| `git diff --stat` | 644 insertions, 81 deletions — matches session scope. |
+| `uv run pytest` | **215 passed, 5 warnings, 0 failed** |
+| `uv run alembic heads` | **0008_unique_trade_candidates_signal_id** |
+
+---
+
+#### SECTION 2 — Network / Container Topology (PARTIALLY VERIFIED)
+
+| Check | Result |
+|-------|--------|
+| docker-compose.yml postgres binding | `127.0.0.1:5432:5432` — loopback only ✅ |
+| docker-compose.yml redis binding | `127.0.0.1:6379:6379` — loopback only ✅ |
+| `docker compose ps` (running containers) | **PENDING — requires VPS** |
+| `docker ps` (port runtime verification) | **PENDING — requires VPS** |
+| `ss -lntup` (actual listening ports) | **PENDING — requires VPS (Linux only)** |
+| `sudo ufw status` (firewall rules) | **PENDING — requires VPS (Linux only)** |
+
+---
+
+#### SECTION 3 — Env Safety (STATICALLY VERIFIED)
+
+| Check | Result |
+|-------|--------|
+| POSTGRES_DSN driver | `.env.example` uses `postgresql+psycopg` (psycopg3 correct) ✅ |
+| PAPER_MODE | `.env.example` has `PAPER_MODE=true` ✅ |
+| EXECUTION_MODE guard | Startup `lifespan` raises `RuntimeError` if not `paper` or `dry_run` ✅ |
+| Token min length | `validate_startup_auth()` enforces ≥ 32 chars + denylist, raises at startup ✅ |
+| Token comparison | `secrets.compare_digest` used for all three token types ✅ |
+| Service base URLs | Internal container names in .env.example (no public exposure) ✅ |
+| EXECUTION_MODE at runtime | Actual VPS env vars **PENDING — requires VPS** |
+| Token values at runtime | **PENDING — requires VPS** |
+
+---
+
+#### SECTION 4 — Kill-Switch Safety (STATICALLY VERIFIED)
+
+| Check | Result |
+|-------|--------|
+| AUTH_FAILURE blocks execution | ✅ confirmed by test |
+| KILL_SWITCH_TIMEOUT blocks execution | ✅ confirmed by test |
+| KILL_SWITCH_UNAVAILABLE blocks execution | ✅ confirmed by test |
+| KILL_SWITCH_ERROR blocks execution | ✅ confirmed by test |
+| All 4 error paths write `kill_switch_check_failed` journal event | ✅ confirmed by test |
+| halt route writes `kill_switch_halted` in one DB commit | ✅ confirmed by test |
+| resume route writes `kill_switch_resumed` in one DB commit | ✅ confirmed by test |
+| kill-switch HTTP smoke test (halt→verify→resume) | **PENDING — requires VPS** |
+
+---
+
+#### SECTION 5 — DB Consistency (PENDING)
+
+- Orphan executions (filled, no position) count: **PENDING — requires VPS**
+- Open positions with closed executions: **PENDING — requires VPS**
+- Candidate stuck in approved/submitted: **PENDING — requires VPS**
+- DB accessible and alembic current at runtime: **PENDING — requires VPS**
+
+---
+
+#### SECTION 6 — Service Health (PENDING)
+
+- `systemctl list-units` for uvicorn services: **PENDING — requires VPS**
+- `/ready` endpoint for each service: **PENDING — requires VPS**
+- `/health` and `/version` responses: **PENDING — requires VPS**
+
+---
+
+#### Static Proof Verdict
+
+**Code-level / static runtime proof: COMPLETE**
+
+All code-derivable safety controls verified:
+- EXECUTION_MODE guard enforced at startup
+- Token strength enforced at startup (not request-time)
+- Kill-switch fail-closed for all 4 error classes
+- postgres/redis bound to loopback in compose config
+- alembic at correct head
+- 215 tests passing
+
+**Runtime-ready: STILL PENDING**
+
+VPS-specific items that must be verified on the actual deployed environment before Runtime-ready can be claimed:
+1. `docker compose ps` — containers actually up
+2. `ss -lntup` — no unintended external port exposure
+3. `sudo ufw status` — firewall active and configured
+4. EXECUTION_MODE and token values in actual deployed `.env`
+5. Kill-switch HTTP smoke test (halt → verify `kill_switch_active=true` → resume)
+6. DB consistency queries (no orphan executions, no stuck candidates)
+7. Service `/ready` endpoints returning 200
+
+**Owner decision required:** The human operator must run these 7 checks directly on the VPS before making the START / HOLD decision for the controlled paper probe.
+
 ## Session: 2026-04-24 (updated end-of-session)
-pytest: 181 passed, 5 warnings
+pytest: 213 passed, 5 warnings (updated from 181 after final session fixes)
 alembic head: 0008_unique_trade_candidates_signal_id
 Shadow trading: COMPLETE
 Paper trading: VALIDATED CONTOUR (Stage 52B.41)

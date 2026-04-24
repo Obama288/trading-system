@@ -157,3 +157,53 @@ class TestRecoverPositionUseCase:
 
         assert result["ok"] is False
         assert result["code"] == "EXECUTION_NOT_FILLED"
+
+    @pytest.mark.asyncio
+    async def test_journal_failure_does_not_fail_position_recovery(self, test_db):
+        execution_id = "exe_recover_journal_fail"
+        _make_execution(test_db, execution_id)
+
+        repo = PositionRepository(test_db)
+
+        class _FailingJournalClient:
+            async def write(self, event):
+                raise RuntimeError("journal service unavailable")
+
+        result = await recover_position_use_case(
+            repo=repo,
+            journal_client=_FailingJournalClient(),
+            alert_client=_NoopAlertClient(),
+            execution_id=execution_id,
+            correlation_id="corr_recover_journal_fail",
+        )
+
+        assert result["ok"] is True
+        assert result["code"] == "POSITION_RECOVERED"
+        persisted = repo.get_by_execution_id(execution_id)
+        assert persisted is not None
+        assert persisted.status == "open"
+
+    @pytest.mark.asyncio
+    async def test_alert_failure_does_not_fail_position_recovery(self, test_db):
+        execution_id = "exe_recover_alert_fail"
+        _make_execution(test_db, execution_id)
+
+        repo = PositionRepository(test_db)
+
+        class _FailingAlertClient:
+            async def notify(self, payload):
+                raise RuntimeError("alerts service unavailable")
+
+        result = await recover_position_use_case(
+            repo=repo,
+            journal_client=_NoopJournalClient(),
+            alert_client=_FailingAlertClient(),
+            execution_id=execution_id,
+            correlation_id="corr_recover_alert_fail",
+        )
+
+        assert result["ok"] is True
+        assert result["code"] == "POSITION_RECOVERED"
+        persisted = repo.get_by_execution_id(execution_id)
+        assert persisted is not None
+        assert persisted.status == "open"

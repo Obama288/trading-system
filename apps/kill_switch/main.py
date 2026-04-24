@@ -71,7 +71,7 @@ def halt(
     repo = SystemStateRepository(db)
     operator_action_repo = OperatorActionRepository(db)
     state = halt_use_case(repo, reason=req.reason, actor=req.actor)
-    operator_action_repo.record(
+    operator_action_repo.record_no_commit(
         operator_user_id=req.operator_user_id,
         action_type="kill_switch_halt",
         target_type="system_state",
@@ -97,7 +97,7 @@ def halt(
             },
         )
     )
-    db.commit()
+    db.commit()  # single commit: state + operator_action + journal
     return {
         "ok": True,
         "service": "kill-switch",
@@ -117,7 +117,7 @@ def resume(
     repo = SystemStateRepository(db)
     operator_action_repo = OperatorActionRepository(db)
     state = resume_use_case(repo, actor=req.actor)
-    operator_action_repo.record(
+    operator_action_repo.record_no_commit(
         operator_user_id=req.operator_user_id,
         action_type="kill_switch_resume",
         target_type="system_state",
@@ -141,7 +141,7 @@ def resume(
             },
         )
     )
-    db.commit()
+    db.commit()  # single commit: state + operator_action + journal
     return {
         "ok": True,
         "service": "kill-switch",

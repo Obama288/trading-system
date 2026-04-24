@@ -5,7 +5,13 @@ from uuid import uuid4
 from apps.execution_service.domain.execution_policy import validate_execution_candidate
 from apps.execution_service.domain.idempotency import validate_idempotency_key
 from apps.execution_service.infrastructure.execution_store import ExecutionStore, StoredExecution
-from libs.clients.kill_switch_client import KillSwitchClient, KillSwitchError
+from libs.clients.kill_switch_client import (
+    KillSwitchAuthError,
+    KillSwitchClient,
+    KillSwitchError,
+    KillSwitchTimeoutError,
+    KillSwitchUnavailableError,
+)
 from libs.schemas.common import ExecutionCandidate
 
 
@@ -36,6 +42,39 @@ async def place_order_dry_run_use_case(
 
     try:
         ks = await kill_switch_client.get_status(correlation_id=correlation_id)
+    except KillSwitchAuthError:
+        return {
+            "accepted": False,
+            "duplicate": False,
+            "execution_id": None,
+            "candidate_id": candidate_id,
+            "status": "blocked",
+            "mode": execution_mode,
+            "payload": None,
+            "error": {"code": "AUTH_FAILURE", "incident_code": "KILL_SWITCH_AUTH_FAILURE"},
+        }
+    except KillSwitchTimeoutError:
+        return {
+            "accepted": False,
+            "duplicate": False,
+            "execution_id": None,
+            "candidate_id": candidate_id,
+            "status": "blocked",
+            "mode": execution_mode,
+            "payload": None,
+            "error": {"code": "KILL_SWITCH_TIMEOUT", "incident_code": "KILL_SWITCH_TIMEOUT"},
+        }
+    except KillSwitchUnavailableError:
+        return {
+            "accepted": False,
+            "duplicate": False,
+            "execution_id": None,
+            "candidate_id": candidate_id,
+            "status": "blocked",
+            "mode": execution_mode,
+            "payload": None,
+            "error": {"code": "KILL_SWITCH_UNAVAILABLE", "incident_code": "KILL_SWITCH_UNAVAILABLE"},
+        }
     except KillSwitchError:
         return {
             "accepted": False,
@@ -45,7 +84,7 @@ async def place_order_dry_run_use_case(
             "status": "blocked",
             "mode": execution_mode,
             "payload": None,
-            "error": {"code": "KILL_SWITCH_ACTIVE", "incident_code": "TRANSPORT_ERROR"},
+            "error": {"code": "KILL_SWITCH_ERROR", "incident_code": "KILL_SWITCH_ERROR"},
         }
     ks_data = ks["data"]
     if not ks_data["trading_enabled"]:
