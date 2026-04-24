@@ -18,7 +18,7 @@ from apps.risk_engine.main import AccountState, RiskRequest
 from apps.position_manager.infrastructure.position_repo import PositionRepository
 from apps.signal_engine.application.evaluate_signal import evaluate_signal_use_case
 from apps.orchestrator.schemas.pipeline_requests import EvaluatePipelineRequest
-from libs.clients.kill_switch_client import HttpKillSwitchClient, KillSwitchClient
+from libs.clients.kill_switch_client import HttpKillSwitchClient, KillSwitchClient, KillSwitchError
 from libs.config.settings import load_all_configs
 from libs.db.session import get_session_factory
 from libs.schemas.common import RiskDecision, SignalStatus
@@ -145,7 +145,16 @@ async def run_cycle(
     review_evaluator=review_candidate_use_case,
 ) -> dict[str, Any]:
     correlation_id = f"corr_paper_pipeline_{uuid4().hex}"
-    kill_switch_status = await kill_switch_client.get_status(correlation_id=correlation_id)
+    try:
+        kill_switch_status = await kill_switch_client.get_status(correlation_id=correlation_id)
+    except KillSwitchError:
+        return {
+            "candidate_created": False,
+            "symbol": symbol,
+            "timeframe": timeframe,
+            "correlation_id": correlation_id,
+            "reason": "kill_switch_error",
+        }
     if kill_switch_status.get("data", {}).get("kill_switch_active") is True:
         return {
             "candidate_created": False,

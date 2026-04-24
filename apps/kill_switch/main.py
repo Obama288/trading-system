@@ -83,6 +83,21 @@ def halt(
             "result": "halted",
         },
     )
+    db.add(
+        JournalEventModel(
+            event_id=f"evt_kill_switch_halt_{uuid4().hex}",
+            event_type="kill_switch_halted",
+            severity="warning",
+            correlation_id=req.correlation_id,
+            payload={
+                "operator_user_id": req.operator_user_id,
+                "actor": req.actor,
+                "reason": req.reason,
+                "result": "halted",
+            },
+        )
+    )
+    db.commit()
     return {
         "ok": True,
         "service": "kill-switch",

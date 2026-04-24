@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import logging
 import os
 from contextlib import asynccontextmanager
 from uuid import uuid4
@@ -9,31 +11,53 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from apps.execution_service.application.cancel_order_dry_run import cancel_order_dry_run_use_case
+from apps.execution_service.application.detect_orphans import detect_orphan_executions_use_case_async
+from apps.execution_service.application.orphan_scheduler import run_orphan_scheduler_loop
 from apps.execution_service.application.place_order import place_order_use_case
-from apps.execution_service.application.detect_orphans import detect_orphan_executions_use_case_sync
 from apps.execution_service.infrastructure.position_admission_repo import DbPositionAdmissionRepo
 from apps.execution_service.infrastructure.position_manager_client import HttpPositionManagerClient
 from apps.execution_service.infrastructure.execution_store_db import DbExecutionStore
 from apps.execution_service.infrastructure.local_clients import DbJournalClient, NoopAlertClient
 from apps.execution_service.schemas.requests import CancelExecutionRequest, PlaceExecutionRequest
 from libs.clients.kill_switch_client import HttpKillSwitchClient
-from libs.db.session import get_db
+from libs.db.session import get_db, get_session_factory
 from libs.db.startup_health import ensure_db_connection_startup
 from libs.logging.context import set_correlation_id
 from libs.security import require_internal_service_auth, validate_startup_auth
 
+LOGGER = logging.getLogger(__name__)
+
 
 EXECUTION_MODE = os.getenv("EXECUTION_MODE", "paper").lower()
+
+ORPHAN_TASK: asyncio.Task | None = None
+ORPHAN_STOP: asyncio.Event | None = None
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global ORPHAN_TASK, ORPHAN_STOP
     print(f"[execution-service] EXECUTION_MODE={EXECUTION_MODE}", flush=True)
     if EXECUTION_MODE not in {"paper", "dry_run"}:
         raise RuntimeError(f"Unsafe EXECUTION_MODE: {EXECUTION_MODE}")
     validate_startup_auth(require_internal=True)
     await ensure_db_connection_startup(service_name="execution-service", app=app)
+    ORPHAN_STOP = asyncio.Event()
+    ORPHAN_TASK = asyncio.create_task(
+        run_orphan_scheduler_loop(
+            session_factory=get_session_factory(),
+            interval_seconds=60.0,
+            execution_mode=EXECUTION_MODE,
+            continue_on_error=True,
+            stop_event=ORPHAN_STOP,
+        ),
+        name="execution_orphan_scheduler",
+    )
+    LOGGER.info("orphan scheduler started", extra={"interval_seconds": 60})
     yield
+    ORPHAN_STOP.set()
+    if ORPHAN_TASK is not None:
+        await ORPHAN_TASK
 
 
 app = FastAPI(title="execution-service", lifespan=lifespan)

@@ -6,6 +6,22 @@ from typing import Protocol
 import httpx
 
 
+class KillSwitchError(Exception):
+    """Unexpected kill-switch error (5xx or unclassified)."""
+
+
+class KillSwitchAuthError(KillSwitchError):
+    """Kill-switch returned 401 or 403 — token misconfiguration."""
+
+
+class KillSwitchTimeoutError(KillSwitchError):
+    """Kill-switch request timed out."""
+
+
+class KillSwitchUnavailableError(KillSwitchError):
+    """Kill-switch is unreachable (connection refused / network error)."""
+
+
 class KillSwitchClient(Protocol):
     async def get_status(self, correlation_id: str) -> dict: ...
 
@@ -31,19 +47,20 @@ class HttpKillSwitchClient:
                 )
                 response.raise_for_status()
                 return response.json()
-        except Exception:
-            return {
-                "ok": False,
-                "service": "kill-switch",
-                "version": "v1",
-                "correlation_id": correlation_id,
-                "data": {
-                    "trading_enabled": False,
-                    "kill_switch_active": True,
-                    "incident_code": "TRANSPORT_ERROR",
-                },
-                "error": {"code": "KILL_SWITCH_UNAVAILABLE", "detail": "Kill-switch unreachable or returned error, failing closed"},
-            }
+        except httpx.TimeoutException as exc:
+            raise KillSwitchTimeoutError("Kill-switch request timed out") from exc
+        except httpx.NetworkError as exc:
+            raise KillSwitchUnavailableError(f"Kill-switch unreachable: {exc}") from exc
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code in (401, 403):
+                raise KillSwitchAuthError(
+                    f"Kill-switch auth failed with status {exc.response.status_code}"
+                ) from exc
+            raise KillSwitchError(
+                f"Kill-switch returned unexpected status {exc.response.status_code}"
+            ) from exc
+        except Exception as exc:
+            raise KillSwitchError(f"Unexpected kill-switch error: {exc}") from exc
 
 
 class StubKillSwitchClient:

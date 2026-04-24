@@ -4,6 +4,8 @@ import os
 import pytest
 from unittest.mock import patch
 
+from libs.security import validate_startup_auth
+
 
 class TestStartupAuthValidation:
     def test_kill_switch_client_fails_without_token(self):
@@ -68,3 +70,60 @@ class TestStartupAuthValidation:
                 from libs.security import get_admin_auth
                 get_admin_auth(x_admin_token="test")
             assert "ADMIN_TOKEN" in str(exc_info.value)
+
+
+class TestTokenStrengthValidation:
+    def test_short_internal_token_raises_at_startup(self):
+        with patch.dict(os.environ, {"INTERNAL_SERVICE_TOKEN": "tooshort"}):
+            with pytest.raises(RuntimeError, match="too short"):
+                validate_startup_auth(require_internal=True)
+
+    def test_short_operator_token_raises_at_startup(self):
+        with patch.dict(os.environ, {"OPERATOR_TOKEN": "tooshort"}):
+            with pytest.raises(RuntimeError, match="too short"):
+                validate_startup_auth(require_operator=True)
+
+    def test_short_admin_token_raises_at_startup(self):
+        with patch.dict(os.environ, {"ADMIN_TOKEN": "tooshort"}):
+            with pytest.raises(RuntimeError, match="too short"):
+                validate_startup_auth(require_admin=True)
+
+    def test_denylisted_internal_token_raises_at_startup(self):
+        with patch.dict(os.environ, {"INTERNAL_SERVICE_TOKEN": "secret"}):
+            with pytest.raises(RuntimeError, match="well-known weak token"):
+                validate_startup_auth(require_internal=True)
+
+    def test_denylisted_operator_token_raises_at_startup(self):
+        with patch.dict(os.environ, {"OPERATOR_TOKEN": "password"}):
+            with pytest.raises(RuntimeError, match="well-known weak token"):
+                validate_startup_auth(require_operator=True)
+
+    def test_denylisted_admin_token_raises_at_startup(self):
+        with patch.dict(os.environ, {"ADMIN_TOKEN": "admin"}):
+            with pytest.raises(RuntimeError, match="well-known weak token"):
+                validate_startup_auth(require_admin=True)
+
+    def test_strong_token_passes_startup(self):
+        strong = "x" * 32
+        with patch.dict(os.environ, {
+            "INTERNAL_SERVICE_TOKEN": strong,
+            "OPERATOR_TOKEN": strong,
+            "ADMIN_TOKEN": strong,
+        }):
+            validate_startup_auth(require_internal=True, require_operator=True, require_admin=True)
+
+    def test_error_message_names_failing_token(self):
+        with patch.dict(os.environ, {"INTERNAL_SERVICE_TOKEN": "tooshort"}):
+            with pytest.raises(RuntimeError, match="INTERNAL_SERVICE_TOKEN"):
+                validate_startup_auth(require_internal=True)
+
+    def test_multiple_weak_tokens_all_reported(self):
+        with patch.dict(os.environ, {
+            "INTERNAL_SERVICE_TOKEN": "tooshort",
+            "OPERATOR_TOKEN": "tooshort",
+        }):
+            with pytest.raises(RuntimeError) as exc_info:
+                validate_startup_auth(require_internal=True, require_operator=True)
+            msg = str(exc_info.value)
+            assert "INTERNAL_SERVICE_TOKEN" in msg
+            assert "OPERATOR_TOKEN" in msg

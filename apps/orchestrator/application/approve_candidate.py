@@ -2,11 +2,18 @@ from __future__ import annotations
 
 import logging
 import httpx
+from uuid import uuid4
 from sqlalchemy.exc import SQLAlchemyError
 
 from apps.orchestrator.infrastructure.candidate_repo import TradeCandidateRepository
 from apps.orchestrator.infrastructure.execution_client import ExecutionClient
-from libs.clients.kill_switch_client import KillSwitchClient
+from libs.clients.kill_switch_client import (
+    KillSwitchAuthError,
+    KillSwitchClient,
+    KillSwitchError,
+    KillSwitchTimeoutError,
+    KillSwitchUnavailableError,
+)
 from libs.db.models.journal_event import JournalEventModel
 from libs.db.repositories.operator_action_repo import OperatorActionRepository
 
@@ -37,8 +44,60 @@ async def approve_candidate_use_case(
         return {"ok": False, "code": "EXECUTION_FAILED"}
     if model.execution_payload_json is None:
         return {"ok": False, "code": "EXECUTION_PAYLOAD_MISSING"}
-    kill_switch_status = await kill_switch_client.get_status(correlation_id=correlation_id)
+    try:
+        kill_switch_status = await kill_switch_client.get_status(correlation_id=correlation_id)
+    except (KillSwitchAuthError, KillSwitchTimeoutError, KillSwitchUnavailableError, KillSwitchError) as exc:
+        if isinstance(exc, KillSwitchAuthError):
+            error_code = "AUTH_FAILURE"
+        elif isinstance(exc, KillSwitchTimeoutError):
+            error_code = "KILL_SWITCH_TIMEOUT"
+        elif isinstance(exc, KillSwitchUnavailableError):
+            error_code = "KILL_SWITCH_UNAVAILABLE"
+        else:
+            error_code = "KILL_SWITCH_ERROR"
+        LOGGER.warning(
+            "kill_switch_check_failed",
+            extra={"candidate_id": candidate_id, "correlation_id": correlation_id, "error_code": error_code, "error": str(exc)},
+        )
+        try:
+            repo.db.add(JournalEventModel(
+                event_id=f"evt_ks_error_{uuid4().hex}",
+                event_type="kill_switch_check_failed",
+                severity="error",
+                correlation_id=correlation_id,
+                payload={"candidate_id": candidate_id, "error_code": error_code, "detail": str(exc)},
+            ))
+            repo.db.flush()
+            repo.db.commit()
+        except SQLAlchemyError as db_exc:
+            repo.db.rollback()
+            LOGGER.warning(
+                "kill_switch_check_failed journal write failed",
+                extra={"candidate_id": candidate_id, "correlation_id": correlation_id, "db_error": str(db_exc)},
+            )
+        return {"ok": False, "code": error_code}
+
     if kill_switch_status.get("data", {}).get("kill_switch_active") is True:
+        LOGGER.warning(
+            "kill_switch_blocked",
+            extra={"candidate_id": candidate_id, "correlation_id": correlation_id},
+        )
+        try:
+            repo.db.add(JournalEventModel(
+                event_id=f"evt_ks_blocked_{uuid4().hex}",
+                event_type="kill_switch_blocked",
+                severity="warning",
+                correlation_id=correlation_id,
+                payload={"candidate_id": candidate_id},
+            ))
+            repo.db.flush()
+            repo.db.commit()
+        except SQLAlchemyError as db_exc:
+            repo.db.rollback()
+            LOGGER.warning(
+                "kill_switch_blocked journal write failed",
+                extra={"candidate_id": candidate_id, "correlation_id": correlation_id, "db_error": str(db_exc)},
+            )
         return {"ok": False, "code": "KILL_SWITCH_ACTIVE"}
 
     try:

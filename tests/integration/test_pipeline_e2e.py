@@ -291,7 +291,9 @@ async def test_pipeline_kill_switch_active_blocks_approve_without_side_effects()
         assert refreshed_candidate.status == "pending"
         assert refreshed_candidate.execution_id is None
         assert execution_client.calls == 0
-        assert journal_rows == []
+        assert len(journal_rows) == 1
+        assert journal_rows[0].event_type == "kill_switch_blocked"
+        assert journal_rows[0].payload["candidate_id"] == candidate.candidate_id
         assert operator_rows == []
 
 

@@ -1,6 +1,6 @@
 # Progress Log
 ## Session: 2026-04-24 (updated end-of-session)
-pytest: 112 passed, 2 infra errors (research/hypothesis_agent PermissionError on Windows temp — pre-existing, non-blocking)
+pytest: 181 passed, 5 warnings
 alembic head: 0008_unique_trade_candidates_signal_id
 Shadow trading: COMPLETE
 Paper trading: VALIDATED CONTOUR (Stage 52B.41)
@@ -14,6 +14,20 @@ Research: B1, B4, B4.1, B4.2
 
 ## Active
 Stage LH-1 live-hardening — P1 items remaining before full live-readiness audit
+
+## Security fixes (2026-04-24)
+
+Security audit completed — 9 fixes implemented (S-1 through S-9). `docs/SECURITY.md` created.
+
+S-1: Duplicate-execution path now emits `position_open_failed` journal event (was silent)
+S-2: `validate_startup_auth()` enforces token minimum length (32 chars) and denylist at startup
+S-3: `OrphanDetector` now runs on 60 s schedule via `orphan_scheduler` (was on-demand only)
+S-4: `/halt` endpoint now writes `kill_switch_halted` journal event atomically with state change
+S-5: E2E auth money-path proof — 8 test scenarios passing (`tests/test_auth_money_path.py`)
+S-6: Network boundary and inter-service topology documented in `docs/SECURITY.md`
+S-7: Token rotation runbook (generate → update → rolling restart → verify) in `docs/SECURITY.md`
+S-8: Kill-switch error taxonomy — `AUTH_FAILURE` / `KILL_SWITCH_TIMEOUT` / `KILL_SWITCH_UNAVAILABLE` / `KILL_SWITCH_ERROR`
+S-9: Kill-switch block and error paths now write `kill_switch_blocked` / `kill_switch_check_failed` journal events
 
 ## Today's fixes (2026-04-24)
 
@@ -189,9 +203,9 @@ TD-13 closed (LH-1.3):
 ## Pre-live checklist
 
 - [x] All P0 TDs closed
-- [ ] P1 items resolved (see table above)
+- [x] P1 items resolved (see table above)
 - [ ] Full audit (Claude + Codex + GPT-4)
-- [ ] Security audit
+- [x] Security audit
 - [ ] Live
 
 ## TD history

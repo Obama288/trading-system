@@ -34,8 +34,9 @@ class TestHttpKillSwitchClientAuth:
                 assert call_kwargs["headers"]["X-Internal-Token"] == "test-token-123"
 
     @pytest.mark.asyncio
-    async def test_fails_closed_on_transport_error(self):
+    async def test_raises_kill_switch_error_on_transport_error(self):
         import httpx
+        from libs.clients.kill_switch_client import KillSwitchError
 
         with patch("libs.clients.kill_switch_client.httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
@@ -46,19 +47,34 @@ class TestHttpKillSwitchClientAuth:
 
             with patch.dict("os.environ", {"INTERNAL_SERVICE_TOKEN": "test-token-123"}):
                 client = HttpKillSwitchClient(base_url="http://test:8000")
-                result = await client.get_status(correlation_id="test-corr")
-
-                assert result["ok"] is False
-                assert result["data"]["trading_enabled"] is False
-                assert result["data"]["kill_switch_active"] is True
-                assert result["data"]["incident_code"] == "TRANSPORT_ERROR"
+                with pytest.raises(KillSwitchError):
+                    await client.get_status(correlation_id="test-corr")
 
     @pytest.mark.asyncio
-    async def test_fails_closed_on_http_error(self):
+    async def test_raises_kill_switch_unavailable_on_connect_error(self):
         import httpx
+        from libs.clients.kill_switch_client import KillSwitchUnavailableError
+
+        with patch("libs.clients.kill_switch_client.httpx.AsyncClient") as mock_client_class:
+            mock_client = AsyncMock()
+            mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client.__aexit__ = AsyncMock(return_value=None)
+            mock_client.get = AsyncMock(side_effect=httpx.ConnectError("connection refused"))
+            mock_client_class.return_value = mock_client
+
+            with patch.dict("os.environ", {"INTERNAL_SERVICE_TOKEN": "test-token-123"}):
+                client = HttpKillSwitchClient(base_url="http://test:8000")
+                with pytest.raises(KillSwitchUnavailableError):
+                    await client.get_status(correlation_id="test-corr")
+
+    @pytest.mark.asyncio
+    async def test_raises_kill_switch_error_on_http_5xx(self):
+        import httpx
+        from libs.clients.kill_switch_client import KillSwitchError
 
         with patch("libs.clients.kill_switch_client.httpx.AsyncClient") as mock_client_class:
             mock_response = AsyncMock()
+            mock_response.status_code = 500
             mock_response.raise_for_status = lambda: (_ for _ in ()).throw(
                 httpx.HTTPStatusError("500 error", request=AsyncMock(), response=mock_response)
             )
@@ -70,11 +86,30 @@ class TestHttpKillSwitchClientAuth:
 
             with patch.dict("os.environ", {"INTERNAL_SERVICE_TOKEN": "test-token-123"}):
                 client = HttpKillSwitchClient(base_url="http://test:8000")
-                result = await client.get_status(correlation_id="test-corr")
+                with pytest.raises(KillSwitchError):
+                    await client.get_status(correlation_id="test-corr")
 
-                assert result["ok"] is False
-                assert result["data"]["trading_enabled"] is False
-                assert result["data"]["kill_switch_active"] is True
+    @pytest.mark.asyncio
+    async def test_raises_kill_switch_auth_error_on_403(self):
+        import httpx
+        from libs.clients.kill_switch_client import KillSwitchAuthError
+
+        with patch("libs.clients.kill_switch_client.httpx.AsyncClient") as mock_client_class:
+            mock_response = AsyncMock()
+            mock_response.status_code = 403
+            mock_response.raise_for_status = lambda: (_ for _ in ()).throw(
+                httpx.HTTPStatusError("403 error", request=AsyncMock(), response=mock_response)
+            )
+            mock_client = AsyncMock()
+            mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+            mock_client.__aexit__ = AsyncMock(return_value=None)
+            mock_client.get = AsyncMock(return_value=mock_response)
+            mock_client_class.return_value = mock_client
+
+            with patch.dict("os.environ", {"INTERNAL_SERVICE_TOKEN": "test-token-123"}):
+                client = HttpKillSwitchClient(base_url="http://test:8000")
+                with pytest.raises(KillSwitchAuthError):
+                    await client.get_status(correlation_id="test-corr")
 
     def test_raises_when_token_missing(self):
         import os

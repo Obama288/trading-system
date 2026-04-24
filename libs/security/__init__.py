@@ -6,6 +6,23 @@ from typing import Annotated
 
 from fastapi import Depends, Header, HTTPException, status
 
+_MIN_TOKEN_LENGTH = 32
+_TOKEN_DENYLIST = frozenset({
+    "test", "dev", "123", "password", "secret",
+    "change-me", "changeme", "default", "admin", "token",
+})
+
+
+def _validate_token_strength(var_name: str, token: str) -> None:
+    if token in _TOKEN_DENYLIST:
+        raise RuntimeError(
+            f"{var_name} is a well-known weak token and must be changed before use."
+        )
+    if len(token) < _MIN_TOKEN_LENGTH:
+        raise RuntimeError(
+            f"{var_name} is too short (minimum {_MIN_TOKEN_LENGTH} characters required)."
+        )
+
 
 def _get_internal_service_token() -> str:
     token = os.getenv("INTERNAL_SERVICE_TOKEN")
@@ -116,17 +133,20 @@ def validate_startup_auth(require_internal: bool = False, require_operator: bool
     errors = []
     if require_internal:
         try:
-            _get_internal_service_token()
+            token = _get_internal_service_token()
+            _validate_token_strength("INTERNAL_SERVICE_TOKEN", token)
         except RuntimeError as e:
             errors.append(str(e))
     if require_operator:
         try:
-            _get_operator_token()
+            token = _get_operator_token()
+            _validate_token_strength("OPERATOR_TOKEN", token)
         except RuntimeError as e:
             errors.append(str(e))
     if require_admin:
         try:
-            _get_admin_token()
+            token = _get_admin_token()
+            _validate_token_strength("ADMIN_TOKEN", token)
         except RuntimeError as e:
             errors.append(str(e))
     if errors:

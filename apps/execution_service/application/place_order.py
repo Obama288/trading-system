@@ -89,6 +89,20 @@ async def place_order_use_case(
                     status="position_open_failed",
                     payload_patch={"position_open_error": {"message": str(exc), "service": "position-manager"}},
                 )
+                await journal_client.write(
+                    {
+                        "event_id": f"evt_position_open_failed_{existing.execution_id}",
+                        "event_type": "position_open_failed",
+                        "severity": "warning",
+                        "correlation_id": correlation_id,
+                        "payload": {
+                            "candidate_id": existing.candidate_id,
+                            "execution_id": existing.execution_id,
+                            "symbol": (existing.payload or {}).get("symbol"),
+                            "error": str(exc),
+                        },
+                    }
+                )
                 return {
                     "accepted": False,
                     "duplicate": True,

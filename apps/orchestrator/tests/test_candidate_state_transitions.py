@@ -8,6 +8,12 @@ from sqlalchemy.exc import SQLAlchemyError
 from apps.orchestrator.application.approve_candidate import approve_candidate_use_case
 from apps.orchestrator.application.create_candidate import create_candidate_use_case
 from apps.orchestrator.application.reject_candidate import reject_candidate_use_case
+from libs.clients.kill_switch_client import (
+    KillSwitchAuthError,
+    KillSwitchError,
+    KillSwitchTimeoutError,
+    KillSwitchUnavailableError,
+)
 from libs.db.models.journal_event import JournalEventModel
 from libs.schemas.common import (
     EntryZone,
@@ -63,6 +69,16 @@ class DummyKillSwitchClient:
             },
             "error": None,
         }
+
+
+class DummyKillSwitchClientRaising:
+    def __init__(self, exc: Exception) -> None:
+        self._exc = exc
+        self.calls = 0
+
+    async def get_status(self, correlation_id: str) -> dict:
+        self.calls += 1
+        raise self._exc
 
 
 class DummyJournalClient:
@@ -518,6 +534,10 @@ async def test_approve_candidate_blocked_when_kill_switch_active():
     assert execution.calls == 0
     assert kill_switch.calls == 1
     assert audit.records == []
+    journal_events = [x for x in repo.db.added if isinstance(x, JournalEventModel)]
+    assert len(journal_events) == 1
+    assert journal_events[0].event_type == "kill_switch_blocked"
+    assert journal_events[0].payload["candidate_id"] == "cand_001"
 
 
 def test_reject_candidate_success_writes_candidate_and_journal_atomically():
@@ -547,3 +567,70 @@ async def test_approve_candidate_not_found():
     result = await approve_candidate_use_case(repo, DummyKillSwitchClient(), DummyExecutionClient(), DummyOperatorActionRepo(db=repo.db), "cand_missing", 123, "corr_001")
     assert result["ok"] is False
     assert result["code"] == "NOT_FOUND"
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# S-8 + S-9: kill-switch error taxonomy and incident journaling
+# ──────────────────────────────────────────────────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_approve_kill_switch_auth_failure_returns_code_and_writes_journal():
+    repo = DummyRepo(DummyCandidate())
+    audit = DummyOperatorActionRepo(db=repo.db)
+    ks = DummyKillSwitchClientRaising(KillSwitchAuthError("auth failed"))
+    result = await approve_candidate_use_case(repo, ks, DummyExecutionClient(), audit, "cand_001", 123, "corr_001")
+    assert result["ok"] is False
+    assert result["code"] == "AUTH_FAILURE"
+    assert repo.candidate.status == "pending"
+    assert ks.calls == 1
+    assert audit.records == []
+    journal_events = [x for x in repo.db.added if isinstance(x, JournalEventModel)]
+    assert len(journal_events) == 1
+    assert journal_events[0].event_type == "kill_switch_check_failed"
+    assert journal_events[0].payload["error_code"] == "AUTH_FAILURE"
+    assert journal_events[0].payload["candidate_id"] == "cand_001"
+
+
+@pytest.mark.asyncio
+async def test_approve_kill_switch_timeout_returns_code_and_writes_journal():
+    repo = DummyRepo(DummyCandidate())
+    audit = DummyOperatorActionRepo(db=repo.db)
+    ks = DummyKillSwitchClientRaising(KillSwitchTimeoutError("timed out"))
+    result = await approve_candidate_use_case(repo, ks, DummyExecutionClient(), audit, "cand_001", 123, "corr_001")
+    assert result["ok"] is False
+    assert result["code"] == "KILL_SWITCH_TIMEOUT"
+    assert repo.candidate.status == "pending"
+    journal_events = [x for x in repo.db.added if isinstance(x, JournalEventModel)]
+    assert len(journal_events) == 1
+    assert journal_events[0].event_type == "kill_switch_check_failed"
+    assert journal_events[0].payload["error_code"] == "KILL_SWITCH_TIMEOUT"
+
+
+@pytest.mark.asyncio
+async def test_approve_kill_switch_unavailable_returns_code_and_writes_journal():
+    repo = DummyRepo(DummyCandidate())
+    audit = DummyOperatorActionRepo(db=repo.db)
+    ks = DummyKillSwitchClientRaising(KillSwitchUnavailableError("unreachable"))
+    result = await approve_candidate_use_case(repo, ks, DummyExecutionClient(), audit, "cand_001", 123, "corr_001")
+    assert result["ok"] is False
+    assert result["code"] == "KILL_SWITCH_UNAVAILABLE"
+    assert repo.candidate.status == "pending"
+    journal_events = [x for x in repo.db.added if isinstance(x, JournalEventModel)]
+    assert len(journal_events) == 1
+    assert journal_events[0].event_type == "kill_switch_check_failed"
+    assert journal_events[0].payload["error_code"] == "KILL_SWITCH_UNAVAILABLE"
+
+
+@pytest.mark.asyncio
+async def test_approve_kill_switch_unexpected_error_returns_code_and_writes_journal():
+    repo = DummyRepo(DummyCandidate())
+    audit = DummyOperatorActionRepo(db=repo.db)
+    ks = DummyKillSwitchClientRaising(KillSwitchError("unexpected 503"))
+    result = await approve_candidate_use_case(repo, ks, DummyExecutionClient(), audit, "cand_001", 123, "corr_001")
+    assert result["ok"] is False
+    assert result["code"] == "KILL_SWITCH_ERROR"
+    assert repo.candidate.status == "pending"
+    journal_events = [x for x in repo.db.added if isinstance(x, JournalEventModel)]
+    assert len(journal_events) == 1
+    assert journal_events[0].event_type == "kill_switch_check_failed"
+    assert journal_events[0].payload["error_code"] == "KILL_SWITCH_ERROR"
