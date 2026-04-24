@@ -36,8 +36,8 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
 ## Current State
 
-Last updated: 2026-04-22
-Current pytest: 96 passed
+Last updated: 2026-04-23
+Current pytest: 98 passed, 2 infra errors (tmp_path PermissionError)
 Alembic head: 0007_create_executions
 
 ## Readiness
@@ -200,11 +200,11 @@ They can inform analysis, filtering, and future paper-trading work, but they are
 | TD-08 | freshness duplicate | ✅ closed |
 | TD-09 | hardcoded URLs | ✅ closed |
 | TD-10 | JournalClient duplicate | ✅ closed |
-| TD-11 | DbJournalClient → libs/messaging/ | P1 OPEN, blocker Live |
-| TD-12 | journal gap after candidate persistence — candidate row exists without matching journal event. This is a data consistency issue, not response consistency. | P1 OPEN, blocker Live |
-| TD-13 | response consistency under downstream failure � candidate may persist while runner receives timeout/error. No deduplication on signal_id in create_candidate � runner retry on timeout creates duplicate candidate for same signal. In live: duplicate candidate = double position risk. | P1 OPEN, blocker Live |
+| TD-11 | DbJournalClient → libs/messaging/ | ✅ closed |
+| TD-12 | journal gap after candidate persistence — candidate row exists without matching journal event. Fixed by making candidate + `candidate_created` journal event atomic in DB (no silent success). | CLOSED (LH-1.2) |
+| TD-13 | response consistency under downstream failure — retry-safe evaluate: de-duplicate `trade_candidates` by `signal_id` (unique) and return `CANDIDATE_EXISTS` instead of creating duplicates. | CLOSED (LH-1.3) |
 | TD-14 | sync httpx audit across money-path � all external HTTP calls in money-path async handlers (evaluate, approve, execution) must use fail-fast async client. Any blocking sync call = potential hang under downstream failure. | P1 OPEN, blocker Live |
-| TD-15 | evaluate_pipeline response contract undefined � caller cannot distinguish: candidate created successfully / candidate created but journal failed (TD-12) / candidate not created at all. Without explicit contract runner cannot safely decide to retry. | P1 OPEN, blocker Live |
+| TD-15 | evaluate_pipeline response contract undefined — caller cannot distinguish success vs partial journal failure (TD-12). Fixed by removing the partial-success state and returning explicit error codes. | CLOSED (LH-1.2) |
 | TD-16 | DB startup health check absent � services start without verifying DB reachability. First request fails instead of startup failing fast. | P2 OPEN, recommended before production |
 | TD-17 | reconcile scheduler absent � position_manager has no background loop for periodic reconcile_positions_use_case calls. Without it: stop_loss, take_profit, ttl do not trigger automatically. Open positions accumulate without closing. Stats endpoint shows 0 closed trades. | ? CLOSED (Stage 53A.1) |
 | TD-18 | paper runtime fetcher coupling — position_manager scheduler imports OkxMarketDataFetcher from research.hypothesis_agent. Move to libs/clients or apps/market_data before live hardening. | P2 OPEN, recommended before live |

@@ -12,7 +12,9 @@ class TradeCandidateModel(Base):
     __tablename__ = "trade_candidates"
 
     candidate_id: Mapped[str] = mapped_column(String(128), primary_key=True)
-    signal_id: Mapped[str] = mapped_column(String(128), index=True)
+    # signal_id is expected to be unique per signal evaluation. Enforce uniqueness to make
+    # /v1/pipeline/evaluate idempotent on retries (TD-13).
+    signal_id: Mapped[str] = mapped_column(String(128), index=True, unique=True)
     risk_id: Mapped[str] = mapped_column(String(128), index=True)
     review_id: Mapped[str] = mapped_column(String(128), index=True)
     symbol: Mapped[str] = mapped_column(String(64), index=True)

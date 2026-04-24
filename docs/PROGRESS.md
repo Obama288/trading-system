@@ -1,6 +1,6 @@
 # Progress Log
-## Session: 2026-04-22
-pytest: 96 passed
+## Session: 2026-04-23
+pytest: 98 passed, 2 infra errors (tmp_path PermissionError)
 alembic head: 0007_create_executions
 Shadow trading: COMPLETE
 Paper trading: VALIDATED CONTOUR (Stage 52B.41)
@@ -43,6 +43,15 @@ Next: live-readiness hardening on open TDs
 - Distinguish active problems from historical residue and harmless noise.
 
 ## Long-range roadmap (post current paper validation)
+
+### Deferred option: Transactional Outbox (Journal Reliability)
+
+- Problem addressed: cross-service journal reliability when an HTTP write can fail after an authoritative DB write.
+- Pattern: in one DB transaction persist `trade_candidates` plus an `outbox_events` row; a separate deliverer loop/job
+  publishes outbox → `journal_events` (via HTTP or direct DB) with retries and idempotency.
+- Why deferred: higher implementation surface area (schema + deliverer + operational lifecycle).
+- When to revisit: after current P1 live blockers are closed, or if we move journal storage behind a true service boundary
+  (no shared DB) and need guaranteed delivery semantics.
 Planning stages below are not immediate execution steps. They are sequenced after current Stage 52B / 53A history and preserve authority boundaries.
 
 Execution order principle:
@@ -120,7 +129,7 @@ Stage 52B.41 final checkpoint:
   - `close_price` nullable in some close paths can skew stats/PnL interpretation
   - `PositionCloseRequest` contract/comment should be tightened before live
 - Live-only risk focus (see `docs/AI_COMMANDS.md` TD table):
-  - TD-11 through TD-16 remain open before live-oriented confidence
+  - TD-14 through TD-16 remain open before live-oriented confidence
 - Status:
   - paper contour validated
   - live not ready
@@ -137,7 +146,19 @@ Stage 53A.12 confirmed risk:
   - live-risk issue
   - requires explicit TD tracking before live-oriented confidence
 
+TD-11 closed:
+- `DbJournalClient` now lives in `libs/messaging/journal_client.py`.
+- Service layers use the shared client directly or thin re-export wrappers only.
+
+TD-12 closed (LH-1.2):
+- Candidate creation + `candidate_created` journaling are now atomic in DB.
+- If the journal event cannot be written, the candidate is not persisted.
+
+TD-13 closed (LH-1.3):
+- `/v1/pipeline/evaluate` is retry-safe and idempotent on `signal_id`.
+- `trade_candidates.signal_id` is now unique; retries return `CANDIDATE_EXISTS` instead of creating duplicates.
+
 ## Open TD
-TD-11: DbJournalClient -> libs/messaging/ (P1, blocker Live)
-TD-12: journal gap on failure after candidate persistence (P1, blocker Live)
-TD-19: max_open_positions TOCTOU enforcement ✅ closed (Stage 53A)
+TD-14: sync httpx audit across money-path (P1, blocker Live)
+TD-16: DB startup health check absent (P2, recommended before production)
+TD-18: paper runtime fetcher coupling (P2, recommended before live)

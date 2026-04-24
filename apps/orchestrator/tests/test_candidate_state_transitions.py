@@ -2,10 +2,12 @@ from datetime import datetime, timedelta, timezone
 
 import httpx
 import pytest
+from sqlalchemy.exc import SQLAlchemyError
 
 from apps.orchestrator.application.approve_candidate import approve_candidate_use_case
 from apps.orchestrator.application.create_candidate import create_candidate_use_case
 from apps.orchestrator.application.reject_candidate import reject_candidate_use_case
+from libs.db.models.journal_event import JournalEventModel
 from libs.schemas.common import (
     EntryZone,
     ExecutionCandidate,
@@ -92,18 +94,67 @@ class DummyCandidate:
         self.ttl_expires_at = datetime.now(timezone.utc) - timedelta(seconds=1) if expired else datetime.now(timezone.utc) + timedelta(seconds=120)
 
 
+class _FakeBegin:
+    def __init__(self, db) -> None:
+        self.db = db
+
+    def __enter__(self):
+        return self.db
+
+    def __exit__(self, exc_type, exc, tb):
+        if exc_type is None:
+            self.db.commits += 1
+            return False
+        self.db.rollbacks += 1
+        return False
+
+
+class _FakeDb:
+    def __init__(self, *, fail_journal_flush: bool = False) -> None:
+        self.fail_journal_flush = fail_journal_flush
+        self.added: list[object] = []
+        self.commits = 0
+        self.rollbacks = 0
+
+    def add(self, obj: object) -> None:
+        self.added.append(obj)
+
+    def flush(self) -> None:
+        if self.fail_journal_flush and any(isinstance(x, JournalEventModel) for x in self.added):
+            raise SQLAlchemyError("simulated journal flush failure")
+
+    def commit(self) -> None:
+        self.commits += 1
+
+    def rollback(self) -> None:
+        self.rollbacks += 1
+
+
 class DummyRepo:
-    def __init__(self, candidate):
+    def __init__(self, candidate, *, db: _FakeDb | None = None):
         self.candidate = candidate
         self.marked_failed = False
         self.approve_calls = 0
+        self.db = db or _FakeDb()
+        self._by_signal_id: dict[str, object] = {}
 
     def create_candidate(self, **kwargs):
+        # Mimic repo behavior: candidate is staged in the session; commit is owned by the caller.
+        self.db.add({"_type": "trade_candidate", "candidate_id": kwargs["candidate_id"]})
+
         class Row:
             candidate_id = kwargs["candidate_id"]
+            signal_id = kwargs["signal_id"]
+            risk_id = kwargs["risk_id"]
+            review_id = kwargs["review_id"]
             status = "pending"
             ttl_expires_at = kwargs["ttl_expires_at"]
-        return Row()
+        row = Row()
+        self._by_signal_id[kwargs["signal_id"]] = row
+        return row
+
+    def get_by_signal_id(self, signal_id: str):
+        return self._by_signal_id.get(signal_id)
 
     def get_candidate(self, candidate_id: str):
         return self.candidate
@@ -196,26 +247,27 @@ def test_create_candidate_success_and_writes_journal():
     result = create_candidate_use_case(repo, journal, make_signal(), make_risk(), make_review(True), "corr_001", ttl_seconds=120)
     assert result["ok"] is True
     assert result["code"] == "CANDIDATE_CREATED"
-    assert result["journal_write_ok"] is True
-    assert result["journal_error"] is None
-    assert len(journal.writes) == 1
+    assert len([x for x in repo.db.added if isinstance(x, JournalEventModel)]) == 1
+    assert len(journal.writes) == 0
 
 
-def test_create_candidate_succeeds_when_journal_write_fails():
+def test_create_candidate_fails_when_journal_db_write_fails():
+    repo = DummyRepo(None, db=_FakeDb(fail_journal_flush=True))
+    result = create_candidate_use_case(repo, DummyJournalClient(), make_signal(), make_risk(), make_review(True), "corr_001", ttl_seconds=120)
+    assert result["ok"] is False
+    assert result["code"] == "JOURNAL_WRITE_FAILED"
+
+
+def test_create_candidate_is_idempotent_on_signal_id():
     repo = DummyRepo(None)
-    result = create_candidate_use_case(
-        repo,
-        FailingJournalClient(),
-        make_signal(),
-        make_risk(),
-        make_review(True),
-        "corr_001",
-        ttl_seconds=120,
-    )
-    assert result["ok"] is True
-    assert result["code"] == "CANDIDATE_CREATED"
-    assert result["journal_write_ok"] is False
-    assert result["journal_error"] == "journal host unavailable"
+    journal = DummyJournalClient()
+    first = create_candidate_use_case(repo, journal, make_signal(), make_risk(), make_review(True), "corr_001", ttl_seconds=120)
+    second = create_candidate_use_case(repo, journal, make_signal(), make_risk(), make_review(True), "corr_002", ttl_seconds=120)
+
+    assert first["ok"] is True
+    assert second["ok"] is True
+    assert second["code"] == "CANDIDATE_EXISTS"
+    assert second["candidate_id"] == first["candidate_id"]
 
 
 @pytest.mark.asyncio

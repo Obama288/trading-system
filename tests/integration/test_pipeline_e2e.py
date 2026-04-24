@@ -144,6 +144,10 @@ def seed_candidate(
         },
         ttl_expires_at=ttl_expires_at or (now + timedelta(minutes=5)),
     )
+    # TradeCandidateRepository.create_candidate no longer commits; tests that seed directly
+    # must persist explicitly to reflect real request behavior.
+    repo.db.commit()
+    repo.db.refresh(row)
     if row.ttl_expires_at.tzinfo is None:
         row.ttl_expires_at = row.ttl_expires_at.replace(tzinfo=timezone.utc)
     return row

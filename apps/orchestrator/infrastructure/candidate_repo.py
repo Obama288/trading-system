@@ -36,8 +36,8 @@ class TradeCandidateRepository:
             ttl_expires_at=ttl_expires_at,
         )
         self.db.add(model)
-        self.db.commit()
-        self.db.refresh(model)
+        # Commit/rollback is owned by the caller to allow atomic persistence with
+        # other authoritative writes (e.g. journal_events).
         return model
 
     def attach_execution(self, model: TradeCandidateModel, execution_id: str) -> TradeCandidateModel:
@@ -49,6 +49,10 @@ class TradeCandidateRepository:
 
     def get_candidate(self, candidate_id: str) -> TradeCandidateModel | None:
         stmt = select(TradeCandidateModel).where(TradeCandidateModel.candidate_id == candidate_id)
+        return self.db.execute(stmt).scalar_one_or_none()
+
+    def get_by_signal_id(self, signal_id: str) -> TradeCandidateModel | None:
+        stmt = select(TradeCandidateModel).where(TradeCandidateModel.signal_id == signal_id)
         return self.db.execute(stmt).scalar_one_or_none()
 
     def list_pending(self) -> list[TradeCandidateModel]:
