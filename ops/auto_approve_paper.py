@@ -38,6 +38,7 @@ def run_loop(*, interval_seconds: float, operator_user_id: int, orchestrator_bas
 
     session_factory = get_session_factory()
     base_url = orchestrator_base_url.rstrip("/")
+    operator_token = os.getenv("OPERATOR_TOKEN")
 
     while True:
         with session_factory() as db:
@@ -69,8 +70,11 @@ def run_loop(*, interval_seconds: float, operator_user_id: int, orchestrator_bas
                     "telegram_user_id": operator_user_id,
                     "correlation_id": correlation_id,
                 }
+                headers = {}
+                if operator_token:
+                    headers["X-Operator-Token"] = operator_token
                 try:
-                    response = httpx.post(f"{base_url}/v1/pipeline/approve", json=payload, timeout=10.0)
+                    response = httpx.post(f"{base_url}/v1/pipeline/approve", json=payload, headers=headers, timeout=10.0)
                     result = {
                         "http_status": response.status_code,
                         "body": response.json(),

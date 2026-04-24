@@ -7,7 +7,6 @@ from uuid import uuid4
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from apps.orchestrator.infrastructure.candidate_repo import TradeCandidateRepository
-from apps.orchestrator.infrastructure.journal_client import JournalClient
 from libs.db.models.journal_event import JournalEventModel
 from libs.schemas.common import ReviewDecision, RiskDecision, SignalDecision
 
@@ -24,7 +23,6 @@ class _CandidateAlreadyExists(RuntimeError):
 
 def create_candidate_use_case(
     repo: TradeCandidateRepository,
-    journal_client: JournalClient,
     signal: SignalDecision,
     risk: RiskDecision,
     review: ReviewDecision,

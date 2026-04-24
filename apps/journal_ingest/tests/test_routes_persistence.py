@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from collections.abc import Generator
 
 from fastapi.testclient import TestClient
@@ -12,8 +13,13 @@ from libs.db.base import Base
 from libs.db.models.journal_event import JournalEventModel
 from libs.db.session import get_db
 
+TEST_INTERNAL_TOKEN = "test-internal-service-token-001"
+TEST_OPERATOR_TOKEN = "test-operator-token-001"
+
 
 def make_client() -> tuple[TestClient, sessionmaker[Session]]:
+    os.environ["INTERNAL_SERVICE_TOKEN"] = TEST_INTERNAL_TOKEN
+    os.environ["OPERATOR_TOKEN"] = TEST_OPERATOR_TOKEN
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -36,11 +42,14 @@ def make_client() -> tuple[TestClient, sessionmaker[Session]]:
 def teardown_client(client: TestClient) -> None:
     client.close()
     app.dependency_overrides.clear()
+    os.environ.pop("INTERNAL_SERVICE_TOKEN", None)
+    os.environ.pop("OPERATOR_TOKEN", None)
 
 
 def test_write_event_persists_to_database():
     client, session_factory = make_client()
     try:
+        client.headers["X-Internal-Token"] = TEST_INTERNAL_TOKEN
         response = client.post(
             "/v1/journal/events",
             json={
@@ -94,9 +103,11 @@ def test_query_events_returns_persisted_rows_with_filters():
         ]
 
         for payload in payloads:
+            client.headers["X-Internal-Token"] = TEST_INTERNAL_TOKEN
             response = client.post("/v1/journal/events", json=payload)
             assert response.status_code == 200
 
+        client.headers["X-Operator-Token"] = TEST_OPERATOR_TOKEN
         response = client.get(
             "/v1/journal/events",
             params={"event_type": "candidate_created", "correlation_id": "corr_a"},

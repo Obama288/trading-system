@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 from uuid import uuid4
 
-from fastapi import Depends, FastAPI, Request
+from fastapi import Depends, FastAPI, Query, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from apps.dashboard_service.application.get_summary import get_dashboard_summary_use_case
@@ -20,17 +22,30 @@ from apps.dashboard_service.schemas.responses import (
     PositionItem,
 )
 from libs.db.session import get_db
+from libs.db.startup_health import ensure_db_connection_startup
 from libs.logging.context import get_correlation_id, set_correlation_id
 from libs.schemas.common import ServiceEnvelope
+from libs.security import require_operator_auth, validate_startup_auth
 
-app = FastAPI(title="dashboard-service")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    validate_startup_auth(require_operator=True)
+    await ensure_db_connection_startup(service_name="dashboard-service", app=app)
+    yield
+
+
+app = FastAPI(title="dashboard-service", lifespan=lifespan)
 
 
 @app.middleware("http")
 async def correlation_id_middleware(request: Request, call_next):
     corr = request.headers.get("X-Correlation-Id") or f"corr_{uuid4().hex}"
     set_correlation_id(corr)
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception:
+        response = JSONResponse(status_code=500, content={"detail": "Internal server error"})
     response.headers["X-Correlation-Id"] = corr
     return response
 
@@ -48,7 +63,11 @@ def health(request: Request) -> ServiceEnvelope[dict]:
 
 
 @app.get("/v1/dashboard/summary")
-def dashboard_summary(request: Request, db: Session = Depends(get_db)) -> ServiceEnvelope[DashboardSummaryResponse]:
+def dashboard_summary(
+    request: Request,
+    _: str = require_operator_auth(),
+    db: Session = Depends(get_db),
+) -> ServiceEnvelope[DashboardSummaryResponse]:
     correlation_id = request.headers.get("X-Correlation-Id") or get_correlation_id()
     repo = DashboardRepository(db)
     result = get_dashboard_summary_use_case(repo)
@@ -62,10 +81,15 @@ def dashboard_summary(request: Request, db: Session = Depends(get_db)) -> Servic
 
 
 @app.get("/v1/dashboard/stats")
-def dashboard_stats(request: Request, db: Session = Depends(get_db)) -> ServiceEnvelope[DashboardStatsResponse]:
+def dashboard_stats(
+    request: Request,
+    _: str = require_operator_auth(),
+    db: Session = Depends(get_db),
+    mode: str = Query(default="paper"),
+) -> ServiceEnvelope[DashboardStatsResponse]:
     correlation_id = request.headers.get("X-Correlation-Id") or get_correlation_id()
     repo = StatsRepository(db)
-    result = get_dashboard_stats_use_case(repo)
+    result = get_dashboard_stats_use_case(repo, mode=mode)
     return ServiceEnvelope[DashboardStatsResponse](
         ok=True,
         service="dashboard-service",
@@ -76,7 +100,11 @@ def dashboard_stats(request: Request, db: Session = Depends(get_db)) -> ServiceE
 
 
 @app.get("/v1/dashboard/candidates")
-def dashboard_candidates(request: Request, db: Session = Depends(get_db)) -> ServiceEnvelope[list[CandidateItem]]:
+def dashboard_candidates(
+    request: Request,
+    _: str = require_operator_auth(),
+    db: Session = Depends(get_db),
+) -> ServiceEnvelope[list[CandidateItem]]:
     correlation_id = request.headers.get("X-Correlation-Id") or get_correlation_id()
     repo = DashboardRepository(db)
     items = [CandidateItem(**item) for item in list_dashboard_candidates_use_case(repo)]
@@ -90,7 +118,11 @@ def dashboard_candidates(request: Request, db: Session = Depends(get_db)) -> Ser
 
 
 @app.get("/v1/dashboard/positions")
-def dashboard_positions(request: Request, db: Session = Depends(get_db)) -> ServiceEnvelope[list[PositionItem]]:
+def dashboard_positions(
+    request: Request,
+    _: str = require_operator_auth(),
+    db: Session = Depends(get_db),
+) -> ServiceEnvelope[list[PositionItem]]:
     correlation_id = request.headers.get("X-Correlation-Id") or get_correlation_id()
     repo = DashboardRepository(db)
     items = [PositionItem(**item) for item in list_dashboard_positions_use_case(repo)]
@@ -104,7 +136,11 @@ def dashboard_positions(request: Request, db: Session = Depends(get_db)) -> Serv
 
 
 @app.get("/v1/dashboard/incidents")
-def dashboard_incidents(request: Request, db: Session = Depends(get_db)) -> ServiceEnvelope[list[IncidentItem]]:
+def dashboard_incidents(
+    request: Request,
+    _: str = require_operator_auth(),
+    db: Session = Depends(get_db),
+) -> ServiceEnvelope[list[IncidentItem]]:
     correlation_id = request.headers.get("X-Correlation-Id") or get_correlation_id()
     repo = DashboardRepository(db)
     items = [IncidentItem(**item) for item in list_dashboard_incidents_use_case(repo, limit=50)]

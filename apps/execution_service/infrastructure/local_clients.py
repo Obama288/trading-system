@@ -6,5 +6,5 @@ __all__ = ["DbJournalClient", "NoopAlertClient"]
 
 
 class NoopAlertClient:
-    def notify(self, payload: dict) -> None:
+    async def notify(self, payload: dict) -> None:
         return None

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-import time
+import asyncio
+import os
 from typing import Protocol
 
 import httpx
@@ -10,7 +11,7 @@ from libs.db.models.journal_event import JournalEventModel
 
 
 class JournalClient(Protocol):
-    def write(self, payload: dict) -> None: ...
+    async def write(self, payload: dict) -> None: ...
 
 
 class HttpJournalClient:
@@ -25,22 +26,30 @@ class HttpJournalClient:
         self.retries = retries
         self.retry_delay_seconds = retry_delay_seconds
         self.timeout_seconds = timeout_seconds
+        self._token = os.getenv("INTERNAL_SERVICE_TOKEN")
+        if not self._token:
+            raise RuntimeError(
+                "INTERNAL_SERVICE_TOKEN environment variable is not set. "
+                "HttpJournalClient requires INTERNAL_SERVICE_TOKEN to call protected journal routes."
+            )
 
-    def write(self, payload: dict) -> None:
+    async def write(self, payload: dict) -> None:
+        headers = {"X-Internal-Token": self._token}
         last_error: Exception | None = None
         for attempt in range(self.retries + 1):
             try:
-                response = httpx.post(
-                    f"{self.base_url}/v1/journal/events",
-                    json=payload,
-                    timeout=self.timeout_seconds,
-                )
+                async with httpx.AsyncClient(timeout=self.timeout_seconds) as client:
+                    response = await client.post(
+                        f"{self.base_url}/v1/journal/events",
+                        json=payload,
+                        headers=headers,
+                    )
                 response.raise_for_status()
                 return
             except Exception as exc:
                 last_error = exc
                 if attempt < self.retries:
-                    time.sleep(self.retry_delay_seconds)
+                    await asyncio.sleep(self.retry_delay_seconds)
         if last_error is None:
             raise RuntimeError("journal write failed without a captured exception")
         raise last_error
@@ -50,7 +59,7 @@ class DbJournalClient:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def write(self, payload: dict) -> None:
+    async def write(self, payload: dict) -> None:
         row = JournalEventModel(
             event_id=payload["event_id"],
             event_type=payload["event_type"],

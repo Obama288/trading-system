@@ -10,26 +10,28 @@ from libs.db.models.position import PositionModel
 from libs.db.models.trade_candidate import TradeCandidateModel
 from libs.schemas.common import PositionStatus
 
+_CANDLE_SECONDS = 900  # 15m candles
+
 
 class StatsRepository:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def get_stats(self) -> dict:
-        rows = self._closed_trade_rows()
+    def get_stats(self, mode: str = "paper") -> dict:
+        rows = self._closed_trade_rows(mode=mode)
         return {
             **self._aggregate(rows),
             "by_symbol": self._group_metrics(rows, key_name="symbol"),
             "by_setup_type": self._group_metrics(rows, key_name="setup_type"),
         }
 
-    def _closed_trade_rows(self) -> list[dict]:
+    def _closed_trade_rows(self, mode: str = "paper") -> list[dict]:
         stmt = (
             select(PositionModel, TradeCandidateModel, ExecutionModel)
             .outerjoin(TradeCandidateModel, TradeCandidateModel.candidate_id == PositionModel.candidate_id)
             .outerjoin(ExecutionModel, ExecutionModel.execution_id == PositionModel.execution_id)
             .where(
-                ExecutionModel.mode == "paper",
+                ExecutionModel.mode == mode,
                 PositionModel.status.in_(
                     [
                         PositionStatus.CLOSED.value,
@@ -71,6 +73,8 @@ class StatsRepository:
             "pnl": pnl,
             "rr": rr,
             "has_valid_rr": position.stop_loss is not None and abs(position.entry_price - position.stop_loss) > 0,
+            "opened_at": position.opened_at,
+            "closed_at": position.closed_at,
         }
 
     def _group_metrics(self, rows: list[dict], *, key_name: str) -> dict[str, dict]:
@@ -96,10 +100,19 @@ class StatsRepository:
         total_pnl = round(sum(row["pnl"] for row in rows), 4)
         avg_rr = round(sum(rr_values) / len(rr_values), 4) if rr_values else 0.0
 
+        hold_seconds = [
+            (row["closed_at"] - row["opened_at"]).total_seconds()
+            for row in rows
+            if row["closed_at"] is not None and row["opened_at"] is not None
+        ]
+        avg_hold_candles = (
+            round(sum(hold_seconds) / len(hold_seconds) / _CANDLE_SECONDS, 2) if hold_seconds else 0.0
+        )
+
         return {
             "total_trades": total_trades,
             "win_rate_pct": round((wins / total_trades) * 100.0, 2),
             "avg_rr": avg_rr,
             "total_pnl_usdt": total_pnl,
-            "avg_hold_candles": 0.0,
+            "avg_hold_candles": avg_hold_candles,
         }

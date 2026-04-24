@@ -22,7 +22,7 @@ from libs.clients.kill_switch_client import HttpKillSwitchClient, KillSwitchClie
 from libs.config.settings import load_all_configs
 from libs.db.session import get_session_factory
 from libs.schemas.common import RiskDecision, SignalStatus
-from research.hypothesis_agent.data.fetcher import OkxMarketDataFetcher
+from libs.clients.okx_market_data_fetcher import OkxMarketDataFetcher
 
 
 class EvaluateClient(Protocol):
@@ -32,12 +32,20 @@ class EvaluateClient(Protocol):
 class OrchestratorEvaluateClient:
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url.rstrip("/")
+        self._token = os.getenv("INTERNAL_SERVICE_TOKEN")
+        if not self._token:
+            raise RuntimeError(
+                "INTERNAL_SERVICE_TOKEN environment variable is not set. "
+                "OrchestratorEvaluateClient requires INTERNAL_SERVICE_TOKEN to call /v1/pipeline/evaluate."
+            )
 
     async def evaluate(self, payload: EvaluatePipelineRequest) -> dict:
+        headers = {"X-Internal-Token": self._token}
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
                 f"{self.base_url}/v1/pipeline/evaluate",
                 json=payload.model_dump(mode="json"),
+                headers=headers,
             )
             response.raise_for_status()
             return response.json()

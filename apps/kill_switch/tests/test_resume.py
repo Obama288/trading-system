@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from collections.abc import Generator
 from datetime import datetime, timedelta, timezone
 
@@ -19,6 +20,8 @@ from libs.db.models.system_state import SystemStateModel
 from libs.db.models.trade_candidate import TradeCandidateModel
 from libs.db.session import get_db
 
+TEST_ADMIN_TOKEN = "test-admin-token-001"
+
 
 class DummyExecutionClient:
     def __init__(self) -> None:
@@ -37,7 +40,7 @@ class DummyJournalClient:
     def __init__(self) -> None:
         self.writes: list[dict] = []
 
-    def write(self, payload: dict) -> None:
+    async def write(self, payload: dict) -> None:
         self.writes.append(payload)
 
 
@@ -46,6 +49,10 @@ class DummyOperatorActionRepo:
         self.records: list[dict] = []
 
     def record(self, **kwargs):
+        self.records.append(kwargs)
+        return kwargs
+
+    def record_no_commit(self, **kwargs):
         self.records.append(kwargs)
         return kwargs
 
@@ -78,6 +85,7 @@ class ResumeAwareTradeCandidateRepository(TradeCandidateRepository):
 
 
 def make_client() -> tuple[TestClient, sessionmaker[Session]]:
+    os.environ["ADMIN_TOKEN"] = TEST_ADMIN_TOKEN
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -94,12 +102,15 @@ def make_client() -> tuple[TestClient, sessionmaker[Session]]:
             db.close()
 
     app.dependency_overrides[get_db] = override_get_db
-    return TestClient(app), test_session_factory
+    client = TestClient(app)
+    client.headers["X-Admin-Token"] = TEST_ADMIN_TOKEN
+    return client, test_session_factory
 
 
 def teardown_client(client: TestClient) -> None:
     client.close()
     app.dependency_overrides.clear()
+    os.environ.pop("ADMIN_TOKEN", None)
 
 
 def seed_candidate(session_factory: sessionmaker[Session]) -> None:
@@ -202,7 +213,6 @@ async def test_resume_unblocks_approve_flow():
                 kill_switch_client=DbBackedKillSwitchClient(session_factory),
                 execution_client=DummyExecutionClient(),
                 operator_action_repo=DummyOperatorActionRepo(),
-                journal_client=DummyJournalClient(),
                 candidate_id="cand_resume_001",
                 telegram_user_id=123,
                 correlation_id="corr_resume_approve",

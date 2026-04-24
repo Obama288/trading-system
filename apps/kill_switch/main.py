@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI
@@ -11,8 +12,18 @@ from apps.kill_switch.infrastructure.system_state_repo import SystemStateReposit
 from libs.db.models.journal_event import JournalEventModel
 from libs.db.repositories.operator_action_repo import OperatorActionRepository
 from libs.db.session import get_db
+from libs.db.startup_health import ensure_db_connection_startup
+from libs.security import require_internal_service_auth, require_admin_auth, validate_startup_auth
 
-app = FastAPI(title="kill-switch")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    validate_startup_auth(require_internal=True, require_admin=True)
+    await ensure_db_connection_startup(service_name="kill-switch", app=app)
+    yield
+
+
+app = FastAPI(title="kill-switch", lifespan=lifespan)
 
 
 class HaltRequest(BaseModel):
@@ -34,7 +45,11 @@ def health() -> dict:
 
 
 @app.get("/v1/kill-switch/status")
-def status(correlation_id: str, db: Session = Depends(get_db)) -> dict:
+def status(
+    correlation_id: str,
+    db: Session = Depends(get_db),
+    _: str = require_internal_service_auth(),
+) -> dict:
     repo = SystemStateRepository(db)
     state = get_kill_switch_status_use_case(repo)
     return {
@@ -48,8 +63,11 @@ def status(correlation_id: str, db: Session = Depends(get_db)) -> dict:
 
 
 @app.post("/v1/kill-switch/halt")
-def halt(req: HaltRequest, db: Session = Depends(get_db)) -> dict:
-    # actor still needs internal auth / ACL validation before non-MVP use.
+def halt(
+    req: HaltRequest,
+    db: Session = Depends(get_db),
+    _: str = require_admin_auth(),
+) -> dict:
     repo = SystemStateRepository(db)
     operator_action_repo = OperatorActionRepository(db)
     state = halt_use_case(repo, reason=req.reason, actor=req.actor)
@@ -76,7 +94,11 @@ def halt(req: HaltRequest, db: Session = Depends(get_db)) -> dict:
 
 
 @app.post("/v1/kill-switch/resume")
-def resume(req: ResumeRequest, db: Session = Depends(get_db)) -> dict:
+def resume(
+    req: ResumeRequest,
+    db: Session = Depends(get_db),
+    _: str = require_admin_auth(),
+) -> dict:
     repo = SystemStateRepository(db)
     operator_action_repo = OperatorActionRepository(db)
     state = resume_use_case(repo, actor=req.actor)

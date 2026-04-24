@@ -41,10 +41,14 @@ class TradeCandidateRepository:
         return model
 
     def attach_execution(self, model: TradeCandidateModel, execution_id: str) -> TradeCandidateModel:
-        model.execution_id = execution_id
-        model.status = "submitted"
+        self.attach_execution_no_commit(model, execution_id)
         self.db.commit()
         self.db.refresh(model)
+        return model
+
+    def attach_execution_no_commit(self, model: TradeCandidateModel, execution_id: str) -> TradeCandidateModel:
+        model.execution_id = execution_id
+        model.status = "submitted"
         return model
 
     def get_candidate(self, candidate_id: str) -> TradeCandidateModel | None:
@@ -73,24 +77,36 @@ class TradeCandidateRepository:
         return model
 
     def approve_candidate(self, model: TradeCandidateModel, telegram_user_id: int) -> TradeCandidateModel:
+        self.approve_candidate_no_commit(model, telegram_user_id)
+        self.db.commit()
+        self.db.refresh(model)
+        return model
+
+    def approve_candidate_no_commit(self, model: TradeCandidateModel, telegram_user_id: int) -> TradeCandidateModel:
         model.status = "approved"
         model.approved_by_user_id = telegram_user_id
         model.approved_at = datetime.now(timezone.utc)
-        self.db.commit()
-        self.db.refresh(model)
         return model
 
     def mark_execution_failed(self, model: TradeCandidateModel) -> TradeCandidateModel:
-        model.status = "failed_execution"
-        model.execution_id = None
+        self.mark_execution_failed_no_commit(model)
         self.db.commit()
         self.db.refresh(model)
         return model
 
+    def mark_execution_failed_no_commit(self, model: TradeCandidateModel) -> TradeCandidateModel:
+        model.status = "failed_execution"
+        model.execution_id = None
+        return model
+
     def reject_candidate(self, model: TradeCandidateModel, telegram_user_id: int) -> TradeCandidateModel:
+        self.reject_candidate_no_commit(model, telegram_user_id)
+        self.db.commit()
+        self.db.refresh(model)
+        return model
+
+    def reject_candidate_no_commit(self, model: TradeCandidateModel, telegram_user_id: int) -> TradeCandidateModel:
         model.status = "rejected"
         model.rejected_by_user_id = telegram_user_id
         model.rejected_at = datetime.now(timezone.utc)
-        self.db.commit()
-        self.db.refresh(model)
         return model

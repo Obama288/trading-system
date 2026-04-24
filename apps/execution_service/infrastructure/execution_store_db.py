@@ -46,6 +46,24 @@ class DbExecutionStore:
         self.db.refresh(row)
         return self._to_stored(row)
 
+    def update_status(
+        self,
+        execution_id: str,
+        *,
+        status: str,
+        payload_patch: dict | None = None,
+    ) -> StoredExecution | None:
+        row = self.db.get(ExecutionModel, execution_id)
+        if row is None:
+            return None
+        row.status = status
+        if payload_patch:
+            row.payload = {**(row.payload or {}), **payload_patch}
+        row.updated_at = datetime.now(timezone.utc)
+        self.db.commit()
+        self.db.refresh(row)
+        return self._to_stored(row)
+
     @staticmethod
     def now_iso() -> str:
         return datetime.now(timezone.utc).isoformat()

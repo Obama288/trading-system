@@ -1,10 +1,10 @@
 # Progress Log
-## Session: 2026-04-23
-pytest: 98 passed, 2 infra errors (tmp_path PermissionError)
-alembic head: 0007_create_executions
+## Session: 2026-04-24 (updated end-of-session)
+pytest: 112 passed, 2 infra errors (research/hypothesis_agent PermissionError on Windows temp — pre-existing, non-blocking)
+alembic head: 0008_unique_trade_candidates_signal_id
 Shadow trading: COMPLETE
 Paper trading: VALIDATED CONTOUR (Stage 52B.41)
-Live trading: NOT READY
+Live trading: NOT READY — P1 items pending
 
 ## Completed stages
 23-42, 38c, 38d, 43, 44, 45, 46, 47, 48, 49, 50, 51
@@ -13,8 +13,26 @@ Live trading: NOT READY
 Research: B1, B4, B4.1, B4.2
 
 ## Active
-Stage 52B - live paper trading
-Next: live-readiness hardening on open TDs
+Stage LH-1 live-hardening — P1 items remaining before full live-readiness audit
+
+## Today's fixes (2026-04-24)
+
+TD-14 CLOSED — sync httpx converted to async across money-path:
+- `libs/messaging/journal_client.py` and `apps/position_manager/infrastructure/journal_client.py` converted
+- 23 additional files updated
+
+TD-16 CLOSED — DB startup health check added to 8 services via `libs/db/startup_health.py`
+
+TD-18 CLOSED — `OkxMarketDataFetcher` moved from `research/` to `libs/clients/okx_market_data_fetcher.py`
+
+TD-19 (53A.12) CLOSED — DB-backed `max_open_positions` cap gate with advisory lock (closed last session, confirmed)
+
+TD-20 CLOSED — approve/reject journaling now DB-atomic (Option A: same-transaction pattern as TD-12)
+
+Additional fixes:
+- `approve_candidate.py` HTTPError early-commit bug fixed
+- `execution_service` direct import of `position_manager` replaced with `HttpPositionManagerClient`
+- Execution persisted without position open: added `position_open_failed` status + journal event
 
 ## Shared Rules (Project-wide Code Discipline)
 1. Expand Critical Findings
@@ -158,7 +176,30 @@ TD-13 closed (LH-1.3):
 - `/v1/pipeline/evaluate` is retry-safe and idempotent on `signal_id`.
 - `trade_candidates.signal_id` is now unique; retries return `CANDIDATE_EXISTS` instead of creating duplicates.
 
-## Open TD
-TD-14: sync httpx audit across money-path (P1, blocker Live)
-TD-16: DB startup health check absent (P2, recommended before production)
-TD-18: paper runtime fetcher coupling (P2, recommended before live)
+## Open P1 items (next session — required before live-readiness audit)
+
+| ID | Problem | Priority |
+|----|---------|----------|
+| P1-1 | Dashboard hardcoded paper mode | ✅ closed |
+| P1-2 | `correlation_id` lost in error responses | ✅ closed |
+| P1-3 | `reconcile_scheduler` swallows exceptions silently | ✅ closed |
+| P1-4 | `journal_client` dead parameter + incorrect wiring in `main.py` | ✅ closed (fixed pre-LH-1.6) |
+| P1-5 | FastAPI `on_event` deprecation — migrate to `lifespan` | ✅ closed (all services use lifespan) |
+
+## Pre-live checklist
+
+- [x] All P0 TDs closed
+- [ ] P1 items resolved (see table above)
+- [ ] Full audit (Claude + Codex + GPT-4)
+- [ ] Security audit
+- [ ] Live
+
+## TD history
+
+TD-12: journal gap after candidate persistence ✅ closed (LH-1.2)
+TD-13: response consistency / duplicate candidate ✅ closed (LH-1.3)
+TD-14: sync httpx audit across money-path ✅ closed (2026-04-24)
+TD-16: DB startup health check absent ✅ closed (2026-04-24)
+TD-18: paper runtime fetcher coupling ✅ closed (2026-04-24)
+TD-19 (53A.12): max_open_positions enforcement gap ✅ closed (2026-04-24)
+TD-20: approve/reject journaling not DB-atomic ✅ closed (2026-04-24)

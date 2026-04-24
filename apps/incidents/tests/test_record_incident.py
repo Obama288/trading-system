@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 
+import pytest
+
 from apps.incidents.application.record_incident import record_incident_use_case
 from apps.incidents.domain.incident import IncidentSeverity, IncidentType
 from apps.incidents.schemas.requests import RecordIncidentRequest
@@ -42,15 +44,16 @@ class DummyJournalClient:
     def __init__(self) -> None:
         self.writes: list[dict] = []
 
-    def write(self, payload: dict) -> None:
+    async def write(self, payload: dict) -> None:
         self.writes.append(payload)
 
 
-def test_record_incident_persists_and_writes_journal():
+@pytest.mark.asyncio
+async def test_record_incident_persists_and_writes_journal():
     repo = DummyRepo()
     journal = DummyJournalClient()
 
-    result = record_incident_use_case(
+    result = await record_incident_use_case(
         repo=repo,
         journal_client=journal,
         req=RecordIncidentRequest(

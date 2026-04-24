@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-import time
+import asyncio
+import os
 from typing import Protocol
 
 import httpx
@@ -9,7 +10,7 @@ from libs.messaging.journal_client import HttpJournalClient, JournalClient
 
 
 class AlertClient(Protocol):
-    def notify(self, payload: dict) -> None: ...
+    async def notify(self, payload: dict) -> None: ...
 
 
 class HttpAlertClient:
@@ -17,24 +18,32 @@ class HttpAlertClient:
         self.base_url = base_url.rstrip("/")
         self.retries = retries
         self.retry_delay_seconds = retry_delay_seconds
+        self._token = os.getenv("INTERNAL_SERVICE_TOKEN")
+        if not self._token:
+            raise RuntimeError(
+                "INTERNAL_SERVICE_TOKEN environment variable is not set. "
+                "HttpAlertClient requires INTERNAL_SERVICE_TOKEN to call protected alerts routes."
+            )
 
-    def notify(self, payload: dict) -> None:
+    async def notify(self, payload: dict) -> None:
+        headers = {"X-Internal-Token": self._token}
         last_error: Exception | None = None
         for attempt in range(self.retries + 1):
             try:
-                response = httpx.post(f"{self.base_url}/v1/alerts/events", json=payload, timeout=5.0)
+                async with httpx.AsyncClient(timeout=5.0) as client:
+                    response = await client.post(f"{self.base_url}/v1/alerts/events", json=payload, headers=headers)
                 response.raise_for_status()
                 return
             except Exception as exc:
                 last_error = exc
                 if attempt < self.retries:
-                    time.sleep(self.retry_delay_seconds)
+                    await asyncio.sleep(self.retry_delay_seconds)
         if last_error is not None:
             raise last_error
 
 
 class NoopAlertClient:
-    def notify(self, payload: dict) -> None:
+    async def notify(self, payload: dict) -> None:
         return None
 
 

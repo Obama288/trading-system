@@ -12,6 +12,9 @@ from apps.position_manager.schemas.requests import ExchangePositionSnapshot, Rec
 
 LOGGER = logging.getLogger(__name__)
 
+_ESCALATION_THRESHOLD = 3  # consecutive failures before emitting an operational alert
+_MAX_BACKOFF_FACTOR = 8    # cap backoff at 8× normal interval
+
 
 class MarketFetcher(Protocol):
     def fetch_candles(self, symbol: str, timeframe: str, *, limit: int = 2) -> list[dict]: ...
@@ -94,11 +97,13 @@ def run_reconcile_cycle(
         candle_limit=candle_limit,
         correlation_id=corr,
     )
-    result = reconcile_positions_use_case(
-        repo=repo,
-        journal_client=journal_client,
-        alert_client=alert_client,
-        req=req,
+    result = asyncio.run(
+        reconcile_positions_use_case(
+            repo=repo,
+            journal_client=journal_client,
+            alert_client=alert_client,
+            req=req,
+        )
     )
     result["correlation_id"] = corr
     return result
@@ -116,6 +121,7 @@ async def run_reconcile_scheduler_loop(
     continue_on_error: bool = False,
     stop_event: asyncio.Event | None = None,
 ) -> None:
+    consecutive_failures = 0
     while True:
         if stop_event is not None and stop_event.is_set():
             return
@@ -137,6 +143,7 @@ async def run_reconcile_scheduler_loop(
                     db.close()
 
             result = await asyncio.to_thread(_run_once)
+            consecutive_failures = 0
             LOGGER.info(
                 "position reconcile scheduler cycle completed",
                 extra={
@@ -145,9 +152,34 @@ async def run_reconcile_scheduler_loop(
                     "open_positions_count": len(result.get("open_positions", [])),
                 },
             )
-        except Exception:
-            LOGGER.exception("position reconcile scheduler cycle failed")
+        except Exception as exc:
+            consecutive_failures += 1
+            LOGGER.exception(
+                "position reconcile scheduler cycle failed",
+                extra={"consecutive_failures": consecutive_failures},
+            )
+            if consecutive_failures >= _ESCALATION_THRESHOLD:
+                LOGGER.error(
+                    "position reconcile scheduler repeated failure — operator action may be required",
+                    extra={"consecutive_failures": consecutive_failures, "error": str(exc)},
+                )
+                try:
+                    await alert_client.notify({
+                        "event_type": "scheduler_failure_escalation",
+                        "service": "position-manager",
+                        "source": "reconcile_scheduler",
+                        "consecutive_failures": consecutive_failures,
+                        "error": str(exc),
+                    })
+                except Exception:
+                    LOGGER.warning("failed to emit escalation alert for reconcile scheduler")
             if not continue_on_error:
                 raise
+            backoff_seconds = min(
+                interval_seconds * (2 ** (consecutive_failures - 1)),
+                interval_seconds * _MAX_BACKOFF_FACTOR,
+            )
+            await asyncio.sleep(backoff_seconds)
+            continue
 
         await asyncio.sleep(interval_seconds)

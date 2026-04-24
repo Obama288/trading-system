@@ -1,10 +1,22 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 from apps.risk_engine.application.evaluate_risk import evaluate_risk_use_case
 from libs.schemas.common import EntryZone, RiskReasonCode, TradeDirection
+from libs.security import require_internal_service_auth, validate_startup_auth
+from libs.db.startup_health import ensure_db_connection_startup
 
-app = FastAPI(title="risk-engine")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    validate_startup_auth(require_internal=True)
+    await ensure_db_connection_startup(service_name="risk-engine", app=app)
+    yield
+
+
+app = FastAPI(title="risk-engine", lifespan=lifespan)
 
 
 class AccountState(BaseModel):
@@ -31,7 +43,10 @@ def health() -> dict:
 
 
 @app.post("/v1/risk/evaluate")
-def evaluate_risk(req: RiskRequest) -> dict:
+def evaluate_risk(
+    req: RiskRequest,
+    _: str = require_internal_service_auth(),
+) -> dict:
     result = evaluate_risk_use_case(req)
     return {
         "ok": True,

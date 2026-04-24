@@ -26,7 +26,7 @@ class DummyRepository:
     def list_incidents(self, *, limit: int = 50) -> list[dict]:
         return [{"incident_id": "inc_001", "severity": "warning", "limit_used": limit}]
 
-    def get_stats(self) -> dict:
+    def get_stats(self, mode: str = "paper") -> dict:
         return {
             "total_trades": 2,
             "win_rate_pct": 50.0,

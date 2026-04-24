@@ -6,7 +6,7 @@ from apps.position_manager.schemas.requests import PositionOpenRequest
 from libs.schemas.common import ExecutionStatus, SeverityLevel
 
 
-def open_position_use_case(
+async def open_position_use_case(
     *,
     repo: PositionRepository,
     journal_client: JournalClient,
@@ -47,7 +47,7 @@ def open_position_use_case(
         correlation_id=req.correlation_id,
         payload=event_payload,
     )
-    journal_client.write(
+    await journal_client.write(
         {
             "event_id": f"evt_position_opened_{row.position_id}",
             "event_type": "position_opened",
@@ -56,7 +56,7 @@ def open_position_use_case(
             "payload": event_payload,
         }
     )
-    alert_client.notify(
+    await alert_client.notify(
         {
             "event_id": f"alert_position_opened_{row.position_id}",
             "event_type": "position_opened",

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from collections.abc import Generator
 from datetime import datetime, timedelta, timezone
 
@@ -19,8 +20,11 @@ from libs.db.models.trade_candidate import TradeCandidateModel
 from libs.db.session import get_db
 from libs.schemas.common import PositionStatus
 
+TEST_OPERATOR_TOKEN = "test-operator-token-001"
+
 
 def make_client() -> tuple[TestClient, sessionmaker[Session]]:
+    os.environ["OPERATOR_TOKEN"] = TEST_OPERATOR_TOKEN
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -37,11 +41,15 @@ def make_client() -> tuple[TestClient, sessionmaker[Session]]:
             db.close()
 
     app.dependency_overrides[get_db] = override_get_db
-    return TestClient(app), test_session_factory
+    client = TestClient(app)
+    client.headers["X-Operator-Token"] = TEST_OPERATOR_TOKEN
+    return client, test_session_factory
 
 
 def teardown_client(client: TestClient) -> None:
     client.close()
+    app.dependency_overrides.clear()
+    os.environ.pop("OPERATOR_TOKEN", None)
     app.dependency_overrides.clear()
 
 
@@ -370,7 +378,8 @@ def test_dashboard_stats_returns_aggregated_metrics():
         assert data["win_rate_pct"] == 50.0
         assert data["avg_rr"] == 0.5
         assert data["total_pnl_usdt"] == 20.0
-        assert data["avg_hold_candles"] == 0.0
+        # pos_002: 1 day hold = 96 candles; pos_004: 2h hold = 8 candles → avg = 52.0
+        assert data["avg_hold_candles"] == 52.0
         assert data["by_symbol"]["ETHUSDT"]["total_trades"] == 1
         assert data["by_symbol"]["ETHUSDT"]["total_pnl_usdt"] == 20.0
         assert data["by_symbol"]["BTCUSDT"]["total_trades"] == 1
@@ -378,6 +387,44 @@ def test_dashboard_stats_returns_aggregated_metrics():
         assert data["by_setup_type"]["trend_continuation"]["total_trades"] == 1
         assert data["by_setup_type"]["trend_continuation"]["avg_rr"] == 1.0
         assert data["by_setup_type"]["breakout_retest"]["total_trades"] == 1
+        assert "SOLUSDT" not in data["by_symbol"]
+    finally:
+        teardown_client(client)
+
+
+def test_dashboard_stats_live_mode_filters_correctly():
+    client, session_factory = make_client()
+    try:
+        seed_dashboard_rows(session_factory)
+
+        response = client.get("/v1/dashboard/stats?mode=live")
+
+        assert response.status_code == 200
+        body = response.json()
+        assert body["ok"] is True
+        data = body["data"]
+        # only pos_003 (exe_003, mode=live, closed) is visible
+        assert data["total_trades"] == 1
+        assert data["win_rate_pct"] == 100.0
+        assert data["total_pnl_usdt"] == 10.0
+        # pos_003: 1 day hold (3d→2d) = 96 candles
+        assert data["avg_hold_candles"] == 96.0
+        assert "SOLUSDT" in data["by_symbol"]
+        assert "ETHUSDT" not in data["by_symbol"]
+        assert "BTCUSDT" not in data["by_symbol"]
+    finally:
+        teardown_client(client)
+
+
+def test_dashboard_stats_paper_mode_excludes_live():
+    client, session_factory = make_client()
+    try:
+        seed_dashboard_rows(session_factory)
+
+        response = client.get("/v1/dashboard/stats?mode=paper")
+
+        assert response.status_code == 200
+        data = response.json()["data"]
         assert "SOLUSDT" not in data["by_symbol"]
     finally:
         teardown_client(client)

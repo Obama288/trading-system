@@ -21,6 +21,28 @@ class OperatorActionRepository:
         correlation_id: str,
         payload_json: dict,
     ) -> OperatorActionModel:
+        row = self.record_no_commit(
+            operator_user_id=operator_user_id,
+            action_type=action_type,
+            target_type=target_type,
+            target_id=target_id,
+            correlation_id=correlation_id,
+            payload_json=payload_json,
+        )
+        self.db.commit()
+        self.db.refresh(row)
+        return row
+
+    def record_no_commit(
+        self,
+        *,
+        operator_user_id: int,
+        action_type: str,
+        target_type: str,
+        target_id: str,
+        correlation_id: str,
+        payload_json: dict,
+    ) -> OperatorActionModel:
         row = OperatorActionModel(
             action_id=f"op_{uuid4().hex}",
             operator_user_id=operator_user_id,
@@ -31,6 +53,4 @@ class OperatorActionRepository:
             payload_json=payload_json,
         )
         self.db.add(row)
-        self.db.commit()
-        self.db.refresh(row)
         return row

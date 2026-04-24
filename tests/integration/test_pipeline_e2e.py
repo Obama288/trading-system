@@ -12,6 +12,7 @@ from apps.execution_service.application.place_order_dry_run import place_order_d
 from apps.execution_service.application.place_order import place_order_use_case
 from apps.execution_service.infrastructure.local_clients import DbJournalClient as ExecutionDbJournalClient
 from apps.execution_service.infrastructure.local_clients import NoopAlertClient as ExecutionNoopAlertClient
+from apps.execution_service.infrastructure.position_admission_repo import DbPositionAdmissionRepo
 from apps.execution_service.infrastructure.execution_store_db import DbExecutionStore
 from apps.orchestrator.application.approve_candidate import approve_candidate_use_case
 from apps.orchestrator.infrastructure.candidate_repo import TradeCandidateRepository
@@ -43,7 +44,7 @@ class DbJournalClient:
     def __init__(self, db: Session) -> None:
         self.db = db
 
-    def write(self, payload: dict) -> None:
+    async def write(self, payload: dict) -> None:
         row = JournalEventModel(
             event_id=payload["event_id"],
             event_type=payload["event_type"],
@@ -56,7 +57,7 @@ class DbJournalClient:
 
 
 class NoopAlertClient:
-    def notify(self, payload: dict) -> None:
+    async def notify(self, payload: dict) -> None:
         return None
 
 
@@ -65,12 +66,14 @@ class ExecutionServiceClient:
         self,
         store: DbExecutionStore,
         kill_switch_client: StubKillSwitchClient,
-        position_repo: PositionRepository,
+        admission_repo: DbPositionAdmissionRepo,
+        position_manager_client,
         db: Session,
     ) -> None:
         self.store = store
         self.kill_switch_client = kill_switch_client
-        self.position_repo = position_repo
+        self.admission_repo = admission_repo
+        self.position_manager_client = position_manager_client
         self.journal_client = ExecutionDbJournalClient(db)
         self.alert_client = ExecutionNoopAlertClient()
         self.calls = 0
@@ -84,7 +87,8 @@ class ExecutionServiceClient:
             correlation_id=correlation_id,
             kill_switch_client=self.kill_switch_client,
             store=self.store,
-            position_repo=self.position_repo,
+            admission_repo=self.admission_repo,
+            position_manager_client=self.position_manager_client,
             journal_client=self.journal_client,
             alert_client=self.alert_client,
             execution_mode="paper",
@@ -116,6 +120,24 @@ class DummyExecutionClient:
             "data": data,
             "error": None if self.ok else {"code": "EXECUTION_REJECTED"},
         }
+
+
+class InProcPositionManagerClient:
+    def __init__(self, *, repo: PositionRepository, journal_client: DbJournalClient, alert_client: NoopAlertClient) -> None:
+        self.repo = repo
+        self.journal_client = journal_client
+        self.alert_client = alert_client
+
+    async def open_position(self, *, payload: dict, correlation_id: str) -> dict:
+        _ = correlation_id
+        req = PositionOpenRequest(**payload)
+        result = await open_position_use_case(
+            repo=self.repo,
+            journal_client=self.journal_client,
+            alert_client=self.alert_client,
+            req=req,
+        )
+        return {"ok": True, "data": result, "error": None}
 
 
 def seed_candidate(
@@ -163,8 +185,14 @@ async def test_pipeline_happy_path_candidate_submitted_execution_and_position_op
         position_repo = PositionRepository(db)
         journal_client = DbJournalClient(db)
         execution_store = DbExecutionStore(db)
+        admission_repo = DbPositionAdmissionRepo(db)
         kill_switch_client = StubKillSwitchClient(trading_enabled=True)
-        execution_client = ExecutionServiceClient(execution_store, kill_switch_client, position_repo, db)
+        position_manager_client = InProcPositionManagerClient(
+            repo=position_repo,
+            journal_client=journal_client,
+            alert_client=NoopAlertClient(),
+        )
+        execution_client = ExecutionServiceClient(execution_store, kill_switch_client, admission_repo, position_manager_client, db)
 
         candidate = seed_candidate(candidate_repo)
 
@@ -173,7 +201,6 @@ async def test_pipeline_happy_path_candidate_submitted_execution_and_position_op
             kill_switch_client=kill_switch_client,
             execution_client=execution_client,
             operator_action_repo=operator_action_repo,
-            journal_client=journal_client,
             candidate_id=candidate.candidate_id,
             telegram_user_id=123,
             correlation_id=correlation_id,
@@ -190,7 +217,7 @@ async def test_pipeline_happy_path_candidate_submitted_execution_and_position_op
         assert refreshed_candidate.status == "submitted"
         assert refreshed_candidate.execution_id is not None
         assert execution is not None
-        assert execution.status == "filled"
+        assert execution.status == "position_opened"
         assert position is not None
 
 
@@ -212,7 +239,6 @@ async def test_pipeline_execution_failure_rolls_back_candidate_and_writes_journa
             kill_switch_client=kill_switch_client,
             execution_client=execution_client,
             operator_action_repo=operator_action_repo,
-            journal_client=journal_client,
             candidate_id=candidate.candidate_id,
             telegram_user_id=123,
             correlation_id=correlation_id,
@@ -251,7 +277,6 @@ async def test_pipeline_kill_switch_active_blocks_approve_without_side_effects()
             kill_switch_client=kill_switch_client,
             execution_client=execution_client,
             operator_action_repo=operator_action_repo,
-            journal_client=journal_client,
             candidate_id=candidate.candidate_id,
             telegram_user_id=123,
             correlation_id=correlation_id,
@@ -291,7 +316,6 @@ async def test_pipeline_expired_candidate_blocks_approve_before_execution():
             kill_switch_client=kill_switch_client,
             execution_client=execution_client,
             operator_action_repo=operator_action_repo,
-            journal_client=journal_client,
             candidate_id=candidate.candidate_id,
             telegram_user_id=123,
             correlation_id=correlation_id,
@@ -315,8 +339,20 @@ async def test_pipeline_paper_trading_opens_position():
         position_repo = PositionRepository(db)
         journal_client = DbJournalClient(db)
         execution_store = DbExecutionStore(db)
+        admission_repo = DbPositionAdmissionRepo(db)
         kill_switch_client = StubKillSwitchClient(trading_enabled=True)
-        execution_client = ExecutionServiceClient(execution_store, kill_switch_client, position_repo, db)
+        position_manager_client = InProcPositionManagerClient(
+            repo=position_repo,
+            journal_client=journal_client,
+            alert_client=NoopAlertClient(),
+        )
+        execution_client = ExecutionServiceClient(
+            execution_store,
+            kill_switch_client,
+            admission_repo,
+            position_manager_client,
+            db,
+        )
 
         candidate = seed_candidate(candidate_repo)
 
@@ -325,7 +361,6 @@ async def test_pipeline_paper_trading_opens_position():
             kill_switch_client=kill_switch_client,
             execution_client=execution_client,
             operator_action_repo=operator_action_repo,
-            journal_client=journal_client,
             candidate_id=candidate.candidate_id,
             telegram_user_id=123,
             correlation_id=correlation_id,
@@ -343,7 +378,7 @@ async def test_pipeline_paper_trading_opens_position():
         assert refreshed_candidate.status == "submitted"
         assert refreshed_candidate.execution_id == result["execution_id"]
         assert execution is not None
-        assert execution.status == "filled"
+        assert execution.status == "position_opened"
         assert position is not None
         assert paper_event is not None
         assert execution_client.calls == 1

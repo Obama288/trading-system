@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import Depends, FastAPI, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from apps.journal_review.application.daily_summary import daily_summary_use_case
@@ -12,22 +14,37 @@ from apps.journal_review.infrastructure.journal_reader import JournalReader
 from apps.journal_review.infrastructure.llm_client import AnthropicLLMClient
 from apps.journal_review.schemas.requests import DailySummaryRequest, PatternReviewRequest
 from libs.db.session import get_db
+from libs.db.startup_health import ensure_db_connection_startup
 from libs.logging.context import get_correlation_id, set_correlation_id
 from libs.schemas.common import ServiceEnvelope
+from libs.security import require_operator_auth, validate_startup_auth
 
-app = FastAPI(title="journal-review")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    validate_startup_auth(require_operator=True)
+    config = get_config()
+    await ensure_db_connection_startup(service_name=config.service_name, app=app)
+    yield
+
+
 CONFIG = get_config()
 LLM_CLIENT = AnthropicLLMClient(
     api_key=CONFIG.anthropic_api_key.get_secret_value() if CONFIG.anthropic_api_key else None,
     model=CONFIG.model,
 )
 
+app = FastAPI(title="journal-review", lifespan=lifespan)
+
 
 @app.middleware("http")
 async def correlation_id_middleware(request: Request, call_next):
     corr = request.headers.get("X-Correlation-Id") or f"corr_{uuid4().hex}"
     set_correlation_id(corr)
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception:
+        response = JSONResponse(status_code=500, content={"detail": "Internal server error"})
     response.headers["X-Correlation-Id"] = corr
     return response
 
@@ -44,7 +61,11 @@ def health(request: Request) -> ServiceEnvelope[dict]:
 
 
 @app.post("/v1/journal-review/daily-summary")
-def daily_summary(req: DailySummaryRequest, db: Session = Depends(get_db)) -> ServiceEnvelope[dict]:
+def daily_summary(
+    req: DailySummaryRequest,
+    _: str = require_operator_auth(),
+    db: Session = Depends(get_db),
+) -> ServiceEnvelope[dict]:
     result = daily_summary_use_case(
         journal_reader=JournalReader(db),
         llm_client=LLM_CLIENT,
@@ -60,7 +81,11 @@ def daily_summary(req: DailySummaryRequest, db: Session = Depends(get_db)) -> Se
 
 
 @app.post("/v1/journal-review/pattern-review")
-def pattern_review(req: PatternReviewRequest, db: Session = Depends(get_db)) -> ServiceEnvelope[dict]:
+def pattern_review(
+    req: PatternReviewRequest,
+    _: str = require_operator_auth(),
+    db: Session = Depends(get_db),
+) -> ServiceEnvelope[dict]:
     result = pattern_review_use_case(
         journal_reader=JournalReader(db),
         llm_client=LLM_CLIENT,

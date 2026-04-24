@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
-
 import pytest
 
 from apps.execution_service.application.place_order import place_order_use_case
@@ -23,23 +21,11 @@ def make_candidate() -> ExecutionCandidate:
     )
 
 
-@dataclass
-class _FakePositionRow:
-    position_id: str
-    execution_id: str
-    symbol: str
-    status: str
-    quantity: float
-    entry_price: float
-
-
-class _FakePositionRepo:
+class _FakeAdmissionRepo:
     def __init__(self, *, open_positions: int, pending_admissions: int) -> None:
         self.open_positions = open_positions
         self.pending_admissions = pending_admissions
         self.lock_calls = 0
-        self.created_rows: list[_FakePositionRow] = []
-        self.by_execution_id: dict[str, _FakePositionRow] = {}
 
     def acquire_open_position_admission_lock(self) -> None:
         self.lock_calls += 1
@@ -51,35 +37,17 @@ class _FakePositionRepo:
         assert mode == "paper"
         return self.pending_admissions
 
-    def get_by_execution_id(self, execution_id: str):
-        return self.by_execution_id.get(execution_id)
 
-    def create_position(
-        self,
-        *,
-        execution_id: str,
-        symbol: str,
-        side: str,
-        quantity: float,
-        entry_price: float,
-        opened_at,
-        stop_loss: float | None,
-        take_profit: list[float],
-        ttl_expires_at,
-        candidate_id: str | None,
-        signal_id: str | None,
-    ):
-        row = _FakePositionRow(
-            position_id=f"pos_{len(self.created_rows) + 1}",
-            execution_id=execution_id,
-            symbol=symbol,
-            status="open",
-            quantity=quantity,
-            entry_price=entry_price,
-        )
-        self.created_rows.append(row)
-        self.by_execution_id[execution_id] = row
-        return row
+class _FakePositionManagerClient:
+    def __init__(self) -> None:
+        self.calls: list[dict] = []
+        self.raises: Exception | None = None
+
+    async def open_position(self, *, payload: dict, correlation_id: str) -> dict:
+        if self.raises is not None:
+            raise self.raises
+        self.calls.append({"payload": payload, "correlation_id": correlation_id})
+        return {"ok": True, "data": {"position_id": "pos_1"}, "error": None}
 
     def record_event(self, *, position_id: str, event_type: str, correlation_id: str, payload: dict):
         return {
@@ -106,7 +74,7 @@ class _NoopJournal:
     def __init__(self) -> None:
         self.events: list[dict] = []
 
-    def write(self, payload: dict) -> None:
+    async def write(self, payload: dict) -> None:
         self.events.append(payload)
 
 
@@ -114,7 +82,7 @@ class _NoopAlert:
     def __init__(self) -> None:
         self.events: list[dict] = []
 
-    def notify(self, payload: dict) -> None:
+    async def notify(self, payload: dict) -> None:
         self.events.append(payload)
 
 
@@ -122,7 +90,8 @@ class _NoopAlert:
 async def test_place_order_allows_new_admission_below_cap():
     store = InMemoryExecutionStore()
     ks = StubKillSwitchClient(trading_enabled=True)
-    repo = _FakePositionRepo(open_positions=0, pending_admissions=0)
+    admission_repo = _FakeAdmissionRepo(open_positions=0, pending_admissions=0)
+    pm = _FakePositionManagerClient()
     journal = _NoopJournal()
     alert = _NoopAlert()
 
@@ -133,7 +102,8 @@ async def test_place_order_allows_new_admission_below_cap():
         correlation_id="corr_001",
         kill_switch_client=ks,
         store=store,
-        position_repo=repo,
+        admission_repo=admission_repo,
+        position_manager_client=pm,
         journal_client=journal,
         alert_client=alert,
         execution_mode="paper",
@@ -141,15 +111,17 @@ async def test_place_order_allows_new_admission_below_cap():
 
     assert result["accepted"] is True
     assert result["duplicate"] is False
-    assert repo.lock_calls == 1
-    assert len(repo.created_rows) == 1
+    assert result["status"] == "position_opened"
+    assert admission_repo.lock_calls == 1
+    assert len(pm.calls) == 1
 
 
 @pytest.mark.asyncio
 async def test_place_order_rejects_when_open_cap_full():
     store = InMemoryExecutionStore()
     ks = StubKillSwitchClient(trading_enabled=True)
-    repo = _FakePositionRepo(open_positions=1, pending_admissions=0)
+    admission_repo = _FakeAdmissionRepo(open_positions=1, pending_admissions=0)
+    pm = _FakePositionManagerClient()
     journal = _NoopJournal()
     alert = _NoopAlert()
 
@@ -160,7 +132,8 @@ async def test_place_order_rejects_when_open_cap_full():
         correlation_id="corr_001",
         kill_switch_client=ks,
         store=store,
-        position_repo=repo,
+        admission_repo=admission_repo,
+        position_manager_client=pm,
         journal_client=journal,
         alert_client=alert,
         execution_mode="paper",
@@ -170,14 +143,15 @@ async def test_place_order_rejects_when_open_cap_full():
     assert result["error"]["code"] == "MAX_OPEN_POSITIONS_REACHED"
     assert result["duplicate"] is False
     assert store.get_by_key("idem_001") is None
-    assert len(repo.created_rows) == 0
+    assert pm.calls == []
 
 
 @pytest.mark.asyncio
 async def test_place_order_idempotent_retry_unchanged_when_cap_full_after_first():
     store = InMemoryExecutionStore()
     ks = StubKillSwitchClient(trading_enabled=True)
-    repo = _FakePositionRepo(open_positions=0, pending_admissions=0)
+    admission_repo = _FakeAdmissionRepo(open_positions=0, pending_admissions=0)
+    pm = _FakePositionManagerClient()
     journal = _NoopJournal()
     alert = _NoopAlert()
 
@@ -188,13 +162,14 @@ async def test_place_order_idempotent_retry_unchanged_when_cap_full_after_first(
         correlation_id="corr_001",
         kill_switch_client=ks,
         store=store,
-        position_repo=repo,
+        admission_repo=admission_repo,
+        position_manager_client=pm,
         journal_client=journal,
         alert_client=alert,
         execution_mode="paper",
     )
-    repo.open_positions = 99
-    repo.pending_admissions = 99
+    admission_repo.open_positions = 99
+    admission_repo.pending_admissions = 99
     second = await place_order_use_case(
         candidate_id="cand_001",
         execution_candidate=make_candidate(),
@@ -202,7 +177,8 @@ async def test_place_order_idempotent_retry_unchanged_when_cap_full_after_first(
         correlation_id="corr_002",
         kill_switch_client=ks,
         store=store,
-        position_repo=repo,
+        admission_repo=admission_repo,
+        position_manager_client=pm,
         journal_client=journal,
         alert_client=alert,
         execution_mode="paper",
@@ -212,14 +188,15 @@ async def test_place_order_idempotent_retry_unchanged_when_cap_full_after_first(
     assert second["accepted"] is True
     assert second["duplicate"] is True
     assert second["execution_id"] == first["execution_id"]
-    assert len(repo.created_rows) == 1
+    assert len(pm.calls) == 1
 
 
 @pytest.mark.asyncio
 async def test_place_order_rejects_when_pending_admission_already_exists():
     store = InMemoryExecutionStore()
     ks = StubKillSwitchClient(trading_enabled=True)
-    repo = _FakePositionRepo(open_positions=0, pending_admissions=1)
+    admission_repo = _FakeAdmissionRepo(open_positions=0, pending_admissions=1)
+    pm = _FakePositionManagerClient()
     journal = _NoopJournal()
     alert = _NoopAlert()
 
@@ -230,7 +207,8 @@ async def test_place_order_rejects_when_pending_admission_already_exists():
         correlation_id="corr_002",
         kill_switch_client=ks,
         store=store,
-        position_repo=repo,
+        admission_repo=admission_repo,
+        position_manager_client=pm,
         journal_client=journal,
         alert_client=alert,
         execution_mode="paper",
@@ -239,3 +217,36 @@ async def test_place_order_rejects_when_pending_admission_already_exists():
     assert result["accepted"] is False
     assert result["error"]["code"] == "MAX_OPEN_POSITIONS_REACHED"
     assert result["error"]["current_load"] == 1
+    assert pm.calls == []
+
+
+@pytest.mark.asyncio
+async def test_place_order_marks_execution_failed_when_position_open_throws():
+    store = InMemoryExecutionStore()
+    ks = StubKillSwitchClient(trading_enabled=True)
+    admission_repo = _FakeAdmissionRepo(open_positions=0, pending_admissions=0)
+    pm = _FakePositionManagerClient()
+    pm.raises = RuntimeError("position manager down")
+    journal = _NoopJournal()
+    alert = _NoopAlert()
+
+    result = await place_order_use_case(
+        candidate_id="cand_003",
+        execution_candidate=make_candidate(),
+        execution_idempotency_key="idem_003",
+        correlation_id="corr_003",
+        kill_switch_client=ks,
+        store=store,
+        admission_repo=admission_repo,
+        position_manager_client=pm,
+        journal_client=journal,
+        alert_client=alert,
+        execution_mode="paper",
+    )
+
+    assert result["accepted"] is False
+    assert result["error"]["code"] == "POSITION_OPEN_FAILED"
+    stored = store.get_by_execution_id(result["execution_id"])
+    assert stored is not None
+    assert stored.status == "position_open_failed"
+    assert any(evt["event_type"] == "position_open_failed" for evt in journal.events)

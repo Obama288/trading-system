@@ -6,7 +6,7 @@ from apps.position_manager.schemas.requests import PositionCloseRequest
 from libs.schemas.common import PositionCloseReason, PositionStatus, SeverityLevel
 
 
-def close_position_use_case(
+async def close_position_use_case(
     *,
     repo: PositionRepository,
     journal_client: JournalClient,
@@ -44,7 +44,7 @@ def close_position_use_case(
         if req.reason in {PositionCloseReason.STOP_LOSS, PositionCloseReason.EXPIRED, PositionCloseReason.RECONCILE}
         else SeverityLevel.INFO.value
     )
-    journal_client.write(
+    await journal_client.write(
         {
             "event_id": f"evt_position_closed_{row.position_id}",
             "event_type": "position_closed",
@@ -53,7 +53,7 @@ def close_position_use_case(
             "payload": event_payload,
         }
     )
-    alert_client.notify(
+    await alert_client.notify(
         {
             "event_id": f"alert_position_closed_{row.position_id}",
             "event_type": "position_closed",

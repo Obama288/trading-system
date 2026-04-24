@@ -21,6 +21,10 @@ class PositionRepository:
         stmt = select(PositionModel).where(PositionModel.execution_id == execution_id)
         return self.db.execute(stmt).scalar_one_or_none()
 
+    def get_execution_model(self, execution_id: str) -> ExecutionModel | None:
+        stmt = select(ExecutionModel).where(ExecutionModel.execution_id == execution_id)
+        return self.db.execute(stmt).scalar_one_or_none()
+
     def get_position(self, position_id: str) -> PositionModel | None:
         stmt = select(PositionModel).where(PositionModel.position_id == position_id)
         return self.db.execute(stmt).scalar_one_or_none()
@@ -49,6 +53,18 @@ class PositionRepository:
             .where(PositionModel.execution_id.is_(None))
         )
         return int(self.db.execute(stmt).scalar_one())
+
+    def get_pending_open_executions(self, *, mode: str) -> list[ExecutionModel]:
+        # "Pending open" = executions with status="filled" that have no corresponding position.
+        # Returns executions that may need recovery (orphan filled executions).
+        stmt = (
+            select(ExecutionModel)
+            .outerjoin(PositionModel, PositionModel.execution_id == ExecutionModel.execution_id)
+            .where(ExecutionModel.mode == mode)
+            .where(ExecutionModel.status == "filled")
+            .where(PositionModel.execution_id.is_(None))
+        )
+        return list(self.db.execute(stmt).scalars().all())
 
     def acquire_open_position_admission_lock(self) -> None:
         # Transaction-scoped global lock for max-open admission checks.

@@ -27,7 +27,7 @@ from libs.schemas.common import (
 
 
 class _NoopJournalClient:
-    def write(self, payload: dict) -> None:
+    async def write(self, payload: dict) -> None:
         return None
 
 
@@ -107,7 +107,6 @@ def test_candidate_created_is_persisted_with_matching_journal_event(db: Session)
     repo = TradeCandidateRepository(db)
     result = create_candidate_use_case(
         repo=repo,
-        journal_client=_NoopJournalClient(),
         signal=_make_signal(),
         risk=_make_risk(),
         review=_make_review(),
@@ -152,7 +151,6 @@ def test_candidate_is_not_persisted_if_journal_event_insert_fails(db: Session, m
     repo = TradeCandidateRepository(db)
     result = create_candidate_use_case(
         repo=repo,
-        journal_client=_NoopJournalClient(),
         signal=_make_signal(),
         risk=_make_risk(),
         review=_make_review(),
@@ -172,7 +170,6 @@ def test_evaluate_is_idempotent_on_signal_id(db: Session) -> None:
     repo = TradeCandidateRepository(db)
     first = create_candidate_use_case(
         repo=repo,
-        journal_client=_NoopJournalClient(),
         signal=_make_signal(),
         risk=_make_risk(),
         review=_make_review(),
@@ -181,7 +178,6 @@ def test_evaluate_is_idempotent_on_signal_id(db: Session) -> None:
     )
     second = create_candidate_use_case(
         repo=repo,
-        journal_client=_NoopJournalClient(),
         signal=_make_signal(),
         risk=_make_risk(),
         review=_make_review(),

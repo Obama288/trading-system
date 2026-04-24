@@ -11,7 +11,7 @@ from libs.schemas.common import PositionCloseReason
 from .close_position import close_position_use_case
 
 
-def reconcile_positions_use_case(
+async def reconcile_positions_use_case(
     *,
     repo: PositionRepository,
     journal_client: JournalClient,
@@ -25,7 +25,7 @@ def reconcile_positions_use_case(
     for row in repo.list_open_positions():
         snapshot = snapshots.get(row.position_id) or snapshots.get(row.execution_id)
         if snapshot is None:
-            result = close_position_use_case(
+            result = await close_position_use_case(
                 repo=repo,
                 journal_client=journal_client,
                 alert_client=alert_client,
@@ -41,7 +41,7 @@ def reconcile_positions_use_case(
             continue
 
         if snapshot.status.lower() in {"cancelled", "canceled"}:
-            result = close_position_use_case(
+            result = await close_position_use_case(
                 repo=repo,
                 journal_client=journal_client,
                 alert_client=alert_client,
@@ -57,7 +57,7 @@ def reconcile_positions_use_case(
             continue
 
         if snapshot.status.lower() == "expired":
-            result = close_position_use_case(
+            result = await close_position_use_case(
                 repo=repo,
                 journal_client=journal_client,
                 alert_client=alert_client,
@@ -76,7 +76,7 @@ def reconcile_positions_use_case(
         if not trigger.should_close or trigger.reason is None:
             continue
 
-        result = close_position_use_case(
+        result = await close_position_use_case(
             repo=repo,
             journal_client=journal_client,
             alert_client=alert_client,

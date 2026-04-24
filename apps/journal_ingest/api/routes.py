@@ -8,12 +8,17 @@ from apps.journal_ingest.schemas.journal_requests import JournalEventRequest
 from apps.journal_ingest.schemas.journal_responses import JournalQueryResult, JournalWriteResult
 from libs.db.models.journal_event import JournalEventModel
 from libs.db.session import get_db
+from libs.security import require_internal_service_auth, require_operator_auth
 
 router = APIRouter()
 
 
 @router.post("/v1/journal/events", response_model=JournalWriteResult)
-def write_event(req: JournalEventRequest, db: Session = Depends(get_db)) -> JournalWriteResult:
+def write_event(
+    req: JournalEventRequest,
+    db: Session = Depends(get_db),
+    _: str = require_internal_service_auth(),
+) -> JournalWriteResult:
     row = JournalEventModel(
         event_id=req.event_id,
         event_type=req.event_type,
@@ -33,6 +38,7 @@ def query_events(
     limit: int = 50,
     offset: int = 0,
     db: Session = Depends(get_db),
+    _: str = require_operator_auth(),
 ) -> JournalQueryResult:
     limit = max(1, min(limit, 500))
     offset = max(0, offset)

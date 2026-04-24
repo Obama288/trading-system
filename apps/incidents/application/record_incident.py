@@ -5,7 +5,7 @@ from apps.incidents.infrastructure.journal_client import JournalClient
 from apps.incidents.schemas.requests import RecordIncidentRequest
 
 
-def record_incident_use_case(
+async def record_incident_use_case(
     *,
     repo: IncidentRepository,
     journal_client: JournalClient,
@@ -20,7 +20,7 @@ def record_incident_use_case(
         payload=req.payload,
     )
     incident = repo.to_dict(row)
-    journal_client.write(
+    await journal_client.write(
         {
             "event_id": f"evt_incident_{row.incident_id}",
             "event_type": "incident_recorded",

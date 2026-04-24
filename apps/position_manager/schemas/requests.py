@@ -47,3 +47,8 @@ class ExchangePositionSnapshot(BaseModel):
 class ReconcileRequest(BaseModel):
     exchange_positions: list[ExchangePositionSnapshot] = Field(default_factory=list)
     correlation_id: str
+
+
+class PositionRecoverRequest(BaseModel):
+    execution_id: str
+    correlation_id: str

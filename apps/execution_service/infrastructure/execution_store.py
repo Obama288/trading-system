@@ -25,6 +25,14 @@ class ExecutionStore(Protocol):
 
     def mark_cancelled(self, execution_id: str) -> StoredExecution | None: ...
 
+    def update_status(
+        self,
+        execution_id: str,
+        *,
+        status: str,
+        payload_patch: dict | None = None,
+    ) -> StoredExecution | None: ...
+
     @staticmethod
     def now_iso() -> str: ...
 
@@ -51,6 +59,21 @@ class InMemoryExecutionStore:
         if row is None:
             return None
         row.status = "cancelled"
+        return row
+
+    def update_status(
+        self,
+        execution_id: str,
+        *,
+        status: str,
+        payload_patch: dict | None = None,
+    ) -> StoredExecution | None:
+        row = self.by_execution_id.get(execution_id)
+        if row is None:
+            return None
+        row.status = status
+        if payload_patch:
+            row.payload = {**(row.payload or {}), **payload_patch}
         return row
 
     @staticmethod
