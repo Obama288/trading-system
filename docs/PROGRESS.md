@@ -206,6 +206,39 @@ Live trading: NOT READY — P1 items pending
 - start-local-runtime.ps1 created for repeatable startup
 - Working Protocol documented in AI_COMMANDS.md
 
+## Live Path Audit (2026-04-25)
+
+### Key finding
+Paper trading pipeline is complete and tested.
+Live exchange layer does not exist.
+Switching EXECUTION_MODE=live crashes at startup (RuntimeError in execution_service/main.py).
+
+### Live blockers (11 hard requirements)
+1. No authenticated exchange client (no place_order, cancel_order, get_order_status, get_balance)
+2. place_order.py hard-rejects non-paper mode (ValueError)
+3. No order status polling loop — instant DB fill is not valid for live
+4. entry_price from signal, not from exchange fill confirmation
+5. position close sends no exchange order — DB only
+6. No balance/margin check before order placement
+7. No rate limit handling on exchange calls
+8. No partial fill handling
+9. Live reconcile scheduler blocked — paper-only guard
+10. Symbol format OKX-only (BTC-USDT) — Bybit needs BTCUSDT
+11. cancel_order sends no exchange request — DB only
+
+### What exists
+- Complete paper trading pipeline (paper mode only)
+- All auth/security/kill-switch hardening (S-1..S-9)
+- Local runtime: 9 services running, 211 tests passing
+
+### Roadmap to controlled live
+Stage 53-A: Bybit market data adapter
+Stage 53-B: Authenticated exchange client (place/cancel/status/balance)
+Stage 53-C: Live execution path (replace paper stub)
+Stage 53-D: Live reconcile scheduler
+Stage 53-E: Tests + exchange smoke tests
+Stage 53-F: Controlled live — 1 trade, manual approval
+
 ## Completed stages
 23-42, 38c, 38d, 43, 44, 45, 46, 47, 48, 49, 50, 51
 52A, 52C, 52B.3, 52B.4, 52B.23, 52B.27
