@@ -5,7 +5,13 @@
       "Bash(pip install *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(docker compose up *)",
+      "Bash(alembic upgrade *)",
+      "Bash(Select-String -Path apps/risk_engine/main.py -Pattern \"LOGGER|middleware|set_correlation_id|JSONResponse\")",
+      "Bash(Select-Object LineNumber, Line)",
+      "Bash(git rebase *)",
+      "Bash(GIT_EDITOR=true git rebase --continue)"
     ]
   }
 }

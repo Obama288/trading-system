@@ -1,7 +1,9 @@
+import logging
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
@@ -13,7 +15,10 @@ from libs.db.models.journal_event import JournalEventModel
 from libs.db.repositories.operator_action_repo import OperatorActionRepository
 from libs.db.session import get_db
 from libs.db.startup_health import ensure_db_connection_startup
+from libs.logging.context import set_correlation_id
 from libs.security import require_internal_service_auth, require_admin_auth, validate_startup_auth
+
+LOGGER = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -24,6 +29,19 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="kill-switch", lifespan=lifespan)
+
+
+@app.middleware("http")
+async def correlation_id_middleware(request: Request, call_next):
+    corr = request.headers.get("X-Correlation-Id") or f"corr_{uuid4().hex}"
+    set_correlation_id(corr)
+    try:
+        response = await call_next(request)
+    except Exception:
+        LOGGER.exception("unhandled_exception_in_middleware", extra={"correlation_id": corr})
+        response = JSONResponse(status_code=500, content={"detail": "Internal server error"})
+    response.headers["X-Correlation-Id"] = corr
+    return response
 
 
 class HaltRequest(BaseModel):

@@ -84,6 +84,7 @@ async def correlation_id_middleware(request: Request, call_next):
     try:
         response = await call_next(request)
     except Exception:
+        LOGGER.exception("unhandled_exception_in_middleware", extra={"correlation_id": corr})
         response = JSONResponse(status_code=500, content={"detail": "Internal server error"})
     response.headers["X-Correlation-Id"] = corr
     return response

@@ -3,6 +3,42 @@
 These commands work across all AI agents (Claude, GPT, Codex).
 Any AI receiving these commands must respond with the relevant context.
 
+## Working Protocol
+
+### Environment defaults
+- Windows PowerShell (not Bash)
+- Use ; not && between commands
+- Always use: python -m pytest, python -m alembic, python -m uvicorn
+- Project path: E:\trading-system
+- Env vars: always Process scope, never Machine
+
+### Verify before proceed
+After every file edit:
+  Get-Content <file>
+  Select-String <file> '<key>'
+After every service start:
+  Invoke-RestMethod http://127.0.0.1:<port>/health
+After every migration:
+  python -m alembic current
+After every test run:
+  Show full output — N passed, N warnings
+
+Do not claim success from write/run alone.
+Verify with independent command first.
+
+### Definition of Done
+1. What was changed
+2. How it was verified
+3. Exact verification command and result
+4. What remains unverified
+5. Blocker or non-blocker
+
+### Tool roles
+- Claude (Sasha) — strategy, architecture, risk analysis
+- Claude Code — code review, reading files, focused fixes
+- Codex — code changes and tests
+- PowerShell directly — runtime, env, docker, service startup
+
 ## Commands
 
 `!status`
@@ -36,9 +72,9 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
 ## Current State
 
-Last updated: 2026-04-24 (synced after LH-1.6)
-Current pytest: 151 passed, 5 warnings
-Alembic head: 0008_unique_tc_signal_id
+Last updated: 2026-04-25 (synced after LH-1.9)
+Current pytest: 211 passed, 5 warnings
+Alembic head: 0008_unique_trade_candidates_signal_id
 
 > **Source of truth**: `docs/PROGRESS.md` is authoritative. If this file conflicts with PROGRESS.md, PROGRESS.md wins.
 
@@ -46,7 +82,7 @@ Alembic head: 0008_unique_tc_signal_id
 
 - Shadow trading: COMPLETE
 - Paper trading: VALIDATED CONTOUR (Stage 52B.41)
-- Live trading: NOT READY — full audit + security audit pending
+- Live trading: NOT READY — full audit pending (security audit: COMPLETE)
 
 ## Stage Map
 

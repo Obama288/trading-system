@@ -37,7 +37,7 @@ ORPHAN_STOP: asyncio.Event | None = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global ORPHAN_TASK, ORPHAN_STOP
-    print(f"[execution-service] EXECUTION_MODE={EXECUTION_MODE}", flush=True)
+    LOGGER.info("execution_service_startup", extra={"execution_mode": EXECUTION_MODE})
     if EXECUTION_MODE not in {"paper", "dry_run"}:
         raise RuntimeError(f"Unsafe EXECUTION_MODE: {EXECUTION_MODE}")
     validate_startup_auth(require_internal=True)
@@ -73,6 +73,7 @@ async def correlation_id_middleware(request: Request, call_next):
     try:
         response = await call_next(request)
     except Exception:
+        LOGGER.exception("unhandled_exception_in_middleware", extra={"correlation_id": corr})
         response = JSONResponse(status_code=500, content={"detail": "Internal server error"})
     response.headers["X-Correlation-Id"] = corr
     return response

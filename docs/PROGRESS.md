@@ -198,6 +198,14 @@ Shadow trading: COMPLETE
 Paper trading: VALIDATED CONTOUR (Stage 52B.41)
 Live trading: NOT READY — P1 items pending
 
+## Local runtime setup (2026-04-25)
+- All 9 services running: kill_switch, risk_engine, review_gateway, journal_ingest, orchestrator, execution_service, position_manager, dashboard_service, incidents
+- execution_service: status=ready, mode=paper
+- Postgres + Redis running via Docker on E drive
+- Alembic migrations: head 0008
+- start-local-runtime.ps1 created for repeatable startup
+- Working Protocol documented in AI_COMMANDS.md
+
 ## Completed stages
 23-42, 38c, 38d, 43, 44, 45, 46, 47, 48, 49, 50, 51
 52A, 52C, 52B.3, 52B.4, 52B.23, 52B.27

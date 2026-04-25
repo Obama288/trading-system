@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from contextlib import asynccontextmanager
 from uuid import uuid4
 
@@ -18,6 +19,8 @@ from libs.db.startup_health import ensure_db_connection_startup
 from libs.logging.context import get_correlation_id, set_correlation_id
 from libs.schemas.common import ServiceEnvelope
 from libs.security import require_internal_service_auth, require_operator_auth, validate_startup_auth
+
+LOGGER = logging.getLogger(__name__)
 
 
 @asynccontextmanager
@@ -41,6 +44,7 @@ async def correlation_id_middleware(request: Request, call_next):
     try:
         response = await call_next(request)
     except Exception:
+        LOGGER.exception("unhandled_exception_in_middleware", extra={"correlation_id": corr})
         response = JSONResponse(status_code=500, content={"detail": "Internal server error"})
     response.headers["X-Correlation-Id"] = corr
     return response
