@@ -38,7 +38,7 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
 Last updated: 2026-04-24 (synced after LH-1.6)
 Current pytest: 151 passed, 5 warnings
-Alembic head: 0008_unique_trade_candidates_signal_id
+Alembic head: 0008_unique_tc_signal_id
 
 > **Source of truth**: `docs/PROGRESS.md` is authoritative. If this file conflicts with PROGRESS.md, PROGRESS.md wins.
 

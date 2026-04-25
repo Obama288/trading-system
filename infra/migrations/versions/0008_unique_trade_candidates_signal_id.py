@@ -1,7 +1,7 @@
 from alembic import op
 
 
-revision = "0008_unique_trade_candidates_signal_id"
+revision = "0008_unique_tc_signal_id"
 down_revision = "0007_create_executions"
 branch_labels = None
 depends_on = None

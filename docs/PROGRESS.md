@@ -31,7 +31,7 @@ Current verdict:
 Last accepted evidence:
 - Final Gate Diff Review completed
 - pytest: 215 passed, 5 warnings
-- alembic head: 0008_unique_trade_candidates_signal_id
+- alembic head: 0008_unique_tc_signal_id
 - docker-compose binds postgres/redis to 127.0.0.1
 - .env.example uses postgresql+psycopg
 - EXECUTION_MODE guard raises RuntimeError at startup if not paper/dry_run (code-verified)
@@ -102,7 +102,7 @@ Static/code-level proof is complete. VPS-level runtime checks require direct VPS
 | `git diff --check` | CLEAN. LF warning on .env.example only (not a blocker). |
 | `git diff --stat` | 644 insertions, 81 deletions — matches session scope. |
 | `uv run pytest` | **215 passed, 5 warnings, 0 failed** |
-| `uv run alembic heads` | **0008_unique_trade_candidates_signal_id** |
+| `uv run alembic heads` | **0008_unique_tc_signal_id** |
 
 ---
 
@@ -193,7 +193,7 @@ VPS-specific items that must be verified on the actual deployed environment befo
 
 ## Session: 2026-04-24 (updated end-of-session)
 pytest: 213 passed, 5 warnings (updated from 181 after final session fixes)
-alembic head: 0008_unique_trade_candidates_signal_id
+alembic head: 0008_unique_tc_signal_id
 Shadow trading: COMPLETE
 Paper trading: VALIDATED CONTOUR (Stage 52B.41)
 Live trading: NOT READY — P1 items pending
