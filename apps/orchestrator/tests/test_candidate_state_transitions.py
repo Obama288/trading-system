@@ -35,16 +35,20 @@ class DummyExecutionClient:
         *,
         ok: bool = True,
         raises: bool = False,
+        exception: Exception | None = None,
         error_payload: dict | None = None,
     ) -> None:
         self.execution_id = execution_id
         self.ok = ok
         self.raises = raises
+        self.exception = exception
         self.error_payload = error_payload or {"code": "EXECUTION_REJECTED"}
         self.calls = 0
 
     async def place(self, *, candidate_id: str, execution_candidate: dict, correlation_id: str) -> dict:
         self.calls += 1
+        if self.exception is not None:
+            raise self.exception
         if self.raises:
             raise httpx.HTTPError("execution request failed")
         return {"ok": self.ok, "data": {"execution_id": self.execution_id}, "error": None if self.ok else self.error_payload}
@@ -424,6 +428,38 @@ async def test_approve_candidate_execution_http_error_rolls_back_candidate():
     assert len(journal_events) == 1
     assert journal_events[0].event_type == "execution_failed_after_approval"
     assert journal_events[0].payload["execution_error_code"] == "EXECUTION_REQUEST_FAILED"
+
+
+@pytest.mark.asyncio
+async def test_approve_candidate_execution_unexpected_error_marks_failed():
+    repo = DummyRepo(DummyCandidate())
+    audit = DummyOperatorActionRepo(db=repo.db)
+    execution = DummyExecutionClient(exception=ValueError("malformed execution response"))
+
+    result = await approve_candidate_use_case(
+        repo,
+        DummyKillSwitchClient(),
+        execution,
+        audit,
+        "cand_001",
+        123,
+        "corr_001",
+    )
+
+    assert result["ok"] is False
+    assert result["code"] == "EXECUTION_UNEXPECTED_ERROR"
+    assert result["execution_error_code"] == "EXECUTION_UNEXPECTED_ERROR"
+    assert result["execution_error"]["exception_type"] == "ValueError"
+    assert repo.candidate.status == "failed_execution"
+    assert repo.candidate.execution_id is None
+    assert repo.marked_failed is True
+    assert execution.calls == 1
+    assert len(audit.records) == 1
+    journal_events = [x for x in repo.db.added if isinstance(x, JournalEventModel)]
+    assert len(journal_events) == 1
+    assert journal_events[0].event_type == "execution_failed_after_approval"
+    assert journal_events[0].payload["reason"] == "execution_unexpected_error"
+    assert journal_events[0].payload["execution_error_code"] == "EXECUTION_UNEXPECTED_ERROR"
 
 
 @pytest.mark.asyncio

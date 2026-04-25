@@ -170,6 +170,46 @@ async def approve_candidate_use_case(
             "execution_error_code": "EXECUTION_REQUEST_FAILED",
             "execution_error": error_payload,
         }
+    except Exception as exc:
+        error_payload = {
+            "code": "EXECUTION_UNEXPECTED_ERROR",
+            "exception_type": type(exc).__name__,
+            "message": str(exc),
+        }
+        try:
+            repo.mark_execution_failed_no_commit(approved)
+            repo.db.add(
+                JournalEventModel(
+                    event_id=f"evt_execution_failed_after_approval_{approved.candidate_id}",
+                    event_type="execution_failed_after_approval",
+                    severity="warning",
+                    correlation_id=correlation_id,
+                    payload={
+                        "candidate_id": approved.candidate_id,
+                        "operator_user_id": telegram_user_id,
+                        "reason": "execution_unexpected_error",
+                        "execution_error_code": "EXECUTION_UNEXPECTED_ERROR",
+                        "execution_error": error_payload,
+                    },
+                )
+            )
+            repo.db.flush()
+            repo.db.commit()
+            repo.db.refresh(approved)
+        except SQLAlchemyError as db_exc:
+            repo.db.rollback()
+            LOGGER.warning(
+                "execution_failed_after_approval journal DB write failed (status rolled back)",
+                extra={"candidate_id": approved.candidate_id, "correlation_id": correlation_id, "db_error": str(db_exc)},
+            )
+            return {"ok": False, "code": "JOURNAL_WRITE_FAILED"}
+        return {
+            "ok": False,
+            "code": "EXECUTION_UNEXPECTED_ERROR",
+            "candidate_id": approved.candidate_id,
+            "execution_error_code": "EXECUTION_UNEXPECTED_ERROR",
+            "execution_error": error_payload,
+        }
 
     execution_id = execution_result.get("data", {}).get("execution_id") if execution_result.get("ok") else None
     if not execution_id:
