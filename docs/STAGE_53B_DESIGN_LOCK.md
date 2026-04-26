@@ -3,10 +3,12 @@
 
 ## Status
 
-- Status: DRAFT / BLOCKED ON OWNER INPUT
+- Stage 53-B design lock: CLOSED
+- Stage 53-B implementation: BLOCKED on owner input / owner decisions
 - Current mode: paper trading only
 - Live trading: NO-GO
 - Stage 53-A closed: 3b3b06f (feat: add Bybit public market data adapter)
+- Owner decisions tracker: docs/STAGE_53B_OWNER_DECISIONS.md
 - Stage 53-B gate: BLOCKED - all owner decisions below must be confirmed before any implementation begins
 
 ---

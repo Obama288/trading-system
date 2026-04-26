@@ -1,67 +1,65 @@
-# AI Handoff — Hephaestus
+# AI Handoff - Hephaestus
 
 ## Current project status
 
 Project:
-Hephaestus — Python async microservice trading system.
+Hephaestus - Python async microservice trading system.
 
 Current mode:
 Paper trading only.
+
+Live trading:
+NO-GO.
 
 Runtime status:
 - Local paper runtime: GO
 - VPS paper runtime: GO
 - 9 services healthy
-- 211 tests passing
+- Current test baseline according to current status/context docs: 250 passed, 5 warnings
 - Alembic head: 0008
 - execution-service confirmed ready in paper mode
 - Live exchange layer: NOT IMPLEMENTED
 
 Latest known commits:
+- e814031 docs: add stage 53-B owner decision tracker
+- 69176ed docs: update status after stage 53-B design lock
+- 5e5eb48 docs: add stage 53-B design lock
+- 3b3b06f feat: add Bybit public market data adapter
 - 04ea0eb docs: add stage 53 design lock
-- 8827f4b docs: draft state ownership and domain events
-- 6c3be0b LH-1.11 VPS runtime proof complete, LH-1 CLOSED
 
 ---
 
 ## Closed work
 
-- LH-1 closed
-- VPS Runtime Proof complete
-- Stage 53 design lock added
-- State ownership and domain events draft added
+- Stage 53-A: CLOSED, commit 3b3b06f
+- Stage 53-B design lock: CLOSED, commit 5e5eb48
+- Status docs after 53-B design lock: CLOSED, commit 69176ed
+- Stage 53-B owner decision tracker: ADDED, commit e814031
 - Live Path Audit completed
 - 11 live blockers confirmed
-- Operator Runbook created
-- Working protocol adopted
 
 ---
 
 ## Current gate
 
-Stage 53-A:
-Bybit public market data adapter.
+Current gate:
+Stage 53-B implementation gate.
 
-Stage 53-A is allowed to begin.
+Stage 53-B implementation:
+BLOCKED.
 
----
+Block reason:
+Owner decisions OI-1..OI-9 are not answered.
 
-## Stage 53-A allowed scope
+No runtime implementation is allowed until owner decisions are answered.
+No live trading enablement is allowed.
 
-- Public Bybit REST market data only
-- Symbol mapping: BTC-USDT -> BTCUSDT
-- market_type config required: spot or linear
-- Bybit public ticker/orderbook/kline/instrument rules reads
-- Instrument rules normalization
-- Liquidity / spread guard
-- Decimal-only price and quantity normalization
-- Typed exchange/market-data errors
-- Mocked tests first
-- Read-only smoke later
+Next safe work:
+Docs-only cleanup and decision tracking.
 
 ---
 
-## Stage 53-A forbidden scope
+## Current forbidden scope
 
 - API keys
 - Private endpoints
@@ -69,8 +67,10 @@ Stage 53-A is allowed to begin.
 - Cancels
 - Balances
 - Positions
-- Authenticated exchange client
+- Authenticated exchange client implementation
 - Live execution
+- Live trading enablement
+- Runtime implementation
 - Risk pipeline rewrites
 - Orchestrator rewrites
 - Position manager rewrites
@@ -84,9 +84,9 @@ Stage 53-A is allowed to begin.
 
 ---
 
-## Stage 53 constraints — must not change
+## Stage 53 constraints - must not change
 
-1. Pipeline order: signal → risk → review → orchestrator → execution_service → position_manager
+1. Pipeline order: signal -> risk -> review -> orchestrator -> execution_service -> position_manager
 2. Kill-switch fail-closed: all 4 error classes (AUTH_FAILURE, KILL_SWITCH_TIMEOUT, KILL_SWITCH_UNAVAILABLE, KILL_SWITCH_ERROR) must continue to block execution
 3. RiskDecision.entry_price midpoint rule: (entry_zone.min + entry_zone.max) / 2
 4. execution_idempotency_key deduplication: DB-level idempotency must remain for the paper path; live adds exchange-level idempotency on top
@@ -118,9 +118,16 @@ Stage 53-A is allowed to begin.
 ## Owner decisions needed before 53-B
 
 1. Confirm Bybit account type: Unified or Classic
-2. Confirm position mode: One-way required
-3. Confirm or set account leverage for linear perpetuals
-4. Confirm Bybit API key has Futures read+write and NO withdrawal permission
+2. Confirm market type for first live: linear or spot
+3. Confirm position mode: One-way required
+4. Confirm or set leverage for first live if using linear perpetuals
+5. Confirm Bybit API key permissions: Futures read+write, NO withdrawal
+6. Decide whether to enable IP whitelist for the VPS
+7. Confirm first live order type preference: market or limit
+8. Confirm first live maximum notional size
+9. Confirm manual stop-loss procedure on Bybit UI
+
+All OI-1..OI-9 rows remain OPEN / TBD unless the owner explicitly updates them.
 
 ---
 
