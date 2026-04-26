@@ -2,13 +2,13 @@
 
 ## Current Gate Status
 
-Date: 2026-04-25
+Date: 2026-04-26
 
 Stage:
-LH-1 live-hardening / pre-probe hardening.
+LH-1 COMPLETE. Next: Stage 53-A (Bybit market data adapter).
 
 Target:
-Controlled paper probe with live market data.
+Stage 53-A — Bybit public market data adapter (no auth, no execution path changes).
 
 Not target:
 - Real live exchange execution
@@ -20,18 +20,18 @@ Not target:
 Readiness levels:
 - Docs-ready: GO — Current Gate Status reflects confirmed reality
 - Code-ready: GO for controlled paper probe with live market data
-- Test-ready: GO — 215 passed, 5 warnings
-- Runtime-ready: PENDING — VPS proof blocked, access not yet provided
+- Test-ready: GO — 211 passed, 5 warnings (VPS); 215 passed, 5 warnings (local)
+- Runtime-ready: GO — VPS runtime proof complete (2026-04-26)
 
 Current verdict:
 - Real live execution: NO-GO
-- Controlled paper probe with live market data: CONDITIONALLY GO
+- Controlled paper probe with live market data: GO — owner START/HOLD decision pending
 - Unsupervised production live: NO-GO
 
 Last accepted evidence:
 - Final Gate Diff Review completed
-- pytest: 215 passed, 5 warnings
-- alembic head: 0008_unique_tc_signal_id
+- pytest: 215 passed, 5 warnings (local); 211 passed (VPS)
+- alembic head: 0008_unique_tc_signal_id (local and VPS)
 - docker-compose binds postgres/redis to 127.0.0.1
 - .env.example uses postgresql+psycopg
 - EXECUTION_MODE guard raises RuntimeError at startup if not paper/dry_run (code-verified)
@@ -45,42 +45,37 @@ Last accepted evidence:
 - stop-loss / take-profit direction validation enforced at execution boundary
 - recover_position journal/alert failures are fail-soft after authoritative DB commit
 - no active production call-sites remain for old commit-based position repo methods
+- VPS runtime proof complete: Python 3.12.3, Docker 29.4.1, all 9 services healthy, execution-service mode=paper (2026-04-26)
 
 Open owner decision:
-- H-1 recover_position_use_case: CLOSED.
-- Remaining owner decision: START / HOLD after VPS Runtime Proof.
+- START / HOLD controlled paper probe — runtime proof complete, decision is now active.
 
 Allowed work:
-- VPS runtime proof (requires owner to provide access)
-- docs checkpoint
+- Stage 53-A: Bybit market data adapter (no owner input required)
+- Controlled paper probe (pending owner START/HOLD decision)
 
 Blocked work:
-- VPS Runtime Proof — BLOCKED: owner has not yet provided VPS IP/hostname, SSH username, SSH key, repo path, service launch method
+- Stage 53-B and later — blocked on owner inputs OI-1/OI-2/OI-3 (Bybit account type, position mode, leverage)
 - LH-2 paper accumulation
-- Stage 53 real exchange integration
-- signal quality
-- AI/media analysis
-- real live execution
+- Real live execution
 
 Next gate:
-VPS Runtime Proof.
+Stage 53-A — Bybit public market data adapter.
 
-Required owner input to unblock:
-- VPS IP or hostname
-- SSH username
-- SSH key (which key from ~/.ssh/)
-- repo path on VPS
-- service launch method (docker compose / systemd / uvicorn manually)
+Required owner input to unblock 53-B:
+- Bybit account type (Unified Trading Account or Classic)
+- Bybit position mode (One-way or Hedge — One-way required)
+- Leverage setting for linear perpetuals (confirm or set via API)
+- Bybit API key with Futures read+write, NO withdrawal permission
 
 Next owner decision:
-START / HOLD controlled paper probe after runtime proof.
+START / HOLD controlled paper probe (gate is now open).
 
 Constraints:
-- Do not claim Runtime-ready.
 - Do not claim live-ready.
-- Do not start paper probe.
-- Do not mark LH-1 fully closed until VPS runtime proof is done.
+- Do not start paper probe without owner START decision.
 - Keep docs consistent with source-of-truth rules.
+- Stage 53-A does not close any critical live blocker — it is a pre-condition for 53-D only.
 
 ---
 
@@ -205,6 +200,27 @@ Live trading: NOT READY — P1 items pending
 - Alembic migrations: head 0008
 - start-local-runtime.ps1 created for repeatable startup
 - Working Protocol documented in AI_COMMANDS.md
+
+## VPS Runtime Proof (2026-04-26)
+
+### VPS details
+- Provider: Beget
+- IP: 45.145.5.254
+- OS: Ubuntu 24.04.4 LTS
+- Path: /opt/trading-system
+
+### Confirmed
+- Python 3.12.3
+- Git 2.43.0
+- Docker 29.4.1 + Compose v5.1.3
+- 211 tests passing
+- Alembic head: 0008
+- Postgres + Redis running (hephaestus-system containers)
+- All 9 services healthy
+- execution-service: status=ready, mode=paper
+
+### LH-1 status
+COMPLETE — paper runtime proven on both local (E drive) and VPS.
 
 ## Live Path Audit (2026-04-25)
 
