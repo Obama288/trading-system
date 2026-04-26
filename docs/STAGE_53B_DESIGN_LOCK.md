@@ -3,10 +3,12 @@
 
 ## Status
 
-- Status: DRAFT / BLOCKED ON OWNER INPUT
+- Stage 53-B design lock: CLOSED
+- Stage 53-B implementation: BLOCKED on owner input / owner decisions
 - Current mode: paper trading only
 - Live trading: NO-GO
 - Stage 53-A closed: 3b3b06f (feat: add Bybit public market data adapter)
+- Owner decisions tracker: docs/STAGE_53B_OWNER_DECISIONS.md
 - Stage 53-B gate: BLOCKED - all owner decisions below must be confirmed before any implementation begins
 
 ---
@@ -214,8 +216,10 @@ It is not imported by any app in Stage 53-B.
 ### Client Order ID
 
 - All place_order calls receive a client_order_id parameter
-- client_order_id is deterministic: derived from execution_id using a stable hash
-- Format: hex(sha256(execution_id))[:32]
+- client_order_id = execution_id
+- Rationale: direct DB/exchange/journal/operator traceability
+- A hash-derived client_order_id is non-canonical and may be considered only as a
+  future fallback if an exchange format constraint is discovered and explicitly approved
 - client_order_id is used as exchange-level idempotency key where supported by Bybit
 - Duplicate or ambiguous client_order_id responses must halt and require manual review
 - HTTP 200 is not sufficient confirmation of order state; order status must be confirmed
@@ -307,4 +311,4 @@ No code was written.
 
 53-A CLOSED (3b3b06f) -> 53-B BLOCKED (owner input) -> 53-C BLOCKED -> 53-D BLOCKED -> 53-E BLOCKED -> 53-F BLOCKED
 
-Live execution remains forbidden until 53-F is complete and all 11 live blockers are closed.
+Live execution remains forbidden until 53-F is complete and all canonical Stage 53 live blockers are closed.

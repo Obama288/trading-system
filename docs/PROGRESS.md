@@ -5,12 +5,13 @@
 Date: 2026-04-26
 
 Stage:
-LH-1 COMPLETE. Next: Stage 53-A (Bybit market data adapter).
+Stage 53-B implementation gate.
 
 Target:
-Stage 53-A — Bybit public market data adapter (no auth, no execution path changes).
+Stage 53-B owner decision tracking and docs-only cleanup.
 
 Not target:
+- Stage 53-B runtime implementation
 - Real live exchange execution
 - Unsupervised production live
 - Signal quality work
@@ -19,18 +20,24 @@ Not target:
 
 Readiness levels:
 - Docs-ready: GO — Current Gate Status reflects confirmed reality
-- Code-ready: GO for controlled paper probe with live market data
-- Test-ready: GO — 211 passed, 5 warnings (VPS); 215 passed, 5 warnings (local)
+- Code-ready: BLOCKED for Stage 53-B implementation until OI-1..OI-9 are answered
+- Test-ready: GO - current baseline 250 passed, 5 warnings
 - Runtime-ready: GO — VPS runtime proof complete (2026-04-26)
 
 Current verdict:
 - Real live execution: NO-GO
-- Controlled paper probe with live market data: GO — owner START/HOLD decision pending
+- Stage 53-B implementation: BLOCKED until all 9 owner decisions are answered
 - Unsupervised production live: NO-GO
 
 Last accepted evidence:
+- Stage 53-A CLOSED: 3b3b06f
+- Stage 53-B design lock CLOSED: 5e5eb48
+- Status docs after 53-B design lock CLOSED: 69176ed
+- Stage 53-B owner decision tracker ADDED: e814031
+- Stage 53-B gate/status handoff cleanup ADDED: 3d72ba8
+- Stage 53 design lock decisions cleanup ADDED: ff2f30c
 - Final Gate Diff Review completed
-- pytest: 215 passed, 5 warnings (local); 211 passed (VPS)
+- pytest current baseline: 250 passed, 5 warnings
 - alembic head: 0008_unique_tc_signal_id (local and VPS)
 - docker-compose binds postgres/redis to 127.0.0.1
 - .env.example uses postgresql+psycopg
@@ -47,35 +54,47 @@ Last accepted evidence:
 - no active production call-sites remain for old commit-based position repo methods
 - VPS runtime proof complete: Python 3.12.3, Docker 29.4.1, all 9 services healthy, execution-service mode=paper (2026-04-26)
 
-Open owner decision:
-- START / HOLD controlled paper probe — runtime proof complete, decision is now active.
+Open owner decisions:
+- OI-1 through OI-9 remain OPEN / TBD unless explicitly updated by owner.
+- All nine owner decisions are required before Stage 53-B implementation.
 
 Allowed work:
-- Stage 53-A: Bybit market data adapter (no owner input required)
-- Controlled paper probe (pending owner START/HOLD decision)
+- Docs-only cleanup and owner decision tracking
 
 Blocked work:
-- Stage 53-B and later — blocked on owner inputs OI-1/OI-2/OI-3 (Bybit account type, position mode, leverage)
+- Stage 53-B implementation and later runtime stages
 - LH-2 paper accumulation
 - Real live execution
 
 Next gate:
-Stage 53-A — Bybit public market data adapter.
+Stage 53-B implementation gate.
 
 Required owner input to unblock 53-B:
 - Bybit account type (Unified Trading Account or Classic)
-- Bybit position mode (One-way or Hedge — One-way required)
+- Bybit market type for first live: linear or spot
+- Bybit position mode: One-way required
 - Leverage setting for linear perpetuals (confirm or set via API)
 - Bybit API key with Futures read+write, NO withdrawal permission
+- IP whitelist for VPS
+- First live order type: market or limit
+- First live maximum notional size
+- Manual stop-loss procedure on Bybit UI
 
 Next owner decision:
-START / HOLD controlled paper probe (gate is now open).
+Answer OI-1..OI-9 in docs/STAGE_53B_OWNER_DECISIONS.md.
 
 Constraints:
 - Do not claim live-ready.
-- Do not start paper probe without owner START decision.
+- Do not start Stage 53-B implementation until OI-1..OI-9 are answered.
 - Keep docs consistent with source-of-truth rules.
-- Stage 53-A does not close any critical live blocker — it is a pre-condition for 53-D only.
+- Stage 53-A is CLOSED.
+- Live trading remains NO-GO.
+- Canonical live blocker taxonomy is the 14 live blockers in docs/STAGE_53_DESIGN_LOCK.md.
+- Any 11-blocker list below is historical/legacy/summarized, not the current authoritative count.
+- Canonical Stage 53-B env vars are BYBIT_API_KEY and BYBIT_API_SECRET.
+- Canonical Stage 53-B idempotency rule is client_order_id = execution_id.
+- 0009_execution_exchange_fields is deferred beyond Stage 53-B.
+- Canonical Bybit public adapter path is libs/exchange/bybit_public.py.
 
 ---
 
@@ -222,14 +241,16 @@ Live trading: NOT READY — P1 items pending
 ### LH-1 status
 COMPLETE — paper runtime proven on both local (E drive) and VPS.
 
-## Live Path Audit (2026-04-25)
+## Live Path Audit (2026-04-25 historical/legacy summary)
 
 ### Key finding
 Paper trading pipeline is complete and tested.
 Live exchange layer does not exist.
 Switching EXECUTION_MODE=live crashes at startup (RuntimeError in execution_service/main.py).
 
-### Live blockers (11 hard requirements)
+### Live blockers (legacy/summarized 11-item list, not current authoritative taxonomy)
+
+Current authoritative taxonomy: 14 canonical live blockers in docs/STAGE_53_DESIGN_LOCK.md.
 1. No authenticated exchange client (no place_order, cancel_order, get_order_status, get_balance)
 2. place_order.py hard-rejects non-paper mode (ValueError)
 3. No order status polling loop — instant DB fill is not valid for live

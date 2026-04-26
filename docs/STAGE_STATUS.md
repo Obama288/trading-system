@@ -6,9 +6,11 @@
 - Last completed operational milestone: Stage 53-A (Bybit public market data adapter)
 - Current mode: paper trading only
 - Live readiness: NO-GO
+- Current test baseline: 250 passed, 5 warnings
 - Stage 53-A closed: 3b3b06f
 - Stage 53-B design lock closed: 5e5eb48
-- Stage 53-B implementation: BLOCKED on owner decisions
+- Stage 53-B implementation: BLOCKED until owner decisions OI-1..OI-9 are answered
+- Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 
 ## Stage table
 
@@ -22,6 +24,10 @@
 | Interaction Model Draft | CLOSED | 65c7204 | Commands / Queries / Events model |
 | Stage 53-A | CLOSED | 3b3b06f | Bybit public market data adapter; 39 Stage 53-A tests passed; 250 total tests passed; read-only public smoke PASS |
 | Stage 53-B Design Lock | CLOSED | 5e5eb48 | authenticated Bybit client design locked; implementation blocked on owner decisions |
+| Stage 53-B Status Docs | CLOSED | 69176ed | status docs updated after 53-B design lock |
+| Stage 53-B Owner Decision Tracker | CLOSED | e814031 | owner decisions OI-1..OI-9 tracker added; all remain OPEN / TBD unless owner updates them |
+| Stage 53-B Gate Handoff Cleanup | CLOSED | 3d72ba8 | handoff status aligned to blocked 53-B implementation gate |
+| Stage 53 Design Lock Decisions Cleanup | CLOSED | ff2f30c | design lock decisions aligned: 14 blockers, BYBIT env vars, client_order_id rule, deferred 0009, canonical adapter path |
 | Stage 53-B | BLOCKED | pending | owner decisions required before code |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |
@@ -45,7 +51,9 @@ All nine must be confirmed before Stage 53-B implementation begins.
 
 ## Live blockers
 
-11 confirmed live blockers that must be resolved before any live execution attempt:
+Canonical current taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md.
+
+Legacy summarized list below: not the current authoritative blocker count.
 
 1. No authenticated exchange client
 2. place_order.py hard-rejects non-paper mode
