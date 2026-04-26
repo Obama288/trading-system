@@ -6,7 +6,7 @@ Project:
 Hephaestus - Python async microservice trading system.
 
 Current mode:
-Paper trading only.
+paper trading only.
 
 Live trading:
 NO-GO.
@@ -21,6 +21,9 @@ Runtime status:
 - Live exchange layer: NOT IMPLEMENTED
 
 Latest known commits:
+- e6008c3 docs: align status docs with stage 53-B gate
+- ff2f30c docs: align stage 53 design lock decisions
+- 3d72ba8 docs: align stage 53-B gate handoff status
 - e814031 docs: add stage 53-B owner decision tracker
 - 69176ed docs: update status after stage 53-B design lock
 - 5e5eb48 docs: add stage 53-B design lock
@@ -36,7 +39,7 @@ Latest known commits:
 - Status docs after 53-B design lock: CLOSED, commit 69176ed
 - Stage 53-B owner decision tracker: ADDED, commit e814031
 - Live Path Audit completed
-- 11 live blockers confirmed
+- Legacy 11-item live blocker audit completed; canonical current taxonomy is 14 live blockers.
 
 ---
 
@@ -99,7 +102,8 @@ Docs-only cleanup and decision tracking.
 
 ## Live blockers
 
-11 confirmed live blockers that must be resolved before any live execution attempt:
+Legacy summarized list (11 items) - not the current authoritative blocker count.
+Canonical current taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md.
 
 1. No authenticated exchange client
 2. place_order.py hard-rejects non-paper mode
