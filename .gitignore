@@ -8,3 +8,8 @@ __pycache__/
 .ruff_cache/
 dist/
 build/
+
+# Local runtime
+venv/
+logs/
+*.log
