@@ -2,11 +2,13 @@
 
 ## Current summary
 
-- Current stage: 53-A
-- Last completed operational milestone: LH-1 / VPS Runtime Proof
+- Current stage: 53-B implementation
+- Last completed operational milestone: Stage 53-A (Bybit public market data adapter)
 - Current mode: paper trading only
 - Live readiness: NO-GO
-- Repo status at time of writing: clean before this doc task
+- Stage 53-A closed: 3b3b06f
+- Stage 53-B design lock closed: 5e5eb48
+- Stage 53-B implementation: BLOCKED on owner decisions
 
 ## Stage table
 
@@ -18,20 +20,28 @@
 | AI Handoff | CLOSED | 93bc643 | Agent handoff guide |
 | Service Ownership Map | CLOSED | e7cecc7 | Stage 54+ ownership map |
 | Interaction Model Draft | CLOSED | 65c7204 | Commands / Queries / Events model |
-| Stage 53-A | NEXT | pending | Bybit public market data adapter |
-| Stage 53-B | BLOCKED | pending | Authenticated Bybit exchange client; owner inputs required |
+| Stage 53-A | CLOSED | 3b3b06f | Bybit public market data adapter; 39 Stage 53-A tests passed; 250 total tests passed; read-only public smoke PASS |
+| Stage 53-B Design Lock | CLOSED | 5e5eb48 | authenticated Bybit client design locked; implementation blocked on owner decisions |
+| Stage 53-B | BLOCKED | pending | owner decisions required before code |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |
 | Stage 53-E | BLOCKED | pending | Tests + read-only smoke |
 | Stage 53-E2 | BLOCKED | pending | Dry live smoke, no orders |
 | Stage 53-F | BLOCKED | pending | Controlled live, one trade, manual approval |
 
-## Owner decisions required before 53-B
+## Owner decisions required before 53-B implementation
+
+All nine must be confirmed before Stage 53-B implementation begins.
 
 1. Confirm Bybit account type: Unified or Classic
-2. Confirm position mode: One-way required
-3. Confirm or set account leverage for linear perpetuals
-4. Confirm Bybit API key has Futures read+write and NO withdrawal permission
+2. Confirm market type for first live: linear or spot
+3. Confirm position mode: One-way required
+4. Confirm or set leverage for first live if using linear perpetuals
+5. Confirm Bybit API key permissions: Futures read+write, NO withdrawal
+6. Decide whether to enable IP whitelist for the VPS
+7. Confirm first live order type preference: market or limit
+8. Confirm first live maximum notional size
+9. Confirm manual stop-loss procedure on Bybit UI
 
 ## Live blockers
 
