@@ -13,6 +13,7 @@ from apps.position_manager.infrastructure.position_repo import PositionRepositor
 from libs.db.base import Base
 from libs.db.models.execution import ExecutionModel
 from libs.db.models.position import PositionModel
+from libs.db.models.position_event import PositionEventModel
 
 
 @pytest.fixture()
@@ -41,26 +42,66 @@ class _NoopAlertClient:
         pass
 
 
-def _make_execution(db, execution_id: str, candidate_id: str = "cand_001", mode: str = "paper"):
+class _SpySideEffectClient:
+    def __init__(self) -> None:
+        self.write_called = False
+        self.notify_called = False
+
+    async def write(self, event):
+        self.write_called = True
+
+    async def notify(self, alert):
+        self.notify_called = True
+
+
+def _make_execution(
+    db,
+    execution_id: str,
+    candidate_id: str = "cand_001",
+    mode: str = "paper",
+    payload: dict | None = None,
+):
+    default_payload = {
+        "symbol": "BTC-USDT",
+        "side": "long",
+        "entry_price": 50000.0,
+        "quantity": 0.1,
+        "stop_loss": 49000.0,
+        "take_profit": [51000.0],
+        "candidate_id": candidate_id,
+    }
     row = ExecutionModel(
         execution_id=execution_id,
         idempotency_key=f"idem_{execution_id}",
         candidate_id=candidate_id,
         status="filled",
         mode=mode,
-        payload={
-            "symbol": "BTC-USDT",
-            "side": "long",
-            "entry_price": 50000.0,
-            "quantity": 0.1,
-            "stop_loss": 49000.0,
-            "take_profit": [51000.0],
-            "candidate_id": candidate_id,
-        },
+        payload=default_payload if payload is None else payload,
     )
     db.add(row)
     db.commit()
     return row
+
+
+def _valid_recovery_payload() -> dict:
+    return {
+        "symbol": "BTC-USDT",
+        "side": "long",
+        "entry_price": 50000.0,
+        "quantity": 0.1,
+        "stop_loss": 49000.0,
+        "take_profit": [51000.0],
+        "candidate_id": "cand_001",
+    }
+
+
+def _assert_no_recovery_side_effects(test_db, execution_id: str, spy: _SpySideEffectClient) -> None:
+    persisted = test_db.execute(select(PositionModel).where(PositionModel.execution_id == execution_id)).scalar_one_or_none()
+    events = test_db.execute(select(PositionEventModel)).scalars().all()
+    assert persisted is None
+    assert events == []
+    assert spy.write_called is False
+    assert spy.notify_called is False
 
 
 class TestRecoverPositionUseCase:
@@ -182,6 +223,108 @@ class TestRecoverPositionUseCase:
         persisted = repo.get_by_execution_id(execution_id)
         assert persisted is not None
         assert persisted.status == "open"
+
+    @pytest.mark.asyncio
+    async def test_recover_fails_when_payload_missing_symbol(self, test_db):
+        execution_id = "exe_recover_missing_symbol"
+        payload = _valid_recovery_payload()
+        del payload["symbol"]
+        _make_execution(test_db, execution_id, payload=payload)
+        repo = PositionRepository(test_db)
+        spy = _SpySideEffectClient()
+
+        result = await recover_position_use_case(
+            repo=repo,
+            journal_client=spy,
+            alert_client=spy,
+            execution_id=execution_id,
+            correlation_id="corr_missing_symbol",
+        )
+
+        assert result["ok"] is False
+        assert result["code"] == "EXECUTION_PAYLOAD_INVALID"
+        assert result["missing_fields"] == ["symbol"]
+        assert result["invalid_fields"] == []
+        _assert_no_recovery_side_effects(test_db, execution_id, spy)
+
+    @pytest.mark.asyncio
+    async def test_recover_fails_when_payload_missing_quantity(self, test_db):
+        execution_id = "exe_recover_missing_quantity"
+        payload = _valid_recovery_payload()
+        del payload["quantity"]
+        _make_execution(test_db, execution_id, payload=payload)
+        repo = PositionRepository(test_db)
+        spy = _SpySideEffectClient()
+
+        result = await recover_position_use_case(
+            repo=repo,
+            journal_client=spy,
+            alert_client=spy,
+            execution_id=execution_id,
+            correlation_id="corr_missing_quantity",
+        )
+
+        assert result["ok"] is False
+        assert result["code"] == "EXECUTION_PAYLOAD_INVALID"
+        assert result["missing_fields"] == ["quantity"]
+        assert result["invalid_fields"] == []
+        _assert_no_recovery_side_effects(test_db, execution_id, spy)
+
+    @pytest.mark.asyncio
+    async def test_recover_fails_when_payload_missing_entry_price(self, test_db):
+        execution_id = "exe_recover_missing_entry_price"
+        payload = _valid_recovery_payload()
+        del payload["entry_price"]
+        _make_execution(test_db, execution_id, payload=payload)
+        repo = PositionRepository(test_db)
+        spy = _SpySideEffectClient()
+
+        result = await recover_position_use_case(
+            repo=repo,
+            journal_client=spy,
+            alert_client=spy,
+            execution_id=execution_id,
+            correlation_id="corr_missing_entry_price",
+        )
+
+        assert result["ok"] is False
+        assert result["code"] == "EXECUTION_PAYLOAD_INVALID"
+        assert result["missing_fields"] == ["entry_price"]
+        assert result["invalid_fields"] == []
+        _assert_no_recovery_side_effects(test_db, execution_id, spy)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize(
+        ("field", "value"),
+        [
+            ("quantity", 0),
+            ("quantity", "not-a-number"),
+            ("entry_price", 0),
+            ("entry_price", "not-a-number"),
+            ("symbol", ""),
+        ],
+    )
+    async def test_recover_fails_when_payload_field_is_invalid(self, test_db, field, value):
+        execution_id = f"exe_recover_invalid_{field}_{str(value).replace('-', '_')}"
+        payload = _valid_recovery_payload()
+        payload[field] = value
+        _make_execution(test_db, execution_id, payload=payload)
+        repo = PositionRepository(test_db)
+        spy = _SpySideEffectClient()
+
+        result = await recover_position_use_case(
+            repo=repo,
+            journal_client=spy,
+            alert_client=spy,
+            execution_id=execution_id,
+            correlation_id=f"corr_invalid_{field}",
+        )
+
+        assert result["ok"] is False
+        assert result["code"] == "EXECUTION_PAYLOAD_INVALID"
+        assert result["missing_fields"] == []
+        assert result["invalid_fields"] == [field]
+        _assert_no_recovery_side_effects(test_db, execution_id, spy)
 
     @pytest.mark.asyncio
     async def test_alert_failure_does_not_fail_position_recovery(self, test_db):

@@ -10,6 +10,45 @@ from libs.schemas.common import ExecutionStatus, SeverityLevel, TradeDirection
 LOGGER = logging.getLogger(__name__)
 
 
+def _validate_recovery_payload(payload: dict) -> tuple[bool, list[str], list[str], str | None, float | None, float | None]:
+    missing_fields: list[str] = []
+    invalid_fields: list[str] = []
+    symbol: str | None = None
+    quantity: float | None = None
+    entry_price: float | None = None
+
+    for field in ("symbol", "quantity", "entry_price"):
+        if field not in payload or payload[field] is None:
+            missing_fields.append(field)
+
+    if "symbol" not in missing_fields:
+        raw_symbol = payload["symbol"]
+        if not isinstance(raw_symbol, str) or raw_symbol == "":
+            invalid_fields.append("symbol")
+        else:
+            symbol = raw_symbol
+
+    if "quantity" not in missing_fields:
+        try:
+            quantity = float(payload["quantity"])
+        except (TypeError, ValueError):
+            invalid_fields.append("quantity")
+        else:
+            if quantity <= 0:
+                invalid_fields.append("quantity")
+
+    if "entry_price" not in missing_fields:
+        try:
+            entry_price = float(payload["entry_price"])
+        except (TypeError, ValueError):
+            invalid_fields.append("entry_price")
+        else:
+            if entry_price <= 0:
+                invalid_fields.append("entry_price")
+
+    return not missing_fields and not invalid_fields, missing_fields, invalid_fields, symbol, quantity, entry_price
+
+
 async def recover_position_use_case(
     *,
     repo: PositionRepository,
@@ -29,13 +68,21 @@ async def recover_position_use_case(
         return {"ok": False, "code": "EXECUTION_NOT_FILLED", "status": exec_model.status}
 
     payload = exec_model.payload or {}
+    valid_payload, missing_fields, invalid_fields, symbol, quantity, entry_price = _validate_recovery_payload(payload)
+    if not valid_payload:
+        return {
+            "ok": False,
+            "code": "EXECUTION_PAYLOAD_INVALID",
+            "missing_fields": missing_fields,
+            "invalid_fields": invalid_fields,
+        }
     # position + position_event in one transaction — authoritative state before any HTTP side effects
     row = repo.create_position_no_commit(
         execution_id=execution_id,
-        symbol=payload.get("symbol", ""),
+        symbol=symbol,
         side=payload.get("side", "long"),
-        quantity=float(payload.get("quantity", 0)),
-        entry_price=float(payload.get("entry_price", 0)),
+        quantity=quantity,
+        entry_price=entry_price,
         opened_at=datetime.now(timezone.utc),
         stop_loss=payload.get("stop_loss"),
         take_profit=list(payload.get("take_profit") or []),
