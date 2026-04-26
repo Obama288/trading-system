@@ -143,8 +143,8 @@ translation:     exchange_symbol = internal_symbol.replace("-", "")
 ```
 
 Where translation lives:
-- Inside `libs/clients/bybit_market_data_fetcher.py` only
-- Inside `libs/clients/bybit_exchange_client.py` only
+- Inside `libs/exchange/bybit_public.py` for the Stage 53-A public adapter
+- Inside the authenticated Bybit client boundary for Stage 53-B+ private calls
 - Nowhere else in the codebase
 
 Where translation must NOT occur:
@@ -248,7 +248,7 @@ If validation fails:
 ### 7a — Public Market Data (Stage 53-A)
 
 ```python
-# libs/clients/bybit_market_data_fetcher.py
+# libs/exchange/bybit_public.py
 # Must satisfy the existing MarketFetcher Protocol in reconcile_scheduler.py:19-21
 
 class BybitMarketDataFetcher:
@@ -381,8 +381,9 @@ X-BAPI-SIGN:         HMAC-SHA256(timestamp + api_key + recv_window + body)
 X-BAPI-RECV-WINDOW:  5000
 ```
 
-API key env vars: `EXCHANGE_API_KEY`, `EXCHANGE_API_SECRET` (already in
-`libs/config/settings.py`; currently unused). No passphrase required for Bybit.
+Stage 53-B Bybit API key env vars: `BYBIT_API_KEY`, `BYBIT_API_SECRET`.
+No passphrase required for Bybit. Do not document compatibility aliases unless
+code support is verified elsewhere.
 
 ---
 
@@ -409,11 +410,15 @@ Why this is safe:
   call `recover_position` (already implemented) to open the position from the
   existing filled execution
 
-Schema change required (Stage 53-B pre-condition):
+Schema change deferred beyond Stage 53-B:
+- `0009_execution_exchange_fields` is not part of Stage 53-B implementation scope.
+- Stage 53-B remains authenticated client foundation only.
+- The following execution schema fields are deferred to Stage 53-C+ or a separately
+  approved schema-prep stage:
 - Add `exchange_order_id` column to `executions` table (Bybit's `orderId`)
 - Add `exchange_avg_fill_price` column (Bybit's `avgPrice`)
 - Add `exchange_filled_qty` column (Bybit's `cumExecQty`)
-- Migration: `0009_execution_exchange_fields`
+- Deferred migration: `0009_execution_exchange_fields`
 
 ---
 
@@ -653,7 +658,7 @@ This is the smallest safe increment. No execution path changes. No schema migrat
 
 | File | Purpose |
 |---|---|
-| `libs/clients/bybit_market_data_fetcher.py` | New fetcher satisfying existing `MarketFetcher` Protocol |
+| `libs/exchange/bybit_public.py` | Stage 53-A public adapter satisfying existing `MarketFetcher` Protocol |
 | `tests/libs/clients/test_bybit_market_data_fetcher.py` | Unit tests (all HTTP mocked) |
 
 ### Files to change
@@ -696,13 +701,10 @@ remain open after 53-A.
 Pre-conditions: owner input resolved (Decisions 2a, 2b, 2c), 53-A complete.
 
 New file: `libs/clients/bybit_exchange_client.py` (interface defined in Decision 7b).
-New migration: `0009_execution_exchange_fields`
-  - `executions.exchange_order_id VARCHAR`
-  - `executions.exchange_avg_fill_price NUMERIC`
-  - `executions.exchange_filled_qty NUMERIC`
+No schema migration in Stage 53-B. `0009_execution_exchange_fields` is deferred
+to Stage 53-C+ or a separately approved schema-prep stage.
 
-Closes live blockers: B-3 (no authenticated client), B-9 (no idempotency fields),
-partial B-12 (position fetch).
+Closes live blockers: B-3 (no authenticated client), partial B-12 (position fetch).
 
 ### Stage 53-C — Live Execution Path
 
@@ -801,7 +803,7 @@ From Live Path Existence Audit 2026-04-25, with stage mapping:
 | B-6 | Reconcile scheduler has paper-only guard | CRITICAL | 53-D |
 | B-7 | Equity is CLI argument (default 1000.0), not from exchange | CRITICAL | 53-B |
 | B-8 | No instrument rule validation | HIGH | 53-C |
-| B-9 | No `client_order_id`/`exchange_order_id` in schema | HIGH | 53-B |
+| B-9 | No `client_order_id`/`exchange_order_id` in schema | HIGH | 53-C+ or approved schema-prep |
 | B-10 | `close_price` nullable on reconcile close | HIGH | 53-C |
 | B-11 | No real exchange position fetch for reconcile | HIGH | 53-D |
 | B-12 | `bid=ask=last_price` in paper runner; spread always 0 | MEDIUM | 53-F runner |
