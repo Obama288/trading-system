@@ -5,6 +5,14 @@ from datetime import datetime, timezone
 from libs.schemas.common import IndicatorSnapshot, MarketFlags, MarketSnapshot
 
 
+def _ema(closes: list[float], period: int) -> float:
+    alpha = 2 / (period + 1)
+    value = sum(closes[:period]) / period
+    for price in closes[period:]:
+        value = alpha * price + (1 - alpha) * value
+    return value
+
+
 def build_market_snapshot(
     symbol: str,
     timeframe: str,
@@ -29,8 +37,8 @@ def build_market_snapshot(
     liquidity_ok = spread_bps < 50.0
     spread_ok = spread_bps < 20.0
 
-    ema_20 = sum(closes[-20:]) / 20
-    ema_50 = sum(closes[-50:]) / 50
+    ema_20 = _ema(closes, 20)
+    ema_50 = _ema(closes, 50)
 
     gains = [max(closes[i] - closes[i - 1], 0) for i in range(-14, 0)]
     losses = [max(closes[i - 1] - closes[i], 0) for i in range(-14, 0)]
