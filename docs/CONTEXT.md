@@ -53,7 +53,8 @@
 
 - Current gate: Stage 53-B1 planning / architecture
 - Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; Stage 53-B implementation NOT STARTED
-- Next allowed task: Stage 53-B1 planning / architecture and docs/status cleanup
+- Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
+- Next allowed task: Stage 53-B1 architecture review, planning follow-up, and docs/status cleanup
 - Live trading: NO-GO
 - Stage 53-B1 maximum scope: Bybit testnet/demo authenticated read-only balances and positions; optional order status read-only; no place order; no cancel order; no live reconcile
 - Withdrawal permission: forbidden
@@ -79,6 +80,7 @@
 - docs/AI_HANDOFF.md
 - docs/STAGE_53_DESIGN_LOCK.md
 - docs/STAGE_53B_DESIGN_LOCK.md
+- docs/STAGE_53B1_ARCHITECTURE.md
 - docs/architecture/STATE_AND_EVENTS_DRAFT.md
 - docs/architecture/SERVICE_OWNERSHIP.md
 - docs/architecture/INTERACTION_MODEL.md

@@ -72,7 +72,7 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
 ## Current State
 
-Last updated: 2026-04-27 (synced after owner approval for OI-1..OI-9)
+Last updated: 2026-04-27 (synced after Stage 53-B1 architecture plan)
 Current stage: Stage 53-B1 planning / architecture gate
 Stage 53-B owner decisions: ANSWERED / APPROVED
 Stage 53-B implementation: NOT STARTED; separate explicit approval required after planning
@@ -83,6 +83,7 @@ Alembic head: 0008_unique_trade_candidates_signal_id
 Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 Owner decisions OI-1..OI-9: answered/approved in docs/STAGE_53B_OWNER_DECISIONS.md
 Next allowed lane: Stage 53-B1 planning / architecture
+Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 Stage 53-B1 maximum scope: Bybit testnet/demo authenticated read-only balances and positions; optional order status read-only; no place order; no cancel order; no live reconcile
 Withdrawal permission: forbidden
 Secrets: no secrets in repo, prompts, docs, or logs
@@ -91,6 +92,7 @@ Stage 53-B design lock: CLOSED, commit 5e5eb48
 Stage 53-B owner decision tracker: ADDED, commit e814031
 Stage 53-B gate/status cleanup: ADDED, commit 3d72ba8
 Stage 53 design lock decisions cleanup: ADDED, commit ff2f30c
+Stage 53-B1 architecture plan: ADDED
 Q1-FIX-3 true EMA: MERGED, commit 1bd8e2a
 Q1 regression gate:
 - python -m pytest apps/market_data/tests -q: 8 passed
