@@ -5,10 +5,10 @@
 Date: 2026-04-27
 
 Stage:
-Stage 53-B implementation gate.
+Stage 53-B1 planning / architecture gate.
 
 Target:
-Q1 regression-validated status sync after Q1-FIX-3 merge.
+Docs-only owner decisions sync for OI-1..OI-9.
 
 Not target:
 - Stage 53-B runtime implementation
@@ -20,13 +20,14 @@ Not target:
 
 Readiness levels:
 - Docs-ready: GO — Current Gate Status reflects confirmed reality
-- Code-ready: BLOCKED for Stage 53-B implementation until OI-1..OI-9 are answered
+- Code-ready: BLOCKED for Stage 53-B implementation until Stage 53-B1 planning is separately approved
 - Test-ready: GO - Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
 - Runtime-ready: GO — VPS runtime proof complete (2026-04-26)
 
 Current verdict:
 - Real live execution: NO-GO
-- Stage 53-B implementation: BLOCKED until all 9 owner decisions are answered
+- Stage 53-B owner decisions: ANSWERED / APPROVED
+- Stage 53-B implementation: NOT STARTED; separate explicit approval required
 - Unsupervised production live: NO-GO
 
 Last accepted evidence:
@@ -40,6 +41,10 @@ Last accepted evidence:
 - Q1-FIX-2 freshness naive datetime handling MERGED
 - Q1-FIX-3 true EMA in snapshot builder MERGED: 1bd8e2a
 - Q1 regression gate PASS on main HEAD 1bd8e2a
+- Owner decisions OI-1..OI-9 ANSWERED / APPROVED
+- Approved Stage 53-B1 maximum scope: Bybit only; testnet/demo only; authenticated client; read-only balances and positions; optional order status read-only; no place order; no cancel order; no live reconcile
+- Withdrawal permission forbidden.
+- No secrets belong in repo, prompts, docs, or logs.
 - Q1 regression results:
   - python -m pytest apps/market_data/tests -q: 8 passed
   - python -m pytest apps/position_manager/tests -q: 36 passed
@@ -65,38 +70,39 @@ Last accepted evidence:
 - no active production call-sites remain for old commit-based position repo methods
 - VPS runtime proof complete: Python 3.12.3, Docker 29.4.1, all 9 services healthy, execution-service mode=paper (2026-04-26)
 
-Open owner decisions:
-- OI-1 through OI-9 remain OPEN / TBD unless explicitly updated by owner.
-- All nine owner decisions are required before Stage 53-B implementation.
+Owner decisions:
+- OI-1 through OI-9 are ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md.
+- This does not authorize Stage 53-B implementation.
+- This does not authorize live trading.
 
 Allowed work:
-- Owner decisions OI-1..OI-9 and docs/status cleanup
+- Stage 53-B1 planning / architecture and docs/status cleanup
 
 Blocked work:
-- Stage 53-B implementation and later runtime stages
+- Stage 53-B implementation unless separately approved after planning
+- Order placement, order cancellation, live execution, and live reconcile
 - LH-2 paper accumulation
 - Real live execution
 
 Next gate:
-Stage 53-B implementation gate.
+Stage 53-B1 planning / architecture gate.
 
-Required owner input to unblock 53-B:
-- Bybit account type (Unified Trading Account or Classic)
-- Bybit market type for first live: linear or spot
-- Bybit position mode: One-way required
-- Leverage setting for linear perpetuals (confirm or set via API)
-- Bybit API key with Futures read+write, NO withdrawal permission
-- IP whitelist for VPS
-- First live order type: market or limit
-- First live maximum notional size
-- Manual stop-loss procedure on Bybit UI
+Stage 53-B1 maximum scope:
+- Bybit only
+- Testnet/demo only
+- Authenticated client
+- Read-only balances and positions
+- Optional order status read-only
+- No place order
+- No cancel order
+- No live reconcile
 
-Next owner decision:
-Answer OI-1..OI-9 in docs/STAGE_53B_OWNER_DECISIONS.md.
+Next allowed lane:
+Stage 53-B1 planning / architecture, not implementation unless separately approved.
 
 Constraints:
 - Do not claim live-ready.
-- Do not start Stage 53-B implementation until OI-1..OI-9 are answered.
+- Do not start Stage 53-B implementation from the owner-decision sync.
 - Keep docs consistent with source-of-truth rules.
 - Stage 53-A is CLOSED.
 - Live trading remains NO-GO.
