@@ -2,13 +2,13 @@
 
 ## Current Gate Status
 
-Date: 2026-04-26
+Date: 2026-04-27
 
 Stage:
 Stage 53-B implementation gate.
 
 Target:
-Stage 53-B owner decision tracking and docs-only cleanup.
+Q1 regression-validated status sync after Q1-FIX-3 merge.
 
 Not target:
 - Stage 53-B runtime implementation
@@ -21,7 +21,7 @@ Not target:
 Readiness levels:
 - Docs-ready: GO — Current Gate Status reflects confirmed reality
 - Code-ready: BLOCKED for Stage 53-B implementation until OI-1..OI-9 are answered
-- Test-ready: GO - current baseline 250 passed, 5 warnings
+- Test-ready: GO - Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
 - Runtime-ready: GO — VPS runtime proof complete (2026-04-26)
 
 Current verdict:
@@ -36,8 +36,19 @@ Last accepted evidence:
 - Stage 53-B owner decision tracker ADDED: e814031
 - Stage 53-B gate/status handoff cleanup ADDED: 3d72ba8
 - Stage 53 design lock decisions cleanup ADDED: ff2f30c
+- Q1-FIX-1 recover_position payload validation MERGED
+- Q1-FIX-2 freshness naive datetime handling MERGED
+- Q1-FIX-3 true EMA in snapshot builder MERGED: 1bd8e2a
+- Q1 regression gate PASS on main HEAD 1bd8e2a
+- Q1 regression results:
+  - python -m pytest apps/market_data/tests -q: 8 passed
+  - python -m pytest apps/position_manager/tests -q: 36 passed
+  - python -m pytest apps -q: 163 passed
+  - python -m pytest -q --ignore=research with project-local temp isolation: 269 passed, 5 warnings
+- No secrets observed during Q1 regression.
+- No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
 - Final Gate Diff Review completed
-- pytest current baseline: 250 passed, 5 warnings
+- pytest current baseline: Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
 - alembic head: 0008_unique_tc_signal_id (local and VPS)
 - docker-compose binds postgres/redis to 127.0.0.1
 - .env.example uses postgresql+psycopg
@@ -59,7 +70,7 @@ Open owner decisions:
 - All nine owner decisions are required before Stage 53-B implementation.
 
 Allowed work:
-- Docs-only cleanup and owner decision tracking
+- Owner decisions OI-1..OI-9 and docs/status cleanup
 
 Blocked work:
 - Stage 53-B implementation and later runtime stages

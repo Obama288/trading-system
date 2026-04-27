@@ -1,11 +1,26 @@
 # Q-1 Code Audit Backlog
 
-Status: OPEN
+Status: FIXES 1-3 MERGED; REMAINING BACKLOG OPEN
 Current mode: paper trading only
 Live trading: NO-GO
 Stage 53-B implementation: BLOCKED until owner decisions OI-1..OI-9 are answered
 Source: Q-1 QA validation report, 2026-04-26
 Scope: backlog only, no runtime implementation
+
+## Current Q1 merge status
+
+- Q1-FIX-1 recover_position payload validation: MERGED
+- Q1-FIX-2 freshness naive datetime handling: MERGED
+- Q1-FIX-3 true EMA calculation: MERGED on main 1bd8e2a
+- Q1 regression gate: PASS on main 1bd8e2a
+- Regression evidence:
+  - python -m pytest apps/market_data/tests -q: 8 passed
+  - python -m pytest apps/position_manager/tests -q: 36 passed
+  - python -m pytest apps -q: 163 passed
+  - python -m pytest -q --ignore=research with project-local temp isolation: 269 passed, 5 warnings
+- No secrets observed.
+- No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
+- Next lane remains owner decisions OI-1..OI-9 and/or status cleanup, not Stage 53-B implementation.
 
 ## Rules
 
@@ -19,6 +34,7 @@ Scope: backlog only, no runtime implementation
 ## Immediate isolated fix candidates
 
 Q1-FIX-1:
+- Status: MERGED.
 - Finding: HIGH-5 recover_position silently defaults missing payload fields.
 - Validated severity: High.
 - Impact: paper-runtime data integrity bug.
@@ -32,6 +48,7 @@ Q1-FIX-1:
   - missing entry_price returns EXECUTION_PAYLOAD_INVALID and does not create position
 
 Q1-FIX-2:
+- Status: MERGED.
 - Finding: HIGH-8 freshness naive datetime can raise TypeError.
 - Validated severity: Medium.
 - Impact: paper-runtime crash on affected input.
@@ -44,6 +61,7 @@ Q1-FIX-2:
   - stale/fresh behavior remains correct for timezone-aware timestamps
 
 Q1-FIX-3:
+- Status: MERGED on main 1bd8e2a and regression-validated.
 - Finding: HIGH-1 EMA calculated as SMA.
 - Validated severity: High.
 - Impact: strategy correctness issue in paper signal quality.
@@ -132,8 +150,14 @@ Q1-NOACT-1:
 
 ## Recommended order
 
-1. Q1-FIX-1 recover_position payload validation.
-2. Q1-FIX-2 freshness naive datetime handling.
-3. Q1-FIX-3 true EMA calculation.
-4. Architecture decision for approve_candidate distributed transaction.
-5. Backlog grooming for remaining items.
+Completed isolated fixes:
+- Q1-FIX-1 recover_position payload validation.
+- Q1-FIX-2 freshness naive datetime handling.
+- Q1-FIX-3 true EMA calculation.
+
+Next:
+1. Owner decisions OI-1..OI-9 and/or status cleanup.
+2. Architecture decision for approve_candidate distributed transaction.
+3. Backlog grooming for remaining items.
+
+Do not start Stage 53-B implementation until OI-1..OI-9 are answered and explicitly approved.

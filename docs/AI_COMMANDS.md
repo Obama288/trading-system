@@ -72,12 +72,12 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
 ## Current State
 
-Last updated: 2026-04-26 (synced after Stage 53-B docs cleanup)
+Last updated: 2026-04-27 (synced after Q1-FIX-3 merge and Q1 regression PASS)
 Current stage: Stage 53-B implementation gate
 Stage 53-B implementation: BLOCKED until owner decisions OI-1..OI-9 are answered
 Current mode: paper trading only
 Live trading: NO-GO
-Current pytest: 250 passed, 5 warnings
+Current pytest: Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
 Alembic head: 0008_unique_trade_candidates_signal_id
 Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 Owner decisions required before Stage 53-B implementation: OI-1..OI-9
@@ -86,6 +86,13 @@ Stage 53-B design lock: CLOSED, commit 5e5eb48
 Stage 53-B owner decision tracker: ADDED, commit e814031
 Stage 53-B gate/status cleanup: ADDED, commit 3d72ba8
 Stage 53 design lock decisions cleanup: ADDED, commit ff2f30c
+Q1-FIX-3 true EMA: MERGED, commit 1bd8e2a
+Q1 regression gate:
+- python -m pytest apps/market_data/tests -q: 8 passed
+- python -m pytest apps/position_manager/tests -q: 36 passed
+- python -m pytest apps -q: 163 passed
+- python -m pytest -q --ignore=research with project-local temp isolation: 269 passed, 5 warnings
+No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
 
 > **Source of truth**: `docs/PROGRESS.md` is authoritative. If this file conflicts with PROGRESS.md, PROGRESS.md wins.
 

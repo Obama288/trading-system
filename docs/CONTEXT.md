@@ -17,7 +17,7 @@
 - Python: 3.12.3
 - Docker: 29.4.1
 - Services: 9 healthy
-- Tests: 250 passing, 5 warnings (baseline 211 + 39 Stage 53-A)
+- Tests: Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
 - Alembic head: 0008
 - execution-service: ready, mode=paper
 
@@ -35,11 +35,25 @@
 - Commit: 5e5eb48 docs: add stage 53-B design lock
 - Implementation: BLOCKED on owner decisions (9 required, none yet answered)
 
+## Q1 fix and regression status
+
+- Q1-FIX-1 recover_position payload validation: MERGED
+- Q1-FIX-2 freshness naive datetime handling: MERGED
+- Q1-FIX-3 true EMA in snapshot builder: MERGED
+- Regression gate: PASS on main 1bd8e2a
+- Results:
+  - python -m pytest apps/market_data/tests -q: 8 passed
+  - python -m pytest apps/position_manager/tests -q: 36 passed
+  - python -m pytest apps -q: 163 passed
+  - python -m pytest -q --ignore=research with project-local temp isolation: 269 passed, 5 warnings
+- No secrets observed.
+- No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
+
 ## Current stage
 
 - Current gate: Stage 53-B implementation
 - Status: BLOCKED - owner decisions required before any code is written
-- Next allowed task: owner decision checklist / Bybit account verification planning
+- Next allowed task: owner decisions OI-1..OI-9 and docs/status cleanup
 - Live trading: NO-GO
 
 ## Current forbidden scope
