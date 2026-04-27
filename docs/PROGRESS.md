@@ -8,7 +8,7 @@ Stage:
 Stage 53-B1 planning / architecture gate.
 
 Target:
-Docs-only owner decisions sync for OI-1..OI-9.
+Docs-only Stage 53-B1 architecture plan.
 
 Not target:
 - Stage 53-B runtime implementation
@@ -27,6 +27,7 @@ Readiness levels:
 Current verdict:
 - Real live execution: NO-GO
 - Stage 53-B owner decisions: ANSWERED / APPROVED
+- Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B implementation: NOT STARTED; separate explicit approval required
 - Unsupervised production live: NO-GO
 
@@ -42,6 +43,7 @@ Last accepted evidence:
 - Q1-FIX-3 true EMA in snapshot builder MERGED: 1bd8e2a
 - Q1 regression gate PASS on main HEAD 1bd8e2a
 - Owner decisions OI-1..OI-9 ANSWERED / APPROVED
+- Stage 53-B1 architecture plan ADDED: docs/STAGE_53B1_ARCHITECTURE.md
 - Approved Stage 53-B1 maximum scope: Bybit only; testnet/demo only; authenticated client; read-only balances and positions; optional order status read-only; no place order; no cancel order; no live reconcile
 - Withdrawal permission forbidden.
 - No secrets belong in repo, prompts, docs, or logs.
@@ -76,7 +78,7 @@ Owner decisions:
 - This does not authorize live trading.
 
 Allowed work:
-- Stage 53-B1 planning / architecture and docs/status cleanup
+- Stage 53-B1 architecture review, planning follow-up, and docs/status cleanup
 
 Blocked work:
 - Stage 53-B implementation unless separately approved after planning
@@ -98,7 +100,7 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B1 planning / architecture, not implementation unless separately approved.
+Stage 53-B1 architecture review and planning follow-up, not implementation unless separately approved.
 
 Constraints:
 - Do not claim live-ready.

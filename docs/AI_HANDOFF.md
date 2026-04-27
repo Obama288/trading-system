@@ -42,6 +42,7 @@ Latest known commits:
 - Stage 53-B design lock: CLOSED, commit 5e5eb48
 - Status docs after 53-B design lock: CLOSED, commit 69176ed
 - Stage 53-B owner decision tracker: ADDED, commit e814031
+- Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
 - Live Path Audit completed
 - Legacy 11-item live blocker audit completed; canonical current taxonomy is 14 live blockers.
 
@@ -63,7 +64,7 @@ No runtime implementation is authorized by the decision-sync PR.
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B1 planning / architecture and docs/status cleanup.
+Stage 53-B1 architecture review, planning follow-up, and docs/status cleanup.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -76,6 +77,11 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 - Withdrawal permission is forbidden
 - No secrets in repo, prompts, docs, or logs
+
+Architecture plan:
+- docs/STAGE_53B1_ARCHITECTURE.md
+- Docs-only plan; implementation has not started.
+- Future implementation questions are not blockers for the docs-only architecture PR.
 
 Q1 regression evidence:
 - python -m pytest apps/market_data/tests -q: 8 passed
