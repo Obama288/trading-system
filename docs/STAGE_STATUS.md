@@ -11,8 +11,9 @@
 - Stage 53-B design lock closed: 5e5eb48
 - Stage 53-B owner decisions OI-1..OI-9: ANSWERED / APPROVED
 - Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
+- Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 - Stage 53-B implementation: NOT STARTED; separate explicit approval required after Stage 53-B1 planning
-- Stage 53-B1 maximum scope: Bybit testnet/demo authenticated read-only balances and positions; optional order status read-only; no place order; no cancel order; no live reconcile
+- Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred
 - Q1-FIX-3 true EMA: MERGED and regression-validated on main 1bd8e2a
 - Live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile: not enabled by Q1 fixes
 - Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
@@ -36,6 +37,7 @@
 | Q1 Fixes Regression Gate | CLOSED | 1bd8e2a | Q1-FIX-1, Q1-FIX-2, and Q1-FIX-3 merged; main regression PASS; live trading remains NO-GO |
 | Stage 53-B Owner Decisions | CLOSED | pending | OI-1..OI-9 answered/approved; live trading remains NO-GO |
 | Stage 53-B1 Planning / Architecture | PLANNED | pending | docs/STAGE_53B1_ARCHITECTURE.md added; implementation requires separate approval |
+| Stage 53-B1 Owner Inputs | CLOSED | pending | B1-OI-1..B1-OI-6 answered/approved; first implementation excludes order status and all write/live actions |
 | Stage 53-B Implementation | BLOCKED | pending | not started; no place/cancel/live execution/live reconcile |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |

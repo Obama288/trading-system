@@ -54,9 +54,10 @@
 - Current gate: Stage 53-B1 planning / architecture
 - Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; Stage 53-B implementation NOT STARTED
 - Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
+- Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 - Next allowed task: Stage 53-B1 architecture review, planning follow-up, and docs/status cleanup
 - Live trading: NO-GO
-- Stage 53-B1 maximum scope: Bybit testnet/demo authenticated read-only balances and positions; optional order status read-only; no place order; no cancel order; no live reconcile
+- Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no live reconcile
 - Withdrawal permission: forbidden
 - Secrets: no secrets in repo, prompts, docs, or logs
 

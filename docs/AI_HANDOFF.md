@@ -68,12 +68,13 @@ Stage 53-B1 architecture review, planning follow-up, and docs/status cleanup.
 
 Stage 53-B1 maximum scope:
 - Bybit only
-- Testnet/demo only
+- Testnet/demo only; first target = testnet
 - Authenticated client
-- Read-only balances and positions
-- Optional order status read-only
+- First implementation endpoints: server time/connectivity, wallet balance read-only, open positions read-only
+- Order status read-only deferred to a later slice
 - No place order
 - No cancel order
+- No set_leverage
 - No live reconcile
 - Withdrawal permission is forbidden
 - No secrets in repo, prompts, docs, or logs
@@ -81,7 +82,8 @@ Stage 53-B1 maximum scope:
 Architecture plan:
 - docs/STAGE_53B1_ARCHITECTURE.md
 - Docs-only plan; implementation has not started.
-- Future implementation questions are not blockers for the docs-only architecture PR.
+- B1-OI-1..B1-OI-6 are ANSWERED / APPROVED for future implementation planning.
+- This does not authorize runtime implementation, live trading, production private endpoints, orders, cancels, leverage changes, live reconcile, or live execution.
 
 Q1 regression evidence:
 - python -m pytest apps/market_data/tests -q: 8 passed
