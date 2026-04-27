@@ -4,12 +4,27 @@
 ## Status
 
 - Stage 53-B design lock: CLOSED
-- Stage 53-B implementation: BLOCKED on owner input / owner decisions
+- Stage 53-B implementation: NOT STARTED; separate explicit approval required after Stage 53-B1 planning
 - Current mode: paper trading only
 - Live trading: NO-GO
 - Stage 53-A closed: 3b3b06f (feat: add Bybit public market data adapter)
 - Owner decisions tracker: docs/STAGE_53B_OWNER_DECISIONS.md
-- Stage 53-B gate: BLOCKED - all owner decisions below must be confirmed before any implementation begins
+- Owner decisions OI-1..OI-9: ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md
+- Current gate: Stage 53-B1 planning / architecture; implementation is not authorized by the owner-decision sync
+
+## Stage 53-B1 Approved Maximum Scope
+
+- Bybit only
+- Testnet/demo only
+- Authenticated client
+- Read-only balances and positions
+- Optional order status read-only
+- No place order
+- No cancel order
+- No live reconcile
+- Withdrawal permission is forbidden
+- No secrets belong in repo, prompts, docs, or logs
+- Live trading remains NO-GO
 
 ---
 
@@ -41,103 +56,87 @@ Stage 53-B does NOT enable live trading of any kind.
 
 ## Blocked on Owner Decisions
 
-The following decisions must be confirmed by the owner before Stage 53-B implementation begins.
-No implementation work starts until all nine are answered.
+The following decisions are answered in docs/STAGE_53B_OWNER_DECISIONS.md.
+This does not start implementation work.
 
-### OI-1: Bybit Account Type
+### OI-1: Exchange Venue
 
-Question: Is the Bybit account Unified Trading Account (UTA) or Classic?
+Approved answer: Bybit only.
 
-Impact: Determines the correct wallet endpoint, margin model, and position structure.
-The V5 API differs meaningfully between UTA and Classic for balance and position queries.
+Impact: Stage 53-B1 planning is limited to Bybit.
 
-Required answer: Unified or Classic
+Status: ANSWERED / APPROVED
 
-### OI-2: Market Type for First Live
+### OI-2: Environment / Market Access Mode
 
-Question: What market type will be used for the first live trade: linear perpetual or spot?
+Approved answer: Testnet/demo only.
 
-Impact: Determines which category is passed to all V5 order and position endpoints.
-Linear perpetuals use margin and have funding rates. Spot uses no margin.
-The market type must match the account type confirmed in OI-1.
+Impact: No production live access is authorized.
 
-Required answer: linear or spot
+Status: ANSWERED / APPROVED
 
-### OI-3: Position Mode
+### OI-3: Endpoint Permission Scope
 
-Question: Is the account set to One-way mode or Hedge mode for linear perpetuals?
+Approved answer: Read-only balances + positions; optional order status read-only; no place/cancel orders.
 
-Constraint: One-way mode is required for Stage 53 execution design.
-Hedge mode requires side-aware position tracking which is out of scope for Stage 53.
+Impact: Stage 53-B1 has no write endpoint authorization.
 
-Required answer: Confirm One-way mode is active
+Status: ANSWERED / APPROVED
 
-### OI-4: Leverage for First Live Trade
+### OI-4: Secret Handling
 
-Question: What leverage is configured on the account for BTCUSDT linear perpetual?
+Approved answer: Env vars for local testnet; secret manager/GitHub secrets later; no secrets in repo/prompts/docs.
 
-Impact: Risk sizing depends on this. Must match what is set in the Bybit UI before any live
-order is placed. This value is read at runtime but the decision must be made before Stage 53-F.
-Only applies if OI-2 is linear.
+Impact: No API keys, account UID, email, balances, or signed payloads belong in repo, prompts, docs, or logs.
 
-Required answer: Numeric value (e.g. 1, 3, 5, 10)
+Status: ANSWERED / APPROVED
 
-### OI-5: API Key Permissions
+### OI-5: API Key Permission Ceiling
 
-Question: Has an API key been created with exactly these permissions?
-- Futures: read + write
-- NO withdrawal permission
+Approved answer: Read-only API key only; withdrawal permission forbidden.
 
-Constraint: The key must never have withdrawal permission. Any key with withdrawal permission
-will be rejected by the fail-closed security check at client initialization.
+Impact: Any key with withdrawal permission is unacceptable.
 
-Required answer: Confirm key exists with correct permissions
+Status: ANSWERED / APPROVED
 
-### OI-6: IP Whitelist Decision
+### OI-6: Live Trading Authorization Gate
 
-Question: Should the Bybit API key be IP-whitelisted to the VPS IP (45.145.5.254)?
+Approved answer: Live trading only after full implementation + QA + regression + external review + separate explicit owner approval.
 
-Impact: Whitelisting is strongly recommended. A non-whitelisted key with Futures write
-permission represents unnecessary exposure if the key is ever leaked.
+Impact: Live trading remains NO-GO.
 
-Required answer: Yes (whitelist VPS IP) or No (accept the risk, document reason)
+Status: ANSWERED / APPROVED
 
-### OI-7: First Live Order Type Preference
+### OI-7: Authority Model
 
-Question: Should the first live order use a market order or a limit order?
+Approved answer: Keep current authority model exactly.
 
-Impact: Market orders guarantee fill but give up price. Limit orders control price but may
-not fill. The execution path design and partial fill risk differ significantly between the two.
-This decision must be made before Stage 53-C order placement design begins.
+Impact: No risk/orchestrator/execution_service/position_manager authority changes are approved.
 
-Required answer: market or limit
+Status: ANSWERED / APPROVED
 
-### OI-8: First Live Maximum Notional Size
+### OI-8: Stage 53-B1 Maximum Scope
 
-Question: What is the maximum notional size (in USDT) for the first live trade?
+Approved answer: Authenticated client + testnet read-only balances and positions only.
 
-Impact: Sets the hard ceiling for the first controlled live order in Stage 53-F.
-Risk engine sizing must not exceed this value regardless of signal strength.
-Must be confirmed before Stage 53-F risk sizing is finalized.
+Impact: Optional order status read-only is permitted; no place order, cancel order, live execution, or live reconcile.
 
-Required answer: Numeric USDT value (e.g. 50, 100, 200)
+Status: ANSWERED / APPROVED
 
-### OI-9: Manual Stop-Loss Procedure
+### OI-9: Delivery Protocol
 
-Question: What is the manual stop-loss procedure on the Bybit UI if a live position
-moves against the system and the automated path fails?
+Approved answer: Full protocol: architect -> plan -> implement -> QA -> external review if needed -> PR -> merge.
 
-Impact: Stage 53-F runs with no automated stop-loss. The operator must be able to close
-the position manually on Bybit if needed. This procedure must be documented and understood
-before any live order is placed.
+Impact: Implementation still requires separate approval.
 
-Required answer: Documented procedure confirmed by owner
+Status: ANSWERED / APPROVED
 
 ---
 
-## Allowed Client Methods (future implementation scope)
+## Stage 53-B1 Allowed Client Methods (future implementation scope)
 
-These are the only private Bybit V5 methods the Stage 53-B client may implement.
+These are the only Bybit V5 methods the Stage 53-B1 client may implement if a
+separate implementation task is explicitly approved after planning.
 Any method not in this list requires a separate design decision before it may be added.
 
 | Method              | Endpoint                          | Type        |
@@ -145,12 +144,13 @@ Any method not in this list requires a separate design decision before it may be
 | get_server_time     | GET /v5/market/time               | read-only   |
 | get_wallet_balance  | GET /v5/account/wallet-balance    | read-only   |
 | get_open_positions  | GET /v5/position/list             | read-only   |
-| get_order_status    | GET /v5/order/realtime            | read-only   |
-| place_order         | POST /v5/order/create             | write       |
-| cancel_order        | POST /v5/order/cancel             | write       |
+| get_order_status    | GET /v5/order/realtime            | read-only, optional |
 
 Note: get_server_time is a public endpoint but is included here as a connectivity check
 for the authenticated client initialization path.
+
+No place_order or cancel_order method is authorized for Stage 53-B1.
+No live execution, live reconcile, or production balance flow is authorized.
 
 ---
 
@@ -211,7 +211,10 @@ It is not imported by any app in Stage 53-B.
 
 ---
 
-## Idempotency Design
+## Deferred Order Idempotency Design (Beyond Stage 53-B1)
+
+Order placement is not authorized for Stage 53-B1. The notes below are retained as future
+design context only and require separate approval before any implementation.
 
 ### Client Order ID
 
@@ -234,7 +237,10 @@ It is not imported by any app in Stage 53-B.
 
 ---
 
-## Order Status Policy
+## Deferred Order Status Policy (Beyond Stage 53-B1 Writes)
+
+Stage 53-B1 may optionally query order status read-only. Order placement and polling for
+newly placed live orders are not authorized in Stage 53-B1.
 
 - Order placement is not complete until exchange order status is known
 - Runtime must not assume success from HTTP 200 alone
@@ -298,8 +304,9 @@ If any read-only call fails, the key configuration is corrected before proceedin
 - [x] Balance and margin policy documented
 - [x] Partial fill policy documented
 - [x] First private smoke sequence documented
-- [ ] Owner decisions answered (BLOCKED)
-- [ ] Implementation may begin
+- [x] Owner decisions answered
+- [ ] Stage 53-B1 planning approved
+- [ ] Stage 53-B1 implementation may begin
 
 No runtime files were changed to produce this document.
 No secrets were added.

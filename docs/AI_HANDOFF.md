@@ -50,19 +50,32 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 53-B implementation gate.
+Stage 53-B1 planning / architecture gate.
 
 Stage 53-B implementation:
-BLOCKED.
+NOT STARTED.
 
 Block reason:
-Owner decisions OI-1..OI-9 are not answered.
+Implementation still requires separate explicit approval after Stage 53-B1 planning.
 
-No runtime implementation is allowed until owner decisions are answered.
+Owner decisions OI-1..OI-9 are ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md.
+No runtime implementation is authorized by the decision-sync PR.
 No live trading enablement is allowed.
 
 Next safe work:
-Owner decisions OI-1..OI-9 and docs/status cleanup.
+Stage 53-B1 planning / architecture and docs/status cleanup.
+
+Stage 53-B1 maximum scope:
+- Bybit only
+- Testnet/demo only
+- Authenticated client
+- Read-only balances and positions
+- Optional order status read-only
+- No place order
+- No cancel order
+- No live reconcile
+- Withdrawal permission is forbidden
+- No secrets in repo, prompts, docs, or logs
 
 Q1 regression evidence:
 - python -m pytest apps/market_data/tests -q: 8 passed
@@ -80,8 +93,8 @@ Q1 regression evidence:
 - Private endpoints
 - Orders
 - Cancels
-- Balances
-- Positions
+- Production balances
+- Live positions
 - Authenticated exchange client implementation
 - Live execution
 - Live trading enablement
@@ -131,19 +144,21 @@ Canonical current taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN
 
 ---
 
-## Owner decisions needed before 53-B
+## Owner decisions for Stage 53-B1
 
-1. Confirm Bybit account type: Unified or Classic
-2. Confirm market type for first live: linear or spot
-3. Confirm position mode: One-way required
-4. Confirm or set leverage for first live if using linear perpetuals
-5. Confirm Bybit API key permissions: Futures read+write, NO withdrawal
-6. Decide whether to enable IP whitelist for the VPS
-7. Confirm first live order type preference: market or limit
-8. Confirm first live maximum notional size
-9. Confirm manual stop-loss procedure on Bybit UI
+OI-1..OI-9 are ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md.
 
-All OI-1..OI-9 rows remain OPEN / TBD unless the owner explicitly updates them.
+1. OI-1: Bybit only.
+2. OI-2: Testnet/demo only.
+3. OI-3: Read-only balances + positions; optional order status read-only; no place/cancel orders.
+4. OI-4: Env vars for local testnet; secret manager/GitHub secrets later; no secrets in repo/prompts/docs.
+5. OI-5: Read-only API key only; withdrawal permission forbidden.
+6. OI-6: Live trading only after full implementation + QA + regression + external review + separate explicit owner approval.
+7. OI-7: Keep current authority model exactly.
+8. OI-8: Authenticated client + testnet read-only balances and positions only.
+9. OI-9: Full protocol: architect -> plan -> implement -> QA -> external review if needed -> PR -> merge.
+
+These decisions authorize planning only. Stage 53-B1 implementation, live trading, order placement, cancellation, live execution, and live reconcile all require separate explicit approval.
 
 ---
 

@@ -51,10 +51,13 @@
 
 ## Current stage
 
-- Current gate: Stage 53-B implementation
-- Status: BLOCKED - owner decisions required before any code is written
-- Next allowed task: owner decisions OI-1..OI-9 and docs/status cleanup
+- Current gate: Stage 53-B1 planning / architecture
+- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; Stage 53-B implementation NOT STARTED
+- Next allowed task: Stage 53-B1 planning / architecture and docs/status cleanup
 - Live trading: NO-GO
+- Stage 53-B1 maximum scope: Bybit testnet/demo authenticated read-only balances and positions; optional order status read-only; no place order; no cancel order; no live reconcile
+- Withdrawal permission: forbidden
+- Secrets: no secrets in repo, prompts, docs, or logs
 
 ## Current forbidden scope
 
