@@ -15,12 +15,13 @@ Runtime status:
 - Local paper runtime: GO
 - VPS paper runtime: GO
 - 9 services healthy
-- Current test baseline according to current status/context docs: 250 passed, 5 warnings
+- Current test baseline: Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
 - Alembic head: 0008
 - execution-service confirmed ready in paper mode
 - Live exchange layer: NOT IMPLEMENTED
 
 Latest known commits:
+- 1bd8e2a fix: implement true EMA in snapshot builder
 - e6008c3 docs: align status docs with stage 53-B gate
 - ff2f30c docs: align stage 53 design lock decisions
 - 3d72ba8 docs: align stage 53-B gate handoff status
@@ -34,6 +35,9 @@ Latest known commits:
 
 ## Closed work
 
+- Q1-FIX-1 recover_position payload validation: MERGED
+- Q1-FIX-2 freshness naive datetime handling: MERGED
+- Q1-FIX-3 true EMA in snapshot builder: MERGED, regression-validated on main 1bd8e2a
 - Stage 53-A: CLOSED, commit 3b3b06f
 - Stage 53-B design lock: CLOSED, commit 5e5eb48
 - Status docs after 53-B design lock: CLOSED, commit 69176ed
@@ -58,7 +62,15 @@ No runtime implementation is allowed until owner decisions are answered.
 No live trading enablement is allowed.
 
 Next safe work:
-Docs-only cleanup and decision tracking.
+Owner decisions OI-1..OI-9 and docs/status cleanup.
+
+Q1 regression evidence:
+- python -m pytest apps/market_data/tests -q: 8 passed
+- python -m pytest apps/position_manager/tests -q: 36 passed
+- python -m pytest apps -q: 163 passed
+- python -m pytest -q --ignore=research with project-local temp isolation: 269 passed, 5 warnings
+- No secrets observed.
+- No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
 
 ---
 

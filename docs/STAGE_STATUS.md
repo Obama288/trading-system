@@ -6,10 +6,12 @@
 - Last completed operational milestone: Stage 53-A (Bybit public market data adapter)
 - Current mode: paper trading only
 - Live readiness: NO-GO
-- Current test baseline: 250 passed, 5 warnings
+- Current test baseline: Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
 - Stage 53-A closed: 3b3b06f
 - Stage 53-B design lock closed: 5e5eb48
 - Stage 53-B implementation: BLOCKED until owner decisions OI-1..OI-9 are answered
+- Q1-FIX-3 true EMA: MERGED and regression-validated on main 1bd8e2a
+- Live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile: not enabled by Q1 fixes
 - Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 
 ## Stage table
@@ -28,6 +30,7 @@
 | Stage 53-B Owner Decision Tracker | CLOSED | e814031 | owner decisions OI-1..OI-9 tracker added; all remain OPEN / TBD unless owner updates them |
 | Stage 53-B Gate Handoff Cleanup | CLOSED | 3d72ba8 | handoff status aligned to blocked 53-B implementation gate |
 | Stage 53 Design Lock Decisions Cleanup | CLOSED | ff2f30c | design lock decisions aligned: 14 blockers, BYBIT env vars, client_order_id rule, deferred 0009, canonical adapter path |
+| Q1 Fixes Regression Gate | CLOSED | 1bd8e2a | Q1-FIX-1, Q1-FIX-2, and Q1-FIX-3 merged; main regression PASS; live trading remains NO-GO |
 | Stage 53-B | BLOCKED | pending | owner decisions required before code |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |
