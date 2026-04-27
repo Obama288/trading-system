@@ -6,9 +6,9 @@ Define the architecture plan for a future Stage 53-B1 implementation slice.
 
 Stage 53-B1 is planning / architecture only in this PR. Stage 53-B1 implementation has not started.
 
-The planned implementation, if separately approved later, is a Bybit testnet/demo authenticated read-only client for balances and positions, with optional read-only order status. It must not enable live trading, production private endpoint access, order placement, order cancellation, live execution, or live reconcile.
+The planned first implementation slice, if separately approved later, is a Bybit testnet authenticated read-only client for server time/connectivity, wallet balance, and open positions only. Order status read-only is deferred to a later slice. It must not enable live trading, production private endpoint access, order placement, order cancellation, leverage changes, live execution, or live reconcile.
 
-OI-1..OI-9 are already answered/approved and merged in PR #8. Future implementation questions in this document are not blockers for this docs-only architecture PR.
+OI-1..OI-9 are already answered/approved and merged in PR #8. B1-OI-1..B1-OI-6 are answered/approved for future Stage 53-B1 implementation planning. This docs-only sync does not authorize runtime implementation.
 
 ## 2. Non-goals
 
@@ -37,7 +37,7 @@ The maximum future Stage 53-B1 implementation scope is:
 - Authenticated client.
 - Read-only wallet balance.
 - Read-only open positions.
-- Optional read-only order status.
+- Order status read-only is deferred to a later slice.
 - Server time / connectivity check if needed.
 - Explicit startup/runtime guards to prevent production/live use.
 - Logging redaction and secret-safety controls.
@@ -51,10 +51,11 @@ Stage 53-B1 must not include:
 - cancel_order.
 - withdraw.
 - transfer.
-- set_leverage unless a future owner-approved stage allows it.
+- set_leverage.
 - Live reconcile.
 - Live execution.
 - Production private endpoint access.
+- Order status in the first implementation slice.
 - Service startup wiring into execution_service, position_manager, orchestrator, risk_engine, review_gateway, dashboard, or kill_switch.
 - Any order routing, order creation, order cancellation, fill processing, or position mutation.
 - Any change to risk authority, kill-switch authority, review authority, execution_service authority, position_manager authority, dashboard read-only behavior, or journal audit-only behavior.
@@ -101,10 +102,9 @@ class BybitReadOnlyClient:
     async def get_server_time(self) -> ServerTime: ...
     async def get_wallet_balance(self) -> WalletBalance: ...
     async def get_open_positions(self) -> list[OpenPosition]: ...
-    async def get_order_status(self, order_id: str | None = None, order_link_id: str | None = None) -> OrderStatus: ...
 ```
 
-`get_order_status` is optional for the first implementation slice. If included, it must be read-only and must not poll newly placed orders because Stage 53-B1 cannot place orders.
+`get_order_status` is deferred to a later slice. The first implementation slice must not include order status.
 
 All methods are queries. They must not create, cancel, amend, transfer, withdraw, set leverage, or reconcile anything.
 
@@ -113,7 +113,8 @@ All methods are queries. They must not create, cancel, amend, transfer, withdraw
 - Server time / connectivity check if needed.
 - Read-only wallet balance.
 - Read-only open positions.
-- Optional read-only order status.
+
+Order status read-only is deferred to a later slice.
 
 ## 9. Explicitly Forbidden Methods
 
@@ -121,8 +122,9 @@ All methods are queries. They must not create, cancel, amend, transfer, withdraw
 - `cancel_order`.
 - `withdraw`.
 - `transfer`.
-- `set_leverage` unless future owner-approved stage allows it.
+- `set_leverage`.
 - `live_reconcile`.
+- `get_order_status` in the first implementation slice.
 
 No method with exchange-side mutation is allowed in Stage 53-B1.
 
@@ -177,7 +179,7 @@ Future implementation tests should be mocked by default:
 - Missing credentials fail closed.
 - Read-only wallet balance maps to typed model.
 - Read-only open positions maps to typed model.
-- Optional order status maps to typed model.
+- First implementation slice excludes order status.
 - Forbidden methods do not exist.
 - Logs redact secrets, signatures, account identifiers, balances, and raw payloads.
 - Bybit error codes map to typed errors.
@@ -197,41 +199,82 @@ Current Q1 regression PASS remains the latest baseline:
 - Paper trading only is preserved.
 - Live trading remains NO-GO.
 - No production private endpoint access is authorized.
-- Maximum scope is Bybit testnet/demo authenticated read-only balances and positions, with optional read-only order status.
+- First implementation scope is Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions.
+- Order status read-only is deferred to a later slice.
 - No place_order.
 - No cancel_order.
 - No withdraw.
 - No transfer.
 - No set_leverage.
+- No order status in the first implementation slice.
 - No live reconcile.
 - No live execution.
 - No secrets or sensitive account data appear in docs.
 - Authority model is unchanged.
 - Pipeline order is unchanged.
-- Future implementation questions are marked NEEDS_OWNER_INPUT before implementation, not blockers for this docs-only PR.
+- B1-OI-1..B1-OI-6 are answered/approved for future implementation planning.
 
 ## 14. Future Implementation Slices
 
 - B1-DOC: maintain this architecture plan and status docs.
-- B1-CONFIG: define testnet/demo-only configuration contract after separate approval.
+- B1-CONFIG: define testnet/demo-only configuration contract after separate approval; first target is testnet.
 - B1-CLIENT-SKELETON: create read-only client shell and typed errors after separate approval.
 - B1-BALANCE-READ: implement mocked read-only wallet balance call after separate approval.
 - B1-POSITIONS-READ: implement mocked read-only open positions call after separate approval.
-- B1-ORDER-STATUS-READ-OPTIONAL: implement mocked read-only order status only if included in first implementation slice.
+- B1-ORDER-STATUS-READ-OPTIONAL: deferred to a later slice.
 - B1-QA-HARDENING: complete mocked tests, redaction tests, guard tests, and regression gate after separate approval.
 
 Each implementation slice requires the protocol from OI-9: architect -> plan -> implement -> QA -> external review if needed -> PR -> merge.
 
 ## 15. Risks and Future Implementation Questions
 
-These are NEEDS_OWNER_INPUT before implementation. They are not blockers for this docs-only architecture PR.
+## 15. Approved B1 Implementation Owner Inputs
 
-- NEEDS_OWNER_INPUT: account type: Unified or Classic.
-- NEEDS_OWNER_INPUT: position mode: One-way or Hedge.
-- NEEDS_OWNER_INPUT: leverage policy: manual pre-config or API-managed.
-- NEEDS_OWNER_INPUT: exact testnet/demo environment name.
-- NEEDS_OWNER_INPUT: final allowed endpoint list.
-- NEEDS_OWNER_INPUT: whether optional order-status read is included in first implementation slice.
+These inputs are ANSWERED / APPROVED for future Stage 53-B1 implementation planning:
+
+| ID | Status | Approved answer |
+|---|---|---|
+| B1-OI-1 | ANSWERED / APPROVED | UTA / Unified Trading Account. |
+| B1-OI-2 | ANSWERED / APPROVED | One-way mode. |
+| B1-OI-3 | ANSWERED / APPROVED | Manual pre-config only; app must not call set_leverage. |
+| B1-OI-4 | ANSWERED / APPROVED | Support testnet/demo in config; first target = testnet. |
+| B1-OI-5 | ANSWERED / APPROVED | server time + wallet balance + open positions only. |
+| B1-OI-6 | ANSWERED / APPROVED | order status read-only deferred to later slice. |
+
+This docs-only update does not authorize runtime implementation, live trading, production private endpoints, orders, cancels, leverage changes, live reconcile, or live execution.
+
+First implementation allowed endpoint list:
+
+- server time / connectivity.
+- wallet balance read-only.
+- open positions read-only.
+
+First implementation slice must exclude:
+
+- order status.
+- place_order.
+- cancel_order.
+- set_leverage.
+- withdraw.
+- transfer.
+- live reconcile.
+- live execution.
+- production private endpoint access.
+
+No API keys, secrets, account UID, email, balances, or signed payloads belong in repo, prompts, docs, or logs.
+
+## 16. Risks and Future Implementation Questions
+
+These questions are resolved for the first implementation slice by B1-OI-1..B1-OI-6:
+
+- account type: UTA / Unified Trading Account.
+- position mode: One-way mode.
+- leverage policy: manual pre-config only; app must not call set_leverage.
+- exact testnet/demo environment name: support testnet/demo in config; first target = testnet.
+- final allowed endpoint list: server time + wallet balance + open positions only.
+- optional order-status read: deferred to a later slice.
+
+Future implementation questions may still arise during design review. They are not authorization to exceed the first implementation scope.
 
 Known risks:
 
@@ -242,7 +285,7 @@ Known risks:
 - Introducing service startup wiring before the client is reviewed.
 - Treating optional order-status read as order lifecycle support.
 
-## 16. Files Future Codex May Touch
+## 17. Files Future Codex May Touch
 
 Only after separate implementation approval, future Codex may touch:
 
@@ -256,7 +299,7 @@ Only after separate implementation approval, future Codex may touch:
 
 Any additional file requires explicit scope approval.
 
-## 17. Files Future Codex Must Not Touch
+## 18. Files Future Codex Must Not Touch
 
 Future Stage 53-B1 work must not touch:
 

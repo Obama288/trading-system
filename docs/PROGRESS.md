@@ -28,6 +28,7 @@ Current verdict:
 - Real live execution: NO-GO
 - Stage 53-B owner decisions: ANSWERED / APPROVED
 - Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
+- Stage 53-B1 implementation owner inputs: ANSWERED / APPROVED
 - Stage 53-B implementation: NOT STARTED; separate explicit approval required
 - Unsupervised production live: NO-GO
 
@@ -44,6 +45,9 @@ Last accepted evidence:
 - Q1 regression gate PASS on main HEAD 1bd8e2a
 - Owner decisions OI-1..OI-9 ANSWERED / APPROVED
 - Stage 53-B1 architecture plan ADDED: docs/STAGE_53B1_ARCHITECTURE.md
+- B1-OI-1..B1-OI-6 ANSWERED / APPROVED for future Stage 53-B1 implementation planning
+- First implementation allowed endpoints: server time/connectivity, wallet balance read-only, open positions read-only
+- First implementation excluded: order status, place_order, cancel_order, set_leverage, withdraw, transfer, live reconcile, live execution, production private endpoint access
 - Approved Stage 53-B1 maximum scope: Bybit only; testnet/demo only; authenticated client; read-only balances and positions; optional order status read-only; no place order; no cancel order; no live reconcile
 - Withdrawal permission forbidden.
 - No secrets belong in repo, prompts, docs, or logs.
@@ -94,9 +98,10 @@ Stage 53-B1 maximum scope:
 - Testnet/demo only
 - Authenticated client
 - Read-only balances and positions
-- Optional order status read-only
+- Order status read-only deferred to a later slice
 - No place order
 - No cancel order
+- No set_leverage
 - No live reconcile
 
 Next allowed lane:

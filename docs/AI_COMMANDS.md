@@ -72,7 +72,7 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
 ## Current State
 
-Last updated: 2026-04-27 (synced after Stage 53-B1 architecture plan)
+Last updated: 2026-04-27 (synced after Stage 53-B1 implementation owner inputs)
 Current stage: Stage 53-B1 planning / architecture gate
 Stage 53-B owner decisions: ANSWERED / APPROVED
 Stage 53-B implementation: NOT STARTED; separate explicit approval required after planning
@@ -84,7 +84,8 @@ Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_D
 Owner decisions OI-1..OI-9: answered/approved in docs/STAGE_53B_OWNER_DECISIONS.md
 Next allowed lane: Stage 53-B1 planning / architecture
 Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
-Stage 53-B1 maximum scope: Bybit testnet/demo authenticated read-only balances and positions; optional order status read-only; no place order; no cancel order; no live reconcile
+Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
+Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no withdraw; no transfer; no live reconcile; no live execution; no production private endpoint access
 Withdrawal permission: forbidden
 Secrets: no secrets in repo, prompts, docs, or logs
 Stage 53-A: CLOSED, commit 3b3b06f
