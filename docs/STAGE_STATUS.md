@@ -2,12 +2,12 @@
 
 ## Current summary
 
-- Current stage: Stage 53-B1 planning / architecture gate + Slice 1 server-time skeleton checkpoint
+- Current stage: Stage 53-B1 planning / architecture gate + Slice 2 wallet_balance checkpoint
 - Last completed operational milestone: Stage 53-A (Bybit public market data adapter)
-- Last completed code/test slice: Stage 53-B1 Slice 1 server-time skeleton, 828b64a
+- Last completed code/test slice: Stage 53-B1 Slice 2 wallet_balance, 66a898d
 - Current mode: paper trading only
 - Live readiness: NO-GO
-- Current Slice 1 test baseline: HEAD 828b64a PASS for mocked server-time skeleton behavior only; focused Slice 1 tests 28 passed; tests/libs/exchange 67 passed
+- Current Slice 2 test baseline: HEAD 66a898d PASS for mocked wallet_balance behavior only; focused Slice 2 tests 33 passed; tests/libs/exchange 72 passed; tests/libs/config 19 passed
 - Stage 53-A closed: 3b3b06f
 - Stage 53-B design lock closed: 5e5eb48
 - Stage 53-B owner decisions OI-1..OI-9: ANSWERED / APPROVED
@@ -15,10 +15,11 @@
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 - B1-CONFIG config-only slice: CLOSED on c17c7d0; no runtime/service wiring
 - Stage 53-B1 Slice 1 server-time skeleton: CLOSED on 828b64a; accepted implementation checkpoint; no runtime/service wiring
-- Stage 53-B implementation beyond Slice 1: BLOCKED; separate explicit approval required
+- Stage 53-B1 Slice 2 wallet_balance: CLOSED on 66a898d; accepted implementation checkpoint; mocked wallet_balance tests only; not runtime-ready
+- Stage 53-B implementation beyond Slice 2: BLOCKED; separate explicit approval required
 - Stage 53-B1 first client implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred
 - Q1-FIX-3 true EMA: MERGED and regression-validated on main 1bd8e2a
-- Live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile: not enabled by Q1 fixes or B1-CONFIG
+- Live/exchange/private endpoints/orders/cancels/live execution/live reconcile: not enabled by Q1 fixes, B1-CONFIG, Slice 1, or Slice 2
 - Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 
 ## Stage table
@@ -43,6 +44,7 @@
 | Stage 53-B1 Owner Inputs | CLOSED | pending | B1-OI-1..B1-OI-6 answered/approved; first implementation excludes order status and all write/live actions |
 | Stage 53-B1 B1-CONFIG | CLOSED | c17c7d0 | config-only Bybit B1 settings and tests; no client, private API calls, service wiring, runtime behavior, or live enablement |
 | Stage 53-B1 Slice 1 Server-Time Skeleton | CLOSED | 828b64a | Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, get_server_time() only, mocked tests; not runtime-ready |
+| Stage 53-B1 Slice 2 Wallet Balance | CLOSED | 66a898d | get_wallet_balance(), wallet balance read-only models, Decimal values, redacted repr/model_dump, sanitized wallet errors, mocked tests; no open_positions, service wiring, real connectivity, or runtime readiness |
 | Stage 53-B Implementation | BLOCKED | pending | not started; no place/cancel/live execution/live reconcile |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |
@@ -100,6 +102,39 @@ Does not exist:
 - real credential verification.
 
 Future wallet/open positions slices require separate Human Owner authorization.
+
+## Stage 53-B1 Slice 2 checkpoint
+
+Commit: 66a898d feat: add Bybit B1 read-only wallet balance.
+
+Classification:
+- Code-ready candidate / accepted implementation checkpoint for Slice 2 wallet_balance only.
+- Test-ready for mocked wallet_balance behavior only.
+- Not runtime-ready.
+
+Exists:
+- get_wallet_balance().
+- Wallet balance read-only models.
+- Decimal numeric values.
+- Redacted repr() / model_dump().
+- Sanitized wallet errors.
+- Mocked tests.
+
+Does not exist:
+- open_positions.
+- order_status.
+- place_order.
+- cancel_order.
+- set_leverage.
+- withdraw.
+- transfer.
+- live_reconcile.
+- live_execution.
+- service startup wiring.
+- real Bybit connectivity verification.
+- real credential verification.
+
+Future open_positions slice requires separate Human Owner authorization.
 
 ## Live blockers
 

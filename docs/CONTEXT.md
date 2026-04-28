@@ -17,7 +17,7 @@
 - Python: 3.12.3
 - Docker: 29.4.1
 - Services: 9 healthy
-- Tests: HEAD 828b64a PASS for mocked Slice 1 server-time skeleton behavior only; focused Slice 1 tests 28 passed; tests/libs/exchange 67 passed
+- Tests: HEAD 66a898d PASS for mocked Slice 2 wallet_balance behavior only; focused Slice 2 tests 33 passed; tests/libs/exchange 72 passed; tests/libs/config 19 passed
 - Alembic head: 0008
 - execution-service: ready, mode=paper
 
@@ -34,14 +34,14 @@
 - Stage 53-B design lock: CLOSED
 - Commit: 5e5eb48 docs: add stage 53-B design lock
 - Owner decisions: ANSWERED / APPROVED
-- Runtime/client implementation: Slice 1 server-time skeleton accepted/pushed at 828b64a; no runtime/service wiring
+- Runtime/client implementation: Slice 2 wallet_balance accepted/pushed at 66a898d; no runtime/service wiring
 
 ## Q1 fix and regression status
 
 - Q1-FIX-1 recover_position payload validation: MERGED
 - Q1-FIX-2 freshness naive datetime handling: MERGED
 - Q1-FIX-3 true EMA in snapshot builder: MERGED
-- Regression gate: PASS on main 1bd8e2a; B1-CONFIG green at c17c7d0; Slice 1 mocked server-time skeleton tests green at 828b64a
+- Regression gate: PASS on main 1bd8e2a; B1-CONFIG green at c17c7d0; Slice 1 mocked server-time skeleton tests green at 828b64a; Slice 2 mocked wallet_balance tests green at 66a898d
 - Results:
   - python -m pytest tests\libs\config -q: 19 passed
   - python -m pytest tests\libs\exchange -q: 39 passed
@@ -53,18 +53,23 @@
 - Slice 1 evidence:
   - python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 28 passed
   - python -m pytest tests\libs\exchange -q: 67 passed
+- Slice 2 evidence:
+  - python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 33 passed
+  - python -m pytest tests\libs\exchange -q: 72 passed
+  - python -m pytest tests\libs\config -q: 19 passed
 
 ## Current stage
 
-- Current gate: Stage 53-B1 planning / architecture + Slice 1 server-time skeleton checkpoint
-- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Stage 53-B implementation beyond Slice 1 BLOCKED
+- Current gate: Stage 53-B1 planning / architecture + Slice 2 wallet_balance checkpoint
+- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Stage 53-B implementation beyond Slice 2 BLOCKED
 - Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
-- Next allowed task: Stage 53-B1 docs/status cleanup and static safety checks; wallet balance/open positions or further implementation requires separate approval
+- Next allowed task: Stage 53-B1 docs/status cleanup and static safety checks; open_positions or further implementation requires separate approval
 - Live trading: NO-GO
 - Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no live reconcile
 - B1-CONFIG scope already present: config-only settings; no client, no private API calls, no service startup wiring, no runtime behavior change
 - Slice 1 scope already present: Bybit auth/signing helper; timestamp / recv_window handling; redaction helpers; minimal ServerTime model; read-only client skeleton; get_server_time() only; mocked tests; not runtime-ready
+- Slice 2 scope already present: get_wallet_balance(); wallet balance read-only models; Decimal numeric values; redacted repr() / model_dump(); sanitized wallet errors; mocked tests; not runtime-ready
 - Withdrawal permission: forbidden
 - Secrets: no secrets in repo, prompts, docs, or logs
 
@@ -74,9 +79,8 @@
 - No real Bybit connectivity or real credential use
 - No orders
 - No cancels
-- No balances
+- No balance runtime verification or real account balance use
 - No positions
-- No wallet_balance implementation without separate Human Owner authorization
 - No open_positions implementation without separate Human Owner authorization
 - No order_status
 - No live execution
