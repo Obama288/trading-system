@@ -41,6 +41,29 @@ No wallet_balance smoke, open_positions smoke, `order_status`, write/live
 methods, service wiring, runtime readiness, trading readiness, live readiness, or
 probe readiness were authorized or confirmed by B2b.
 
+Stage 53-B2c wallet_balance smoke harness is implemented, committed, pushed, and
+remote-visible at:
+
+`c9b1337 feat: add Stage 53-B2 wallet-balance smoke harness`
+
+B2c includes:
+- `scripts/smoke_wallet_balance.py`
+- `tests/scripts/test_smoke_wallet_balance.py`
+- wallet_balance smoke harness
+- mocked tests only
+- direct no-flag latch that exits 3 with sanitized `authorization_required` JSON
+- `--allow-real-smoke` required for the real-capable path
+- mocked success output limited to endpoint, status, exchange, account_type,
+  coins_count, and elapsed_ms
+
+B2c did not run real wallet_balance smoke, did not use credentials, did not add
+open_positions smoke, did not add `order_status`, did not add write/live methods,
+and did not add service wiring.
+
+B2c is code-ready/test-ready only for mocked wallet_balance smoke harness
+behavior. Runtime readiness, trading readiness, live readiness, and probe
+readiness remain not approved.
+
 ## 2. Stage 53-B2 Scope
 
 Stage 53-B2 is a plan for real Bybit testnet read-only connectivity smoke.
@@ -57,7 +80,7 @@ implementation or real-smoke step requires a separate Human Owner decision.
 
 - B2a: implemented server_time smoke harness + mocked tests only at a511e2f
 - B2b: completed successful real testnet server_time smoke after explicit Human Owner authorization
-- B2c: implement wallet_balance smoke harness + mocked tests only
+- B2c: implemented wallet_balance smoke harness + mocked tests only at c9b1337
 - B2d: execute real wallet_balance smoke only after explicit Human Owner authorization
 - B2e: implement open_positions smoke harness + mocked tests only
 - B2f: execute real open_positions smoke only after explicit Human Owner authorization
@@ -65,12 +88,14 @@ implementation or real-smoke step requires a separate Human Owner decision.
 Each gate requires a separate Human Owner decision.
 
 No automatic progression is allowed. Passing B2a does not authorize B2b. Passing
-B2b does not authorize B2c. Passing any gate does not authorize trading, live,
-probe, runtime readiness, service wiring, `order_status`, or write/live methods.
+B2b does not authorize B2c, and B2c does not authorize B2d. Passing any gate does
+not authorize trading, live, probe, runtime readiness, service wiring,
+`order_status`, or write/live methods.
 
-B2b real server_time smoke is complete for `server_time` only. B2d wallet_balance
-real smoke remains unauthorized until a separate Human Owner decision. No
-automatic progression and no automatic retry are allowed.
+B2b real server_time smoke is complete for `server_time` only. B2c mocked
+wallet_balance harness is complete for mocked behavior only. B2d real
+wallet_balance smoke remains unauthorized until a separate Human Owner decision.
+No automatic progression and no automatic retry are allowed.
 
 ## 4. Forbidden Scope
 
@@ -422,12 +447,7 @@ Successful smoke does not authorize production private endpoint use.
 ## 17. Human Owner Decisions Required
 
 Required decisions before any next action:
-- Whether to accept this Stage 53-B2 smoke plan.
-- Whether to authorize B2a implementation of a server_time smoke harness with
-  mocked tests only.
-- Whether to accept the B2b real server_time smoke success checkpoint.
-- Whether to authorize B2c wallet_balance smoke harness implementation with
-  mocked tests only.
+- Whether to accept the B2c wallet_balance smoke harness checkpoint.
 - Whether to authorize B2d real wallet_balance smoke after B2c is reviewed.
 - Whether wallet_balance and open_positions smoke gates remain in scope after
   server_time results.
@@ -436,9 +456,10 @@ Required decisions before any next action:
 
 ## 18. Recommended Next Step
 
-Accept or revise this docs-only B2b server_time success checkpoint.
+Accept or revise this docs-only B2c wallet_balance smoke harness checkpoint.
 
-If accepted, the next possible implementation request is B2c only:
-implement wallet_balance smoke harness + mocked tests only, with no real
-wallet_balance smoke, no open_positions smoke, no service wiring, no
-`order_status`, and no write/live methods.
+If accepted, the next possible protected action is B2d preflight/planning for
+real wallet_balance smoke only. B2d still requires a separate Human Owner
+decision and must preserve credential hygiene / key active-not-expired preflight,
+no automatic progression, no automatic retry, no open_positions smoke, no
+service wiring, no `order_status`, and no write/live methods.

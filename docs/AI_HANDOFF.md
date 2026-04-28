@@ -15,7 +15,7 @@ Runtime status:
 - Local paper runtime: GO
 - VPS paper runtime: GO
 - 9 services healthy
-- Current test baseline: HEAD a511e2f PASS for mocked B2a server_time smoke harness behavior only; direct no-flag latch exits 3 with authorization_required JSON; B2a tests 14 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
+- Current test baseline: HEAD c9b1337 PASS for mocked B2c wallet_balance smoke harness behavior only; direct no-flag latch exits 3 with authorization_required JSON; tests/scripts/test_smoke_wallet_balance.py 14 passed; tests/scripts 28 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed after clearing BYBIT_B1 env vars
 - Alembic head: 0008
 - execution-service confirmed ready in paper mode
 - Live exchange layer: NOT IMPLEMENTED
@@ -25,9 +25,11 @@ Runtime status:
 - Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED / REMOTE-VISIBLE at 0596afb; mocked tests only; not runtime-ready
 - Stage 53-B2a server_time smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE at a511e2f; mocked tests only; direct no-flag latch exits 3; not runtime-ready; no real smoke or credentials use authorized
 - Stage 53-B2b real server_time smoke: SUCCESS for server_time only; Human Owner executed exactly one real Bybit testnet server_time smoke locally after safe credential presence and hygiene checks; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; not runtime-ready
+- Stage 53-B2c wallet_balance smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE at c9b1337; mocked tests only; direct no-flag latch exits 3; --allow-real-smoke required for real-capable path; not runtime-ready; no real wallet_balance smoke or credentials use for B2c implementation
 - Stage 53-B2 permanent real-smoke preflight: safe credential presence check, safe credential hygiene check, and Human Owner external 7-day key validity confirmation are required before any real Bybit smoke gate; any missing required env var, hygiene warning, expired/uncertain key, or missing owner confirmation stops the smoke
 
 Latest known commits:
+- c9b1337 feat: add Stage 53-B2 wallet-balance smoke harness
 - a511e2f feat: add Stage 53-B2 server-time smoke harness
 - 0596afb feat: add Bybit B1 read-only open positions
 - 66a898d feat: add Bybit B1 read-only wallet balance
@@ -62,6 +64,7 @@ Latest known commits:
 - Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED / REMOTE-VISIBLE, commit 0596afb
 - Stage 53-B2a server_time smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE, commit a511e2f
 - Stage 53-B2b real server_time smoke: SUCCESS, local owner-run; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; no wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
+- Stage 53-B2c wallet_balance smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE, commit c9b1337; mocked tests only; no real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
 - Live Path Audit completed
 - Legacy 11-item live blocker audit completed; canonical current taxonomy is 14 live blockers.
 
@@ -70,7 +73,7 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 53-B2b real server_time smoke checkpoint.
+Stage 53-B2c wallet_balance smoke harness checkpoint.
 
 Stage 53-B implementation:
 BLOCKED beyond accepted Slice 3 open_positions.
@@ -84,13 +87,16 @@ B2a server_time smoke harness is accepted, pushed, and remote-visible on a511e2f
 Stage 53-B2b smoke state:
 B2b real server_time smoke succeeded for server_time only. Human Owner executed exactly one real Bybit testnet server_time smoke locally after safe credential presence and hygiene checks. Result: LASTEXITCODE=0; elapsed_ms=1534; sanitized output only. Credentials were used locally only and must not be stored or disclosed. No wallet_balance smoke, open_positions smoke, order_status, write/live methods, or service wiring was run or authorized. Runtime readiness is not confirmed.
 
+Stage 53-B2c implementation state:
+B2c wallet_balance smoke harness is accepted, pushed, and remote-visible on c9b1337. It adds scripts/smoke_wallet_balance.py and tests/scripts/test_smoke_wallet_balance.py. It includes a wallet_balance smoke harness, mocked tests only, and a direct CLI no-flag safety latch that exits 3 with authorization_required JSON. The real-capable path requires --allow-real-smoke. Mocked success output is sanitized and includes only endpoint/status/exchange/account_type/coins_count/elapsed_ms. No real wallet_balance smoke was run. No credentials were used for B2c implementation. No open_positions smoke, order_status, write/live methods, or service wiring was added. Runtime readiness is not confirmed.
+
 Slice 3 classification:
 - Code-ready candidate / accepted implementation checkpoint for open_positions only.
 - Test-ready for mocked open_positions behavior only.
 - Not runtime-ready.
 
 Still not implemented:
-- wallet_balance smoke
+- B2d real wallet_balance smoke
 - open_positions smoke
 - order_status
 - place_order
@@ -105,14 +111,14 @@ Still not implemented:
 - real credential verification
 
 Block reason:
-Any implementation beyond B2a and any real smoke beyond B2b server_time requires separate explicit approval. B2d real wallet_balance smoke, open_positions smoke, order_status, and all write/live methods require separate Human Owner authorization.
+Any real smoke beyond B2b server_time and any implementation beyond B2c requires separate explicit approval. B2d real wallet_balance smoke, open_positions smoke, order_status, and all write/live methods require separate Human Owner authorization.
 
 Owner decisions OI-1..OI-9 are ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md.
 No runtime implementation is authorized by the decision-sync PR, B1-CONFIG, Slice 1, Slice 2, or Slice 3.
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B2 docs/status cleanup and static safety checks; B2c wallet_balance smoke harness implementation, B2d real wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation only after explicit approval.
+Stage 53-B2 docs/status cleanup and static safety checks; B2d real wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation only after explicit approval.
 
 Stage 53-B1 maximum scope:
 - Bybit only
