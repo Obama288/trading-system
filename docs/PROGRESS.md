@@ -5,15 +5,16 @@
 Date: 2026-04-28
 
 Stage:
-Stage 53-B1 planning / architecture gate + B1-CONFIG status sync.
+Stage 53-B1 planning / architecture gate + Slice 1 server-time skeleton checkpoint.
 
 Target:
-Docs-only Gate 2 status sync after B1-CONFIG.
+Docs-only status sync after accepted and pushed Stage 53-B1 Slice 1.
 
 Not target:
 - Stage 53-B runtime implementation
-- Authenticated Bybit client implementation
-- Private Bybit API calls
+- Wallet balance implementation
+- Open positions implementation
+- Order status implementation
 - Service startup wiring
 - Real live exchange execution
 - Unsupervised production live
@@ -22,10 +23,10 @@ Not target:
 - LH-2 accumulation/stats work
 
 Readiness levels:
-- Docs-ready: GO - Gate 2 sync reflects B1-CONFIG status at HEAD c17c7d0
-- Code-ready: GO for B1-CONFIG config-only slice; BLOCKED/NOT STARTED for authenticated Bybit client, private endpoints, service wiring, Stage 53-B runtime implementation, and live execution
-- Test-ready: GO - HEAD c17c7d0: tests/libs/config 19 passed; tests/libs/exchange 39 passed; apps/market_data/tests 8 passed; apps 163 passed; non-research suite 288 passed, 5 warnings
-- Runtime-ready: no new runtime readiness from B1-CONFIG; prior paper runtime proof remains historical; live runtime readiness not confirmed
+- Docs-ready: GO - status reflects Slice 1 checkpoint at HEAD 828b64a
+- Code-ready: code-ready candidate / accepted implementation checkpoint for Stage 53-B1 Slice 1 server-time skeleton only
+- Test-ready: mocked server-time skeleton behavior only; HEAD 828b64a: focused Slice 1 tests 28 passed; tests/libs/exchange 67 passed
+- Runtime-ready: not runtime-ready; no real Bybit connectivity, real credential, service startup, VPS, deployment, or live runtime readiness confirmed
 
 Current verdict:
 - Real live execution: NO-GO
@@ -33,13 +34,20 @@ Current verdict:
 - Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs: ANSWERED / APPROVED
 - B1-CONFIG config-only slice: CODE/TEST COMPLETE on HEAD c17c7d0
-- Authenticated Bybit client files: NOT PRESENT
+- Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED on HEAD 828b64a
+- Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, and get_server_time() only: PRESENT
+- Mocked tests for auth and get_server_time skeleton behavior: PRESENT
 - Service startup wiring for B1 client: NOT PRESENT
-- Private Bybit API calls: NOT PRESENT
-- Stage 53-B implementation: NOT STARTED; separate explicit approval required
+- Wallet balance, open positions, order status, place_order, cancel_order, set_leverage, withdraw, transfer, live_reconcile, live_execution: NOT PRESENT
+- Real Bybit connectivity verification and real credential verification: NOT PRESENT
+- Stage 53-B implementation beyond Slice 1 server-time skeleton: BLOCKED; separate explicit approval required
 - Unsupervised production live: NO-GO
 
 Last accepted evidence:
+- Stage 53-B1 Slice 1 server-time skeleton ACCEPTED / PUSHED: 828b64a feat: add Bybit B1 read-only server-time skeleton
+  - Exists: Bybit auth/signing helper; timestamp / recv_window handling; redaction helpers; minimal ServerTime model; read-only client skeleton; get_server_time() only; mocked tests.
+  - Test evidence: python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 28 passed; python -m pytest tests\libs\exchange -q: 67 passed.
+  - Not verified: runtime readiness, real Bybit connectivity, real credentials, wallet balance, open positions, order status, service startup wiring, live/probe/trading readiness.
 - Stage 53-A CLOSED: 3b3b06f
 - Stage 53-B design lock CLOSED: 5e5eb48
 - Status docs after 53-B design lock CLOSED: 69176ed
@@ -100,16 +108,16 @@ Allowed work:
 - Further B1 implementation slices only after separate explicit approval
 
 Blocked work:
-- Stage 53-B implementation unless separately approved after planning
-- Authenticated Bybit client implementation unless separately approved
+- Stage 53-B implementation beyond accepted Slice 1 unless separately approved
+- Wallet balance and open positions implementation unless separately approved
 - Service startup wiring for any Bybit private/read-only client
-- Private Bybit API calls
+- Order status implementation
 - Order placement, order cancellation, live execution, and live reconcile
 - LH-2 paper accumulation
 - Real live execution
 
 Next gate:
-Stage 53-B1 post-B1-CONFIG status / safety gate.
+Stage 53-B1 post-Slice-1 status / safety gate.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -123,7 +131,7 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B1 docs/status cleanup and static safety checks; no further implementation unless separately approved.
+Stage 53-B1 docs/status cleanup and static safety checks; wallet balance/open positions or any further implementation requires separate Human Owner authorization.
 
 Constraints:
 - Do not claim live-ready.

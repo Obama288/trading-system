@@ -2,19 +2,20 @@
 
 ## Current summary
 
-- Current stage: Stage 53-B1 planning / architecture gate + B1-CONFIG status sync
+- Current stage: Stage 53-B1 planning / architecture gate + Slice 1 server-time skeleton checkpoint
 - Last completed operational milestone: Stage 53-A (Bybit public market data adapter)
-- Last completed code/test slice: B1-CONFIG config-only settings, c17c7d0
+- Last completed code/test slice: Stage 53-B1 Slice 1 server-time skeleton, 828b64a
 - Current mode: paper trading only
 - Live readiness: NO-GO
-- Current test baseline: HEAD c17c7d0 PASS; tests/libs/config 19 passed; tests/libs/exchange 39 passed; apps/market_data/tests 8 passed; apps 163 passed; non-research suite 288 passed, 5 warnings
+- Current Slice 1 test baseline: HEAD 828b64a PASS for mocked server-time skeleton behavior only; focused Slice 1 tests 28 passed; tests/libs/exchange 67 passed
 - Stage 53-A closed: 3b3b06f
 - Stage 53-B design lock closed: 5e5eb48
 - Stage 53-B owner decisions OI-1..OI-9: ANSWERED / APPROVED
 - Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 - B1-CONFIG config-only slice: CLOSED on c17c7d0; no runtime/service wiring
-- Stage 53-B implementation: NOT STARTED; separate explicit approval required after Stage 53-B1 planning
+- Stage 53-B1 Slice 1 server-time skeleton: CLOSED on 828b64a; accepted implementation checkpoint; no runtime/service wiring
+- Stage 53-B implementation beyond Slice 1: BLOCKED; separate explicit approval required
 - Stage 53-B1 first client implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred
 - Q1-FIX-3 true EMA: MERGED and regression-validated on main 1bd8e2a
 - Live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile: not enabled by Q1 fixes or B1-CONFIG
@@ -41,6 +42,7 @@
 | Stage 53-B1 Planning / Architecture | PLANNED | pending | docs/STAGE_53B1_ARCHITECTURE.md added; implementation requires separate approval |
 | Stage 53-B1 Owner Inputs | CLOSED | pending | B1-OI-1..B1-OI-6 answered/approved; first implementation excludes order status and all write/live actions |
 | Stage 53-B1 B1-CONFIG | CLOSED | c17c7d0 | config-only Bybit B1 settings and tests; no client, private API calls, service wiring, runtime behavior, or live enablement |
+| Stage 53-B1 Slice 1 Server-Time Skeleton | CLOSED | 828b64a | Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, get_server_time() only, mocked tests; not runtime-ready |
 | Stage 53-B Implementation | BLOCKED | pending | not started; no place/cancel/live execution/live reconcile |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |
@@ -63,6 +65,41 @@ All nine are ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md.
 9. OI-9: Full protocol: architect -> plan -> implement -> QA -> external review if needed -> PR -> merge.
 
 This does not authorize Stage 53-B implementation or live trading.
+
+## Stage 53-B1 Slice 1 checkpoint
+
+Commit: 828b64a feat: add Bybit B1 read-only server-time skeleton.
+
+Classification:
+- Code-ready candidate / accepted implementation checkpoint for Slice 1 only.
+- Test-ready for mocked server-time skeleton behavior only.
+- Not runtime-ready.
+
+Exists:
+- Bybit auth/signing helper.
+- Timestamp / recv_window handling.
+- Redaction helpers.
+- Minimal ServerTime model.
+- Read-only client skeleton.
+- get_server_time() only.
+- Mocked tests.
+
+Does not exist:
+- wallet_balance.
+- open_positions.
+- order_status.
+- place_order.
+- cancel_order.
+- set_leverage.
+- withdraw.
+- transfer.
+- live_reconcile.
+- live_execution.
+- service startup wiring.
+- real Bybit connectivity verification.
+- real credential verification.
+
+Future wallet/open positions slices require separate Human Owner authorization.
 
 ## Live blockers
 

@@ -20,8 +20,12 @@ Runtime status:
 - execution-service confirmed ready in paper mode
 - Live exchange layer: NOT IMPLEMENTED
 - B1-CONFIG config-only slice: CODE/TEST COMPLETE, no runtime wiring
+- Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED at 828b64a; mocked tests only; not runtime-ready
 
 Latest known commits:
+- 828b64a feat: add Bybit B1 read-only server-time skeleton
+- d6045ad docs: add three-lane operating model
+- 43940c8 docs: sync Stage 53-B1 B1-CONFIG status
 - c17c7d0 feat: add Bybit B1 read-only config settings
 - 67c37f6 Merge pull request #10 from Obama288/docs/stage-53b1-owner-inputs
 - 93e7767 docs: record Stage 53-B1 implementation owner inputs
@@ -45,6 +49,7 @@ Latest known commits:
 - Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 owner inputs: ADDED, commit 93e7767
 - B1-CONFIG config-only settings: ADDED, commit c17c7d0
+- Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED, commit 828b64a
 - Live Path Audit completed
 - Legacy 11-item live blocker audit completed; canonical current taxonomy is 14 live blockers.
 
@@ -53,23 +58,43 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 53-B1 post-B1-CONFIG status / safety gate.
+Stage 53-B1 post-Slice-1 status / safety gate.
 
 Stage 53-B implementation:
-NOT STARTED.
+BLOCKED beyond accepted Slice 1 server-time skeleton.
 
 Stage 53-B1 implementation state:
-B1-CONFIG config-only slice is complete on c17c7d0. Authenticated Bybit client files, private API calls, service startup wiring, order status, order placement, cancellation, live reconcile, live execution, and production private endpoint access are not implemented.
+B1-CONFIG config-only slice is complete on c17c7d0. Slice 1 server-time skeleton is accepted and pushed on 828b64a. It includes Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, get_server_time() only, and mocked tests.
+
+Slice 1 classification:
+- Code-ready candidate / accepted implementation checkpoint for server-time skeleton only.
+- Test-ready for mocked server-time skeleton behavior only.
+- Not runtime-ready.
+
+Still not implemented:
+- wallet_balance
+- open_positions
+- order_status
+- place_order
+- cancel_order
+- set_leverage
+- withdraw
+- transfer
+- live_reconcile
+- live_execution
+- service startup wiring
+- real Bybit connectivity verification
+- real credential verification
 
 Block reason:
-Any implementation beyond B1-CONFIG requires separate explicit approval.
+Any implementation beyond Slice 1 requires separate explicit approval. Future wallet/open positions slices require separate Human Owner authorization.
 
 Owner decisions OI-1..OI-9 are ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md.
-No runtime implementation is authorized by the decision-sync PR or B1-CONFIG.
+No runtime implementation is authorized by the decision-sync PR, B1-CONFIG, or Slice 1.
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B1 docs/status cleanup and static safety checks; further implementation only after explicit approval.
+Stage 53-B1 docs/status cleanup and static safety checks; wallet balance/open positions or further implementation only after explicit approval.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -86,11 +111,14 @@ Stage 53-B1 maximum scope:
 
 Architecture plan:
 - docs/STAGE_53B1_ARCHITECTURE.md
-- B1-CONFIG config-only slice exists; read-only client implementation has not started.
+- B1-CONFIG config-only slice exists.
+- Slice 1 server-time skeleton exists at 828b64a; read-only client remains library-only and exposes get_server_time() only.
 - B1-OI-1..B1-OI-6 are ANSWERED / APPROVED for future implementation planning.
 - This does not authorize runtime implementation, live trading, production private endpoints, orders, cancels, leverage changes, live reconcile, or live execution.
 
 Current regression evidence:
+- python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 28 passed
+- python -m pytest tests\libs\exchange -q: 67 passed
 - python -m pytest tests\libs\config -q: 19 passed
 - python -m pytest tests\libs\exchange -q: 39 passed
 - python -m pytest apps/market_data/tests -q: 8 passed
