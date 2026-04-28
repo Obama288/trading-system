@@ -23,9 +23,23 @@ Stage 53-B2a is implemented, committed, and pushed at:
 B2a includes a `server_time` smoke harness, mocked tests, and a direct no-flag
 safety latch that exits 3 with sanitized `authorization_required` JSON.
 
-Real credentials, real Bybit calls, runtime smoke, service wiring,
-`order_status`, wallet_balance smoke, open_positions smoke, and write/live
-methods are not authorized by this document or by B2a.
+Stage 53-B2b real Bybit testnet `server_time` smoke was executed locally by the
+Human Owner after safe credential presence and hygiene checks.
+
+B2b result:
+- command: `python scripts\smoke_server_time.py --allow-real-smoke`
+- `LASTEXITCODE=0`
+- `elapsed_ms=1534`
+- sanitized output only
+- endpoint family: `server_time`
+- status: success
+
+Credentials were used locally only for the owner-authorized B2b smoke and must
+not be stored, disclosed, logged, committed, or pasted into chat.
+
+No wallet_balance smoke, open_positions smoke, `order_status`, write/live
+methods, service wiring, runtime readiness, trading readiness, live readiness, or
+probe readiness were authorized or confirmed by B2b.
 
 ## 2. Stage 53-B2 Scope
 
@@ -42,7 +56,7 @@ implementation or real-smoke step requires a separate Human Owner decision.
 ## 3. Gate Structure
 
 - B2a: implemented server_time smoke harness + mocked tests only at a511e2f
-- B2b: execute real server_time smoke only after explicit Human Owner authorization
+- B2b: completed successful real testnet server_time smoke after explicit Human Owner authorization
 - B2c: implement wallet_balance smoke harness + mocked tests only
 - B2d: execute real wallet_balance smoke only after explicit Human Owner authorization
 - B2e: implement open_positions smoke harness + mocked tests only
@@ -54,7 +68,9 @@ No automatic progression is allowed. Passing B2a does not authorize B2b. Passing
 B2b does not authorize B2c. Passing any gate does not authorize trading, live,
 probe, runtime readiness, service wiring, `order_status`, or write/live methods.
 
-B2b real server_time smoke remains not authorized and not executed.
+B2b real server_time smoke is complete for `server_time` only. B2d wallet_balance
+real smoke remains unauthorized until a separate Human Owner decision. No
+automatic progression and no automatic retry are allowed.
 
 ## 4. Forbidden Scope
 
@@ -105,6 +121,90 @@ Rules:
   or issue comments.
 - Human Owner verifies read-only/no-withdrawal/testnet key permissions externally
   before any real smoke.
+
+Permanent preflight rule:
+
+Before any real Bybit smoke execution, the active shell/session must pass all of
+the following:
+- safe credential presence check
+- safe credential hygiene check
+- Human Owner external 7-day key validity check
+
+The Bybit testnet API key is temporary / expected valid or stored for 7 days.
+Before any real smoke, the Human Owner must externally confirm:
+- key is still active
+- key has not expired
+- key is testnet-only
+- key is read-only
+- withdrawal is disabled
+- transfer/write/order permissions are disabled
+
+The assistant must not inspect secret values, inspect the Bybit UI, or ask the
+Human Owner to paste credentials into chat.
+
+Safe credential presence check output is limited to:
+- `OK: VARIABLE_NAME is set`
+- `MISSING: VARIABLE_NAME is not set`
+
+Safe credential hygiene check may check only:
+- empty/missing
+- leading/trailing whitespace
+- newline/carriage return/tab
+- accidental surrounding quote characters
+
+Safe credential hygiene output is limited to:
+- `OK: VARIABLE_NAME basic hygiene check passed`
+- `WARNING: VARIABLE_NAME is empty or missing`
+- `WARNING: VARIABLE_NAME has leading/trailing whitespace`
+- `WARNING: VARIABLE_NAME contains newline or tab`
+- `WARNING: VARIABLE_NAME appears to include surrounding quote characters`
+
+Credential preflight output must never include:
+- values
+- lengths
+- masked values
+- prefixes or suffixes
+- hashes
+- `env | grep BYBIT`
+- echoed secret variables
+- screenshots containing secrets
+
+Recommended PowerShell preflight snippet:
+
+```powershell
+@("BYBIT_B1_ENVIRONMENT","BYBIT_B1_API_KEY","BYBIT_B1_API_SECRET") | ForEach-Object {
+    if ([Environment]::GetEnvironmentVariable($_)) {
+        Write-Output "OK: $_ is set"
+    } else {
+        Write-Output "MISSING: $_ is not set"
+    }
+}
+
+@("BYBIT_B1_API_KEY","BYBIT_B1_API_SECRET") | ForEach-Object {
+    $v = [Environment]::GetEnvironmentVariable($_)
+
+    if ($null -eq $v -or $v -eq "") {
+        Write-Output "WARNING: $_ is empty or missing"
+        return
+    }
+
+    if ($v -ne $v.Trim()) {
+        Write-Output "WARNING: $_ has leading/trailing whitespace"
+    }
+
+    if ($v.Contains("`n") -or $v.Contains("`r") -or $v.Contains("`t")) {
+        Write-Output "WARNING: $_ contains newline or tab"
+    }
+
+    if (($v.StartsWith('"') -and $v.EndsWith('"')) -or ($v.StartsWith("'") -and $v.EndsWith("'"))) {
+        Write-Output "WARNING: $_ appears to include surrounding quote characters"
+    }
+
+    if (($v -eq $v.Trim()) -and -not ($v.Contains("`n") -or $v.Contains("`r") -or $v.Contains("`t")) -and -not (($v.StartsWith('"') -and $v.EndsWith('"')) -or ($v.StartsWith("'") -and $v.EndsWith("'")))) {
+        Write-Output "OK: $_ basic hygiene check passed"
+    }
+}
+```
 
 ## 6. Read-Only / No-Withdrawal Permission Verification Plan
 
@@ -240,6 +340,8 @@ Failure handling must fail closed and stop the phase.
 The following outcomes stop the phase:
 - missing credentials
 - malformed credentials
+- any credential hygiene `WARNING`
+- expired or uncertain key status
 - auth failure
 - permission denied
 - timeout
@@ -254,6 +356,11 @@ Rate limit is inconclusive, not success. No automatic retry is allowed unless a
 future Human Owner decision explicitly authorizes a bounded retry policy.
 
 There is no automatic progression after failure or success.
+
+Successful credential presence, hygiene, and key-validity preflight does not mean
+runtime-ready, trading-ready, live-ready, or probe-ready. It does not authorize
+wallet_balance smoke, open_positions smoke, `order_status`, service wiring, or
+write/live methods.
 
 ## 14. Rollback / Cleanup Plan
 
@@ -318,7 +425,10 @@ Required decisions before any next action:
 - Whether to accept this Stage 53-B2 smoke plan.
 - Whether to authorize B2a implementation of a server_time smoke harness with
   mocked tests only.
-- Whether to authorize B2b real server_time smoke after B2a is reviewed.
+- Whether to accept the B2b real server_time smoke success checkpoint.
+- Whether to authorize B2c wallet_balance smoke harness implementation with
+  mocked tests only.
+- Whether to authorize B2d real wallet_balance smoke after B2c is reviewed.
 - Whether wallet_balance and open_positions smoke gates remain in scope after
   server_time results.
 - Whether demo environment is ever allowed, with explicit URL mapping.
@@ -326,8 +436,9 @@ Required decisions before any next action:
 
 ## 18. Recommended Next Step
 
-Accept or revise this docs-only Stage 53-B2 smoke plan.
+Accept or revise this docs-only B2b server_time success checkpoint.
 
-If accepted, the next implementation request should be B2a only:
-implement server_time smoke harness + mocked tests only, with no real Bybit call,
-no credentials, no service wiring, no `order_status`, and no write/live methods.
+If accepted, the next possible implementation request is B2c only:
+implement wallet_balance smoke harness + mocked tests only, with no real
+wallet_balance smoke, no open_positions smoke, no service wiring, no
+`order_status`, and no write/live methods.

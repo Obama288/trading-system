@@ -2,19 +2,20 @@
 
 ## Current Gate Status
 
-Date: 2026-04-28
+Date: 2026-04-29
 
 Stage:
-Stage 53-B2a server_time smoke harness checkpoint.
+Stage 53-B2b real server_time smoke checkpoint.
 
 Target:
-Docs-only status sync after accepted and pushed Stage 53-B2a.
+Docs-only status sync after Human Owner executed successful B2b real testnet
+server_time smoke.
 
 Not target:
 - Stage 53-B runtime implementation
 - Order status implementation
 - Service startup wiring
-- Real smoke execution
+- Further real smoke execution
 - Credentials use
 - Wallet balance smoke
 - Open positions smoke
@@ -25,10 +26,10 @@ Not target:
 - LH-2 accumulation/stats work
 
 Readiness levels:
-- Docs-ready: GO - status reflects B2a server_time smoke harness checkpoint at HEAD a511e2f
+- Docs-ready: GO - status reflects B2b successful real testnet server_time smoke checkpoint
 - Code-ready: code-ready candidate / accepted implementation checkpoint for Stage 53-B2a server_time smoke harness only
 - Test-ready: mocked B2a server_time smoke harness behavior only; HEAD a511e2f: direct no-flag latch confirmed exit 3; B2a tests 14 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
-- Runtime-ready: not runtime-ready; no real Bybit connectivity, real credential, service startup, VPS, deployment, or live runtime readiness confirmed
+- Runtime-ready: not runtime-ready; B2b confirmed server_time connectivity only and does not confirm service startup, VPS, deployment, or live runtime readiness
 
 Current verdict:
 - Real live execution: NO-GO
@@ -40,20 +41,30 @@ Current verdict:
 - Stage 53-B1 Slice 2 wallet_balance: ACCEPTED / PUSHED on HEAD 66a898d
 - Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED on HEAD 0596afb
 - Stage 53-B2a server_time smoke harness: ACCEPTED / PUSHED on HEAD a511e2f
+- Stage 53-B2b real server_time smoke: SUCCESS; Human Owner executed exactly one real Bybit testnet server_time smoke locally after safe credential presence and hygiene checks; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only
+- Stage 53-B2 permanent real-smoke preflight: safe credential presence check, safe credential hygiene check, and Human Owner external 7-day key validity confirmation are REQUIRED before any real Bybit smoke gate; any missing required env var, hygiene warning, expired/uncertain key, or missing owner confirmation stops the smoke
 - Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, and get_server_time() only: PRESENT
 - get_wallet_balance(), wallet balance read-only models, Decimal numeric values, redacted repr()/model_dump(), sanitized wallet errors, and mocked tests: PRESENT
 - get_open_positions(), open-position read-only models, Decimal numeric values, redacted repr()/model_dump(), sanitized open-position errors, and mocked tests: PRESENT
 - Mocked tests for auth and get_server_time skeleton behavior: PRESENT
 - Service startup wiring for B1 client: NOT PRESENT
-- B2b real server_time smoke execution: NOT AUTHORIZED / NOT RUN
-- Credentials use for smoke: NOT AUTHORIZED / NOT USED
+- B2b real server_time smoke execution: SUCCESS for server_time only; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only
+- Credentials use for smoke: USED LOCALLY ONLY by Human Owner for B2b; credentials must not be stored or disclosed
 - Wallet_balance smoke and open_positions smoke: NOT AUTHORIZED / NOT PRESENT
 - Order status, place_order, cancel_order, set_leverage, withdraw, transfer, live_reconcile, live_execution: NOT PRESENT
-- Real Bybit connectivity verification and real credential verification: NOT PRESENT
+- Real Bybit server_time connectivity verification: PRESENT for B2b only; wallet_balance/open_positions connectivity and real credential permission verification remain NOT PRESENT
 - Stage 53-B implementation beyond Slice 3 open_positions: BLOCKED; separate explicit approval required
 - Unsupervised production live: NO-GO
 
 Last accepted evidence:
+- Stage 53-B2b real server_time smoke SUCCESS:
+  - Command: python scripts\smoke_server_time.py --allow-real-smoke
+  - LASTEXITCODE=0; elapsed_ms=1534; output was sanitized.
+  - Sanitized output fields included endpoint server_time, endpoint_family server_time, exchange bybit, operation bybit_b1_server_time_smoke, status success, timestamp_second, and timestamp_nano.
+  - Credentials were used locally only and must not be stored, disclosed, logged, committed, or pasted into chat.
+  - Not run / not authorized: wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring.
+  - Not verified: runtime readiness, trading readiness, live readiness, probe readiness, wallet_balance connectivity, open_positions connectivity, order_status, service startup wiring.
+  - B2d wallet_balance real smoke remains unauthorized until separate Human Owner decision.
 - Stage 53-B2a server_time smoke harness ACCEPTED / PUSHED / REMOTE-VISIBLE: a511e2f feat: add Stage 53-B2 server-time smoke harness
   - Classification: code-ready candidate / accepted implementation checkpoint; test-ready for mocked B2a behavior only; not runtime-ready.
   - Exists: server_time smoke harness; mocked tests; direct no-flag latch exits 3 with authorization_required JSON.
@@ -159,7 +170,7 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B2 docs/status cleanup and static safety checks; B2b real server_time smoke, credentials use, wallet_balance smoke, open_positions smoke, order_status, and any write/live methods require separate Human Owner authorization.
+Stage 53-B2 docs/status cleanup and static safety checks; B2c wallet_balance smoke harness implementation, B2d real wallet_balance smoke, open_positions smoke, order_status, and any write/live methods require separate Human Owner authorization.
 
 Constraints:
 - Do not claim live-ready.

@@ -2,7 +2,7 @@
 
 ## Current summary
 
-- Current stage: Stage 53-B2a server_time smoke harness checkpoint
+- Current stage: Stage 53-B2b real server_time smoke checkpoint
 - Last completed operational milestone: Stage 53-A (Bybit public market data adapter)
 - Last completed code/test slice: Stage 53-B2a server_time smoke harness, a511e2f
 - Current mode: paper trading only
@@ -18,6 +18,8 @@
 - Stage 53-B1 Slice 2 wallet_balance: CLOSED on 66a898d; accepted implementation checkpoint; mocked wallet_balance tests only; not runtime-ready
 - Stage 53-B1 Slice 3 open_positions: CLOSED on 0596afb; accepted implementation checkpoint; mocked open_positions tests only; not runtime-ready
 - Stage 53-B2a server_time smoke harness: CLOSED on a511e2f; accepted implementation checkpoint; mocked tests only; direct no-flag latch exits 3; not runtime-ready; no real smoke or credentials use authorized
+- Stage 53-B2b real server_time smoke: SUCCESS for server_time only; Human Owner executed exactly one real Bybit testnet server_time smoke locally after safe credential presence and hygiene checks; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; not runtime-ready
+- Stage 53-B2 permanent real-smoke preflight: safe credential presence check, safe credential hygiene check, and Human Owner external 7-day key validity confirmation are required before any real Bybit smoke gate; any missing required env var, hygiene warning, expired/uncertain key, or missing owner confirmation stops the smoke
 - Stage 53-B implementation beyond Slice 3: BLOCKED; separate explicit approval required
 - Stage 53-B1 first client implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred
 - Q1-FIX-3 true EMA: MERGED and regression-validated on main 1bd8e2a
@@ -49,6 +51,7 @@
 | Stage 53-B1 Slice 2 Wallet Balance | CLOSED | 66a898d | get_wallet_balance(), wallet balance read-only models, Decimal values, redacted repr/model_dump, sanitized wallet errors, mocked tests; no open_positions, service wiring, real connectivity, or runtime readiness |
 | Stage 53-B1 Slice 3 Open Positions | CLOSED | 0596afb | get_open_positions(), open-position read-only models, Decimal values, redacted repr/model_dump, sanitized open-position errors, mocked tests; no order_status, service wiring, real connectivity, or runtime readiness |
 | Stage 53-B2a Server-Time Smoke Harness | CLOSED | a511e2f | server_time smoke harness, mocked tests, direct no-flag latch exits 3 with authorization_required JSON; no real smoke, credentials use, wallet/open_positions smoke, order_status, service wiring, or runtime readiness |
+| Stage 53-B2b Real Server-Time Smoke | CLOSED | local owner-run | successful real Bybit testnet server_time smoke; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; no wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness |
 | Stage 53-B Implementation | BLOCKED | pending | not started; no place/cancel/live execution/live reconcile |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |
@@ -203,7 +206,7 @@ Does not exist / is not authorized:
 - real Bybit connectivity verification.
 - real credential verification.
 
-B2b real server_time smoke, credentials use, wallet_balance smoke, open_positions smoke, order_status, and all write/live methods require separate Human Owner authorization.
+B2c wallet_balance smoke harness implementation, B2d real wallet_balance smoke, open_positions smoke, order_status, and all write/live methods require separate Human Owner authorization.
 
 ## Live blockers
 

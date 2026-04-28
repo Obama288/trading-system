@@ -34,7 +34,7 @@
 - Stage 53-B design lock: CLOSED
 - Commit: 5e5eb48 docs: add stage 53-B design lock
 - Owner decisions: ANSWERED / APPROVED
-- Runtime/client implementation: B2a server_time smoke harness accepted/pushed/remote-visible at a511e2f; no runtime/service wiring; no real smoke executed; no credentials used
+- Runtime/client implementation: B2a server_time smoke harness accepted/pushed/remote-visible at a511e2f; B2b real server_time smoke succeeded locally with LASTEXITCODE=0 and elapsed_ms=1534; no runtime/service wiring; no wallet_balance/open_positions smoke; no order_status or write/live methods
 
 ## Q1 fix and regression status
 
@@ -66,29 +66,34 @@
   - python -m pytest tests\scripts\test_smoke_server_time.py -q --basetemp=.pytest-temp-run: 14 passed
   - python -m pytest tests\libs\exchange -q: 78 passed
   - python -m pytest tests\libs\config -q: 19 passed
+- B2b evidence:
+  - Human Owner executed exactly one real Bybit testnet server_time smoke locally after safe credential presence and hygiene checks
+  - python scripts\smoke_server_time.py --allow-real-smoke: LASTEXITCODE=0; elapsed_ms=1534; sanitized output only
+  - No wallet_balance smoke, open_positions smoke, order_status, write/live methods, or service wiring was run
 
 ## Current stage
 
-- Current gate: Stage 53-B2a server_time smoke harness checkpoint
-- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; Stage 53-B implementation beyond B2a BLOCKED
+- Current gate: Stage 53-B2b real server_time smoke checkpoint
+- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; B2b server_time smoke succeeded locally; Stage 53-B implementation beyond B2a and real smoke beyond B2b server_time BLOCKED
 - Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
-- Next allowed task: Stage 53-B2 docs/status cleanup and static safety checks; B2b real server_time smoke, credentials use, wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
+- Next allowed task: Stage 53-B2 docs/status cleanup and static safety checks; B2c wallet_balance smoke harness implementation, B2d real wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
 - Live trading: NO-GO
 - Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no live reconcile
 - B1-CONFIG scope already present: config-only settings; no client, no private API calls, no service startup wiring, no runtime behavior change
 - Slice 1 scope already present: Bybit auth/signing helper; timestamp / recv_window handling; redaction helpers; minimal ServerTime model; read-only client skeleton; get_server_time() only; mocked tests; not runtime-ready
 - Slice 2 scope already present: get_wallet_balance(); wallet balance read-only models; Decimal numeric values; redacted repr() / model_dump(); sanitized wallet errors; mocked tests; not runtime-ready
 - Slice 3 scope already present: get_open_positions(); open-position read-only models; Decimal numeric values; redacted repr() / model_dump(); sanitized open-position errors; mocked tests; not runtime-ready
-- B2a scope already present: server_time smoke harness; mocked tests; direct no-flag latch exits 3 with authorization_required JSON; not runtime-ready; no real smoke executed; no credentials used
+- B2a scope already present: server_time smoke harness; mocked tests; direct no-flag latch exits 3 with authorization_required JSON; not runtime-ready
+- B2b scope already completed: real testnet server_time smoke succeeded locally; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; credentials were used locally only and must not be stored or disclosed; not runtime-ready
 - Withdrawal permission: forbidden
 - Secrets: no secrets in repo, prompts, docs, or logs
 
 ## Current forbidden scope
 
 - No API keys in repo, prompts, docs, logs, or committed fixtures
-- No real Bybit connectivity or real credential use
-- No real smoke execution without separate Human Owner authorization
+- No further real Bybit connectivity or real credential use without separate Human Owner authorization
+- No further real smoke execution without separate Human Owner authorization
 - No orders
 - No cancels
 - No balance runtime verification or real account balance use
