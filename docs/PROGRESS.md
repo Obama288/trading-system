@@ -42,7 +42,9 @@ Current verdict:
 - Stage 53-B2a server_time smoke harness: ACCEPTED / PUSHED on HEAD a511e2f
 - Stage 53-B2b real server_time smoke: SUCCESS; Human Owner executed exactly one real Bybit testnet server_time smoke locally after safe credential presence and hygiene checks; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only
 - Stage 53-B2c wallet_balance smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE on HEAD c9b1337; mocked tests only; direct no-flag latch exits 3; --allow-real-smoke required for real-capable path; not runtime-ready; no real wallet_balance smoke or credentials use for B2c implementation
-- Stage 53-B2 permanent real-smoke preflight: safe credential presence check, safe credential hygiene check, and Human Owner external 7-day key validity confirmation are REQUIRED before any real Bybit smoke gate; any missing required env var, hygiene warning, expired/uncertain key, or missing owner confirmation stops the smoke
+- Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: REQUIRED before B2d; B2d real wallet_balance smoke is NO-GO until B2c.1 is completed and Human Owner separately authorizes B2d
+- Stage 53-B2 permanent real-smoke preflight: safe credential presence check, safe credential hygiene check, and Human Owner external key active/not expired confirmation are REQUIRED before any real Bybit smoke gate; any missing required env var, hygiene warning, expired/uncertain key, or missing owner confirmation stops the smoke
+- 7-day note is not treated as verified API key expiry; if secret availability is uncertain, recreate the testnet key rather than exposing or guessing it
 - Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, and get_server_time() only: PRESENT
 - get_wallet_balance(), wallet balance read-only models, Decimal numeric values, redacted repr()/model_dump(), sanitized wallet errors, and mocked tests: PRESENT
 - get_open_positions(), open-position read-only models, Decimal numeric values, redacted repr()/model_dump(), sanitized open-position errors, and mocked tests: PRESENT
@@ -52,6 +54,8 @@ Current verdict:
 - B2b real server_time smoke execution: SUCCESS for server_time only; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only
 - Credentials use for smoke: USED LOCALLY ONLY by Human Owner for B2b; credentials must not be stored or disclosed
 - B2d real wallet_balance smoke and open_positions smoke: NOT AUTHORIZED / NOT RUN
+- Query-api `/v5/user/query-api`: NOT IN CURRENT B1/B2 ENDPOINT SET; separate Human Owner decision required; if authorized, read-only preflight only and must not print raw permissions, IDs, raw response body, API key, or API secret
+- Signing audit before B2d: REQUIRED for deterministic GET query strings, exact match between signed and sent query, pybit-equivalent sorted params review, `X-BAPI-SIGN-TYPE: 2` decision, and safe retCode classification
 - Order status, place_order, cancel_order, set_leverage, withdraw, transfer, live_reconcile, live_execution: NOT PRESENT
 - Real Bybit server_time connectivity verification: PRESENT for B2b only; wallet_balance/open_positions connectivity and real credential permission verification remain NOT PRESENT
 - Stage 53-B implementation beyond Slice 3 open_positions: BLOCKED; separate explicit approval required
@@ -67,6 +71,15 @@ Last accepted evidence:
   - Operational hygiene lesson: config suite initially failed because real BYBIT_B1 env vars from B2b smoke were still present; after clearing env vars it passed. This is not classified as a B2c code failure.
   - Not verified: runtime readiness, trading readiness, live readiness, probe readiness, real wallet_balance smoke, open_positions smoke, order_status, service startup wiring.
   - B2d wallet_balance real smoke remains unauthorized until separate Human Owner decision.
+- Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision:
+  - Required before B2d real wallet_balance smoke.
+  - Not real wallet smoke; must not call wallet_balance or open_positions.
+  - Does not authorize order_status or write/live methods.
+  - Must audit signing/query-string behavior, signed vs unsigned server_time behavior, `X-BAPI-SIGN-TYPE: 2`, whether to add `/v5/user/query-api`, and key active/not expired wording.
+  - `/v5/market/time` is public and should be treated as unsigned connectivity/time; B2b remains valid as a real testnet connectivity checkpoint, but signed server_time usage should be tracked as an audit/backlog issue if present.
+  - Query-api is a scope expansion requiring explicit Human Owner decision; if authorized, it is read-only preflight only.
+  - Current authorized state: READ_ONLY_TESTNET_SMOKE.
+  - Future READ_ONLY_ACTIVE / READ_ONLY_DEGRADED / READ_ONLY_HALTED, OMS, reconciliation, kill switch, risk controls, runbook, write client, ExchangePort refactor, dependency changes, CI secret scanning, and service wiring remain future-gate/backlog concepts only.
 - Stage 53-B2b real server_time smoke SUCCESS:
   - Command: python scripts\smoke_server_time.py --allow-real-smoke
   - LASTEXITCODE=0; elapsed_ms=1534; output was sanitized.

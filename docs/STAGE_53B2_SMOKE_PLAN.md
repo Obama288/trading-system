@@ -61,8 +61,9 @@ open_positions smoke, did not add `order_status`, did not add write/live methods
 and did not add service wiring.
 
 B2c is code-ready/test-ready only for mocked wallet_balance smoke harness
-behavior. Runtime readiness, trading readiness, live readiness, and probe
-readiness remain not approved.
+behavior. It did not run real wallet_balance smoke, did not use credentials, and
+does not authorize B2d. Runtime readiness, trading readiness, live readiness, and
+probe readiness remain not approved.
 
 ## 2. Stage 53-B2 Scope
 
@@ -81,6 +82,7 @@ implementation or real-smoke step requires a separate Human Owner decision.
 - B2a: implemented server_time smoke harness + mocked tests only at a511e2f
 - B2b: completed successful real testnet server_time smoke after explicit Human Owner authorization
 - B2c: implemented wallet_balance smoke harness + mocked tests only at c9b1337
+- B2c.1: authenticated readiness audit / query-api preflight decision; no real wallet smoke
 - B2d: execute real wallet_balance smoke only after explicit Human Owner authorization
 - B2e: implement open_positions smoke harness + mocked tests only
 - B2f: execute real open_positions smoke only after explicit Human Owner authorization
@@ -94,8 +96,78 @@ not authorize trading, live, probe, runtime readiness, service wiring,
 
 B2b real server_time smoke is complete for `server_time` only. B2c mocked
 wallet_balance harness is complete for mocked behavior only. B2d real
-wallet_balance smoke remains unauthorized until a separate Human Owner decision.
-No automatic progression and no automatic retry are allowed.
+wallet_balance smoke is NO-GO and remains unauthorized until B2c.1 is completed
+and the Human Owner makes a separate B2d decision. No automatic progression from
+B2c to B2d and no automatic retry are allowed.
+
+## 3A. Stage 53-B2c.1 Authenticated Readiness Audit
+
+Stage 53-B2c.1 is an intermediate protected planning/audit gate before B2d.
+
+B2c.1 is not real wallet smoke. B2c.1 must not call `wallet_balance`, must not
+call `open_positions`, must not authorize `order_status`, and must not authorize
+write/live methods.
+
+B2c.1 purpose:
+- audit current signing and query-string behavior
+- audit whether `server_time` is unsigned or signed
+- audit whether `X-BAPI-SIGN-TYPE: 2` is present or intentionally omitted
+- decide whether to add `/v5/user/query-api` as a new read-only preflight
+  endpoint
+- verify docs wording around key active/not expired checks
+
+External research and expert review confirm that direct transition from B2c to
+B2d should be blocked until this audit and Human Owner decision are complete.
+B2d real wallet_balance smoke remains NO-GO.
+
+## 3B. Query-API Scope Boundary
+
+`GET /v5/user/query-api` is not currently part of the existing B1/B2 endpoint
+set unless separately authorized.
+
+Adding query-api requires an explicit Human Owner decision. If authorized,
+query-api is read-only preflight only. Its purpose is to verify `readOnly`,
+permissions, key active/not expired status, and testnet environment before
+authenticated private smoke.
+
+Query-api output must not print:
+- API key
+- API secret
+- raw permissions payload
+- user IDs
+- account IDs
+- raw response body
+- raw `retMsg`
+
+## 3C. Server-Time Semantics
+
+`/v5/market/time` is public and should be treated as an unsigned
+connectivity/time endpoint.
+
+If the current implementation uses a signed `server_time` path, record that as an
+audit finding / backlog issue, not as the ideal future methodology. B2b success
+remains valid as a real testnet connectivity checkpoint, but future methodology
+should separate public unsigned smoke from authenticated private smoke.
+
+## 3D. Signing Audit Before B2d
+
+Before B2d can be authorized:
+- GET query string construction must be deterministic.
+- The query string used for signing must exactly match what is sent.
+- Official pybit behavior sorts GET params by key; the project should audit
+  whether current behavior is deterministic and equivalent.
+- `X-BAPI-SIGN-TYPE: 2` should be audited before authenticated smoke.
+- raw `retMsg` and raw response body remain forbidden unless separately reviewed
+  and sanitized.
+
+Safe retCode classification should cover at least:
+- `10002`: timestamp / recv_window issue
+- `10003`: invalid key or environment
+- `10004`: bad signature
+- `10005`: permission denied
+- `10006`: rate limit / inconclusive / exit 2
+- `10007`: authentication failed
+- `10010`: IP mismatch
 
 ## 4. Forbidden Scope
 
@@ -153,9 +225,13 @@ Before any real Bybit smoke execution, the active shell/session must pass all of
 the following:
 - safe credential presence check
 - safe credential hygiene check
-- Human Owner external 7-day key validity check
+- Human Owner external key active/not expired confirmation
 
-The Bybit testnet API key is temporary / expected valid or stored for 7 days.
+The 7-day note is not treated as verified API key expiry. It may reflect secret
+visibility or demo/order-retention confusion unless verified. The required
+operational rule is key active/not expired confirmation via Bybit UI or a future
+owner-authorized query-api preflight.
+
 Before any real smoke, the Human Owner must externally confirm:
 - key is still active
 - key has not expired
@@ -166,6 +242,9 @@ Before any real smoke, the Human Owner must externally confirm:
 
 The assistant must not inspect secret values, inspect the Bybit UI, or ask the
 Human Owner to paste credentials into chat.
+
+If secret availability is uncertain, recreate the testnet key rather than
+exposing, guessing, or attempting to recover the secret.
 
 Safe credential presence check output is limited to:
 - `OK: VARIABLE_NAME is set`
@@ -397,7 +476,7 @@ may remove only the owner-provided path after verifying the resolved absolute pa
 No credentials, `.env` files, raw payloads, headers, signatures, or account data
 may be written to disk.
 
-## 15. Engineering Rules v2 Impact
+## 15. Engineering Rules v2 Impact And Architecture Adaptations
 
 1. Commit Ownership Lives In Use-Cases
 - No database writes or use-case commits are part of B2 smoke planning.
@@ -428,6 +507,29 @@ may be written to disk.
   endpoint family, `retCode` when available, and `elapsed_ms`; raw payloads and
   secrets remain forbidden.
 
+Project-specific planning constraints:
+- Current authorized state: `READ_ONLY_TESTNET_SMOKE`.
+- Future docs/code concepts may include `READ_ONLY_ACTIVE`,
+  `READ_ONLY_DEGRADED`, and `READ_ONLY_HALTED`.
+- `BybitReadOnlyClient` must remain permanently read-only.
+- A future write client, if ever authorized, must be a separate object/module/gate.
+- Exchange is authoritative for actual balances, actual positions, fills/trades,
+  and final exchange-side order state.
+- The local system is authoritative for intended commands, client order IDs,
+  audit trail, and local lifecycle state.
+- No component may treat read-only exchange observations as internal trading
+  authority without reconciliation.
+- Reconciliation is required before any `order_status`, write, or live path.
+- Unknown/lost order state in a future OMS must lead to halt plus Human Owner
+  review.
+- Kill switch, idempotency, OMS, risk controls, and runbook remain future gates
+  before any write path.
+
+These are planning constraints, not immediate implementation requirements. This
+document does not authorize a TradingState enum in code, ExchangePort refactor,
+OMS, RiskEngine, kill switch, reconciliation framework, log handler-level
+scrubber, dependency changes, CI secret scanning, or service wiring.
+
 ## 16. Runtime Readiness Boundary
 
 Successful smoke does not mean runtime-ready.
@@ -448,7 +550,11 @@ Successful smoke does not authorize production private endpoint use.
 
 Required decisions before any next action:
 - Whether to accept the B2c wallet_balance smoke harness checkpoint.
-- Whether to authorize B2d real wallet_balance smoke after B2c is reviewed.
+- Whether to authorize B2c.1 authenticated readiness audit / query-api preflight
+  decision.
+- Whether to authorize adding query-api as a read-only preflight endpoint.
+- Whether to authorize B2d real wallet_balance smoke after B2c.1 is completed
+  and reviewed.
 - Whether wallet_balance and open_positions smoke gates remain in scope after
   server_time results.
 - Whether demo environment is ever allowed, with explicit URL mapping.
@@ -458,8 +564,7 @@ Required decisions before any next action:
 
 Accept or revise this docs-only B2c wallet_balance smoke harness checkpoint.
 
-If accepted, the next possible protected action is B2d preflight/planning for
-real wallet_balance smoke only. B2d still requires a separate Human Owner
-decision and must preserve credential hygiene / key active-not-expired preflight,
-no automatic progression, no automatic retry, no open_positions smoke, no
-service wiring, no `order_status`, and no write/live methods.
+If accepted, the next possible protected action is B2c.1 only: authenticated
+readiness audit / query-api preflight decision. B2d real wallet_balance smoke is
+NO-GO until B2c.1 is completed and a separate Human Owner decision authorizes
+B2d.

@@ -106,13 +106,14 @@ Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED / REMOTE-VISIBLE on 0596af
 Stage 53-B2a server_time smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE on a511e2f; code-ready candidate / accepted implementation checkpoint; mocked tests only; direct no-flag latch exits 3; not runtime-ready; no real smoke or credentials use authorized
 Stage 53-B2b real server_time smoke: SUCCESS for server_time only; Human Owner executed exactly one real Bybit testnet server_time smoke locally after safe credential presence and hygiene checks; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; credentials used locally only and must not be stored or disclosed; not runtime-ready
 Stage 53-B2c wallet_balance smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE on c9b1337; code-ready candidate / accepted implementation checkpoint; mocked tests only; direct no-flag latch exits 3; --allow-real-smoke required for real-capable path; not runtime-ready; no real wallet_balance smoke or credentials use for B2c implementation
+Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: REQUIRED before B2d; B2d real wallet_balance smoke is NO-GO until B2c.1 is complete and Human Owner separately authorizes B2d
 Current mode: paper trading only
 Live trading: NO-GO
 Current B2c pytest: HEAD c9b1337 PASS for mocked wallet_balance smoke harness behavior only; direct no-flag latch exits 3 with authorization_required JSON; tests/scripts/test_smoke_wallet_balance.py 14 passed; tests/scripts 28 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed after clearing BYBIT_B1 env vars
 Alembic head: 0008_unique_trade_candidates_signal_id
 Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 Owner decisions OI-1..OI-9: answered/approved in docs/STAGE_53B_OWNER_DECISIONS.md
-Next allowed lane: Stage 53-B2 docs/status cleanup and static safety checks; B2d real wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation requires separate explicit approval
+Next allowed lane: Stage 53-B2 docs/status cleanup and static safety checks; B2c.1 authenticated readiness audit / query-api preflight decision next; B2d real wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation requires separate explicit approval
 Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no withdraw; no transfer; no live reconcile; no live execution; no production private endpoint access
@@ -124,6 +125,7 @@ B2b exists: real testnet server_time smoke success; LASTEXITCODE=0; elapsed_ms=1
 B2b does not include / authorize: wallet_balance smoke; open_positions smoke; order_status; place_order; cancel_order; set_leverage; withdraw; transfer; live_reconcile; live_execution; service startup wiring; runtime readiness; trading readiness; live readiness; probe readiness
 B2c exists: wallet_balance smoke harness; tests/scripts/test_smoke_wallet_balance.py; mocked tests only; direct no-flag latch exits 3 with authorization_required JSON; --allow-real-smoke required; mocked success output includes only endpoint/status/exchange/account_type/coins_count/elapsed_ms
 B2c does not include / authorize: real wallet_balance smoke; credentials use for B2c implementation; open_positions smoke; order_status; place_order; cancel_order; set_leverage; withdraw; transfer; live_reconcile; live_execution; service startup wiring; runtime readiness; trading readiness; live readiness; probe readiness
+B2c.1 required before B2d: audit signing/query-string behavior, signed vs unsigned server_time, X-BAPI-SIGN-TYPE: 2, query-api scope decision, safe retCode classification, and key active/not expired wording; query-api is not currently in B1/B2 endpoint set and requires explicit Human Owner decision
 Withdrawal permission: forbidden
 Secrets: no secrets in repo, prompts, docs, or logs
 Stage 53-A: CLOSED, commit 3b3b06f
