@@ -15,21 +15,21 @@ Runtime status:
 - Local paper runtime: GO
 - VPS paper runtime: GO
 - 9 services healthy
-- Current test baseline: Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
+- Current test baseline: HEAD c17c7d0 PASS; tests/libs/config 19 passed; tests/libs/exchange 39 passed; apps/market_data/tests 8 passed; apps 163 passed; non-research suite 288 passed, 5 warnings
 - Alembic head: 0008
 - execution-service confirmed ready in paper mode
 - Live exchange layer: NOT IMPLEMENTED
+- B1-CONFIG config-only slice: CODE/TEST COMPLETE, no runtime wiring
 
 Latest known commits:
+- c17c7d0 feat: add Bybit B1 read-only config settings
+- 67c37f6 Merge pull request #10 from Obama288/docs/stage-53b1-owner-inputs
+- 93e7767 docs: record Stage 53-B1 implementation owner inputs
+- 63d14f0 docs: add Stage 53-B1 architecture plan
+- 19e00a8 docs: record Stage 53-B owner decisions
 - 1bd8e2a fix: implement true EMA in snapshot builder
-- e6008c3 docs: align status docs with stage 53-B gate
-- ff2f30c docs: align stage 53 design lock decisions
-- 3d72ba8 docs: align stage 53-B gate handoff status
-- e814031 docs: add stage 53-B owner decision tracker
-- 69176ed docs: update status after stage 53-B design lock
 - 5e5eb48 docs: add stage 53-B design lock
 - 3b3b06f feat: add Bybit public market data adapter
-- 04ea0eb docs: add stage 53 design lock
 
 ---
 
@@ -43,6 +43,8 @@ Latest known commits:
 - Status docs after 53-B design lock: CLOSED, commit 69176ed
 - Stage 53-B owner decision tracker: ADDED, commit e814031
 - Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
+- Stage 53-B1 owner inputs: ADDED, commit 93e7767
+- B1-CONFIG config-only settings: ADDED, commit c17c7d0
 - Live Path Audit completed
 - Legacy 11-item live blocker audit completed; canonical current taxonomy is 14 live blockers.
 
@@ -51,20 +53,23 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 53-B1 planning / architecture gate.
+Stage 53-B1 post-B1-CONFIG status / safety gate.
 
 Stage 53-B implementation:
 NOT STARTED.
 
+Stage 53-B1 implementation state:
+B1-CONFIG config-only slice is complete on c17c7d0. Authenticated Bybit client files, private API calls, service startup wiring, order status, order placement, cancellation, live reconcile, live execution, and production private endpoint access are not implemented.
+
 Block reason:
-Implementation still requires separate explicit approval after Stage 53-B1 planning.
+Any implementation beyond B1-CONFIG requires separate explicit approval.
 
 Owner decisions OI-1..OI-9 are ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md.
-No runtime implementation is authorized by the decision-sync PR.
+No runtime implementation is authorized by the decision-sync PR or B1-CONFIG.
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B1 architecture review, planning follow-up, and docs/status cleanup.
+Stage 53-B1 docs/status cleanup and static safety checks; further implementation only after explicit approval.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -81,15 +86,16 @@ Stage 53-B1 maximum scope:
 
 Architecture plan:
 - docs/STAGE_53B1_ARCHITECTURE.md
-- Docs-only plan; implementation has not started.
+- B1-CONFIG config-only slice exists; read-only client implementation has not started.
 - B1-OI-1..B1-OI-6 are ANSWERED / APPROVED for future implementation planning.
 - This does not authorize runtime implementation, live trading, production private endpoints, orders, cancels, leverage changes, live reconcile, or live execution.
 
-Q1 regression evidence:
+Current regression evidence:
+- python -m pytest tests\libs\config -q: 19 passed
+- python -m pytest tests\libs\exchange -q: 39 passed
 - python -m pytest apps/market_data/tests -q: 8 passed
-- python -m pytest apps/position_manager/tests -q: 36 passed
 - python -m pytest apps -q: 163 passed
-- python -m pytest -q --ignore=research with project-local temp isolation: 269 passed, 5 warnings
+- python -m pytest -q --ignore=./research --basetemp=.pytest_tmp: 288 passed, 5 warnings
 - No secrets observed.
 - No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
 
@@ -103,7 +109,8 @@ Q1 regression evidence:
 - Cancels
 - Production balances
 - Live positions
-- Authenticated exchange client implementation
+- Authenticated exchange client implementation beyond separately approved config-only settings
+- Service startup wiring for Bybit private/read-only client
 - Live execution
 - Live trading enablement
 - Runtime implementation

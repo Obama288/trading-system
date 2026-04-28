@@ -2,20 +2,22 @@
 
 ## Current summary
 
-- Current stage: Stage 53-B1 planning / architecture gate
+- Current stage: Stage 53-B1 planning / architecture gate + B1-CONFIG status sync
 - Last completed operational milestone: Stage 53-A (Bybit public market data adapter)
+- Last completed code/test slice: B1-CONFIG config-only settings, c17c7d0
 - Current mode: paper trading only
 - Live readiness: NO-GO
-- Current test baseline: Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
+- Current test baseline: HEAD c17c7d0 PASS; tests/libs/config 19 passed; tests/libs/exchange 39 passed; apps/market_data/tests 8 passed; apps 163 passed; non-research suite 288 passed, 5 warnings
 - Stage 53-A closed: 3b3b06f
 - Stage 53-B design lock closed: 5e5eb48
 - Stage 53-B owner decisions OI-1..OI-9: ANSWERED / APPROVED
 - Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
+- B1-CONFIG config-only slice: CLOSED on c17c7d0; no runtime/service wiring
 - Stage 53-B implementation: NOT STARTED; separate explicit approval required after Stage 53-B1 planning
-- Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred
+- Stage 53-B1 first client implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred
 - Q1-FIX-3 true EMA: MERGED and regression-validated on main 1bd8e2a
-- Live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile: not enabled by Q1 fixes
+- Live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile: not enabled by Q1 fixes or B1-CONFIG
 - Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 
 ## Stage table
@@ -38,6 +40,7 @@
 | Stage 53-B Owner Decisions | CLOSED | pending | OI-1..OI-9 answered/approved; live trading remains NO-GO |
 | Stage 53-B1 Planning / Architecture | PLANNED | pending | docs/STAGE_53B1_ARCHITECTURE.md added; implementation requires separate approval |
 | Stage 53-B1 Owner Inputs | CLOSED | pending | B1-OI-1..B1-OI-6 answered/approved; first implementation excludes order status and all write/live actions |
+| Stage 53-B1 B1-CONFIG | CLOSED | c17c7d0 | config-only Bybit B1 settings and tests; no client, private API calls, service wiring, runtime behavior, or live enablement |
 | Stage 53-B Implementation | BLOCKED | pending | not started; no place/cancel/live execution/live reconcile |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |

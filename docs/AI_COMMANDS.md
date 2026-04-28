@@ -72,17 +72,18 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
 ## Current State
 
-Last updated: 2026-04-27 (synced after Stage 53-B1 implementation owner inputs)
-Current stage: Stage 53-B1 planning / architecture gate
+Last updated: 2026-04-28 (Gate 2 sync after B1-CONFIG)
+Current stage: Stage 53-B1 planning / architecture gate + B1-CONFIG status sync
 Stage 53-B owner decisions: ANSWERED / APPROVED
 Stage 53-B implementation: NOT STARTED; separate explicit approval required after planning
+B1-CONFIG config-only slice: CLOSED on c17c7d0; no client, private API calls, service startup wiring, runtime behavior, or live enablement
 Current mode: paper trading only
 Live trading: NO-GO
-Current pytest: Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
+Current pytest: HEAD c17c7d0 PASS; tests/libs/config 19 passed; tests/libs/exchange 39 passed; apps/market_data/tests 8 passed; apps 163 passed; non-research suite 288 passed, 5 warnings
 Alembic head: 0008_unique_trade_candidates_signal_id
 Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 Owner decisions OI-1..OI-9: answered/approved in docs/STAGE_53B_OWNER_DECISIONS.md
-Next allowed lane: Stage 53-B1 planning / architecture
+Next allowed lane: Stage 53-B1 docs/status cleanup and static safety checks; further implementation requires separate explicit approval
 Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no withdraw; no transfer; no live reconcile; no live execution; no production private endpoint access
@@ -94,12 +95,14 @@ Stage 53-B owner decision tracker: ADDED, commit e814031
 Stage 53-B gate/status cleanup: ADDED, commit 3d72ba8
 Stage 53 design lock decisions cleanup: ADDED, commit ff2f30c
 Stage 53-B1 architecture plan: ADDED
+Stage 53-B1 B1-CONFIG: CLOSED, commit c17c7d0
 Q1-FIX-3 true EMA: MERGED, commit 1bd8e2a
-Q1 regression gate:
+B1-CONFIG / current regression gate:
+- python -m pytest tests\libs\config -q: 19 passed
+- python -m pytest tests\libs\exchange -q: 39 passed
 - python -m pytest apps/market_data/tests -q: 8 passed
-- python -m pytest apps/position_manager/tests -q: 36 passed
 - python -m pytest apps -q: 163 passed
-- python -m pytest -q --ignore=research with project-local temp isolation: 269 passed, 5 warnings
+- python -m pytest -q --ignore=./research --basetemp=.pytest_tmp: 288 passed, 5 warnings
 No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
 
 > **Source of truth**: `docs/PROGRESS.md` is authoritative. If this file conflicts with PROGRESS.md, PROGRESS.md wins.

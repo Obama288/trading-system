@@ -2,16 +2,19 @@
 
 ## Current Gate Status
 
-Date: 2026-04-27
+Date: 2026-04-28
 
 Stage:
-Stage 53-B1 planning / architecture gate.
+Stage 53-B1 planning / architecture gate + B1-CONFIG status sync.
 
 Target:
-Docs-only Stage 53-B1 architecture plan.
+Docs-only Gate 2 status sync after B1-CONFIG.
 
 Not target:
 - Stage 53-B runtime implementation
+- Authenticated Bybit client implementation
+- Private Bybit API calls
+- Service startup wiring
 - Real live exchange execution
 - Unsupervised production live
 - Signal quality work
@@ -19,16 +22,20 @@ Not target:
 - LH-2 accumulation/stats work
 
 Readiness levels:
-- Docs-ready: GO — Current Gate Status reflects confirmed reality
-- Code-ready: BLOCKED for Stage 53-B implementation until Stage 53-B1 planning is separately approved
-- Test-ready: GO - Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
-- Runtime-ready: GO — VPS runtime proof complete (2026-04-26)
+- Docs-ready: GO - Gate 2 sync reflects B1-CONFIG status at HEAD c17c7d0
+- Code-ready: GO for B1-CONFIG config-only slice; BLOCKED/NOT STARTED for authenticated Bybit client, private endpoints, service wiring, Stage 53-B runtime implementation, and live execution
+- Test-ready: GO - HEAD c17c7d0: tests/libs/config 19 passed; tests/libs/exchange 39 passed; apps/market_data/tests 8 passed; apps 163 passed; non-research suite 288 passed, 5 warnings
+- Runtime-ready: no new runtime readiness from B1-CONFIG; prior paper runtime proof remains historical; live runtime readiness not confirmed
 
 Current verdict:
 - Real live execution: NO-GO
 - Stage 53-B owner decisions: ANSWERED / APPROVED
 - Stage 53-B1 architecture plan: ADDED in docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs: ANSWERED / APPROVED
+- B1-CONFIG config-only slice: CODE/TEST COMPLETE on HEAD c17c7d0
+- Authenticated Bybit client files: NOT PRESENT
+- Service startup wiring for B1 client: NOT PRESENT
+- Private Bybit API calls: NOT PRESENT
 - Stage 53-B implementation: NOT STARTED; separate explicit approval required
 - Unsupervised production live: NO-GO
 
@@ -43,6 +50,13 @@ Last accepted evidence:
 - Q1-FIX-2 freshness naive datetime handling MERGED
 - Q1-FIX-3 true EMA in snapshot builder MERGED: 1bd8e2a
 - Q1 regression gate PASS on main HEAD 1bd8e2a
+- B1-CONFIG config-only slice ADDED: c17c7d0
+- B1-CONFIG regression on HEAD c17c7d0:
+  - python -m pytest tests\libs\config -q: 19 passed
+  - python -m pytest tests\libs\exchange -q: 39 passed
+  - python -m pytest apps\market_data\tests -q: 8 passed
+  - python -m pytest apps -q: 163 passed
+  - python -m pytest -q --ignore=./research --basetemp=.pytest_tmp: 288 passed, 5 warnings
 - Owner decisions OI-1..OI-9 ANSWERED / APPROVED
 - Stage 53-B1 architecture plan ADDED: docs/STAGE_53B1_ARCHITECTURE.md
 - B1-OI-1..B1-OI-6 ANSWERED / APPROVED for future Stage 53-B1 implementation planning
@@ -59,7 +73,7 @@ Last accepted evidence:
 - No secrets observed during Q1 regression.
 - No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
 - Final Gate Diff Review completed
-- pytest current baseline: Q1 regression PASS on main 1bd8e2a; broader suite 269 passed, 5 warnings
+- pytest current baseline: HEAD c17c7d0 PASS; non-research suite 288 passed, 5 warnings
 - alembic head: 0008_unique_tc_signal_id (local and VPS)
 - docker-compose binds postgres/redis to 127.0.0.1
 - .env.example uses postgresql+psycopg
@@ -82,16 +96,20 @@ Owner decisions:
 - This does not authorize live trading.
 
 Allowed work:
-- Stage 53-B1 architecture review, planning follow-up, and docs/status cleanup
+- Stage 53-B1 docs/status cleanup and static safety checks
+- Further B1 implementation slices only after separate explicit approval
 
 Blocked work:
 - Stage 53-B implementation unless separately approved after planning
+- Authenticated Bybit client implementation unless separately approved
+- Service startup wiring for any Bybit private/read-only client
+- Private Bybit API calls
 - Order placement, order cancellation, live execution, and live reconcile
 - LH-2 paper accumulation
 - Real live execution
 
 Next gate:
-Stage 53-B1 planning / architecture gate.
+Stage 53-B1 post-B1-CONFIG status / safety gate.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -105,7 +123,7 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B1 architecture review and planning follow-up, not implementation unless separately approved.
+Stage 53-B1 docs/status cleanup and static safety checks; no further implementation unless separately approved.
 
 Constraints:
 - Do not claim live-ready.
