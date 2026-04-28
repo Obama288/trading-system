@@ -95,26 +95,28 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
 ## Current State
 
-Last updated: 2026-04-28 (Slice 2 wallet_balance checkpoint)
-Current stage: Stage 53-B1 planning / architecture gate + Slice 2 wallet_balance checkpoint
+Last updated: 2026-04-28 (Slice 3 open_positions checkpoint)
+Current stage: Stage 53-B1 planning / architecture gate + Slice 3 open_positions checkpoint
 Stage 53-B owner decisions: ANSWERED / APPROVED
-Stage 53-B implementation beyond Slice 2: BLOCKED; separate explicit approval required
+Stage 53-B implementation beyond Slice 3: BLOCKED; separate explicit approval required
 B1-CONFIG config-only slice: CLOSED on c17c7d0; no client, private API calls, service startup wiring, runtime behavior, or live enablement
 Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED on 828b64a; code-ready candidate / accepted implementation checkpoint; mocked server-time skeleton tests only; not runtime-ready
 Stage 53-B1 Slice 2 wallet_balance: ACCEPTED / PUSHED on 66a898d; code-ready candidate / accepted implementation checkpoint; mocked wallet_balance tests only; not runtime-ready
+Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED / REMOTE-VISIBLE on 0596afb; code-ready candidate / accepted implementation checkpoint; mocked open_positions tests only; not runtime-ready
 Current mode: paper trading only
 Live trading: NO-GO
-Current Slice 2 pytest: HEAD 66a898d PASS for mocked wallet_balance behavior only; focused Slice 2 tests 33 passed; tests/libs/exchange 72 passed; tests/libs/config 19 passed
+Current Slice 3 pytest: HEAD 0596afb PASS for mocked open_positions behavior only; focused Slice 3 tests 39 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
 Alembic head: 0008_unique_trade_candidates_signal_id
 Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 Owner decisions OI-1..OI-9: answered/approved in docs/STAGE_53B_OWNER_DECISIONS.md
-Next allowed lane: Stage 53-B1 docs/status cleanup and static safety checks; open_positions or further implementation requires separate explicit approval
+Next allowed lane: Stage 53-B1 docs/status cleanup and static safety checks; order_status or any write/live implementation requires separate explicit approval
 Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no withdraw; no transfer; no live reconcile; no live execution; no production private endpoint access
 Slice 1 exists: Bybit auth/signing helper; timestamp / recv_window handling; redaction helpers; minimal ServerTime model; read-only client skeleton; get_server_time() only; mocked tests
 Slice 2 exists: get_wallet_balance(); wallet balance read-only models; Decimal numeric values; redacted repr() / model_dump(); sanitized wallet errors; mocked tests
-Slice 2 does not include: open_positions; order_status; place_order; cancel_order; set_leverage; withdraw; transfer; live_reconcile; live_execution; service startup wiring; real Bybit connectivity verification; real credential verification
+Slice 3 exists: get_open_positions(); open-position read-only models; Decimal numeric values; redacted repr() / model_dump(); sanitized open-position errors; mocked tests
+Slice 3 does not include: order_status; place_order; cancel_order; set_leverage; withdraw; transfer; live_reconcile; live_execution; service startup wiring; real Bybit connectivity verification; real credential verification
 Withdrawal permission: forbidden
 Secrets: no secrets in repo, prompts, docs, or logs
 Stage 53-A: CLOSED, commit 3b3b06f
@@ -126,6 +128,7 @@ Stage 53-B1 architecture plan: ADDED
 Stage 53-B1 B1-CONFIG: CLOSED, commit c17c7d0
 Stage 53-B1 Slice 1 server-time skeleton: CLOSED, commit 828b64a
 Stage 53-B1 Slice 2 wallet_balance: CLOSED, commit 66a898d
+Stage 53-B1 Slice 3 open_positions: CLOSED, commit 0596afb
 Q1-FIX-3 true EMA: MERGED, commit 1bd8e2a
 B1-CONFIG / current regression gate:
 - python -m pytest tests\libs\config -q: 19 passed
@@ -134,7 +137,7 @@ B1-CONFIG / current regression gate:
 - python -m pytest apps -q: 163 passed
 - python -m pytest -q --ignore=./research --basetemp=.pytest_tmp: 288 passed, 5 warnings
 No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
-No trading readiness, live readiness, probe readiness, or runtime readiness is approved by Slice 2.
+No trading readiness, live readiness, probe readiness, or runtime readiness is approved by Slice 3.
 
 > **Source of truth**: `docs/PROGRESS.md` is authoritative. If this file conflicts with PROGRESS.md, PROGRESS.md wins.
 
@@ -143,7 +146,7 @@ No trading readiness, live readiness, probe readiness, or runtime readiness is a
 - Shadow trading: COMPLETE
 - Paper trading: VALIDATED CONTOUR (Stage 52B.41)
 - Live trading: NO-GO
-- Stage 53-B implementation beyond Slice 2: BLOCKED; separate explicit approval required
+- Stage 53-B implementation beyond Slice 3: BLOCKED; separate explicit approval required
 
 ## Stage Map
 

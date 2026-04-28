@@ -15,15 +15,17 @@ Runtime status:
 - Local paper runtime: GO
 - VPS paper runtime: GO
 - 9 services healthy
-- Current test baseline: HEAD 66a898d PASS for mocked Slice 2 wallet_balance behavior only; focused Slice 2 tests 33 passed; tests/libs/exchange 72 passed; tests/libs/config 19 passed
+- Current test baseline: HEAD 0596afb PASS for mocked Slice 3 open_positions behavior only; focused Slice 3 tests 39 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
 - Alembic head: 0008
 - execution-service confirmed ready in paper mode
 - Live exchange layer: NOT IMPLEMENTED
 - B1-CONFIG config-only slice: CODE/TEST COMPLETE, no runtime wiring
 - Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED at 828b64a; mocked tests only; not runtime-ready
 - Stage 53-B1 Slice 2 wallet_balance: ACCEPTED / PUSHED at 66a898d; mocked tests only; not runtime-ready
+- Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED / REMOTE-VISIBLE at 0596afb; mocked tests only; not runtime-ready
 
 Latest known commits:
+- 0596afb feat: add Bybit B1 read-only open positions
 - 66a898d feat: add Bybit B1 read-only wallet balance
 - 828b64a feat: add Bybit B1 read-only server-time skeleton
 - d6045ad docs: add three-lane operating model
@@ -53,6 +55,7 @@ Latest known commits:
 - B1-CONFIG config-only settings: ADDED, commit c17c7d0
 - Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED, commit 828b64a
 - Stage 53-B1 Slice 2 wallet_balance: ACCEPTED / PUSHED, commit 66a898d
+- Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED / REMOTE-VISIBLE, commit 0596afb
 - Live Path Audit completed
 - Legacy 11-item live blocker audit completed; canonical current taxonomy is 14 live blockers.
 
@@ -61,21 +64,20 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 53-B1 post-Slice-2 status / safety gate.
+Stage 53-B1 post-Slice-3 status / safety gate.
 
 Stage 53-B implementation:
-BLOCKED beyond accepted Slice 2 wallet_balance.
+BLOCKED beyond accepted Slice 3 open_positions.
 
 Stage 53-B1 implementation state:
-B1-CONFIG config-only slice is complete on c17c7d0. Slice 1 server-time skeleton is accepted and pushed on 828b64a. Slice 2 wallet_balance is accepted and pushed on 66a898d. It includes get_wallet_balance(), wallet balance read-only models, Decimal numeric values, redacted repr() / model_dump(), sanitized wallet errors, and mocked tests.
+B1-CONFIG config-only slice is complete on c17c7d0. Slice 1 server-time skeleton is accepted and pushed on 828b64a. Slice 2 wallet_balance is accepted and pushed on 66a898d. Slice 3 open_positions is accepted, pushed, and remote-visible on 0596afb. It includes get_open_positions(), open-position read-only models, Decimal numeric values, redacted repr() / model_dump(), sanitized open-position errors, and mocked tests.
 
-Slice 2 classification:
-- Code-ready candidate / accepted implementation checkpoint for wallet_balance only.
-- Test-ready for mocked wallet_balance behavior only.
+Slice 3 classification:
+- Code-ready candidate / accepted implementation checkpoint for open_positions only.
+- Test-ready for mocked open_positions behavior only.
 - Not runtime-ready.
 
 Still not implemented:
-- open_positions
 - order_status
 - place_order
 - cancel_order
@@ -89,14 +91,14 @@ Still not implemented:
 - real credential verification
 
 Block reason:
-Any implementation beyond Slice 2 requires separate explicit approval. Future open_positions slice requires separate Human Owner authorization.
+Any implementation beyond Slice 3 requires separate explicit approval. Future order_status and all write/live methods require separate Human Owner authorization.
 
 Owner decisions OI-1..OI-9 are ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md.
-No runtime implementation is authorized by the decision-sync PR, B1-CONFIG, Slice 1, or Slice 2.
+No runtime implementation is authorized by the decision-sync PR, B1-CONFIG, Slice 1, Slice 2, or Slice 3.
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B1 docs/status cleanup and static safety checks; open_positions or further implementation only after explicit approval.
+Stage 53-B1 docs/status cleanup and static safety checks; order_status or any write/live implementation only after explicit approval.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -116,10 +118,14 @@ Architecture plan:
 - B1-CONFIG config-only slice exists.
 - Slice 1 server-time skeleton exists at 828b64a; read-only client remains library-only and exposes get_server_time() only.
 - Slice 2 wallet_balance exists at 66a898d; read-only client exposes get_wallet_balance() with mocked tests only.
+- Slice 3 open_positions exists at 0596afb; read-only client exposes get_open_positions() with mocked tests only.
 - B1-OI-1..B1-OI-6 are ANSWERED / APPROVED for future implementation planning.
 - This does not authorize runtime implementation, live trading, production private endpoints, orders, cancels, leverage changes, live reconcile, or live execution.
 
 Current regression evidence:
+- python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 39 passed
+- python -m pytest tests\libs\exchange -q: 78 passed
+- python -m pytest tests\libs\config -q: 19 passed
 - python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 33 passed
 - python -m pytest tests\libs\exchange -q: 72 passed
 - python -m pytest tests\libs\config -q: 19 passed
@@ -140,7 +146,7 @@ Current regression evidence:
 - Cancels
 - Production balances
 - Live positions
-- Authenticated exchange client implementation beyond separately approved config-only settings
+- Authenticated exchange client implementation beyond separately approved Slice 3 read-only library scope
 - Service startup wiring for Bybit private/read-only client
 - Live execution
 - Live trading enablement

@@ -5,14 +5,13 @@
 Date: 2026-04-28
 
 Stage:
-Stage 53-B1 planning / architecture gate + Slice 2 wallet_balance checkpoint.
+Stage 53-B1 planning / architecture gate + Slice 3 open_positions checkpoint.
 
 Target:
-Docs-only status sync after accepted and pushed Stage 53-B1 Slice 2.
+Docs-only status sync after accepted and pushed Stage 53-B1 Slice 3.
 
 Not target:
 - Stage 53-B runtime implementation
-- Open positions implementation
 - Order status implementation
 - Service startup wiring
 - Real live exchange execution
@@ -22,9 +21,9 @@ Not target:
 - LH-2 accumulation/stats work
 
 Readiness levels:
-- Docs-ready: GO - status reflects Slice 2 wallet_balance checkpoint at HEAD 66a898d
-- Code-ready: code-ready candidate / accepted implementation checkpoint for Stage 53-B1 Slice 2 wallet_balance only
-- Test-ready: mocked wallet_balance behavior only; HEAD 66a898d: focused Slice 2 tests 33 passed; tests/libs/exchange 72 passed; tests/libs/config 19 passed
+- Docs-ready: GO - status reflects Slice 3 open_positions checkpoint at HEAD 0596afb
+- Code-ready: code-ready candidate / accepted implementation checkpoint for Stage 53-B1 Slice 3 open_positions only
+- Test-ready: mocked open_positions behavior only; HEAD 0596afb: focused Slice 3 tests 39 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
 - Runtime-ready: not runtime-ready; no real Bybit connectivity, real credential, service startup, VPS, deployment, or live runtime readiness confirmed
 
 Current verdict:
@@ -35,16 +34,24 @@ Current verdict:
 - B1-CONFIG config-only slice: CODE/TEST COMPLETE on HEAD c17c7d0
 - Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED on HEAD 828b64a
 - Stage 53-B1 Slice 2 wallet_balance: ACCEPTED / PUSHED on HEAD 66a898d
+- Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED on HEAD 0596afb
 - Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, and get_server_time() only: PRESENT
 - get_wallet_balance(), wallet balance read-only models, Decimal numeric values, redacted repr()/model_dump(), sanitized wallet errors, and mocked tests: PRESENT
+- get_open_positions(), open-position read-only models, Decimal numeric values, redacted repr()/model_dump(), sanitized open-position errors, and mocked tests: PRESENT
 - Mocked tests for auth and get_server_time skeleton behavior: PRESENT
 - Service startup wiring for B1 client: NOT PRESENT
-- Open positions, order status, place_order, cancel_order, set_leverage, withdraw, transfer, live_reconcile, live_execution: NOT PRESENT
+- Order status, place_order, cancel_order, set_leverage, withdraw, transfer, live_reconcile, live_execution: NOT PRESENT
 - Real Bybit connectivity verification and real credential verification: NOT PRESENT
-- Stage 53-B implementation beyond Slice 2 wallet_balance: BLOCKED; separate explicit approval required
+- Stage 53-B implementation beyond Slice 3 open_positions: BLOCKED; separate explicit approval required
 - Unsupervised production live: NO-GO
 
 Last accepted evidence:
+- Stage 53-B1 Slice 3 open_positions ACCEPTED / PUSHED / REMOTE-VISIBLE: 0596afb feat: add Bybit B1 read-only open positions
+  - Classification: code-ready candidate / accepted implementation checkpoint; test-ready for mocked open_positions behavior only; not runtime-ready.
+  - Exists: get_open_positions(); open-position read-only models; Decimal numeric values; redacted repr() / model_dump(); sanitized open-position errors; mocked tests.
+  - Does not exist: order_status; place_order; cancel_order; set_leverage; withdraw; transfer; live_reconcile; live_execution; service startup wiring; real Bybit connectivity verification; real credential verification.
+  - Test evidence: python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 39 passed; python -m pytest tests\libs\exchange -q: 78 passed; python -m pytest tests\libs\config -q: 19 passed.
+  - Not verified: runtime readiness, real Bybit connectivity, real credentials, order_status, service startup wiring, live/probe/trading readiness.
 - Stage 53-B1 Slice 2 wallet_balance ACCEPTED / PUSHED: 66a898d feat: add Bybit B1 read-only wallet balance
   - Exists: get_wallet_balance(); wallet balance read-only models; Decimal numeric values; redacted repr() / model_dump(); sanitized wallet errors; mocked tests.
   - Test evidence: python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 33 passed; python -m pytest tests\libs\exchange -q: 72 passed; python -m pytest tests\libs\config -q: 19 passed.
@@ -113,8 +120,7 @@ Allowed work:
 - Further B1 implementation slices only after separate explicit approval
 
 Blocked work:
-- Stage 53-B implementation beyond accepted Slice 2 unless separately approved
-- Open positions implementation unless separately approved
+- Stage 53-B implementation beyond accepted Slice 3 unless separately approved
 - Service startup wiring for any Bybit private/read-only client
 - Order status implementation
 - Order placement, order cancellation, live execution, and live reconcile
@@ -122,7 +128,7 @@ Blocked work:
 - Real live execution
 
 Next gate:
-Stage 53-B1 post-Slice-2 status / safety gate.
+Stage 53-B1 post-Slice-3 status / safety gate.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -136,7 +142,7 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B1 docs/status cleanup and static safety checks; open positions or any further implementation requires separate Human Owner authorization.
+Stage 53-B1 docs/status cleanup and static safety checks; order_status and any write/live methods require separate Human Owner authorization.
 
 Constraints:
 - Do not claim live-ready.
