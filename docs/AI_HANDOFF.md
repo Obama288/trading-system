@@ -184,7 +184,12 @@ These decisions authorize planning only. Stage 53-B1 implementation, live tradin
 - Always use python -m alembic
 - Always use python -m uvicorn
 - Verify file edits with Get-Content after writing
-- Definition of Done: changed + verified + tests + git status
+- Use the 3-lane operating model in docs/HOW_WE_WORK.md: Fast Lane, Standard Lane, Protected Lane
+- Fast Lane: docs/report-only scope checks; QA optional when no readiness is promoted
+- Standard Lane: focused approved work; compact QA required with targeted tests/checks
+- Protected Lane: live/probe readiness, authenticated/private exchange work, secrets, safety authority, runtime wiring, infra/deploy, migrations/schema, dependencies, or runtime-behavior config; explicit Human Owner authorization and mandatory QA required
+- Every report must identify Agent, Task Type, Scope, Lane, Changed Files, Commands Run, Readiness Claims, Not Verified, and Decision Needed
+- Definition of Done: changed + verified + commands/results + readiness claims + not verified + git status
 - Do not commit without explicit owner instruction
 
 ---

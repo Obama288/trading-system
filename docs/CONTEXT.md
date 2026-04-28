@@ -80,6 +80,7 @@
 ## Current architecture docs
 
 - docs/PROGRESS.md
+- docs/HOW_WE_WORK.md
 - docs/AI_COMMANDS.md
 - docs/AI_HANDOFF.md
 - docs/STAGE_53_DESIGN_LOCK.md
@@ -94,4 +95,7 @@
 - GPT: senior architect / final reviewer
 - Claude: independent reviewer
 - Claude Code / Codex: executor
-- Commit only after reviewer approval
+- All agents use the 3-lane operating model in docs/HOW_WE_WORK.md: Fast Lane, Standard Lane, Protected Lane
+- Human Owner keeps final authority for accept/reject, START/HOLD, GO/NO-GO, stage transitions, and risk acceptance
+- Commit only after explicit Human Owner instruction
+- Every agent report must identify Agent, Task Type, Scope, Lane, Changed Files, Commands Run, Readiness Claims, Not Verified, and Decision Needed

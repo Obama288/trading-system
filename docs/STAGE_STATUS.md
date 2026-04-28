@@ -85,7 +85,7 @@ Legacy summarized list below: not the current authoritative blocker count.
 ## Session startup prompt
 
 ```
-Read docs/CONTEXT.md, docs/STAGE_STATUS.md, docs/PROGRESS.md, docs/AI_HANDOFF.md, and docs/AI_COMMANDS.md first.
+Read docs/CONTEXT.md, docs/STAGE_STATUS.md, docs/PROGRESS.md, docs/HOW_WE_WORK.md, docs/AI_HANDOFF.md, and docs/AI_COMMANDS.md first.
 Then give me:
 1. current stage
 2. latest relevant commit
@@ -93,5 +93,8 @@ Then give me:
 4. tests status
 5. next allowed task
 6. forbidden scope
+7. operating lane for the requested task
 Do not modify files until I approve the plan.
 ```
+
+Every agent report must identify: Agent, Task Type, Scope, Lane, Changed Files, Commands Run, Readiness Claims, Not Verified, and Decision Needed.

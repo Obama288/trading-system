@@ -26,12 +26,35 @@ After every test run:
 Do not claim success from write/run alone.
 Verify with independent command first.
 
+### Operating lanes
+Canonical policy: `docs/HOW_WE_WORK.md`.
+
+Use the strictest matching lane:
+- Fast Lane: docs-only, report-only, typo/status cleanup, static docs checks; no code/test/config/infra/runtime/secret/trading behavior change. QA optional if scope is bounded and no readiness is promoted.
+- Standard Lane: approved focused code/test/docs work that does not touch Protected criteria. Compact QA required with targeted tests/checks.
+- Protected Lane: live/probe readiness, GO/NO-GO, authenticated/private exchange client work, secrets, orders/cancels/balances/positions, live execution/reconcile, safety authority, source-of-truth boundaries, runtime wiring, deployments, infra, migrations/schema, dependencies, or runtime-behavior config. Explicit Human Owner authorization and mandatory QA required.
+
+Lane rules:
+- Human Owner keeps final authority for accept/reject, START/HOLD, GO/NO-GO, stage transitions, and risk acceptance.
+- Lanes do not collapse docs-ready, code-ready, test-ready, and runtime-ready into one claim.
+- A docs-only change cannot approve trading readiness, live readiness, probe readiness, implementation readiness, or runtime readiness.
+
 ### Definition of Done
-1. What was changed
-2. How it was verified
-3. Exact verification command and result
-4. What remains unverified
-5. Blocker or non-blocker
+Every agent report must include:
+1. Agent
+2. Task Type
+3. Scope
+4. Lane
+5. Changed Files
+6. Commands Run
+7. Readiness Claims
+8. Not Verified
+9. Decision Needed
+
+Commands Run must list exact commands and results.
+Readiness Claims must separate docs/code/test/runtime.
+Not Verified must explicitly state skipped tests, runtime checks, deployment checks, external review, or QA.
+Decision Needed belongs to the Human Owner; use `None` only when no owner decision is needed.
 
 ### Tool roles
 - Claude (Sasha) — strategy, architecture, risk analysis
