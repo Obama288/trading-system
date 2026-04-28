@@ -30,6 +30,14 @@ class ExchangeRateLimited(ExchangeError):
     """Bybit returned a rate-limit response (retCode 10006 or HTTP 429)."""
 
 
+class ExchangeConfigurationError(ExchangeError):
+    """Exchange client configuration is missing, unsafe, or outside approved scope."""
+
+
+class ExchangeAuthError(ExchangeError):
+    """Exchange authentication failed or credentials are missing/malformed."""
+
+
 class MarketDataUnavailable(ExchangeError):
     """Market data could not be fetched (network error, timeout, empty response)."""
 
