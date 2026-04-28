@@ -1,0 +1,338 @@
+from __future__ import annotations
+
+from decimal import Decimal
+import json
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import NoReturn
+
+import pytest
+from pydantic import SecretStr, ValidationError
+
+from libs.config.settings import BybitB1Settings
+from libs.exchange.bybit_models import WalletBalance, WalletCoinBalance
+from libs.exchange.errors import (
+    ExchangeAuthError,
+    ExchangeConfigurationError,
+    ExchangeRateLimited,
+    ExchangeResponseError,
+    MarketDataUnavailable,
+)
+from scripts import smoke_wallet_balance
+
+
+FAKE_API_KEY = "testnet_fake_key"
+FAKE_API_SECRET = "testnet_fake_secret"
+FAKE_SIGNATURE = "deadbeefcafebabefeedface1234567890abcdef"
+RAW_RET_MSG = "raw retMsg account_id=123 walletBalance=999 BTC=1 X-BAPI-SIGN=secret"
+RAW_BODY = '{"retMsg":"raw response body","api_secret":"secret","totalEquity":"999"}'
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+@dataclass
+class _ClientReturnsWalletBalance:
+    settings: BybitB1Settings
+
+    async def get_wallet_balance(self) -> WalletBalance:
+        return WalletBalance(
+            exchange="bybit",
+            account_type="UNIFIED",
+            total_equity=Decimal("1000.01"),
+            total_wallet_balance=Decimal("900.02"),
+            coins=(
+                WalletCoinBalance(
+                    coin="BTC",
+                    wallet_balance=Decimal("1.23"),
+                    equity=Decimal("2.34"),
+                ),
+                WalletCoinBalance(
+                    coin="USDT",
+                    wallet_balance=Decimal("500"),
+                    equity=Decimal("500"),
+                ),
+            ),
+        )
+
+    async def get_server_time(self) -> NoReturn:
+        raise AssertionError("server_time smoke is not part of B2c wallet_balance")
+
+    async def get_open_positions(self) -> NoReturn:
+        raise AssertionError("open_positions smoke is not authorized in B2c")
+
+
+class _ClientRaises:
+    def __init__(self, exc: Exception) -> None:
+        self._exc = exc
+
+    async def get_wallet_balance(self) -> NoReturn:
+        raise self._exc
+
+    async def get_server_time(self) -> NoReturn:
+        raise AssertionError("server_time smoke is not part of B2c wallet_balance")
+
+    async def get_open_positions(self) -> NoReturn:
+        raise AssertionError("open_positions smoke is not authorized in B2c")
+
+
+def _settings(environment: str = "testnet") -> BybitB1Settings:
+    return BybitB1Settings(
+        environment=environment,
+        api_key=SecretStr(FAKE_API_KEY),
+        api_secret=SecretStr(FAKE_API_SECRET),
+    )
+
+
+def _rendered(output: dict) -> str:
+    return json.dumps(output, sort_keys=True)
+
+
+def _assert_sanitized(output: dict) -> None:
+    rendered = _rendered(output)
+    for forbidden in (
+        FAKE_API_KEY,
+        FAKE_API_SECRET,
+        FAKE_SIGNATURE,
+        "X-BAPI-SIGN",
+        "X-BAPI-API-KEY",
+        "signed_payload",
+        "api_secret",
+        "api_key",
+        RAW_RET_MSG,
+        RAW_BODY,
+        "account_id=123",
+        "walletBalance",
+        "totalEquity",
+        "totalWalletBalance",
+        "availableToWithdraw",
+        "balance=999",
+        "equity",
+        "total_equity",
+        "total_wallet_balance",
+        "BTC",
+        "USDT",
+        "1.23",
+        "2.34",
+        "500",
+        "999",
+        "positionValue",
+        "BTCUSDT",
+        "trading-ready",
+        "live-ready",
+        "probe-ready",
+        "runtime-ready",
+    ):
+        assert forbidden not in rendered
+
+
+@pytest.mark.asyncio
+async def test_successful_wallet_balance_output_is_sanitized():
+    exit_code, output = await smoke_wallet_balance.run_wallet_balance_smoke(
+        settings=_settings(),
+        client_factory=_ClientReturnsWalletBalance,
+    )
+
+    assert exit_code == 0
+    assert output == {
+        "operation": "bybit_b1_wallet_balance_smoke",
+        "endpoint": "wallet_balance",
+        "endpoint_family": "wallet_balance",
+        "status": "success",
+        "elapsed_ms": output["elapsed_ms"],
+        "exchange": "bybit",
+        "account_type": "UNIFIED",
+        "coins_count": 2,
+    }
+    assert isinstance(output["elapsed_ms"], int)
+    assert "coins_count" in output
+    assert "coins" not in output
+    assert "balances" not in output
+    _assert_sanitized(output)
+
+
+@pytest.mark.asyncio
+async def test_missing_credentials_fail_safely():
+    exit_code, output = await smoke_wallet_balance.run_wallet_balance_smoke(
+        settings=BybitB1Settings(api_key=None, api_secret=None),
+    )
+
+    assert exit_code == 1
+    assert output["status"] == "failure"
+    assert output["error_category"] == "auth_error"
+    _assert_sanitized(output)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("environment", ["production", "live"])
+async def test_production_and_live_config_rejected(environment: str):
+    with pytest.raises(ValidationError):
+        BybitB1Settings(
+            environment=environment,
+            api_key=SecretStr(FAKE_API_KEY),
+            api_secret=SecretStr(FAKE_API_SECRET),
+        )
+
+
+@pytest.mark.asyncio
+async def test_production_endpoint_rejected_safely():
+    def _factory(settings: BybitB1Settings):
+        raise ExchangeConfigurationError("production Bybit base URL is forbidden")
+
+    exit_code, output = await smoke_wallet_balance.run_wallet_balance_smoke(
+        settings=_settings(),
+        client_factory=_factory,
+    )
+
+    assert exit_code == 1
+    assert output["status"] == "failure"
+    assert output["error_category"] == "configuration_error"
+    _assert_sanitized(output)
+
+
+@pytest.mark.asyncio
+async def test_rate_limit_is_inconclusive_not_success():
+    exit_code, output = await smoke_wallet_balance.run_wallet_balance_smoke(
+        settings=_settings(),
+        client_factory=lambda settings: _ClientRaises(ExchangeRateLimited(RAW_RET_MSG)),
+    )
+
+    assert exit_code == 2
+    assert output["status"] == "inconclusive"
+    assert output["error_category"] == "rate_limited"
+    _assert_sanitized(output)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("exc", "category"),
+    [
+        (ExchangeAuthError(RAW_RET_MSG), "auth_error"),
+        (MarketDataUnavailable(RAW_BODY), "network_or_timeout"),
+        (ExchangeResponseError(ret_code=0, ret_msg=RAW_RET_MSG), "response_error"),
+    ],
+)
+async def test_failures_are_sanitized(exc: Exception, category: str):
+    exit_code, output = await smoke_wallet_balance.run_wallet_balance_smoke(
+        settings=_settings(),
+        client_factory=lambda settings: _ClientRaises(exc),
+    )
+
+    assert exit_code == 1
+    assert output["status"] == "failure"
+    assert output["error_category"] == category
+    if isinstance(exc, ExchangeResponseError):
+        assert output["retCode"] == 0
+    _assert_sanitized(output)
+
+
+def test_cli_without_authorization_does_not_call_smoke_or_require_credentials(
+    monkeypatch,
+    capsys,
+):
+    async def _forbidden_run():
+        raise AssertionError("real-capable smoke must not run without explicit authorization")
+
+    def _forbidden_settings(*args, **kwargs):
+        raise AssertionError("settings/credentials must not be loaded without authorization")
+
+    monkeypatch.setattr(smoke_wallet_balance, "run_wallet_balance_smoke", _forbidden_run)
+    monkeypatch.setattr(smoke_wallet_balance, "BybitB1Settings", _forbidden_settings, raising=False)
+
+    exit_code = smoke_wallet_balance.main([])
+
+    captured = capsys.readouterr()
+    output = json.loads(captured.out)
+    assert exit_code == 3
+    assert output == {
+        "endpoint": "get_wallet_balance",
+        "status": "authorization_required",
+        "message": "Real smoke execution requires explicit Human Owner authorization.",
+        "exit_code": 3,
+    }
+    _assert_sanitized(output)
+
+
+def test_direct_cli_without_authorization_exits_3_without_traceback_or_import_error():
+    completed = subprocess.run(
+        [sys.executable, "scripts\\smoke_wallet_balance.py"],
+        cwd=REPO_ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+
+    assert completed.returncode == 3
+    assert completed.stderr == ""
+    assert "Traceback" not in completed.stdout
+    assert "ModuleNotFoundError" not in completed.stdout
+    output = json.loads(completed.stdout)
+    assert output == {
+        "endpoint": "get_wallet_balance",
+        "status": "authorization_required",
+        "message": "Real smoke execution requires explicit Human Owner authorization.",
+        "exit_code": 3,
+    }
+    _assert_sanitized(output)
+
+
+def test_cli_with_authorization_prints_sanitized_json(monkeypatch, capsys):
+    async def _fake_run():
+        return 0, {
+            "operation": "bybit_b1_wallet_balance_smoke",
+            "endpoint": "wallet_balance",
+            "endpoint_family": "wallet_balance",
+            "status": "success",
+            "exchange": "bybit",
+            "account_type": "UNIFIED",
+            "coins_count": 2,
+            "elapsed_ms": 3,
+        }
+
+    monkeypatch.setattr(smoke_wallet_balance, "run_wallet_balance_smoke", _fake_run)
+
+    exit_code = smoke_wallet_balance.main(["--allow-real-smoke"])
+
+    captured = capsys.readouterr()
+    assert exit_code == 0
+    output = json.loads(captured.out)
+    assert output["endpoint"] == "wallet_balance"
+    assert output["coins_count"] == 2
+    _assert_sanitized(output)
+
+
+def test_cli_with_authorization_preserves_rate_limit_inconclusive(monkeypatch, capsys):
+    async def _fake_run():
+        return 2, {
+            "operation": "bybit_b1_wallet_balance_smoke",
+            "endpoint": "wallet_balance",
+            "endpoint_family": "wallet_balance",
+            "status": "inconclusive",
+            "error_category": "rate_limited",
+            "elapsed_ms": 3,
+        }
+
+    monkeypatch.setattr(smoke_wallet_balance, "run_wallet_balance_smoke", _fake_run)
+
+    exit_code = smoke_wallet_balance.main(["--allow-real-smoke"])
+
+    captured = capsys.readouterr()
+    output = json.loads(captured.out)
+    assert exit_code == 2
+    assert output["status"] == "inconclusive"
+    assert output["error_category"] == "rate_limited"
+    _assert_sanitized(output)
+
+
+def test_no_open_positions_order_status_or_write_live_smoke_is_implemented():
+    assert not hasattr(smoke_wallet_balance, "run_open_positions_smoke")
+    assert not hasattr(smoke_wallet_balance, "run_order_status_smoke")
+    assert not hasattr(smoke_wallet_balance, "place_order")
+    assert not hasattr(smoke_wallet_balance, "cancel_order")
+    assert not hasattr(smoke_wallet_balance, "set_leverage")
+    assert not hasattr(smoke_wallet_balance, "withdraw")
+    assert not hasattr(smoke_wallet_balance, "transfer")
+    assert not hasattr(smoke_wallet_balance, "live_reconcile")
+    assert not hasattr(smoke_wallet_balance, "live_execution")
+    assert "get_open_positions" not in smoke_wallet_balance.__dict__
+    assert "get_order_status" not in smoke_wallet_balance.__dict__
