@@ -1,12 +1,13 @@
 from __future__ import annotations
 
+from decimal import Decimal
 from unittest.mock import MagicMock, patch
 
 import pytest
 from pydantic import SecretStr, ValidationError
 
 from libs.config.settings import BybitB1Settings
-from libs.exchange.bybit_models import ServerTime
+from libs.exchange.bybit_models import ServerTime, WalletBalance
 from libs.exchange.bybit_read_only import BybitReadOnlyClient
 from libs.exchange.errors import (
     ExchangeAuthError,
@@ -19,6 +20,33 @@ from libs.exchange.errors import (
 
 FAKE_API_KEY = "testnet_fake_key"
 FAKE_API_SECRET = "testnet_fake_secret"
+FAKE_SIGNATURE = "deadbeefcafebabefeedface1234567890abcdef"
+
+
+_WALLET_BALANCE_PAYLOAD = {
+    "retCode": 0,
+    "retMsg": "OK",
+    "result": {
+        "list": [
+            {
+                "accountType": "UNIFIED",
+                "accountIMRate": "0.01",
+                "accountMMRate": "0.005",
+                "totalEquity": "12345.67",
+                "totalWalletBalance": "12000.00",
+                "accountId": "123456789",
+                "coin": [
+                    {
+                        "coin": "USDT",
+                        "walletBalance": "12000.00",
+                        "equity": "12345.67",
+                        "availableToWithdraw": "1000.00",
+                    }
+                ],
+            }
+        ]
+    },
+}
 
 
 class _FakeResponse:
@@ -100,7 +128,12 @@ def test_unsupported_endpoint_method_fails_closed():
         # Protected internal helper: any future endpoint must be explicitly allowed.
         import asyncio
 
-        asyncio.run(client._signed_get("/v5/account/wallet-balance"))
+        asyncio.run(
+            client._signed_get(
+                "/v5/order/realtime",
+                endpoint_family="order_status",
+            )
+        )
 
 
 @pytest.mark.asyncio
@@ -180,12 +213,11 @@ async def test_generic_bybit_error_raises_response_error():
 
 @pytest.mark.asyncio
 async def test_generic_bybit_error_sanitizes_sensitive_ret_msg(caplog):
-    fake_signature = "deadbeefcafebabefeedface1234567890abcdef"
     fake_account_id = "account_id=123456789"
     fake_balance = "balance=999999.99"
     sensitive_ret_msg = (
         f"bad request api_key={FAKE_API_KEY} api_secret={FAKE_API_SECRET} "
-        f"X-BAPI-SIGN={fake_signature} X-BAPI-API-KEY={FAKE_API_KEY} "
+        f"X-BAPI-SIGN={FAKE_SIGNATURE} X-BAPI-API-KEY={FAKE_API_KEY} "
         f"signed_payload=timestamp-key-window-query {fake_account_id} {fake_balance} "
         "raw_private_payload={'walletBalance':'999999.99'}"
     )
@@ -207,7 +239,7 @@ async def test_generic_bybit_error_sanitizes_sensitive_ret_msg(caplog):
     for forbidden in (
         FAKE_API_KEY,
         FAKE_API_SECRET,
-        fake_signature,
+        FAKE_SIGNATURE,
         "X-BAPI-SIGN",
         "X-BAPI-API-KEY",
         "signed_payload",
@@ -216,6 +248,139 @@ async def test_generic_bybit_error_sanitizes_sensitive_ret_msg(caplog):
         "walletBalance",
         "raw_private_payload",
         sensitive_ret_msg,
+    ):
+        assert forbidden not in exposed_text
+
+
+@pytest.mark.asyncio
+async def test_get_wallet_balance_uses_mocked_http_and_returns_decimal_model():
+    captured: dict = {}
+
+    with _patch_async(_WALLET_BALANCE_PAYLOAD, captured):
+        wallet = await BybitReadOnlyClient(_settings()).get_wallet_balance()
+
+    assert isinstance(wallet, WalletBalance)
+    assert wallet.exchange == "bybit"
+    assert wallet.account_type == "UNIFIED"
+    assert wallet.total_equity == Decimal("12345.67")
+    assert wallet.total_wallet_balance == Decimal("12000.00")
+    assert wallet.coins[0].coin == "USDT"
+    assert wallet.coins[0].wallet_balance == Decimal("12000.00")
+    assert wallet.coins[0].equity == Decimal("12345.67")
+    assert wallet.coins[0].available_to_withdraw == Decimal("1000.00")
+    assert captured["url"] == "https://api-testnet.bybit.com/v5/account/wallet-balance"
+    assert captured["kwargs"]["params"] == {"accountType": "UNIFIED"}
+
+
+@pytest.mark.asyncio
+async def test_get_wallet_balance_sends_auth_headers_without_logging_them(caplog):
+    captured: dict = {}
+
+    with _patch_async(_WALLET_BALANCE_PAYLOAD, captured):
+        await BybitReadOnlyClient(_settings()).get_wallet_balance()
+
+    headers = captured["kwargs"]["headers"]
+    assert headers["X-BAPI-API-KEY"] == FAKE_API_KEY
+    assert "X-BAPI-SIGN" in headers
+    assert FAKE_API_KEY not in caplog.text
+    assert FAKE_API_SECRET not in caplog.text
+    assert headers["X-BAPI-SIGN"] not in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_wallet_balance_repr_and_model_dump_redact_balances_and_account_ids():
+    captured: dict = {}
+
+    with _patch_async(_WALLET_BALANCE_PAYLOAD, captured):
+        wallet = await BybitReadOnlyClient(_settings()).get_wallet_balance()
+
+    exposed_text = " ".join(
+        [
+            repr(wallet),
+            repr(wallet.coins[0]),
+            str(wallet.model_dump()),
+            str(wallet.coins[0].model_dump()),
+        ]
+    )
+    for forbidden in (
+        "12345.67",
+        "12000.00",
+        "1000.00",
+        "123456789",
+        "walletBalance",
+        "totalWalletBalance",
+        "totalEquity",
+        "accountId",
+    ):
+        assert forbidden not in exposed_text
+
+
+@pytest.mark.asyncio
+async def test_wallet_generic_error_sanitizes_sensitive_ret_msg(caplog):
+    sensitive_ret_msg = (
+        f"wallet error api_key={FAKE_API_KEY} api_secret={FAKE_API_SECRET} "
+        f"X-BAPI-SIGN={FAKE_SIGNATURE} X-BAPI-API-KEY={FAKE_API_KEY} "
+        "signed_payload=timestamp-key-window-accountType "
+        "account_id=123456789 balance=999999.99 "
+        "raw_wallet_payload={'totalWalletBalance':'999999.99'}"
+    )
+    captured: dict = {}
+
+    with _patch_async({"retCode": 10001, "retMsg": sensitive_ret_msg}, captured):
+        with pytest.raises(ExchangeResponseError) as exc_info:
+            await BybitReadOnlyClient(_settings()).get_wallet_balance()
+
+    exposed_text = " ".join([str(exc_info.value), repr(exc_info.value), caplog.text])
+    assert "10001" in exposed_text
+    assert "endpoint_family=wallet_balance" in exposed_text
+    for forbidden in (
+        FAKE_API_KEY,
+        FAKE_API_SECRET,
+        FAKE_SIGNATURE,
+        "X-BAPI-SIGN",
+        "X-BAPI-API-KEY",
+        "signed_payload",
+        "account_id=123456789",
+        "balance=999999.99",
+        "totalWalletBalance",
+        "raw_wallet_payload",
+        sensitive_ret_msg,
+    ):
+        assert forbidden not in exposed_text
+
+
+@pytest.mark.asyncio
+async def test_malformed_wallet_payload_raises_sanitized_response_error(caplog):
+    malformed = {
+        "retCode": 0,
+        "retMsg": "OK",
+        "result": {
+            "list": [
+                {
+                    "accountType": "UNIFIED",
+                    "accountId": "123456789",
+                    "totalEquity": "12345.67",
+                    "totalWalletBalance": "12000.00",
+                    "coin": [{"coin": "USDT", "walletBalance": "not-a-decimal"}],
+                }
+            ]
+        },
+    }
+    captured: dict = {}
+
+    with _patch_async(malformed, captured):
+        with pytest.raises(ExchangeResponseError) as exc_info:
+            await BybitReadOnlyClient(_settings()).get_wallet_balance()
+
+    exposed_text = " ".join([str(exc_info.value), repr(exc_info.value), caplog.text])
+    assert "wallet balance payload missing required fields" in exposed_text
+    for forbidden in (
+        "12345.67",
+        "12000.00",
+        "123456789",
+        "not-a-decimal",
+        "walletBalance",
+        "accountId",
     ):
         assert forbidden not in exposed_text
 
@@ -254,12 +419,12 @@ async def test_http_failure_raises_unavailable_without_secret_leak():
     assert FAKE_API_SECRET not in rendered
 
 
-def test_only_get_server_time_exists_among_client_query_methods():
+def test_only_server_time_and_wallet_balance_exist_among_client_query_methods():
     client = BybitReadOnlyClient(_settings())
 
     assert hasattr(client, "get_server_time")
+    assert hasattr(client, "get_wallet_balance")
     for forbidden in (
-        "get_wallet_balance",
         "get_open_positions",
         "get_order_status",
         "place_order",
