@@ -16,9 +16,16 @@ Current readiness:
 - Runtime-ready: no.
 - Live/probe/trading readiness: not approved.
 
-Stage 53-B2 is not implemented. Real credentials, real Bybit calls, runtime smoke,
-service wiring, `order_status`, and write/live methods are not authorized by this
-document.
+Stage 53-B2a is implemented, committed, and pushed at:
+
+`a511e2f feat: add Stage 53-B2 server-time smoke harness`
+
+B2a includes a `server_time` smoke harness, mocked tests, and a direct no-flag
+safety latch that exits 3 with sanitized `authorization_required` JSON.
+
+Real credentials, real Bybit calls, runtime smoke, service wiring,
+`order_status`, wallet_balance smoke, open_positions smoke, and write/live
+methods are not authorized by this document or by B2a.
 
 ## 2. Stage 53-B2 Scope
 
@@ -34,7 +41,7 @@ implementation or real-smoke step requires a separate Human Owner decision.
 
 ## 3. Gate Structure
 
-- B2a: implement server_time smoke harness + mocked tests only
+- B2a: implemented server_time smoke harness + mocked tests only at a511e2f
 - B2b: execute real server_time smoke only after explicit Human Owner authorization
 - B2c: implement wallet_balance smoke harness + mocked tests only
 - B2d: execute real wallet_balance smoke only after explicit Human Owner authorization
@@ -46,6 +53,8 @@ Each gate requires a separate Human Owner decision.
 No automatic progression is allowed. Passing B2a does not authorize B2b. Passing
 B2b does not authorize B2c. Passing any gate does not authorize trading, live,
 probe, runtime readiness, service wiring, `order_status`, or write/live methods.
+
+B2b real server_time smoke remains not authorized and not executed.
 
 ## 4. Forbidden Scope
 

@@ -17,7 +17,7 @@
 - Python: 3.12.3
 - Docker: 29.4.1
 - Services: 9 healthy
-- Tests: HEAD 0596afb PASS for mocked Slice 3 open_positions behavior only; focused Slice 3 tests 39 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
+- Tests: HEAD a511e2f PASS for mocked B2a server_time smoke harness behavior only; direct no-flag latch exits 3 with authorization_required JSON; B2a tests 14 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
 - Alembic head: 0008
 - execution-service: ready, mode=paper
 
@@ -34,14 +34,14 @@
 - Stage 53-B design lock: CLOSED
 - Commit: 5e5eb48 docs: add stage 53-B design lock
 - Owner decisions: ANSWERED / APPROVED
-- Runtime/client implementation: Slice 3 open_positions accepted/pushed/remote-visible at 0596afb; no runtime/service wiring
+- Runtime/client implementation: B2a server_time smoke harness accepted/pushed/remote-visible at a511e2f; no runtime/service wiring; no real smoke executed; no credentials used
 
 ## Q1 fix and regression status
 
 - Q1-FIX-1 recover_position payload validation: MERGED
 - Q1-FIX-2 freshness naive datetime handling: MERGED
 - Q1-FIX-3 true EMA in snapshot builder: MERGED
-- Regression gate: PASS on main 1bd8e2a; B1-CONFIG green at c17c7d0; Slice 1 mocked server-time skeleton tests green at 828b64a; Slice 2 mocked wallet_balance tests green at 66a898d; Slice 3 mocked open_positions tests green at 0596afb
+- Regression gate: PASS on main 1bd8e2a; B1-CONFIG green at c17c7d0; Slice 1 mocked server-time skeleton tests green at 828b64a; Slice 2 mocked wallet_balance tests green at 66a898d; Slice 3 mocked open_positions tests green at 0596afb; B2a mocked server_time smoke harness tests green at a511e2f
 - Results:
   - python -m pytest tests\libs\config -q: 19 passed
   - python -m pytest tests\libs\exchange -q: 39 passed
@@ -61,20 +61,26 @@
   - python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 39 passed
   - python -m pytest tests\libs\exchange -q: 78 passed
   - python -m pytest tests\libs\config -q: 19 passed
+- B2a evidence:
+  - python scripts\smoke_server_time.py: LASTEXITCODE=3 with sanitized authorization_required JSON
+  - python -m pytest tests\scripts\test_smoke_server_time.py -q --basetemp=.pytest-temp-run: 14 passed
+  - python -m pytest tests\libs\exchange -q: 78 passed
+  - python -m pytest tests\libs\config -q: 19 passed
 
 ## Current stage
 
-- Current gate: Stage 53-B1 planning / architecture + Slice 3 open_positions checkpoint
-- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; Stage 53-B implementation beyond Slice 3 BLOCKED
+- Current gate: Stage 53-B2a server_time smoke harness checkpoint
+- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; Stage 53-B implementation beyond B2a BLOCKED
 - Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
-- Next allowed task: Stage 53-B1 docs/status cleanup and static safety checks; order_status or any write/live implementation requires separate approval
+- Next allowed task: Stage 53-B2 docs/status cleanup and static safety checks; B2b real server_time smoke, credentials use, wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
 - Live trading: NO-GO
 - Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no live reconcile
 - B1-CONFIG scope already present: config-only settings; no client, no private API calls, no service startup wiring, no runtime behavior change
 - Slice 1 scope already present: Bybit auth/signing helper; timestamp / recv_window handling; redaction helpers; minimal ServerTime model; read-only client skeleton; get_server_time() only; mocked tests; not runtime-ready
 - Slice 2 scope already present: get_wallet_balance(); wallet balance read-only models; Decimal numeric values; redacted repr() / model_dump(); sanitized wallet errors; mocked tests; not runtime-ready
 - Slice 3 scope already present: get_open_positions(); open-position read-only models; Decimal numeric values; redacted repr() / model_dump(); sanitized open-position errors; mocked tests; not runtime-ready
+- B2a scope already present: server_time smoke harness; mocked tests; direct no-flag latch exits 3 with authorization_required JSON; not runtime-ready; no real smoke executed; no credentials used
 - Withdrawal permission: forbidden
 - Secrets: no secrets in repo, prompts, docs, or logs
 
@@ -82,10 +88,12 @@
 
 - No API keys in repo, prompts, docs, logs, or committed fixtures
 - No real Bybit connectivity or real credential use
+- No real smoke execution without separate Human Owner authorization
 - No orders
 - No cancels
 - No balance runtime verification or real account balance use
 - No positions runtime verification or real account position use
+- No wallet_balance smoke or open_positions smoke without separate Human Owner authorization
 - No order_status
 - No write/live methods without separate Human Owner authorization
 - No live execution

@@ -15,7 +15,7 @@ Runtime status:
 - Local paper runtime: GO
 - VPS paper runtime: GO
 - 9 services healthy
-- Current test baseline: HEAD 0596afb PASS for mocked Slice 3 open_positions behavior only; focused Slice 3 tests 39 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
+- Current test baseline: HEAD a511e2f PASS for mocked B2a server_time smoke harness behavior only; direct no-flag latch exits 3 with authorization_required JSON; B2a tests 14 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
 - Alembic head: 0008
 - execution-service confirmed ready in paper mode
 - Live exchange layer: NOT IMPLEMENTED
@@ -23,8 +23,10 @@ Runtime status:
 - Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED at 828b64a; mocked tests only; not runtime-ready
 - Stage 53-B1 Slice 2 wallet_balance: ACCEPTED / PUSHED at 66a898d; mocked tests only; not runtime-ready
 - Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED / REMOTE-VISIBLE at 0596afb; mocked tests only; not runtime-ready
+- Stage 53-B2a server_time smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE at a511e2f; mocked tests only; direct no-flag latch exits 3; not runtime-ready; no real smoke or credentials use authorized
 
 Latest known commits:
+- a511e2f feat: add Stage 53-B2 server-time smoke harness
 - 0596afb feat: add Bybit B1 read-only open positions
 - 66a898d feat: add Bybit B1 read-only wallet balance
 - 828b64a feat: add Bybit B1 read-only server-time skeleton
@@ -56,6 +58,7 @@ Latest known commits:
 - Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED, commit 828b64a
 - Stage 53-B1 Slice 2 wallet_balance: ACCEPTED / PUSHED, commit 66a898d
 - Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED / REMOTE-VISIBLE, commit 0596afb
+- Stage 53-B2a server_time smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE, commit a511e2f
 - Live Path Audit completed
 - Legacy 11-item live blocker audit completed; canonical current taxonomy is 14 live blockers.
 
@@ -64,7 +67,7 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 53-B1 post-Slice-3 status / safety gate.
+Stage 53-B2a post-implementation status / safety gate.
 
 Stage 53-B implementation:
 BLOCKED beyond accepted Slice 3 open_positions.
@@ -72,12 +75,19 @@ BLOCKED beyond accepted Slice 3 open_positions.
 Stage 53-B1 implementation state:
 B1-CONFIG config-only slice is complete on c17c7d0. Slice 1 server-time skeleton is accepted and pushed on 828b64a. Slice 2 wallet_balance is accepted and pushed on 66a898d. Slice 3 open_positions is accepted, pushed, and remote-visible on 0596afb. It includes get_open_positions(), open-position read-only models, Decimal numeric values, redacted repr() / model_dump(), sanitized open-position errors, and mocked tests.
 
+Stage 53-B2a implementation state:
+B2a server_time smoke harness is accepted, pushed, and remote-visible on a511e2f. It includes a server_time smoke harness, mocked tests, and a direct CLI no-flag safety latch that exits 3 with authorization_required JSON. No real smoke was executed. No credentials were used. B2b real server_time smoke still requires separate Human Owner authorization.
+
 Slice 3 classification:
 - Code-ready candidate / accepted implementation checkpoint for open_positions only.
 - Test-ready for mocked open_positions behavior only.
 - Not runtime-ready.
 
 Still not implemented:
+- B2b real server_time smoke execution
+- credentials use for smoke
+- wallet_balance smoke
+- open_positions smoke
 - order_status
 - place_order
 - cancel_order
@@ -91,14 +101,14 @@ Still not implemented:
 - real credential verification
 
 Block reason:
-Any implementation beyond Slice 3 requires separate explicit approval. Future order_status and all write/live methods require separate Human Owner authorization.
+Any implementation beyond B2a requires separate explicit approval. B2b real server_time smoke, credentials use, wallet_balance smoke, open_positions smoke, order_status, and all write/live methods require separate Human Owner authorization.
 
 Owner decisions OI-1..OI-9 are ANSWERED / APPROVED in docs/STAGE_53B_OWNER_DECISIONS.md.
 No runtime implementation is authorized by the decision-sync PR, B1-CONFIG, Slice 1, Slice 2, or Slice 3.
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B1 docs/status cleanup and static safety checks; order_status or any write/live implementation only after explicit approval.
+Stage 53-B2 docs/status cleanup and static safety checks; B2b real server_time smoke, credentials use, wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation only after explicit approval.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -119,10 +129,13 @@ Architecture plan:
 - Slice 1 server-time skeleton exists at 828b64a; read-only client remains library-only and exposes get_server_time() only.
 - Slice 2 wallet_balance exists at 66a898d; read-only client exposes get_wallet_balance() with mocked tests only.
 - Slice 3 open_positions exists at 0596afb; read-only client exposes get_open_positions() with mocked tests only.
+- B2a server_time smoke harness exists at a511e2f; direct no-flag latch exits 3 with authorization_required JSON; mocked tests only.
 - B1-OI-1..B1-OI-6 are ANSWERED / APPROVED for future implementation planning.
 - This does not authorize runtime implementation, live trading, production private endpoints, orders, cancels, leverage changes, live reconcile, or live execution.
 
 Current regression evidence:
+- python scripts\smoke_server_time.py: LASTEXITCODE=3 with sanitized authorization_required JSON
+- python -m pytest tests\scripts\test_smoke_server_time.py -q --basetemp=.pytest-temp-run: 14 passed
 - python -m pytest tests\libs\exchange\test_bybit_auth.py tests\libs\exchange\test_bybit_read_only.py -q --basetemp=.pytest-temp-run: 39 passed
 - python -m pytest tests\libs\exchange -q: 78 passed
 - python -m pytest tests\libs\config -q: 19 passed

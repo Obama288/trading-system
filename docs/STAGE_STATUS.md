@@ -2,12 +2,12 @@
 
 ## Current summary
 
-- Current stage: Stage 53-B1 planning / architecture gate + Slice 3 open_positions checkpoint
+- Current stage: Stage 53-B2a server_time smoke harness checkpoint
 - Last completed operational milestone: Stage 53-A (Bybit public market data adapter)
-- Last completed code/test slice: Stage 53-B1 Slice 3 open_positions, 0596afb
+- Last completed code/test slice: Stage 53-B2a server_time smoke harness, a511e2f
 - Current mode: paper trading only
 - Live readiness: NO-GO
-- Current Slice 3 test baseline: HEAD 0596afb PASS for mocked open_positions behavior only; focused Slice 3 tests 39 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
+- Current B2a test baseline: HEAD a511e2f PASS for mocked server_time smoke harness behavior only; direct no-flag latch exits 3 with authorization_required JSON; B2a tests 14 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed
 - Stage 53-A closed: 3b3b06f
 - Stage 53-B design lock closed: 5e5eb48
 - Stage 53-B owner decisions OI-1..OI-9: ANSWERED / APPROVED
@@ -17,10 +17,11 @@
 - Stage 53-B1 Slice 1 server-time skeleton: CLOSED on 828b64a; accepted implementation checkpoint; no runtime/service wiring
 - Stage 53-B1 Slice 2 wallet_balance: CLOSED on 66a898d; accepted implementation checkpoint; mocked wallet_balance tests only; not runtime-ready
 - Stage 53-B1 Slice 3 open_positions: CLOSED on 0596afb; accepted implementation checkpoint; mocked open_positions tests only; not runtime-ready
+- Stage 53-B2a server_time smoke harness: CLOSED on a511e2f; accepted implementation checkpoint; mocked tests only; direct no-flag latch exits 3; not runtime-ready; no real smoke or credentials use authorized
 - Stage 53-B implementation beyond Slice 3: BLOCKED; separate explicit approval required
 - Stage 53-B1 first client implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred
 - Q1-FIX-3 true EMA: MERGED and regression-validated on main 1bd8e2a
-- Live/exchange/private endpoints/orders/cancels/live execution/live reconcile: not enabled by Q1 fixes, B1-CONFIG, Slice 1, Slice 2, or Slice 3
+- Live/exchange/private endpoints/orders/cancels/live execution/live reconcile: not enabled by Q1 fixes, B1-CONFIG, Slice 1, Slice 2, Slice 3, or B2a
 - Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 
 ## Stage table
@@ -47,6 +48,7 @@
 | Stage 53-B1 Slice 1 Server-Time Skeleton | CLOSED | 828b64a | Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, get_server_time() only, mocked tests; not runtime-ready |
 | Stage 53-B1 Slice 2 Wallet Balance | CLOSED | 66a898d | get_wallet_balance(), wallet balance read-only models, Decimal values, redacted repr/model_dump, sanitized wallet errors, mocked tests; no open_positions, service wiring, real connectivity, or runtime readiness |
 | Stage 53-B1 Slice 3 Open Positions | CLOSED | 0596afb | get_open_positions(), open-position read-only models, Decimal values, redacted repr/model_dump, sanitized open-position errors, mocked tests; no order_status, service wiring, real connectivity, or runtime readiness |
+| Stage 53-B2a Server-Time Smoke Harness | CLOSED | a511e2f | server_time smoke harness, mocked tests, direct no-flag latch exits 3 with authorization_required JSON; no real smoke, credentials use, wallet/open_positions smoke, order_status, service wiring, or runtime readiness |
 | Stage 53-B Implementation | BLOCKED | pending | not started; no place/cancel/live execution/live reconcile |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |
@@ -169,6 +171,39 @@ Does not exist:
 - real credential verification.
 
 Order_status and all write/live methods require separate Human Owner authorization.
+
+## Stage 53-B2a checkpoint
+
+Commit: a511e2f feat: add Stage 53-B2 server-time smoke harness.
+
+Classification:
+- Code-ready candidate / accepted implementation checkpoint for B2a server_time smoke harness only.
+- Test-ready for mocked B2a behavior only.
+- Not runtime-ready.
+
+Exists:
+- server_time smoke harness.
+- Mocked tests.
+- Direct no-flag latch exits 3 with authorization_required JSON.
+
+Does not exist / is not authorized:
+- B2b real server_time smoke execution.
+- Credentials use.
+- wallet_balance smoke.
+- open_positions smoke.
+- order_status.
+- place_order.
+- cancel_order.
+- set_leverage.
+- withdraw.
+- transfer.
+- live_reconcile.
+- live_execution.
+- service startup wiring.
+- real Bybit connectivity verification.
+- real credential verification.
+
+B2b real server_time smoke, credentials use, wallet_balance smoke, open_positions smoke, order_status, and all write/live methods require separate Human Owner authorization.
 
 ## Live blockers
 
