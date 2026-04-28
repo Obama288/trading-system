@@ -8,7 +8,13 @@ from httpx import HTTPError
 
 from libs.config.settings import BybitB1Settings
 from libs.exchange.bybit_auth import BybitAuth
-from libs.exchange.bybit_models import ServerTime, WalletBalance, WalletCoinBalance
+from libs.exchange.bybit_models import (
+    OpenPosition,
+    OpenPositions,
+    ServerTime,
+    WalletBalance,
+    WalletCoinBalance,
+)
 from libs.exchange.errors import (
     ExchangeAuthError,
     ExchangeConfigurationError,
@@ -24,7 +30,8 @@ _PRODUCTION_BASE_URLS = frozenset({
 })
 _ALLOWED_ENVIRONMENTS = frozenset({"testnet", "demo"})
 _WALLET_BALANCE_PATH = "/v5/account/wallet-balance"
-_ALLOWED_PATHS = frozenset({"/v5/market/time", _WALLET_BALANCE_PATH})
+_OPEN_POSITIONS_PATH = "/v5/position/list"
+_ALLOWED_PATHS = frozenset({"/v5/market/time", _WALLET_BALANCE_PATH, _OPEN_POSITIONS_PATH})
 _AUTH_ERROR_CODES = frozenset({10003, 10004})
 _RATE_LIMIT_CODE = 10006
 _GENERIC_BYBIT_ERROR_REASON = "Bybit read-only request returned non-zero retCode"
@@ -33,9 +40,10 @@ _GENERIC_BYBIT_ERROR_REASON = "Bybit read-only request returned non-zero retCode
 class BybitReadOnlyClient:
     """Stage 53-B1 read-only Bybit client skeleton.
 
-    Scope: testnet/demo server time and wallet balance read-only queries only.
-    No open positions, order status, orders, cancels, leverage, transfers,
-    withdrawals, live reconcile, live execution, or service wiring.
+    Scope: testnet/demo server time, wallet balance, and open positions
+    read-only queries only. Open positions are external observations, not
+    internal trading authority. No order status, orders, cancels, leverage,
+    transfers, withdrawals, live reconcile, live execution, or service wiring.
     """
 
     def __init__(
@@ -147,6 +155,42 @@ class BybitReadOnlyClient:
             raise ExchangeResponseError(
                 ret_code=0,
                 ret_msg="Bybit wallet balance payload missing required fields",
+            ) from exc
+
+    async def get_open_positions(self) -> OpenPositions:
+        payload = await self._signed_get(
+            _OPEN_POSITIONS_PATH,
+            {"category": "linear", "settleCoin": "USDT"},
+            endpoint_family="open_positions",
+        )
+        try:
+            result = payload.get("result") or {}
+            raw_positions = result["list"]
+            positions = tuple(
+                OpenPosition(
+                    symbol=str(raw_position["symbol"]),
+                    side=str(raw_position["side"]),
+                    size=_decimal_from_field(raw_position, "size"),
+                    avg_price=_decimal_from_field(raw_position, "avgPrice"),
+                    mark_price=_decimal_from_field(raw_position, "markPrice"),
+                    position_value=_decimal_from_field(raw_position, "positionValue"),
+                    unrealised_pnl=_decimal_from_field(raw_position, "unrealisedPnl"),
+                    position_im=_decimal_from_field(raw_position, "positionIM"),
+                    position_mm=_decimal_from_field(raw_position, "positionMM"),
+                    leverage=_decimal_from_field(raw_position, "leverage"),
+                )
+                for raw_position in raw_positions
+                if _decimal_from_field(raw_position, "size") != Decimal("0")
+            )
+            return OpenPositions(
+                exchange="bybit",
+                category=str(result["category"]),
+                positions=positions,
+            )
+        except (DecimalException, KeyError, TypeError, ValueError) as exc:
+            raise ExchangeResponseError(
+                ret_code=0,
+                ret_msg="Bybit open positions payload missing required fields",
             ) from exc
 
 

@@ -73,3 +73,61 @@ class WalletBalance:
             "coin_count": len(self.coins),
             "coins": [coin.model_dump() for coin in self.coins],
         }
+
+
+@dataclass(frozen=True)
+class OpenPosition:
+    """External read-only Bybit position observation.
+
+    This is not internal trading authority and must not be mapped into
+    position_manager domain state.
+    """
+
+    symbol: str
+    side: str
+    size: Decimal
+    avg_price: Decimal
+    mark_price: Decimal
+    position_value: Decimal
+    unrealised_pnl: Decimal
+    position_im: Decimal
+    position_mm: Decimal
+    leverage: Decimal
+
+    def __repr__(self) -> str:
+        return "OpenPosition(symbol='[REDACTED]', values='[REDACTED]')"
+
+    def model_dump(self) -> dict[str, Any]:
+        return {
+            "symbol": "[REDACTED]",
+            "values": "[REDACTED]",
+        }
+
+
+@dataclass(frozen=True)
+class OpenPositions:
+    """External read-only Bybit open positions snapshot.
+
+    Positions are external exchange observations only. They are not internal
+    authoritative position state and must not drive live execution/reconcile.
+    """
+
+    exchange: str
+    category: str
+    positions: tuple[OpenPosition, ...]
+
+    def __repr__(self) -> str:
+        return (
+            "OpenPositions("
+            f"exchange={self.exchange!r}, category={self.category!r}, "
+            "positions='[REDACTED]', "
+            f"position_count={len(self.positions)})"
+        )
+
+    def model_dump(self) -> dict[str, Any]:
+        return {
+            "exchange": self.exchange,
+            "category": self.category,
+            "positions": "[REDACTED]",
+            "position_count": len(self.positions),
+        }

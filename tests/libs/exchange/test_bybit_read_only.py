@@ -7,7 +7,7 @@ import pytest
 from pydantic import SecretStr, ValidationError
 
 from libs.config.settings import BybitB1Settings
-from libs.exchange.bybit_models import ServerTime, WalletBalance
+from libs.exchange.bybit_models import OpenPositions, ServerTime, WalletBalance
 from libs.exchange.bybit_read_only import BybitReadOnlyClient
 from libs.exchange.errors import (
     ExchangeAuthError,
@@ -45,6 +45,45 @@ _WALLET_BALANCE_PAYLOAD = {
                 ],
             }
         ]
+    },
+}
+
+_OPEN_POSITIONS_PAYLOAD = {
+    "retCode": 0,
+    "retMsg": "OK",
+    "result": {
+        "category": "linear",
+        "nextPageCursor": "",
+        "list": [
+            {
+                "positionIdx": 0,
+                "riskId": 1,
+                "riskLimitValue": "2000000",
+                "symbol": "BTCUSDT",
+                "side": "Buy",
+                "size": "0.25",
+                "avgPrice": "64000.50",
+                "markPrice": "64123.45",
+                "positionValue": "16000.125",
+                "unrealisedPnl": "30.7375",
+                "positionIM": "800.00625",
+                "positionMM": "80.000625",
+                "leverage": "20",
+                "accountId": "123456789",
+            },
+            {
+                "symbol": "ETHUSDT",
+                "side": "Sell",
+                "size": "0",
+                "avgPrice": "3000",
+                "markPrice": "3001",
+                "positionValue": "0",
+                "unrealisedPnl": "0",
+                "positionIM": "0",
+                "positionMM": "0",
+                "leverage": "10",
+            },
+        ],
     },
 }
 
@@ -419,13 +458,179 @@ async def test_http_failure_raises_unavailable_without_secret_leak():
     assert FAKE_API_SECRET not in rendered
 
 
-def test_only_server_time_and_wallet_balance_exist_among_client_query_methods():
+@pytest.mark.asyncio
+async def test_get_open_positions_uses_mocked_http_and_returns_decimal_external_observations():
+    captured: dict = {}
+
+    with _patch_async(_OPEN_POSITIONS_PAYLOAD, captured):
+        positions = await BybitReadOnlyClient(_settings()).get_open_positions()
+
+    assert isinstance(positions, OpenPositions)
+    assert positions.exchange == "bybit"
+    assert positions.category == "linear"
+    assert len(positions.positions) == 1
+    position = positions.positions[0]
+    assert position.symbol == "BTCUSDT"
+    assert position.side == "Buy"
+    assert position.size == Decimal("0.25")
+    assert position.avg_price == Decimal("64000.50")
+    assert position.mark_price == Decimal("64123.45")
+    assert position.position_value == Decimal("16000.125")
+    assert position.unrealised_pnl == Decimal("30.7375")
+    assert position.position_im == Decimal("800.00625")
+    assert position.position_mm == Decimal("80.000625")
+    assert position.leverage == Decimal("20")
+    assert captured["url"] == "https://api-testnet.bybit.com/v5/position/list"
+    assert captured["kwargs"]["params"] == {"category": "linear", "settleCoin": "USDT"}
+
+
+@pytest.mark.asyncio
+async def test_get_open_positions_sends_auth_headers_without_logging_them(caplog):
+    captured: dict = {}
+
+    with _patch_async(_OPEN_POSITIONS_PAYLOAD, captured):
+        await BybitReadOnlyClient(_settings()).get_open_positions()
+
+    headers = captured["kwargs"]["headers"]
+    assert headers["X-BAPI-API-KEY"] == FAKE_API_KEY
+    assert "X-BAPI-SIGN" in headers
+    assert FAKE_API_KEY not in caplog.text
+    assert FAKE_API_SECRET not in caplog.text
+    assert headers["X-BAPI-SIGN"] not in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_open_positions_repr_and_model_dump_redact_private_observation_values():
+    captured: dict = {}
+
+    with _patch_async(_OPEN_POSITIONS_PAYLOAD, captured):
+        positions = await BybitReadOnlyClient(_settings()).get_open_positions()
+
+    exposed_text = " ".join(
+        [
+            repr(positions),
+            repr(positions.positions[0]),
+            str(positions.model_dump()),
+            str(positions.positions[0].model_dump()),
+        ]
+    )
+    for forbidden in (
+        "BTCUSDT",
+        "ETHUSDT",
+        "0.25",
+        "64000.50",
+        "64123.45",
+        "16000.125",
+        "30.7375",
+        "800.00625",
+        "80.000625",
+        "123456789",
+        "accountId",
+        "positionValue",
+        "unrealisedPnl",
+        "positionIM",
+        "positionMM",
+    ):
+        assert forbidden not in exposed_text
+
+
+@pytest.mark.asyncio
+async def test_open_positions_generic_error_sanitizes_sensitive_ret_msg(caplog):
+    sensitive_ret_msg = (
+        f"position error api_key={FAKE_API_KEY} api_secret={FAKE_API_SECRET} "
+        f"X-BAPI-SIGN={FAKE_SIGNATURE} X-BAPI-API-KEY={FAKE_API_KEY} "
+        "signed_payload=timestamp-key-window-category "
+        "account_id=123456789 symbol=BTCUSDT size=0.25 pnl=30.7375 margin=800.00625 "
+        "raw_position_payload={'symbol':'BTCUSDT','size':'0.25'}"
+    )
+    captured: dict = {}
+
+    with _patch_async({"retCode": 10001, "retMsg": sensitive_ret_msg}, captured):
+        with pytest.raises(ExchangeResponseError) as exc_info:
+            await BybitReadOnlyClient(_settings()).get_open_positions()
+
+    exposed_text = " ".join([str(exc_info.value), repr(exc_info.value), caplog.text])
+    assert "10001" in exposed_text
+    assert "endpoint_family=open_positions" in exposed_text
+    for forbidden in (
+        FAKE_API_KEY,
+        FAKE_API_SECRET,
+        FAKE_SIGNATURE,
+        "X-BAPI-SIGN",
+        "X-BAPI-API-KEY",
+        "signed_payload",
+        "account_id=123456789",
+        "BTCUSDT",
+        "0.25",
+        "30.7375",
+        "800.00625",
+        "raw_position_payload",
+        sensitive_ret_msg,
+    ):
+        assert forbidden not in exposed_text
+
+
+@pytest.mark.asyncio
+async def test_malformed_open_positions_payload_raises_sanitized_response_error(caplog):
+    malformed = {
+        "retCode": 0,
+        "retMsg": "OK",
+        "result": {
+            "category": "linear",
+            "list": [
+                {
+                    "symbol": "BTCUSDT",
+                    "side": "Buy",
+                    "size": "not-a-decimal",
+                    "avgPrice": "64000.50",
+                    "markPrice": "64123.45",
+                    "positionValue": "16000.125",
+                    "unrealisedPnl": "30.7375",
+                    "positionIM": "800.00625",
+                    "positionMM": "80.000625",
+                    "leverage": "20",
+                    "accountId": "123456789",
+                }
+            ],
+        },
+    }
+    captured: dict = {}
+
+    with _patch_async(malformed, captured):
+        with pytest.raises(ExchangeResponseError) as exc_info:
+            await BybitReadOnlyClient(_settings()).get_open_positions()
+
+    exposed_text = " ".join([str(exc_info.value), repr(exc_info.value), caplog.text])
+    assert "open positions payload missing required fields" in exposed_text
+    for forbidden in (
+        "BTCUSDT",
+        "not-a-decimal",
+        "64000.50",
+        "64123.45",
+        "16000.125",
+        "30.7375",
+        "800.00625",
+        "80.000625",
+        "123456789",
+        "accountId",
+    ):
+        assert forbidden not in exposed_text
+
+
+def test_open_positions_model_is_documented_as_external_read_only_observation():
+    doc = (OpenPositions.__doc__ or "").lower()
+
+    assert "external read-only" in doc
+    assert "not internal" in doc
+
+
+def test_only_approved_read_only_methods_exist_among_client_query_methods():
     client = BybitReadOnlyClient(_settings())
 
     assert hasattr(client, "get_server_time")
     assert hasattr(client, "get_wallet_balance")
+    assert hasattr(client, "get_open_positions")
     for forbidden in (
-        "get_open_positions",
         "get_order_status",
         "place_order",
         "cancel_order",
