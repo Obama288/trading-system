@@ -1,11 +1,25 @@
 from __future__ import annotations
 
+import os
 from unittest.mock import patch
 
 import pytest
 from pydantic import SecretStr, ValidationError
 
 from libs.config.settings import AppSettings, BybitB1Settings
+
+
+BYBIT_ENV_NAMES = (
+    "BYBIT_B1_ENVIRONMENT",
+    "BYBIT_B1_API_KEY",
+    "BYBIT_B1_API_SECRET",
+    "BYBIT_API_KEY",
+    "BYBIT_API_SECRET",
+)
+FAKE_B1_KEY = "fake_b1_key"
+FAKE_B1_SECRET = "fake_b1_secret"
+FAKE_GENERIC_KEY = "fake_generic_key"
+FAKE_GENERIC_SECRET = "fake_generic_secret"
 
 
 def test_bybit_b1_settings_safe_defaults():
@@ -19,6 +33,73 @@ def test_bybit_b1_settings_safe_defaults():
     assert settings.allowed_endpoints == ("server_time", "wallet_balance", "open_positions")
     assert settings.api_key is None
     assert settings.api_secret is None
+
+
+def test_bybit_b1_settings_safe_defaults_when_bybit_env_is_cleared():
+    with patch.dict("os.environ", {}, clear=True):
+        assert all(name not in os.environ for name in BYBIT_ENV_NAMES)
+        settings = BybitB1Settings(_env_file=None)
+
+    assert settings.environment == "testnet"
+    assert settings.api_key is None
+    assert settings.api_secret is None
+
+
+def test_bybit_b1_settings_safe_defaults_require_clearing_b1_and_generic_aliases():
+    env = {
+        "POSTGRES_DSN": "postgresql+psycopg://user:pass@localhost:5432/trading",
+        "REDIS_URL": "redis://localhost:6379/0",
+    }
+    with patch.dict("os.environ", env, clear=True):
+        settings = BybitB1Settings(_env_file=None)
+
+    assert settings.environment == "testnet"
+    assert settings.api_key is None
+    assert settings.api_secret is None
+
+
+def test_bybit_b1_settings_reads_b1_specific_key_pair_when_only_b1_env_is_set():
+    env = {
+        "BYBIT_B1_API_KEY": FAKE_B1_KEY,
+        "BYBIT_B1_API_SECRET": FAKE_B1_SECRET,
+    }
+    with patch.dict("os.environ", env, clear=True):
+        settings = BybitB1Settings(_env_file=None)
+
+    assert settings.api_key is not None
+    assert settings.api_secret is not None
+    assert settings.api_key.get_secret_value() == FAKE_B1_KEY
+    assert settings.api_secret.get_secret_value() == FAKE_B1_SECRET
+
+
+def test_bybit_b1_settings_uses_generic_key_pair_only_as_fallback():
+    env = {
+        "BYBIT_API_KEY": FAKE_GENERIC_KEY,
+        "BYBIT_API_SECRET": FAKE_GENERIC_SECRET,
+    }
+    with patch.dict("os.environ", env, clear=True):
+        settings = BybitB1Settings(_env_file=None)
+
+    assert settings.api_key is not None
+    assert settings.api_secret is not None
+    assert settings.api_key.get_secret_value() == FAKE_GENERIC_KEY
+    assert settings.api_secret.get_secret_value() == FAKE_GENERIC_SECRET
+
+
+def test_bybit_b1_settings_prefers_b1_specific_env_over_generic_aliases():
+    env = {
+        "BYBIT_B1_API_KEY": FAKE_B1_KEY,
+        "BYBIT_B1_API_SECRET": FAKE_B1_SECRET,
+        "BYBIT_API_KEY": FAKE_GENERIC_KEY,
+        "BYBIT_API_SECRET": FAKE_GENERIC_SECRET,
+    }
+    with patch.dict("os.environ", env, clear=True):
+        settings = BybitB1Settings(_env_file=None)
+
+    assert settings.api_key is not None
+    assert settings.api_secret is not None
+    assert settings.api_key.get_secret_value() == FAKE_B1_KEY
+    assert settings.api_secret.get_secret_value() == FAKE_B1_SECRET
 
 
 @pytest.mark.parametrize("environment", ["testnet", "demo"])

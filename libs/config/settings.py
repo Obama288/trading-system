@@ -65,13 +65,13 @@ class BybitB1Settings(BaseSettings):
         default=None,
         repr=False,
         exclude=True,
-        validation_alias=AliasChoices("BYBIT_API_KEY", "BYBIT_B1_API_KEY"),
+        validation_alias=AliasChoices("BYBIT_B1_API_KEY", "BYBIT_API_KEY"),
     )
     api_secret: SecretStr | None = Field(
         default=None,
         repr=False,
         exclude=True,
-        validation_alias=AliasChoices("BYBIT_API_SECRET", "BYBIT_B1_API_SECRET"),
+        validation_alias=AliasChoices("BYBIT_B1_API_SECRET", "BYBIT_API_SECRET"),
     )
 
     @field_validator("exchange")

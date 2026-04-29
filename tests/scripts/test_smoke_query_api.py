@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -24,6 +25,10 @@ from scripts import smoke_query_api
 
 FAKE_API_KEY = "testnet_fake_key"
 FAKE_API_SECRET = "testnet_fake_secret"
+FAKE_B1_KEY = "fake_b1_key"
+FAKE_B1_SECRET = "fake_b1_secret"
+FAKE_GENERIC_KEY = "fake_generic_key"
+FAKE_GENERIC_SECRET = "fake_generic_secret"
 FAKE_SIGNATURE = "deadbeefcafebabefeedface1234567890abcdef"
 RAW_RET_MSG = "raw retMsg uid=123 ip=192.0.2.1 X-BAPI-SIGN=secret"
 RAW_BODY = '{"retMsg":"raw response body","api_secret":"secret","permissions":["Withdraw"]}'
@@ -88,6 +93,10 @@ def _assert_sanitized(output: dict) -> None:
     for forbidden in (
         FAKE_API_KEY,
         FAKE_API_SECRET,
+        FAKE_B1_KEY,
+        FAKE_B1_SECRET,
+        FAKE_GENERIC_KEY,
+        FAKE_GENERIC_SECRET,
         FAKE_SIGNATURE,
         "X-BAPI-SIGN",
         "X-BAPI-API-KEY",
@@ -109,6 +118,20 @@ def _assert_sanitized(output: dict) -> None:
         "BTCUSDT",
     ):
         assert forbidden not in rendered
+
+
+def _env_with_fake_bybit_aliases() -> dict[str, str]:
+    env = {key: value for key, value in os.environ.items() if not key.startswith("BYBIT")}
+    env.update(
+        {
+            "BYBIT_B1_ENVIRONMENT": "testnet",
+            "BYBIT_B1_API_KEY": FAKE_B1_KEY,
+            "BYBIT_B1_API_SECRET": FAKE_B1_SECRET,
+            "BYBIT_API_KEY": FAKE_GENERIC_KEY,
+            "BYBIT_API_SECRET": FAKE_GENERIC_SECRET,
+        }
+    )
+    return env
 
 
 @pytest.mark.asyncio
@@ -315,6 +338,24 @@ def test_direct_cli_without_authorization_exits_3_without_traceback_or_import_er
         "message": "Real smoke execution requires explicit Human Owner authorization.",
         "exit_code": 3,
     }
+    _assert_sanitized(output)
+
+
+def test_direct_cli_without_authorization_ignores_fake_bybit_env_aliases():
+    completed = subprocess.run(
+        [sys.executable, "scripts\\smoke_query_api.py"],
+        cwd=REPO_ROOT,
+        check=False,
+        capture_output=True,
+        text=True,
+        env=_env_with_fake_bybit_aliases(),
+    )
+
+    assert completed.returncode == 3
+    assert completed.stderr == ""
+    output = json.loads(completed.stdout)
+    assert output["status"] == "authorization_required"
+    assert output["exit_code"] == 3
     _assert_sanitized(output)
 
 
