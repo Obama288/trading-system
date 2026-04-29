@@ -35,6 +35,11 @@
 - Commit: 5e5eb48 docs: add stage 53-B design lock
 - Owner decisions: ANSWERED / APPROVED
 - Runtime/client implementation: B2a server_time smoke harness accepted/pushed/remote-visible at a511e2f; B2b real server_time smoke succeeded locally with LASTEXITCODE=0 and elapsed_ms=1534; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337 with mocked tests only; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a with mocked/local tests only; B2c.1b query-api read-only preflight harness accepted/pushed/remote-visible at 00d84d8 with mocked tests only; B2c.1c query-api real preflight attempted once and blocked with retCode=10003 invalid_key_or_environment; B2d real wallet_balance testnet smoke blocked due unavailable usable Bybit testnet API access; testnet API access runbook documented in docs/STAGE_53B2_SMOKE_PLAN.md; no runtime/service wiring; no open_positions smoke; no order_status or write/live methods
+- Stage 54-BG planning: Bitget Demo / Simulated Trading is the primary candidate replacement track after the blocked Bybit private testnet path; begin with docs-only architecture planning, then `BitgetBg1Settings` plus mocked tests only
+- Stage 54-BG proposed env namespace: `BITGET_BG1_ENVIRONMENT`, `BITGET_BG1_API_KEY`, `BITGET_BG1_API_SECRET`, `BITGET_BG1_PASSPHRASE`
+- Stage 54-BG safety boundary: no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback in the first implementation; production/mainnet must fail closed by default; no private Bitget smoke before config, environment, and passphrase boundaries are locked
+- Stage 54-AP fallback planning: Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction
+- Generic adapter boundary: do not create a generic exchange adapter yet
 - Pit-stop audit: audit-only checkpoint recorded; repo aligned at 8153c61; `.pytest-temp-run/` generated artifact removed; full local regression 408 passed / 5 warnings; targeted suites passed; no-flag server_time, wallet_balance, and query_api latches all exited 3; checked BYBIT env names were missing; no runtime/trading/live/probe readiness is claimed
 
 ## Q1 fix and regression status
@@ -139,11 +144,11 @@
 
 ## Current stage
 
-- Current gate: Stage 53-B2c.1c/B2d blocked due unavailable usable Bybit testnet API access
+- Current gate: Stage 54-BG planning active; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access
 - Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; B2b server_time smoke succeeded locally; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a; B2c.1b query-api preflight harness accepted/pushed/remote-visible at 00d84d8; B2c.1c real query-api preflight failed safely with retCode=10003 invalid_key_or_environment; B2d real wallet_balance smoke BLOCKED / NO-GO due unavailable usable Bybit testnet API access
 - Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
-- Next allowed task: Stage 53-B2 docs/status cleanup and local/mocked architecture improvements; B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
+- Next allowed task: Stage 53-B2 docs/status cleanup and Stage 54-BG docs-only architecture planning; any Bitget implementation, Bitget private smoke, B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
 - Live trading: NO-GO
 - Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no live reconcile
 - B1-CONFIG scope already present: config-only settings; no client, no private API calls, no service startup wiring, no runtime behavior change

@@ -30,6 +30,11 @@ Runtime status:
 - Stage 53-B2c.1b query-api read-only preflight harness: ACCEPTED / PUSHED / REMOTE-VISIBLE at 00d84d8; get_query_api_info() supports signed read-only GET /v5/user/query-api; sanitized ApiKeyInfo model; scripts/smoke_query_api.py exists; no-flag latch exits 3 with sanitized authorization_required JSON; success output exact approved field set with no operation or endpoint_family; unsafe readOnly/permissions/expiry metadata fail closed; stale/malformed expiredAt regression tests exist; rate limit remains exit 2 / inconclusive; no real query-api execution, credentials use, Bybit call, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
 - Stage 53-B2c.1c real query-api preflight: BLOCKED; attempted once and failed safely with retCode=10003, error_category=invalid_key_or_environment, LASTEXITCODE=1; likely ordinary/mainnet Bybit key used against testnet API endpoint, or no usable Bybit testnet API access; no further query-api retry is authorized
 - Stage 53-B2d real wallet_balance testnet smoke: BLOCKED / NO-GO because usable Bybit testnet API credentials are unavailable; ordinary/mainnet Bybit key must not be substituted into the testnet flow; any mainnet read-only smoke requires a new separately authorized stage, not continuation of B2d
+- Stage 54-BG planning: Bitget Demo / Simulated Trading is the primary candidate for the next exchange-specific read-only sandbox track; start with docs-only architecture planning, then `BitgetBg1Settings` plus mocked tests only
+- Stage 54-BG proposed env namespace: `BITGET_BG1_ENVIRONMENT`, `BITGET_BG1_API_KEY`, `BITGET_BG1_API_SECRET`, `BITGET_BG1_PASSPHRASE`
+- Stage 54-BG first-slice safety boundary: no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback, Bitget production/mainnet fail-closed by default, and no private Bitget smoke before config/environment/passphrase boundaries are locked
+- Stage 54-AP fallback planning: Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction
+- Generic adapter boundary: do not create a generic exchange adapter yet
 - Stage 53-B2 testnet API access runbook: DOCUMENTED in docs/STAGE_53B2_SMOKE_PLAN.md; Human Owner must obtain testnet credentials from https://testnet.bybit.com / https://testnet.bybit.com/app/user/api-management; use API Transaction / Транзакция API, read-only only, withdrawal/transfer/trade/order/write disabled; BYBIT_B1_ENVIRONMENT=testnet; BYBIT_B1_API_KEY and BYBIT_B1_API_SECRET must come from the same testnet key pair; BYBIT_API_KEY / BYBIT_API_SECRET should be missing during B2 flow; retCode 10003 troubleshooting covers mainnet/testnet mismatch, demo/testnet-demo mismatch, deleted/disabled/expired key, wrong key/secret pair, IP whitelist mismatch, and endpoint compatibility issue
 - Stage 53-B2 Pit-stop audit: RECORDED as audit-only, not an implementation gate; repo was aligned at 8153c61; tracked diff was empty; full local regression passed with 408 passed and 5 warnings; targeted suites passed with tests/scripts 60, tests/libs/exchange 99, tests/libs/config 19; server_time, wallet_balance, and query_api no-flag latches all exited 3; checked BYBIT env names were missing; no runtime/trading/live/probe readiness is claimed
 - Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b are mocked/local implementation checkpoints only; private real testnet path is blocked due unavailable usable Bybit testnet API access
@@ -88,7 +93,7 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 53-B2c.1c/B2d blocked - unavailable usable Bybit testnet API access.
+Stage 54-BG planning active; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
 
 Stage 53-B implementation:
 BLOCKED beyond accepted Slice 3 open_positions.
@@ -151,7 +156,7 @@ No runtime implementation is authorized by the decision-sync PR, B1-CONFIG, Slic
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B2 docs/status cleanup and local/mocked architecture improvements. B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation only after explicit approval.
+Stage 53-B2 docs/status cleanup and Stage 54-BG docs-only architecture planning. Any Bitget implementation, Bitget private smoke, B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation only after explicit approval.
 
 Stage 53-B1 maximum scope:
 - Bybit only

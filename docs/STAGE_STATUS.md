@@ -2,11 +2,17 @@
 
 ## Current summary
 
-- Current stage: Stage 53-B2c.1c/B2d blocked - unavailable usable Bybit testnet API access
+- Current stage: Stage 54-BG planning - Bitget Demo primary candidate; Bybit Stage 53 private real testnet path remains blocked
 - Last completed operational milestone: Stage 53-A (Bybit public market data adapter)
 - Last completed code/test slice: Stage 53-B2c.1b query-api read-only preflight harness, 00d84d8
 - Current mode: paper trading only
 - Live readiness: NO-GO
+- Stage 54-BG planning decision: Bitget Demo / Simulated Trading is the primary candidate for the next exchange-specific read-only sandbox track; start with docs-only architecture planning, then `BitgetBg1Settings` plus mocked tests only
+- Stage 54-BG proposed env namespace: `BITGET_BG1_ENVIRONMENT`, `BITGET_BG1_API_KEY`, `BITGET_BG1_API_SECRET`, `BITGET_BG1_PASSPHRASE`
+- Stage 54-BG config boundary: no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback in the first implementation; Bitget production/mainnet must fail closed by default
+- Stage 54-BG implementation boundary: no private Bitget smoke before config, environment, and passphrase guardrails are locked; no real wallet/balance/positions smoke, order_status, write/live methods, or service wiring are authorized
+- Stage 54-AP planning boundary: Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction
+- Generic exchange adapter boundary: do not create a generic exchange adapter yet
 - Current B2c.1a test baseline: HEAD 189cb0a PASS for mocked/local authenticated-readiness hardening only; server_time no-flag latch LASTEXITCODE=3; wallet_balance no-flag latch LASTEXITCODE=3; tests/scripts 40 passed; tests/libs/exchange 86 passed; tests/libs/config 19 passed
 - Stage 53-A closed: 3b3b06f
 - Stage 53-B design lock closed: 5e5eb48
@@ -67,6 +73,8 @@
 | Stage 53-B2c.1b Query-API Preflight Harness | CLOSED | 00d84d8 | get_query_api_info() signed read-only `/v5/user/query-api`; sanitized ApiKeyInfo; smoke_query_api no-flag latch exits 3; exact success output field set; unsafe readOnly/permissions/expiry metadata fail closed; stale/malformed expiredAt covered; rate limit exit 2 / inconclusive; mocked tests only; no real query-api execution, real wallet smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness |
 | Stage 53-B2c.1c Real Query-API Preflight | BLOCKED | local owner-run | attempted once; failed safely with retCode=10003 invalid_key_or_environment and LASTEXITCODE=1; likely mainnet/testnet key-environment mismatch or no usable testnet API access; no retry authorized |
 | Stage 53-B2d Real Wallet Balance Testnet Smoke | BLOCKED / NO-GO | pending | usable Bybit testnet API credentials unavailable; ordinary/mainnet key must not be substituted into testnet flow; any mainnet read-only smoke requires a new separately authorized stage |
+| Stage 54-BG Planning | PLANNED | pending | Bitget Demo / Simulated Trading is the primary candidate replacement track; begin with docs-only architecture planning, then `BitgetBg1Settings` and mocked tests only; no generic `BITGET_API_KEY` fallback in first implementation; production/mainnet must fail closed; no private Bitget smoke, wallet/balance/positions real smoke, order_status, write/live methods, or service wiring authorized |
+| Stage 54-AP Fallback Planning | PLANNED | pending | Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction or a generic exchange adapter |
 | Stage 53-B2 Testnet API Access Runbook | DOCUMENTED | pending | testnet URL/API Management URL, API Transaction / Транзакция API key type, read-only permissions, retCode 10003 troubleshooting, and safe restart path documented; no real retry authorized |
 | Stage 53-B2 Pit-stop Audit | RECORDED | 8153c61 | audit-only checkpoint; repo aligned at 8153c61; no-flag latches exited 3; targeted suites passed; full local regression 408 passed / 5 warnings; B2d remains blocked / NO-GO; no readiness promoted |
 | Stage 53-B2c.1 Auth Readiness Audit | BLOCKED | pending | B2c.1a/B2c.1b mocked/local readiness complete; private real testnet path blocked due unavailable usable Bybit testnet API access |
