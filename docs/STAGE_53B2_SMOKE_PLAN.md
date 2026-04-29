@@ -65,6 +65,36 @@ behavior. It did not run real wallet_balance smoke, did not use credentials, and
 does not authorize B2d. Runtime readiness, trading readiness, live readiness, and
 probe readiness remain not approved.
 
+Stage 53-B2c.1a authenticated readiness hardening is implemented, committed,
+pushed, and remote-visible at:
+
+`189cb0a feat: harden Stage 53-B2 authenticated smoke readiness`
+
+B2c.1a includes:
+- unsigned public `/v5/market/time` methodology for `server_time`
+- `get_server_time()` no longer requires credentials
+- private reads still fail closed without credentials
+- private signed reads include `X-BAPI-SIGN-TYPE: 2`
+- deterministic signed GET query handling consistent with what is sent
+- `wallet_balance` signs/sends `accountType=UNIFIED`
+- safe retCode classification for `10002`, `10003`, `10004`, `10005`, `10006`,
+  `10007`, and `10010`
+- `10006` remains exit code 2 / inconclusive in smoke harnesses
+- no raw `retMsg` or raw response body exposure
+- wallet smoke output remains sanitized
+
+B2c.1a test evidence:
+- server_time no-flag latch: `LASTEXITCODE=3`
+- wallet_balance no-flag latch: `LASTEXITCODE=3`
+- `tests/scripts`: 40 passed
+- `tests/libs/exchange`: 86 passed
+- `tests/libs/config`: 19 passed
+
+B2c.1a is code-ready/test-ready only for mocked/local authenticated-readiness
+hardening. It did not add query-api support, open_positions smoke,
+`order_status`, write/live methods, service wiring, runtime readiness, trading
+readiness, live readiness, or probe readiness.
+
 ## 2. Stage 53-B2 Scope
 
 Stage 53-B2 is a plan for real Bybit testnet read-only connectivity smoke.
@@ -83,6 +113,8 @@ implementation or real-smoke step requires a separate Human Owner decision.
 - B2b: completed successful real testnet server_time smoke after explicit Human Owner authorization
 - B2c: implemented wallet_balance smoke harness + mocked tests only at c9b1337
 - B2c.1: authenticated readiness audit / query-api preflight decision; no real wallet smoke
+- B2c.1a: implemented authenticated readiness hardening at 189cb0a; mocked/local
+  hardening only; no real wallet smoke
 - B2d: execute real wallet_balance smoke only after explicit Human Owner authorization
 - B2e: implement open_positions smoke harness + mocked tests only
 - B2f: execute real open_positions smoke only after explicit Human Owner authorization
@@ -119,6 +151,10 @@ B2c.1 purpose:
 External research and expert review confirm that direct transition from B2c to
 B2d should be blocked until this audit and Human Owner decision are complete.
 B2d real wallet_balance smoke remains NO-GO.
+
+B2c.1a closed the first hardening sub-slice of B2c.1. It does not complete or
+replace any Human Owner decision about query-api, and it does not authorize B2d.
+Query-api remains a separate Human Owner decision and was not implemented.
 
 ## 3B. Query-API Scope Boundary
 

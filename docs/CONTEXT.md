@@ -17,7 +17,7 @@
 - Python: 3.12.3
 - Docker: 29.4.1
 - Services: 9 healthy
-- Tests: HEAD c9b1337 PASS for mocked B2c wallet_balance smoke harness behavior only; direct no-flag latch exits 3 with authorization_required JSON; tests/scripts/test_smoke_wallet_balance.py 14 passed; tests/scripts 28 passed; tests/libs/exchange 78 passed; tests/libs/config 19 passed after clearing BYBIT_B1 env vars
+- Tests: HEAD 189cb0a PASS for mocked/local B2c.1a authenticated-readiness hardening only; server_time no-flag latch LASTEXITCODE=3; wallet_balance no-flag latch LASTEXITCODE=3; tests/scripts 40 passed; tests/libs/exchange 86 passed; tests/libs/config 19 passed
 - Alembic head: 0008
 - execution-service: ready, mode=paper
 
@@ -34,7 +34,7 @@
 - Stage 53-B design lock: CLOSED
 - Commit: 5e5eb48 docs: add stage 53-B design lock
 - Owner decisions: ANSWERED / APPROVED
-- Runtime/client implementation: B2a server_time smoke harness accepted/pushed/remote-visible at a511e2f; B2b real server_time smoke succeeded locally with LASTEXITCODE=0 and elapsed_ms=1534; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337 with mocked tests only; no runtime/service wiring; no real wallet_balance/open_positions smoke; no order_status or write/live methods
+- Runtime/client implementation: B2a server_time smoke harness accepted/pushed/remote-visible at a511e2f; B2b real server_time smoke succeeded locally with LASTEXITCODE=0 and elapsed_ms=1534; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337 with mocked tests only; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a with mocked/local tests only; no runtime/service wiring; no real wallet_balance/open_positions smoke; no order_status or write/live methods
 
 ## Q1 fix and regression status
 
@@ -79,6 +79,21 @@
   - mocked success output is sanitized and includes only endpoint/status/exchange/account_type/coins_count/elapsed_ms
   - tests/scripts/test_smoke_wallet_balance.py: 14 passed; tests/scripts: 28 passed; tests/libs/exchange: 78 passed; tests/libs/config: 19 passed after clearing BYBIT_B1 env vars
   - Operational hygiene lesson: config suite initially failed because real BYBIT_B1 env vars from B2b smoke were still present; after clearing env vars it passed, not a B2c code failure
+- B2c.1a evidence:
+  - 189cb0a feat: harden Stage 53-B2 authenticated smoke readiness
+  - server_time now uses unsigned public /v5/market/time methodology
+  - get_server_time no longer requires credentials
+  - private reads still fail closed without credentials
+  - private signed reads include X-BAPI-SIGN-TYPE: 2
+  - signed GET query handling is deterministic and consistent with what is sent
+  - wallet_balance signs/sends accountType=UNIFIED
+  - safe retCode classifications added for 10002 timestamp_or_recv_window_error, 10003 invalid_key_or_environment, 10004 invalid_signature, 10005 permission_denied, 10006 rate_limited, 10007 authentication_failed, and 10010 ip_mismatch
+  - 10006 remains exit code 2 / inconclusive in smoke harnesses
+  - no raw retMsg or raw response body exposure
+  - wallet smoke output remains sanitized
+  - server_time no-flag latch LASTEXITCODE=3; wallet_balance no-flag latch LASTEXITCODE=3
+  - tests/scripts: 40 passed; tests/libs/exchange: 86 passed; tests/libs/config: 19 passed
+  - no query-api support, open_positions smoke, order_status, write/live methods, service wiring, runtime readiness, trading readiness, live readiness, or probe readiness was added
 - B2c.1 required next gate:
   - authenticated readiness audit / query-api preflight decision before B2d
   - not real wallet smoke; must not call wallet_balance or open_positions
@@ -89,8 +104,8 @@
 
 ## Current stage
 
-- Current gate: Stage 53-B2c wallet_balance smoke harness checkpoint
-- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; B2b server_time smoke succeeded locally; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337; B2d real wallet_balance smoke NO-GO pending B2c.1 and Human Owner decision
+- Current gate: Stage 53-B2c.1a authenticated readiness hardening checkpoint
+- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; B2b server_time smoke succeeded locally; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a; B2d real wallet_balance smoke NO-GO pending Human Owner decision
 - Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 - Next allowed task: Stage 53-B2 docs/status cleanup and static safety checks; B2c.1 authenticated readiness audit / query-api preflight decision. B2d real wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
@@ -103,6 +118,7 @@
 - B2a scope already present: server_time smoke harness; mocked tests; direct no-flag latch exits 3 with authorization_required JSON; not runtime-ready
 - B2b scope already completed: real testnet server_time smoke succeeded locally; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; credentials were used locally only and must not be stored or disclosed; not runtime-ready
 - B2c scope already present: wallet_balance smoke harness; mocked tests only; direct no-flag latch exits 3 with authorization_required JSON; --allow-real-smoke required; sanitized mocked success output only; no real wallet_balance smoke or credentials use for B2c implementation; not runtime-ready
+- B2c.1a scope already present: unsigned public server_time methodology; get_server_time no longer requires credentials; private reads fail closed without credentials; signed private reads include X-BAPI-SIGN-TYPE: 2; deterministic signed/sent GET query handling; wallet_balance signs/sends accountType=UNIFIED; safe retCode categories for 10002/10003/10004/10005/10006/10007/10010; no query-api, open_positions smoke, order_status, write/live methods, service wiring, or readiness approval; not runtime-ready
 - Current authorized state: READ_ONLY_TESTNET_SMOKE. Future READ_ONLY_ACTIVE / READ_ONLY_DEGRADED / READ_ONLY_HALTED, OMS, reconciliation, kill switch, risk controls, runbook, write client, ExchangePort refactor, dependency changes, CI secret scanning, and service wiring remain future-gate/backlog concepts only
 - Withdrawal permission: forbidden
 - Secrets: no secrets in repo, prompts, docs, or logs
