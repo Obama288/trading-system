@@ -95,8 +95,8 @@ Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
 ## Current State
 
-Last updated: 2026-04-29 (B2c.1b query-api read-only preflight harness checkpoint)
-Current stage: Stage 53-B2c.1b query-api read-only preflight harness checkpoint
+Last updated: 2026-04-29 (B2c.1c/B2d blocked - unavailable usable Bybit testnet API access)
+Current stage: Stage 53-B2c.1c/B2d blocked due unavailable usable Bybit testnet API access
 Stage 53-B owner decisions: ANSWERED / APPROVED
 Stage 53-B implementation beyond B2a: BLOCKED; separate explicit approval required
 B1-CONFIG config-only slice: CLOSED on c17c7d0; no client, private API calls, service startup wiring, runtime behavior, or live enablement
@@ -108,14 +108,17 @@ Stage 53-B2b real server_time smoke: SUCCESS for server_time only; Human Owner e
 Stage 53-B2c wallet_balance smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE on c9b1337; code-ready candidate / accepted implementation checkpoint; mocked tests only; direct no-flag latch exits 3; --allow-real-smoke required for real-capable path; not runtime-ready; no real wallet_balance smoke or credentials use for B2c implementation
 Stage 53-B2c.1a authenticated readiness hardening: ACCEPTED / PUSHED / REMOTE-VISIBLE on 189cb0a; code-ready/test-ready only for mocked/local hardening; server_time now uses unsigned public /v5/market/time; get_server_time no longer requires credentials; private reads fail closed without credentials; private signed reads include X-BAPI-SIGN-TYPE: 2; signed GET query handling is deterministic and consistent with what is sent; wallet_balance signs/sends accountType=UNIFIED; safe retCode classifications added for 10002/10003/10004/10005/10006/10007/10010; 10006 remains exit code 2 / inconclusive; no query-api, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
 Stage 53-B2c.1b query-api read-only preflight harness: ACCEPTED / PUSHED / REMOTE-VISIBLE on 00d84d8; code-ready/test-ready only for mocked query-api preflight behavior; get_query_api_info() supports signed read-only GET /v5/user/query-api; sanitized ApiKeyInfo model; scripts/smoke_query_api.py exists; no-flag latch exits 3 with sanitized authorization_required JSON; success output exact approved field set; operation and endpoint_family absent from success output; unsafe readOnly/permissions/expiry metadata fail closed; stale/malformed expiredAt regression tests exist; rate limit remains exit 2 / inconclusive; no real query-api execution, credentials use, Bybit call, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
-Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b are mocked/local implementation checkpoints only; B2d real wallet_balance smoke is NO-GO until Human Owner separately authorizes B2d
+Stage 53-B2c.1c real query-api preflight: BLOCKED; attempted once and failed safely with retCode=10003, error_category=invalid_key_or_environment, LASTEXITCODE=1; likely ordinary/mainnet Bybit key used against testnet API endpoint, or no usable Bybit testnet API access; no further query-api retry is authorized
+Stage 53-B2d real wallet_balance testnet smoke: BLOCKED / NO-GO because usable Bybit testnet API credentials are unavailable; ordinary/mainnet Bybit key must not be substituted into the testnet flow; any mainnet read-only smoke requires a new separately authorized stage, not continuation of B2d
+Stage 53-B2 testnet API access runbook: DOCUMENTED in docs/STAGE_53B2_SMOKE_PLAN.md; use https://testnet.bybit.com and https://testnet.bybit.com/app/user/api-management; keys from www.bybit.com / ordinary Bybit mainnet must not be used in the Stage 53-B2 testnet flow; use API Transaction / Транзакция API, read-only only, withdrawal/transfer/trade/order/write disabled; BYBIT_B1_ENVIRONMENT=testnet; BYBIT_B1_API_KEY and BYBIT_B1_API_SECRET must come from the same testnet key pair; BYBIT_API_KEY / BYBIT_API_SECRET should be missing during B2 flow; retCode 10003 troubleshooting and safe restart path are documented
+Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b are mocked/local implementation checkpoints only; private real testnet path is blocked due unavailable usable Bybit testnet API access
 Current mode: paper trading only
 Live trading: NO-GO
 Current B2c.1a pytest: HEAD 189cb0a PASS for mocked/local authenticated-readiness hardening only; server_time no-flag latch LASTEXITCODE=3; wallet_balance no-flag latch LASTEXITCODE=3; tests/scripts 40 passed; tests/libs/exchange 86 passed; tests/libs/config 19 passed
 Alembic head: 0008_unique_trade_candidates_signal_id
 Canonical live blocker taxonomy: 14 canonical live blockers from docs/STAGE_53_DESIGN_LOCK.md
 Owner decisions OI-1..OI-9: answered/approved in docs/STAGE_53B_OWNER_DECISIONS.md
-Next allowed lane: Stage 53-B2 docs/status cleanup and static safety checks; remaining B2c.1/query-api preflight decision work only after explicit approval; B2d real wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation requires separate explicit approval
+Next allowed lane: Stage 53-B2 docs/status cleanup and local/mocked architecture improvements; B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation requires separate explicit approval
 Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no withdraw; no transfer; no live reconcile; no live execution; no production private endpoint access
@@ -131,7 +134,10 @@ B2c.1a exists: unsigned public server_time methodology; get_server_time no longe
 B2c.1a does not include / authorize: query-api; real wallet_balance smoke; open_positions smoke; order_status; place_order; cancel_order; set_leverage; withdraw; transfer; live_reconcile; live_execution; service startup wiring; runtime readiness; trading readiness; live readiness; probe readiness
 B2c.1b exists: get_query_api_info() signed read-only GET /v5/user/query-api support; sanitized ApiKeyInfo model; scripts/smoke_query_api.py; tests/scripts/test_smoke_query_api.py; direct no-flag latch exits 3; exact success output field set; unsafe readOnly/permissions/expiry metadata fail closed; stale/malformed expiredAt tests; rate limit exit 2 / inconclusive
 B2c.1b does not include / authorize: real query-api execution; credentials use; Bybit call; real wallet_balance smoke; open_positions smoke; order_status; place_order; cancel_order; set_leverage; withdraw; transfer; live_reconcile; live_execution; service startup wiring; runtime readiness; trading readiness; live readiness; probe readiness
-B2c.1 required before B2d: audit signing/query-string behavior, signed vs unsigned server_time, X-BAPI-SIGN-TYPE: 2, query-api scope decision, safe retCode classification, and key active/not expired wording; query-api is not currently in B1/B2 endpoint set and requires explicit Human Owner decision
+B2c.1c attempted once: real query-api preflight failed safely with retCode=10003 invalid_key_or_environment and LASTEXITCODE=1; likely mainnet/testnet key-environment mismatch or no usable Bybit testnet API access; no query-api retry is authorized
+B2d blocked: real wallet_balance testnet smoke is NO-GO because usable Bybit testnet API credentials are unavailable; ordinary/mainnet key must not be substituted into the testnet flow; any mainnet read-only smoke requires a new separately authorized stage
+B2 testnet access runbook exists: safe restart path is safe env presence/hygiene check, no-flag latch LASTEXITCODE=3, explicit Human Owner authorization, exactly one real query-api preflight, and no automatic retry; B2d remains blocked until query-api preflight succeeds or Human Owner explicitly accepts a documented alternative
+B2c.1 required before any future B2d reconsideration: audit signing/query-string behavior, signed vs unsigned server_time, X-BAPI-SIGN-TYPE: 2, query-api scope decision, safe retCode classification, key active/not expired wording, and usable testnet API access
 Withdrawal permission: forbidden
 Secrets: no secrets in repo, prompts, docs, or logs
 Stage 53-A: CLOSED, commit 3b3b06f
@@ -149,6 +155,9 @@ Stage 53-B2b real server_time smoke: CLOSED, local owner-run success
 Stage 53-B2c wallet_balance smoke harness: CLOSED, commit c9b1337
 Stage 53-B2c.1a authenticated readiness hardening: CLOSED, commit 189cb0a
 Stage 53-B2c.1b query-api read-only preflight harness: CLOSED, commit 00d84d8
+Stage 53-B2c.1c real query-api preflight: BLOCKED, local owner-run retCode=10003 invalid_key_or_environment
+Stage 53-B2d real wallet_balance testnet smoke: BLOCKED / NO-GO, usable testnet API credentials unavailable
+Stage 53-B2 testnet API access runbook: DOCUMENTED, no real retry authorized
 Q1-FIX-3 true EMA: MERGED, commit 1bd8e2a
 B1-CONFIG / current regression gate:
 - python -m pytest tests\libs\config -q: 19 passed
@@ -157,7 +166,7 @@ B1-CONFIG / current regression gate:
 - python -m pytest apps -q: 163 passed
 - python -m pytest -q --ignore=./research --basetemp=.pytest_tmp: 288 passed, 5 warnings
 No live/exchange/private endpoints/orders/cancels/balances/live execution/live reconcile were enabled or observed.
-No trading readiness, live readiness, probe readiness, real query-api execution, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness is approved by B2c.1b.
+No trading readiness, live readiness, probe readiness, real query-api retry, real wallet_balance smoke, mainnet smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness is approved by B2c.1c/B2d blocked-state docs.
 
 > **Source of truth**: `docs/PROGRESS.md` is authoritative. If this file conflicts with PROGRESS.md, PROGRESS.md wins.
 

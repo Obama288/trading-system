@@ -5,17 +5,21 @@
 Date: 2026-04-29
 
 Stage:
-Stage 53-B2c.1b query-api read-only preflight harness checkpoint.
+Stage 53-B2c.1c/B2d blocked - unavailable usable Bybit testnet API access.
 
 Target:
-Docs-only status sync after accepted, committed, pushed, and remote-visible
-B2c.1b query-api read-only preflight harness.
+Docs-only status sync and testnet API access runbook after B2c.1c real
+query-api preflight failed safely with retCode=10003 /
+invalid_key_or_environment and Human Owner confirmed usable Bybit testnet API
+access is unavailable.
 
 Not target:
 - Stage 53-B runtime implementation
 - Order status implementation
 - Service startup wiring
 - Real wallet_balance smoke execution
+- Real query-api retry
+- Mainnet read-only smoke
 - Credentials use for B2c implementation
 - Open positions smoke
 - Real live exchange execution
@@ -45,7 +49,10 @@ Current verdict:
 - Stage 53-B2c wallet_balance smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE on HEAD c9b1337; mocked tests only; direct no-flag latch exits 3; --allow-real-smoke required for real-capable path; not runtime-ready; no real wallet_balance smoke or credentials use for B2c implementation
 - Stage 53-B2c.1a authenticated readiness hardening: ACCEPTED / PUSHED / REMOTE-VISIBLE on HEAD 189cb0a; server_time now uses unsigned public /v5/market/time; get_server_time no longer requires credentials; private reads still fail closed without credentials; signed private reads include X-BAPI-SIGN-TYPE: 2; signed GET query handling is deterministic and consistent with what is sent; wallet_balance signs/sends accountType=UNIFIED; safe retCode classifications added for 10002/10003/10004/10005/10006/10007/10010; 10006 remains exit code 2 / inconclusive; no raw retMsg or raw response body exposure; wallet smoke output remains sanitized; no query-api, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
 - Stage 53-B2c.1b query-api read-only preflight harness: ACCEPTED / PUSHED / REMOTE-VISIBLE on HEAD 00d84d8; get_query_api_info() supports signed read-only GET /v5/user/query-api; sanitized ApiKeyInfo model; scripts/smoke_query_api.py exists; no-flag latch exits 3 with sanitized authorization_required JSON; success output exact approved field set; operation and endpoint_family absent from success output; unsafe readOnly/permissions/expiry metadata fail closed; stale and malformed expiredAt regression tests exist; rate limit remains exit 2 / inconclusive; no real query-api execution, credentials use, Bybit call, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
-- Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b implementation checkpoints are code/test ready for mocked/local behavior only; B2d real wallet_balance smoke is NO-GO until Human Owner separately authorizes B2d
+- Stage 53-B2c.1c real query-api preflight: BLOCKED; attempted once and failed safely with retCode=10003, error_category=invalid_key_or_environment, LASTEXITCODE=1; likely ordinary/mainnet Bybit key used against testnet API endpoint, or no usable Bybit testnet API access; no further query-api retry is authorized
+- Stage 53-B2d real wallet_balance testnet smoke: BLOCKED / NO-GO because usable Bybit testnet API credentials are unavailable; ordinary/mainnet Bybit key must not be substituted into the testnet flow; any mainnet read-only smoke requires a new separately authorized stage and guardrails, not continuation of B2d
+- Stage 53-B2 testnet API access runbook: DOCUMENTED in docs/STAGE_53B2_SMOKE_PLAN.md; use `https://testnet.bybit.com` and `https://testnet.bybit.com/app/user/api-management`; keys from ordinary Bybit mainnet / `www.bybit.com` must not be used in the B2 testnet flow; key type must be API Transaction / Транзакция API, read-only only, with withdrawal/transfer/trade/order/write disabled; `BYBIT_B1_ENVIRONMENT=testnet`; `BYBIT_B1_API_KEY` and `BYBIT_B1_API_SECRET` must come from the same testnet key pair; generic `BYBIT_API_KEY` / `BYBIT_API_SECRET` should be missing during B2 flow; recovery requires safe env presence/hygiene check, no-flag latch LASTEXITCODE=3, explicit Human Owner authorization, exactly one query-api preflight, and no automatic retry
+- Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b implementation checkpoints are code/test ready for mocked/local behavior only; private real testnet path is blocked due unavailable usable Bybit testnet API access
 - Stage 53-B2 permanent real-smoke preflight: safe credential presence check, safe credential hygiene check, and Human Owner external key active/not expired confirmation are REQUIRED before any real Bybit smoke gate; any missing required env var, hygiene warning, expired/uncertain key, or missing owner confirmation stops the smoke
 - 7-day note is not treated as verified API key expiry; if secret availability is uncertain, recreate the testnet key rather than exposing or guessing it
 - Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, and get_server_time() only: PRESENT
@@ -58,7 +65,9 @@ Current verdict:
 - Service startup wiring for B1 client: NOT PRESENT
 - B2b real server_time smoke execution: SUCCESS for server_time only; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only
 - Credentials use for smoke: USED LOCALLY ONLY by Human Owner for B2b; credentials must not be stored or disclosed
-- B2d real wallet_balance smoke and open_positions smoke: NOT AUTHORIZED / NOT RUN
+- B2c.1c real query-api retry: NOT AUTHORIZED / BLOCKED
+- B2d real wallet_balance smoke and open_positions smoke: NOT AUTHORIZED / NOT RUN; B2d testnet path is BLOCKED because usable Bybit testnet API credentials are unavailable
+- Mainnet read-only smoke: NOT AUTHORIZED; would require a new separately authorized stage
 - Query-api `/v5/user/query-api`: NOT IN CURRENT B1/B2 ENDPOINT SET; separate Human Owner decision required; if authorized, read-only preflight only and must not print raw permissions, IDs, raw response body, API key, or API secret
 - Signing audit before B2d: B2c.1a implemented deterministic signed/sent GET query handling, `X-BAPI-SIGN-TYPE: 2`, and safe retCode classification; query-api remains a separate Human Owner decision and B2d remains unauthorized
 - Order status, place_order, cancel_order, set_leverage, withdraw, transfer, live_reconcile, live_execution: NOT PRESENT
@@ -67,6 +76,17 @@ Current verdict:
 - Unsupervised production live: NO-GO
 
 Last accepted evidence:
+- Stage 53-B2c.1c/B2d blocked-state evidence:
+  - Real query-api preflight was attempted once and failed safely: retCode=10003, error_category=invalid_key_or_environment, LASTEXITCODE=1.
+  - Likely cause: ordinary/mainnet Bybit key used against testnet API endpoint, or no usable Bybit testnet API access.
+  - Human Owner confirmed Bybit testnet API key cannot be used / is unavailable and the ordinary Bybit key must not be used for the existing testnet flow.
+  - B2c.1c query-api retry is not authorized.
+  - B2d real wallet_balance testnet smoke is blocked / NO-GO because usable Bybit testnet API credentials are unavailable.
+  - Any mainnet read-only smoke would require a new separately authorized stage, not continuation of B2d.
+  - Testnet API access runbook now documents the testnet URL, API Management URL, correct API Transaction / Транзакция API key type, read-only permission requirements, environment variable shape, generic alias avoidance, retCode 10003 troubleshooting tree, and safe restart path.
+  - B2d remains blocked until query-api preflight succeeds or the Human Owner explicitly accepts a documented alternative.
+  - Preserved evidence: B2b public server_time success; B2c/B2c.1a/B2c.1b mocked/local/code readiness.
+  - Not verified: runtime readiness, trading readiness, live readiness, probe readiness, real wallet_balance smoke, open_positions smoke, order_status, service startup wiring.
 - Stage 53-B2c.1b query-api read-only preflight harness ACCEPTED / PUSHED / REMOTE-VISIBLE: 00d84d8 feat: add Stage 53-B2 query-api preflight harness
   - Classification: code-ready candidate / accepted implementation checkpoint; test-ready for mocked query-api preflight behavior only; not runtime-ready.
   - Exists: get_query_api_info() signed read-only GET /v5/user/query-api support; sanitized ApiKeyInfo model with boolean/status summary fields; scripts/smoke_query_api.py; tests/scripts/test_smoke_query_api.py; direct no-flag latch exits 3 with sanitized authorization_required JSON.
@@ -214,7 +234,7 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B2 docs/status cleanup and static safety checks; B2d real wallet_balance smoke, open_positions smoke, order_status, and any write/live methods require separate Human Owner authorization.
+Stage 53-B2 docs/status cleanup and local/mocked architecture improvements; B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, and any write/live methods require separate Human Owner authorization.
 
 Constraints:
 - Do not claim live-ready.
@@ -224,7 +244,7 @@ Constraints:
 - Live trading remains NO-GO.
 - Canonical live blocker taxonomy is the 14 live blockers in docs/STAGE_53_DESIGN_LOCK.md.
 - Any 11-blocker list below is historical/legacy/summarized, not the current authoritative count.
-- Canonical Stage 53-B env vars are BYBIT_API_KEY and BYBIT_API_SECRET.
+- Historical Stage 53-B design-lock generic env vars were BYBIT_API_KEY and BYBIT_API_SECRET; Stage 53-B2 testnet smoke flow uses BYBIT_B1_ENVIRONMENT, BYBIT_B1_API_KEY, and BYBIT_B1_API_SECRET, and generic BYBIT_API_KEY / BYBIT_API_SECRET should be missing during B2 flow.
 - Canonical Stage 53-B idempotency rule is client_order_id = execution_id.
 - 0009_execution_exchange_fields is deferred beyond Stage 53-B.
 - Canonical Bybit public adapter path is libs/exchange/bybit_public.py.
