@@ -35,6 +35,7 @@
 - Commit: 5e5eb48 docs: add stage 53-B design lock
 - Owner decisions: ANSWERED / APPROVED
 - Runtime/client implementation: B2a server_time smoke harness accepted/pushed/remote-visible at a511e2f; B2b real server_time smoke succeeded locally with LASTEXITCODE=0 and elapsed_ms=1534; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337 with mocked tests only; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a with mocked/local tests only; B2c.1b query-api read-only preflight harness accepted/pushed/remote-visible at 00d84d8 with mocked tests only; B2c.1c query-api real preflight attempted once and blocked with retCode=10003 invalid_key_or_environment; B2d real wallet_balance testnet smoke blocked due unavailable usable Bybit testnet API access; testnet API access runbook documented in docs/STAGE_53B2_SMOKE_PLAN.md; no runtime/service wiring; no open_positions smoke; no order_status or write/live methods
+- Pit-stop audit: audit-only checkpoint recorded; repo aligned at 8153c61; `.pytest-temp-run/` generated artifact removed; full local regression 408 passed / 5 warnings; targeted suites passed; no-flag server_time, wallet_balance, and query_api latches all exited 3; checked BYBIT env names were missing; no runtime/trading/live/probe readiness is claimed
 
 ## Q1 fix and regression status
 
@@ -119,6 +120,15 @@
   - retCode 10003 troubleshooting tree includes mainnet/testnet mismatch, demo/testnet-demo mismatch, deleted/disabled/expired key, wrong key/secret pair, IP whitelist mismatch, and endpoint compatibility issue
   - safe restart path requires safe env presence/hygiene check, no-flag latch LASTEXITCODE=3, explicit Human Owner authorization, exactly one real query-api preflight, and no automatic retry
   - B2d remains blocked until query-api preflight succeeds or Human Owner explicitly accepts a documented alternative
+- Pit-stop audit evidence:
+  - this was a Pit-stop audit, not an implementation gate
+  - repo HEAD/origin main aligned at 8153c61 and tracked diff was empty
+  - full local regression passed with 408 passed and 5 warnings
+  - targeted suites passed: tests/scripts 60, tests/libs/exchange 99, tests/libs/config 19
+  - no-flag latches for server_time, wallet_balance, and query_api returned sanitized authorization_required JSON with LASTEXITCODE=3
+  - checked BYBIT_B1_ENVIRONMENT, BYBIT_B1_API_KEY, BYBIT_B1_API_SECRET, BYBIT_API_KEY, and BYBIT_API_SECRET by name only; all were missing and no values were printed
+  - cleanup removed only the generated `.pytest-temp-run/` artifact
+  - backlog: clean async mock warnings; add env-isolation guard tests; add B2 generic alias static guard; audit transaction ownership and handler-level log redaction; plan future authority map / reconciliation / TradingState / OMS; review dependencies and secret scanning; run periodic docs source-of-truth audits
 - B2c.1 required next gate:
   - authenticated readiness audit / query-api preflight decision before B2d
   - not real wallet smoke; must not call wallet_balance or open_positions

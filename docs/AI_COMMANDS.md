@@ -111,6 +111,7 @@ Stage 53-B2c.1b query-api read-only preflight harness: ACCEPTED / PUSHED / REMOT
 Stage 53-B2c.1c real query-api preflight: BLOCKED; attempted once and failed safely with retCode=10003, error_category=invalid_key_or_environment, LASTEXITCODE=1; likely ordinary/mainnet Bybit key used against testnet API endpoint, or no usable Bybit testnet API access; no further query-api retry is authorized
 Stage 53-B2d real wallet_balance testnet smoke: BLOCKED / NO-GO because usable Bybit testnet API credentials are unavailable; ordinary/mainnet Bybit key must not be substituted into the testnet flow; any mainnet read-only smoke requires a new separately authorized stage, not continuation of B2d
 Stage 53-B2 testnet API access runbook: DOCUMENTED in docs/STAGE_53B2_SMOKE_PLAN.md; use https://testnet.bybit.com and https://testnet.bybit.com/app/user/api-management; keys from www.bybit.com / ordinary Bybit mainnet must not be used in the Stage 53-B2 testnet flow; use API Transaction / Транзакция API, read-only only, withdrawal/transfer/trade/order/write disabled; BYBIT_B1_ENVIRONMENT=testnet; BYBIT_B1_API_KEY and BYBIT_B1_API_SECRET must come from the same testnet key pair; BYBIT_API_KEY / BYBIT_API_SECRET should be missing during B2 flow; retCode 10003 troubleshooting and safe restart path are documented
+Stage 53-B2 Pit-stop audit: RECORDED as audit-only, not an implementation gate; repo aligned at 8153c61; full local regression 408 passed / 5 warnings; targeted suites passed with tests/scripts 60, tests/libs/exchange 99, tests/libs/config 19; server_time, wallet_balance, and query_api no-flag latches exited 3; checked BYBIT env names were missing; `.pytest-temp-run/` generated artifact was removed; no runtime/trading/live/probe readiness is claimed
 Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b are mocked/local implementation checkpoints only; private real testnet path is blocked due unavailable usable Bybit testnet API access
 Current mode: paper trading only
 Live trading: NO-GO
@@ -137,6 +138,7 @@ B2c.1b does not include / authorize: real query-api execution; credentials use; 
 B2c.1c attempted once: real query-api preflight failed safely with retCode=10003 invalid_key_or_environment and LASTEXITCODE=1; likely mainnet/testnet key-environment mismatch or no usable Bybit testnet API access; no query-api retry is authorized
 B2d blocked: real wallet_balance testnet smoke is NO-GO because usable Bybit testnet API credentials are unavailable; ordinary/mainnet key must not be substituted into the testnet flow; any mainnet read-only smoke requires a new separately authorized stage
 B2 testnet access runbook exists: safe restart path is safe env presence/hygiene check, no-flag latch LASTEXITCODE=3, explicit Human Owner authorization, exactly one real query-api preflight, and no automatic retry; B2d remains blocked until query-api preflight succeeds or Human Owner explicitly accepts a documented alternative
+B2 Pit-stop backlog: clean async mock warnings; add env-isolation guard tests; add static guard for generic BYBIT_API_KEY/BYBIT_API_SECRET in B2 flow; follow-up audit on transaction ownership; follow-up audit on handler-level log redaction; future authority map / reconciliation / TradingState / OMS planning; dependency and secret-scan review; periodic docs source-of-truth audit
 B2c.1 required before any future B2d reconsideration: audit signing/query-string behavior, signed vs unsigned server_time, X-BAPI-SIGN-TYPE: 2, query-api scope decision, safe retCode classification, key active/not expired wording, and usable testnet API access
 Withdrawal permission: forbidden
 Secrets: no secrets in repo, prompts, docs, or logs
@@ -158,6 +160,7 @@ Stage 53-B2c.1b query-api read-only preflight harness: CLOSED, commit 00d84d8
 Stage 53-B2c.1c real query-api preflight: BLOCKED, local owner-run retCode=10003 invalid_key_or_environment
 Stage 53-B2d real wallet_balance testnet smoke: BLOCKED / NO-GO, usable testnet API credentials unavailable
 Stage 53-B2 testnet API access runbook: DOCUMENTED, no real retry authorized
+Stage 53-B2 Pit-stop audit: RECORDED, audit-only, no readiness promoted
 Q1-FIX-3 true EMA: MERGED, commit 1bd8e2a
 B1-CONFIG / current regression gate:
 - python -m pytest tests\libs\config -q: 19 passed

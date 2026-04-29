@@ -76,6 +76,19 @@ Current verdict:
 - Unsupervised production live: NO-GO
 
 Last accepted evidence:
+- Stage 53-B2 Pit-stop audit record:
+  - Classification: Pit-stop audit only, not an implementation gate.
+  - Repo state during audit: HEAD and origin/main aligned at 8153c61 docs: add Stage 53-B2 testnet API runbook; tracked diff was empty.
+  - Cleanup follow-up: generated `.pytest-temp-run/` artifact from requested pytest `--basetemp` run was removed in the follow-up cleanup.
+  - Control state preserved: B2d real wallet_balance testnet smoke remains blocked / NO-GO because usable Bybit testnet API access is unavailable; B2c.1c real query-api failed safely with retCode=10003 invalid_key_or_environment due no usable testnet API access / environment mismatch.
+  - Authorization state preserved: no mainnet smoke, no real query-api retry, no real wallet_balance smoke, no open_positions smoke, no order_status, no write/live methods, and no service wiring are authorized.
+  - Readiness boundary preserved: no runtime readiness, trading readiness, live readiness, or probe readiness is claimed.
+  - Full local regression evidence: `python -m pytest -q --ignore=research --basetemp=.pytest-temp-run` passed with 408 passed, 5 warnings.
+  - Targeted suite evidence: `tests/scripts` 60 passed; `tests/libs/exchange` 99 passed; `tests/libs/config` 19 passed.
+  - No-flag latch evidence: `smoke_server_time`, `smoke_wallet_balance`, and `smoke_query_api` all returned sanitized authorization_required JSON with LASTEXITCODE=3.
+  - Env hygiene evidence: checked BYBIT_B1_ENVIRONMENT, BYBIT_B1_API_KEY, BYBIT_B1_API_SECRET, BYBIT_API_KEY, and BYBIT_API_SECRET by name only; all were missing; no values, lengths, prefixes, suffixes, hashes, masks, or derived values were printed.
+  - Issues found: 5 async mock warnings remain; Engineering Rules v2 transaction ownership is partial; handler-level secret redaction is not evident; future risks remain around authority map, reconciliation, TradingState, OMS, dependency drift, docs drift, and runtime observability.
+  - Pit-stop backlog: clean async mock warnings; add env-isolation guard tests; add static guard for generic BYBIT_API_KEY/BYBIT_API_SECRET in B2 flow; follow-up audit on transaction ownership; follow-up audit on handler-level log redaction; future authority map / reconciliation / TradingState / OMS planning; dependency and secret-scan review; periodic docs source-of-truth audit.
 - Stage 53-B2c.1c/B2d blocked-state evidence:
   - Real query-api preflight was attempted once and failed safely: retCode=10003, error_category=invalid_key_or_environment, LASTEXITCODE=1.
   - Likely cause: ordinary/mainnet Bybit key used against testnet API endpoint, or no usable Bybit testnet API access.
