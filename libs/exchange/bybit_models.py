@@ -131,3 +131,39 @@ class OpenPositions:
             "positions": "[REDACTED]",
             "position_count": len(self.positions),
         }
+
+
+@dataclass(frozen=True)
+class ApiKeyInfo:
+    """Sanitized read-only Bybit API key preflight summary.
+
+    Raw permission groups, account/user identifiers, IP allowlists, and expiry
+    values are intentionally not retained or exposed.
+    """
+
+    exchange: str
+    read_only: bool
+    permissions_safe: bool
+    key_active: bool
+    deadline_days_present: bool
+    expired_at_present: bool
+
+    def __repr__(self) -> str:
+        return (
+            "ApiKeyInfo("
+            f"exchange={self.exchange!r}, read_only={self.read_only!r}, "
+            f"permissions_safe={self.permissions_safe!r}, "
+            f"key_active={self.key_active!r}, "
+            f"deadline_days_present={self.deadline_days_present!r}, "
+            f"expired_at_present={self.expired_at_present!r})"
+        )
+
+    def model_dump(self) -> dict[str, Any]:
+        return {
+            "exchange": self.exchange,
+            "read_only": self.read_only,
+            "permissions_safe": self.permissions_safe,
+            "key_active": self.key_active,
+            "deadline_days_present": self.deadline_days_present,
+            "expired_at_present": self.expired_at_present,
+        }

@@ -7,8 +7,9 @@ import httpx
 from httpx import HTTPError
 
 from libs.config.settings import BybitB1Settings
-from libs.exchange.bybit_auth import BybitAuth, canonical_query
+from libs.exchange.bybit_auth import BybitAuth, canonical_query, now_ms
 from libs.exchange.bybit_models import (
+    ApiKeyInfo,
     OpenPosition,
     OpenPositions,
     ServerTime,
@@ -30,9 +31,10 @@ _PRODUCTION_BASE_URLS = frozenset({
 })
 _ALLOWED_ENVIRONMENTS = frozenset({"testnet", "demo"})
 _SERVER_TIME_PATH = "/v5/market/time"
+_QUERY_API_PATH = "/v5/user/query-api"
 _WALLET_BALANCE_PATH = "/v5/account/wallet-balance"
 _OPEN_POSITIONS_PATH = "/v5/position/list"
-_SIGNED_ALLOWED_PATHS = frozenset({_WALLET_BALANCE_PATH, _OPEN_POSITIONS_PATH})
+_SIGNED_ALLOWED_PATHS = frozenset({_QUERY_API_PATH, _WALLET_BALANCE_PATH, _OPEN_POSITIONS_PATH})
 _AUTH_ERROR_CODES = frozenset({10002, 10003, 10004, 10005, 10007, 10010})
 _RATE_LIMIT_CODE = 10006
 _RETCODE_ERROR_CATEGORIES = {
@@ -45,6 +47,13 @@ _RETCODE_ERROR_CATEGORIES = {
     10010: "ip_mismatch",
 }
 _GENERIC_BYBIT_ERROR_REASON = "Bybit read-only request returned non-zero retCode"
+_UNSAFE_PERMISSION_TOKENS = frozenset({
+    "withdraw",
+    "transfer",
+    "order",
+    "trade",
+    "write",
+})
 
 
 class BybitReadOnlyClient:
@@ -190,6 +199,39 @@ class BybitReadOnlyClient:
                 ret_msg="Bybit wallet balance payload missing required fields",
             ) from exc
 
+    async def get_query_api_info(self) -> ApiKeyInfo:
+        payload = await self._signed_get(
+            _QUERY_API_PATH,
+            endpoint_family="query_api",
+        )
+        result = payload.get("result") or {}
+        try:
+            read_only = _parse_read_only(result.get("readOnly"))
+            permissions_safe = _permissions_are_safe(result.get("permissions"))
+            key_active, deadline_present, expired_at_present = _parse_key_active(result)
+        except (TypeError, ValueError) as exc:
+            raise _with_bybit_error_metadata(
+                ExchangeAuthError("Bybit query-api preflight failed"),
+                category="preflight_failed",
+                ret_code=0,
+            ) from exc
+
+        if not read_only or not permissions_safe or not key_active:
+            raise _with_bybit_error_metadata(
+                ExchangeAuthError("Bybit query-api preflight failed"),
+                category="preflight_failed",
+                ret_code=0,
+            )
+
+        return ApiKeyInfo(
+            exchange="bybit",
+            read_only=read_only,
+            permissions_safe=permissions_safe,
+            key_active=key_active,
+            deadline_days_present=deadline_present,
+            expired_at_present=expired_at_present,
+        )
+
     async def get_open_positions(self) -> OpenPositions:
         payload = await self._signed_get(
             _OPEN_POSITIONS_PATH,
@@ -263,6 +305,64 @@ def _with_bybit_error_metadata(
     setattr(exc, "error_category", category)
     setattr(exc, "ret_code", ret_code)
     return exc
+
+
+def _parse_read_only(value: Any) -> bool:
+    if value in (1, "1", True):
+        return True
+    if value in (0, "0", False):
+        return False
+    raise ValueError("missing readOnly")
+
+
+def _permissions_are_safe(value: Any) -> bool:
+    if value in ({}, [], (), None):
+        return True
+    for token in _permission_tokens(value):
+        lower = token.lower()
+        if any(unsafe in lower for unsafe in _UNSAFE_PERMISSION_TOKENS):
+            return False
+    return True
+
+
+def _permission_tokens(value: Any) -> tuple[str, ...]:
+    if isinstance(value, dict):
+        tokens: list[str] = []
+        for key, nested in value.items():
+            tokens.append(str(key))
+            tokens.extend(_permission_tokens(nested))
+        return tuple(tokens)
+    if isinstance(value, (list, tuple, set)):
+        tokens = []
+        for nested in value:
+            tokens.extend(_permission_tokens(nested))
+        return tuple(tokens)
+    if isinstance(value, str):
+        return (value,)
+    if value is None:
+        return ()
+    return (str(value),)
+
+
+def _parse_key_active(result: dict[str, Any]) -> tuple[bool, bool, bool]:
+    deadline_present = "deadlineDay" in result and result.get("deadlineDay") not in ("", None)
+    expired_at_present = "expiredAt" in result and result.get("expiredAt") not in ("", None)
+
+    if deadline_present:
+        try:
+            deadline_days = int(str(result["deadlineDay"]))
+        except (TypeError, ValueError) as exc:
+            raise ValueError("malformed deadlineDay") from exc
+        return deadline_days > 0, True, expired_at_present
+
+    if expired_at_present:
+        try:
+            expired_at_ms = int(str(result["expiredAt"]))
+        except (TypeError, ValueError) as exc:
+            raise ValueError("malformed expiredAt") from exc
+        return expired_at_ms > now_ms(), False, True
+
+    raise ValueError("query-api payload missing expiry metadata")
 
 
 def _to_bybit_account_type(account_type: str) -> str:

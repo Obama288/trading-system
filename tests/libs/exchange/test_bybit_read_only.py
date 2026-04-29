@@ -8,7 +8,7 @@ from pydantic import SecretStr, ValidationError
 
 from libs.config.settings import BybitB1Settings
 from libs.exchange.bybit_auth import BybitAuth, canonical_query
-from libs.exchange.bybit_models import OpenPositions, ServerTime, WalletBalance
+from libs.exchange.bybit_models import ApiKeyInfo, OpenPositions, ServerTime, WalletBalance
 from libs.exchange.bybit_read_only import BybitReadOnlyClient
 from libs.exchange.errors import (
     ExchangeAuthError,
@@ -85,6 +85,23 @@ _OPEN_POSITIONS_PAYLOAD = {
                 "leverage": "10",
             },
         ],
+    },
+}
+
+_QUERY_API_PAYLOAD = {
+    "retCode": 0,
+    "retMsg": "OK",
+    "result": {
+        "id": "sensitive-user-id",
+        "note": "do-not-print",
+        "readOnly": 1,
+        "deadlineDay": 7,
+        "expiredAt": "4102444800000",
+        "ips": ["192.0.2.1"],
+        "permissions": {
+            "Account": ["read"],
+            "Spot": ["read"],
+        },
     },
 }
 
@@ -419,6 +436,127 @@ async def test_signed_query_uses_deterministic_canonical_order_for_multi_param_g
 
 
 @pytest.mark.asyncio
+async def test_get_query_api_info_uses_signed_read_only_endpoint_and_returns_safe_model():
+    captured: dict = {}
+
+    with _patch_async(_QUERY_API_PAYLOAD, captured):
+        info = await BybitReadOnlyClient(_settings()).get_query_api_info()
+
+    assert isinstance(info, ApiKeyInfo)
+    assert info.exchange == "bybit"
+    assert info.read_only is True
+    assert info.permissions_safe is True
+    assert info.key_active is True
+    assert info.deadline_days_present is True
+    assert info.expired_at_present is True
+    assert captured["url"] == "https://api-testnet.bybit.com/v5/user/query-api"
+    assert captured["kwargs"]["params"] == ""
+    headers = captured["kwargs"]["headers"]
+    assert headers["X-BAPI-SIGN-TYPE"] == "2"
+
+
+@pytest.mark.asyncio
+async def test_query_api_info_repr_and_model_dump_do_not_expose_raw_metadata():
+    captured: dict = {}
+
+    with _patch_async(_QUERY_API_PAYLOAD, captured):
+        info = await BybitReadOnlyClient(_settings()).get_query_api_info()
+
+    exposed_text = " ".join([repr(info), str(info.model_dump())])
+    for forbidden in (
+        "sensitive-user-id",
+        "do-not-print",
+        "Account",
+        "Spot",
+        "192.0.2.1",
+        "4102444800000",
+        "deadlineDay",
+        "expiredAt",
+        "ips",
+    ):
+        assert forbidden not in exposed_text
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "result_update",
+    [
+        {"readOnly": 0},
+        {"readOnly": None},
+        {"permissions": {"Withdraw": ["read"]}},
+        {"permissions": {"ContractTrade": ["Order"]}},
+        {"permissions": {"Transfer": ["read"]}},
+        {"deadlineDay": 0},
+        {"deadlineDay": -1},
+        {"deadlineDay": None, "expiredAt": None},
+        {"deadlineDay": None},
+    ],
+)
+async def test_query_api_preflight_failures_are_sanitized(result_update: dict):
+    captured: dict = {}
+    payload = {
+        "retCode": 0,
+        "retMsg": "OK",
+        "result": {
+            **_QUERY_API_PAYLOAD["result"],
+            **result_update,
+        },
+    }
+    if result_update == {"deadlineDay": None}:
+        payload["result"].pop("expiredAt", None)
+
+    with _patch_async(payload, captured):
+        with pytest.raises(ExchangeAuthError) as exc_info:
+            await BybitReadOnlyClient(_settings()).get_query_api_info()
+
+    exposed_text = str(exc_info.value)
+    assert getattr(exc_info.value, "error_category") == "preflight_failed"
+    assert getattr(exc_info.value, "ret_code") == 0
+    for forbidden in (
+        "sensitive-user-id",
+        "ContractTrade",
+        "Withdraw",
+        "Transfer",
+        "Order",
+        "192.0.2.1",
+        "4102444800000",
+    ):
+        assert forbidden not in exposed_text
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "expired_at",
+    [
+        "1",
+        "not-a-timestamp",
+    ],
+)
+async def test_query_api_expired_at_stale_or_malformed_fails_closed(expired_at: str):
+    captured: dict = {}
+    payload = {
+        "retCode": 0,
+        "retMsg": "OK",
+        "result": {
+            **_QUERY_API_PAYLOAD["result"],
+            "deadlineDay": None,
+            "expiredAt": expired_at,
+        },
+    }
+
+    with _patch_async(payload, captured):
+        with pytest.raises(ExchangeAuthError) as exc_info:
+            await BybitReadOnlyClient(_settings()).get_query_api_info()
+
+    exposed_text = str(exc_info.value)
+    assert getattr(exc_info.value, "error_category") == "preflight_failed"
+    assert getattr(exc_info.value, "ret_code") == 0
+    assert expired_at not in exposed_text
+    assert "expiredAt" not in exposed_text
+    assert "sensitive-user-id" not in exposed_text
+
+
+@pytest.mark.asyncio
 async def test_wallet_balance_repr_and_model_dump_redact_balances_and_account_ids():
     captured: dict = {}
 
@@ -721,6 +859,7 @@ def test_only_approved_read_only_methods_exist_among_client_query_methods():
     client = BybitReadOnlyClient(_settings())
 
     assert hasattr(client, "get_server_time")
+    assert hasattr(client, "get_query_api_info")
     assert hasattr(client, "get_wallet_balance")
     assert hasattr(client, "get_open_positions")
     for forbidden in (
