@@ -7,7 +7,7 @@ import httpx
 from httpx import HTTPError
 
 from libs.config.settings import BybitB1Settings
-from libs.exchange.bybit_auth import BybitAuth
+from libs.exchange.bybit_auth import BybitAuth, canonical_query
 from libs.exchange.bybit_models import (
     OpenPosition,
     OpenPositions,
@@ -29,11 +29,21 @@ _PRODUCTION_BASE_URLS = frozenset({
     "https://api.bytick.com",
 })
 _ALLOWED_ENVIRONMENTS = frozenset({"testnet", "demo"})
+_SERVER_TIME_PATH = "/v5/market/time"
 _WALLET_BALANCE_PATH = "/v5/account/wallet-balance"
 _OPEN_POSITIONS_PATH = "/v5/position/list"
-_ALLOWED_PATHS = frozenset({"/v5/market/time", _WALLET_BALANCE_PATH, _OPEN_POSITIONS_PATH})
-_AUTH_ERROR_CODES = frozenset({10003, 10004})
+_SIGNED_ALLOWED_PATHS = frozenset({_WALLET_BALANCE_PATH, _OPEN_POSITIONS_PATH})
+_AUTH_ERROR_CODES = frozenset({10002, 10003, 10004, 10005, 10007, 10010})
 _RATE_LIMIT_CODE = 10006
+_RETCODE_ERROR_CATEGORIES = {
+    10002: "timestamp_or_recv_window_error",
+    10003: "invalid_key_or_environment",
+    10004: "invalid_signature",
+    10005: "permission_denied",
+    10006: "rate_limited",
+    10007: "authentication_failed",
+    10010: "ip_mismatch",
+}
 _GENERIC_BYBIT_ERROR_REASON = "Bybit read-only request returned non-zero retCode"
 
 
@@ -56,8 +66,6 @@ class BybitReadOnlyClient:
     ) -> None:
         if settings.environment not in _ALLOWED_ENVIRONMENTS:
             raise ExchangeConfigurationError("Bybit B1 environment must be testnet or demo")
-        if settings.api_key is None or settings.api_secret is None:
-            raise ExchangeAuthError("Bybit B1 credentials are required")
 
         resolved_base_url = (base_url or _TESTNET_BASE_URL).rstrip("/")
         if resolved_base_url in _PRODUCTION_BASE_URLS:
@@ -68,11 +76,7 @@ class BybitReadOnlyClient:
         self.settings = settings
         self.base_url = resolved_base_url
         self.timeout = timeout
-        self._auth = BybitAuth(
-            api_key=settings.api_key,
-            api_secret=settings.api_secret,
-            recv_window_ms=recv_window_ms,
-        )
+        self._recv_window_ms = recv_window_ms
 
     def __repr__(self) -> str:
         return (
@@ -88,14 +92,43 @@ class BybitReadOnlyClient:
         *,
         endpoint_family: str,
     ) -> dict[str, Any]:
-        if path not in _ALLOWED_PATHS:
+        if path not in _SIGNED_ALLOWED_PATHS:
             raise ExchangeConfigurationError(f"Bybit endpoint not allowed in B1 slice: {path}")
+        if self.settings.api_key is None or self.settings.api_secret is None:
+            raise ExchangeAuthError("Bybit B1 credentials are required for private read-only request")
 
         url = f"{self.base_url}{path}"
-        headers = self._auth.signed_headers(query_params=params)
+        auth = BybitAuth(
+            api_key=self.settings.api_key,
+            api_secret=self.settings.api_secret,
+            recv_window_ms=self._recv_window_ms,
+        )
+        headers = auth.signed_headers(query_params=params)
+        query_string = canonical_query(params)
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
-                response = await client.get(url, params=params or {}, headers=headers)
+                response = await client.get(url, params=query_string, headers=headers)
+                response.raise_for_status()
+                payload = response.json()
+        except HTTPError as exc:
+            raise MarketDataUnavailable(f"Bybit read-only request failed [{path}]") from exc
+
+        _raise_for_bybit_error(payload, endpoint_family=endpoint_family)
+        return payload
+
+    async def _public_get(
+        self,
+        path: str,
+        *,
+        endpoint_family: str,
+    ) -> dict[str, Any]:
+        if path != _SERVER_TIME_PATH:
+            raise ExchangeConfigurationError(f"Bybit public endpoint not allowed in B1 slice: {path}")
+
+        url = f"{self.base_url}{path}"
+        try:
+            async with httpx.AsyncClient(timeout=self.timeout) as client:
+                response = await client.get(url)
                 response.raise_for_status()
                 payload = response.json()
         except HTTPError as exc:
@@ -105,8 +138,8 @@ class BybitReadOnlyClient:
         return payload
 
     async def get_server_time(self) -> ServerTime:
-        payload = await self._signed_get(
-            "/v5/market/time",
+        payload = await self._public_get(
+            _SERVER_TIME_PATH,
             endpoint_family="server_time",
         )
         result = payload.get("result") or {}
@@ -198,14 +231,38 @@ def _raise_for_bybit_error(payload: dict[str, Any], *, endpoint_family: str) -> 
     ret_code = int(payload.get("retCode", 0))
     if ret_code == 0:
         return
+    category = _RETCODE_ERROR_CATEGORIES.get(ret_code, "response_error")
     if ret_code in _AUTH_ERROR_CODES:
-        raise ExchangeAuthError(f"Bybit authentication failed (retCode {ret_code})")
+        raise _with_bybit_error_metadata(
+            ExchangeAuthError(f"Bybit authentication failed (retCode {ret_code})"),
+            category=category,
+            ret_code=ret_code,
+        )
     if ret_code == _RATE_LIMIT_CODE:
-        raise ExchangeRateLimited(f"Bybit rate limited (retCode {ret_code})")
-    raise ExchangeResponseError(
+        raise _with_bybit_error_metadata(
+            ExchangeRateLimited(f"Bybit rate limited (retCode {ret_code})"),
+            category=category,
+            ret_code=ret_code,
+        )
+    raise _with_bybit_error_metadata(
+        ExchangeResponseError(
+            ret_code=ret_code,
+            ret_msg=f"{_GENERIC_BYBIT_ERROR_REASON}; endpoint_family={endpoint_family}",
+        ),
+        category=category,
         ret_code=ret_code,
-        ret_msg=f"{_GENERIC_BYBIT_ERROR_REASON}; endpoint_family={endpoint_family}",
     )
+
+
+def _with_bybit_error_metadata(
+    exc: Exception,
+    *,
+    category: str,
+    ret_code: int,
+) -> Exception:
+    setattr(exc, "error_category", category)
+    setattr(exc, "ret_code", ret_code)
+    return exc
 
 
 def _to_bybit_account_type(account_type: str) -> str:

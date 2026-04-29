@@ -76,6 +76,12 @@ class _ClientRaises:
         raise AssertionError("open_positions smoke is not authorized in B2c")
 
 
+def _with_error_metadata(exc: Exception, *, category: str, ret_code: int) -> Exception:
+    setattr(exc, "error_category", category)
+    setattr(exc, "ret_code", ret_code)
+    return exc
+
+
 def _settings(environment: str = "testnet") -> BybitB1Settings:
     return BybitB1Settings(
         environment=environment,
@@ -223,6 +229,37 @@ async def test_failures_are_sanitized(exc: Exception, category: str):
     assert output["error_category"] == category
     if isinstance(exc, ExchangeResponseError):
         assert output["retCode"] == 0
+    _assert_sanitized(output)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("category", "ret_code"),
+    [
+        ("timestamp_or_recv_window_error", 10002),
+        ("invalid_key_or_environment", 10003),
+        ("invalid_signature", 10004),
+        ("permission_denied", 10005),
+        ("authentication_failed", 10007),
+        ("ip_mismatch", 10010),
+    ],
+)
+async def test_granular_bybit_error_categories_are_sanitized(category: str, ret_code: int):
+    exc = _with_error_metadata(
+        ExchangeAuthError(RAW_RET_MSG),
+        category=category,
+        ret_code=ret_code,
+    )
+
+    exit_code, output = await smoke_wallet_balance.run_wallet_balance_smoke(
+        settings=_settings(),
+        client_factory=lambda settings: _ClientRaises(exc),
+    )
+
+    assert exit_code == 1
+    assert output["status"] == "failure"
+    assert output["error_category"] == category
+    assert output["retCode"] == ret_code
     _assert_sanitized(output)
 
 

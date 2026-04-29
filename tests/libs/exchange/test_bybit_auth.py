@@ -59,6 +59,7 @@ def test_signed_headers_include_auth_headers_without_leaking_in_repr():
     assert headers["X-BAPI-API-KEY"] == FAKE_API_KEY
     assert headers["X-BAPI-TIMESTAMP"] == "1700000000000"
     assert headers["X-BAPI-RECV-WINDOW"] == "5000"
+    assert headers["X-BAPI-SIGN-TYPE"] == "2"
     assert "X-BAPI-SIGN" in headers
     rendered = repr(auth)
     assert FAKE_API_KEY not in rendered

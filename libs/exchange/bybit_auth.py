@@ -131,6 +131,7 @@ class BybitAuth:
             "X-BAPI-API-KEY": api_key,
             "X-BAPI-TIMESTAMP": str(ts),
             "X-BAPI-RECV-WINDOW": str(self.recv_window_ms),
+            "X-BAPI-SIGN-TYPE": "2",
             "X-BAPI-SIGN": sign_payload(payload, api_secret),
             "User-Agent": "trading-system",
         }

@@ -43,6 +43,10 @@ def _ensure_repo_root_on_path() -> None:
 
 
 def _error_category(exc: BaseException, error_types: dict[str, type[BaseException]]) -> str:
+    safe_category = getattr(exc, "error_category", None)
+    if isinstance(safe_category, str):
+        return safe_category
+
     ExchangeRateLimited = error_types["ExchangeRateLimited"]
     ExchangeAuthError = error_types["ExchangeAuthError"]
     ExchangeConfigurationError = error_types["ExchangeConfigurationError"]
@@ -70,6 +74,9 @@ def _safe_ret_code(
     *,
     ExchangeResponseError: type[BaseException],
 ) -> int | None:
+    safe_ret_code = getattr(exc, "ret_code", None)
+    if isinstance(safe_ret_code, int):
+        return safe_ret_code
     if isinstance(exc, ExchangeResponseError):
         return getattr(exc, "ret_code")
     return None
@@ -132,6 +139,9 @@ async def run_server_time_smoke(
         elapsed_ms = int((time.perf_counter() - started) * 1000)
         output = _base_output(status="inconclusive", elapsed_ms=elapsed_ms)
         output["error_category"] = _error_category(exc, error_types)
+        ret_code = _safe_ret_code(exc, ExchangeResponseError=ExchangeResponseError)
+        if ret_code is not None:
+            output["retCode"] = ret_code
         return _INCONCLUSIVE_EXIT_CODE, output
     except (ExchangeError, ValidationError) as exc:
         elapsed_ms = int((time.perf_counter() - started) * 1000)

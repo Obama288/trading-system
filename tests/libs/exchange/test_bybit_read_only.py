@@ -7,6 +7,7 @@ import pytest
 from pydantic import SecretStr, ValidationError
 
 from libs.config.settings import BybitB1Settings
+from libs.exchange.bybit_auth import BybitAuth, canonical_query
 from libs.exchange.bybit_models import OpenPositions, ServerTime, WalletBalance
 from libs.exchange.bybit_read_only import BybitReadOnlyClient
 from libs.exchange.errors import (
@@ -139,9 +140,26 @@ def test_client_repr_does_not_leak_credentials():
     assert FAKE_API_SECRET not in rendered
 
 
-def test_missing_credentials_fail_closed():
+@pytest.mark.asyncio
+async def test_server_time_allows_missing_credentials_but_private_reads_fail_closed():
+    payload = {
+        "retCode": 0,
+        "retMsg": "OK",
+        "result": {
+            "timeSecond": "1700000000",
+            "timeNano": "1700000000123456789",
+        },
+    }
+    captured: dict = {}
+    client = BybitReadOnlyClient(BybitB1Settings(api_key=None, api_secret=None))
+
+    with _patch_async(payload, captured):
+        server_time = await client.get_server_time()
+
+    assert server_time.time_second == 1700000000
+    assert "headers" not in captured["kwargs"]
     with pytest.raises(ExchangeAuthError):
-        BybitReadOnlyClient(BybitB1Settings(api_key=None, api_secret=None))
+        await client.get_wallet_balance()
 
 
 @pytest.mark.parametrize("environment", ["production", "live"])
@@ -198,7 +216,7 @@ async def test_get_server_time_uses_mocked_http_and_returns_model():
 
 
 @pytest.mark.asyncio
-async def test_get_server_time_sends_auth_headers_without_logging_them(caplog):
+async def test_get_server_time_uses_unsigned_public_request_without_logging_auth(caplog):
     payload = {
         "retCode": 0,
         "retMsg": "OK",
@@ -212,12 +230,10 @@ async def test_get_server_time_sends_auth_headers_without_logging_them(caplog):
     with _patch_async(payload, captured):
         await BybitReadOnlyClient(_settings()).get_server_time()
 
-    headers = captured["kwargs"]["headers"]
-    assert headers["X-BAPI-API-KEY"] == FAKE_API_KEY
-    assert "X-BAPI-SIGN" in headers
+    assert "headers" not in captured["kwargs"]
+    assert "params" not in captured["kwargs"]
     assert FAKE_API_KEY not in caplog.text
     assert FAKE_API_SECRET not in caplog.text
-    assert headers["X-BAPI-SIGN"] not in caplog.text
 
 
 @pytest.mark.asyncio
@@ -229,25 +245,69 @@ async def test_auth_error_code_raises_sanitized_auth_error():
 
     rendered = str(exc_info.value)
     assert "10004" in rendered
+    assert getattr(exc_info.value, "error_category") == "invalid_signature"
+    assert getattr(exc_info.value, "ret_code") == 10004
     assert FAKE_API_KEY not in rendered
     assert FAKE_API_SECRET not in rendered
     assert "bad sign" not in rendered
 
 
 @pytest.mark.asyncio
-async def test_rate_limit_code_raises_rate_limited():
+async def test_rate_limit_code_raises_rate_limited_with_safe_category():
     captured: dict = {}
     with _patch_async({"retCode": 10006, "retMsg": "too many requests"}, captured):
-        with pytest.raises(ExchangeRateLimited):
+        with pytest.raises(ExchangeRateLimited) as exc_info:
             await BybitReadOnlyClient(_settings()).get_server_time()
 
+    assert getattr(exc_info.value, "error_category") == "rate_limited"
+    assert getattr(exc_info.value, "ret_code") == 10006
 
 @pytest.mark.asyncio
 async def test_generic_bybit_error_raises_response_error():
     captured: dict = {}
     with _patch_async({"retCode": 10001, "retMsg": "bad request"}, captured):
-        with pytest.raises(ExchangeResponseError):
+        with pytest.raises(ExchangeResponseError) as exc_info:
             await BybitReadOnlyClient(_settings()).get_server_time()
+
+    assert getattr(exc_info.value, "error_category") == "response_error"
+    assert getattr(exc_info.value, "ret_code") == 10001
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("ret_code", "category"),
+    [
+        (10002, "timestamp_or_recv_window_error"),
+        (10003, "invalid_key_or_environment"),
+        (10004, "invalid_signature"),
+        (10005, "permission_denied"),
+        (10007, "authentication_failed"),
+        (10010, "ip_mismatch"),
+    ],
+)
+async def test_auth_ret_codes_have_safe_granular_categories(ret_code: int, category: str):
+    sensitive_ret_msg = (
+        f"auth failure api_key={FAKE_API_KEY} api_secret={FAKE_API_SECRET} "
+        f"X-BAPI-SIGN={FAKE_SIGNATURE} raw_private_payload=secret"
+    )
+    captured: dict = {}
+
+    with _patch_async({"retCode": ret_code, "retMsg": sensitive_ret_msg}, captured):
+        with pytest.raises(ExchangeAuthError) as exc_info:
+            await BybitReadOnlyClient(_settings()).get_wallet_balance()
+
+    exposed_text = str(exc_info.value)
+    assert getattr(exc_info.value, "error_category") == category
+    assert getattr(exc_info.value, "ret_code") == ret_code
+    assert str(ret_code) in exposed_text
+    for forbidden in (
+        FAKE_API_KEY,
+        FAKE_API_SECRET,
+        FAKE_SIGNATURE,
+        "raw_private_payload",
+        sensitive_ret_msg,
+    ):
+        assert forbidden not in exposed_text
 
 
 @pytest.mark.asyncio
@@ -308,7 +368,7 @@ async def test_get_wallet_balance_uses_mocked_http_and_returns_decimal_model():
     assert wallet.coins[0].equity == Decimal("12345.67")
     assert wallet.coins[0].available_to_withdraw == Decimal("1000.00")
     assert captured["url"] == "https://api-testnet.bybit.com/v5/account/wallet-balance"
-    assert captured["kwargs"]["params"] == {"accountType": "UNIFIED"}
+    assert captured["kwargs"]["params"] == "accountType=UNIFIED"
 
 
 @pytest.mark.asyncio
@@ -320,10 +380,42 @@ async def test_get_wallet_balance_sends_auth_headers_without_logging_them(caplog
 
     headers = captured["kwargs"]["headers"]
     assert headers["X-BAPI-API-KEY"] == FAKE_API_KEY
+    assert headers["X-BAPI-SIGN-TYPE"] == "2"
     assert "X-BAPI-SIGN" in headers
     assert FAKE_API_KEY not in caplog.text
     assert FAKE_API_SECRET not in caplog.text
     assert headers["X-BAPI-SIGN"] not in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_wallet_balance_signed_query_matches_sent_query(monkeypatch):
+    captured: dict = {}
+    signed: dict = {}
+    original_signed_headers = BybitAuth.signed_headers
+
+    def _capturing_signed_headers(self: BybitAuth, **kwargs: object) -> dict[str, str]:
+        signed["query_params"] = kwargs.get("query_params")
+        signed["query_string"] = canonical_query(kwargs.get("query_params"))  # type: ignore[arg-type]
+        return original_signed_headers(self, **kwargs)
+
+    monkeypatch.setattr(BybitAuth, "signed_headers", _capturing_signed_headers)
+
+    with _patch_async(_WALLET_BALANCE_PAYLOAD, captured):
+        await BybitReadOnlyClient(_settings()).get_wallet_balance()
+
+    assert signed["query_params"] == {"accountType": "UNIFIED"}
+    assert signed["query_string"] == "accountType=UNIFIED"
+    assert captured["kwargs"]["params"] == signed["query_string"]
+
+
+@pytest.mark.asyncio
+async def test_signed_query_uses_deterministic_canonical_order_for_multi_param_get():
+    captured: dict = {}
+
+    with _patch_async(_OPEN_POSITIONS_PAYLOAD, captured):
+        await BybitReadOnlyClient(_settings()).get_open_positions()
+
+    assert captured["kwargs"]["params"] == "category=linear&settleCoin=USDT"
 
 
 @pytest.mark.asyncio
@@ -481,7 +573,7 @@ async def test_get_open_positions_uses_mocked_http_and_returns_decimal_external_
     assert position.position_mm == Decimal("80.000625")
     assert position.leverage == Decimal("20")
     assert captured["url"] == "https://api-testnet.bybit.com/v5/position/list"
-    assert captured["kwargs"]["params"] == {"category": "linear", "settleCoin": "USDT"}
+    assert captured["kwargs"]["params"] == "category=linear&settleCoin=USDT"
 
 
 @pytest.mark.asyncio
@@ -493,6 +585,7 @@ async def test_get_open_positions_sends_auth_headers_without_logging_them(caplog
 
     headers = captured["kwargs"]["headers"]
     assert headers["X-BAPI-API-KEY"] == FAKE_API_KEY
+    assert headers["X-BAPI-SIGN-TYPE"] == "2"
     assert "X-BAPI-SIGN" in headers
     assert FAKE_API_KEY not in caplog.text
     assert FAKE_API_SECRET not in caplog.text

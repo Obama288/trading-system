@@ -56,6 +56,12 @@ class _ClientRaises:
         raise self._exc
 
 
+def _with_error_metadata(exc: Exception, *, category: str, ret_code: int) -> Exception:
+    setattr(exc, "error_category", category)
+    setattr(exc, "ret_code", ret_code)
+    return exc
+
+
 def _settings(environment: str = "testnet") -> BybitB1Settings:
     return BybitB1Settings(
         environment=environment,
@@ -110,14 +116,15 @@ async def test_successful_server_time_output_is_sanitized():
 
 
 @pytest.mark.asyncio
-async def test_missing_credentials_fail_safely():
+async def test_missing_credentials_do_not_block_public_server_time_when_client_is_mocked():
     exit_code, output = await smoke_server_time.run_server_time_smoke(
         settings=BybitB1Settings(api_key=None, api_secret=None),
+        client_factory=_ClientReturnsServerTime,
     )
 
-    assert exit_code == 1
-    assert output["status"] == "failure"
-    assert output["error_category"] == "auth_error"
+    assert exit_code == 0
+    assert output["status"] == "success"
+    assert output["endpoint"] == "server_time"
     _assert_sanitized(output)
 
 
@@ -181,6 +188,37 @@ async def test_failures_are_sanitized(exc: Exception, category: str):
     assert output["error_category"] == category
     if isinstance(exc, ExchangeResponseError):
         assert output["retCode"] == 0
+    _assert_sanitized(output)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("category", "ret_code"),
+    [
+        ("timestamp_or_recv_window_error", 10002),
+        ("invalid_key_or_environment", 10003),
+        ("invalid_signature", 10004),
+        ("permission_denied", 10005),
+        ("authentication_failed", 10007),
+        ("ip_mismatch", 10010),
+    ],
+)
+async def test_granular_bybit_error_categories_are_sanitized(category: str, ret_code: int):
+    exc = _with_error_metadata(
+        ExchangeAuthError(RAW_RET_MSG),
+        category=category,
+        ret_code=ret_code,
+    )
+
+    exit_code, output = await smoke_server_time.run_server_time_smoke(
+        settings=_settings(),
+        client_factory=lambda settings: _ClientRaises(exc),
+    )
+
+    assert exit_code == 1
+    assert output["status"] == "failure"
+    assert output["error_category"] == category
+    assert output["retCode"] == ret_code
     _assert_sanitized(output)
 
 
