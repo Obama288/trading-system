@@ -5,11 +5,11 @@
 Date: 2026-04-29
 
 Stage:
-Stage 53-B2c.1a authenticated readiness hardening checkpoint.
+Stage 53-B2c.1b query-api read-only preflight harness checkpoint.
 
 Target:
 Docs-only status sync after accepted, committed, pushed, and remote-visible
-B2c.1a authenticated readiness hardening.
+B2c.1b query-api read-only preflight harness.
 
 Not target:
 - Stage 53-B runtime implementation
@@ -44,7 +44,8 @@ Current verdict:
 - Stage 53-B2b real server_time smoke: SUCCESS; Human Owner executed exactly one real Bybit testnet server_time smoke locally after safe credential presence and hygiene checks; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only
 - Stage 53-B2c wallet_balance smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE on HEAD c9b1337; mocked tests only; direct no-flag latch exits 3; --allow-real-smoke required for real-capable path; not runtime-ready; no real wallet_balance smoke or credentials use for B2c implementation
 - Stage 53-B2c.1a authenticated readiness hardening: ACCEPTED / PUSHED / REMOTE-VISIBLE on HEAD 189cb0a; server_time now uses unsigned public /v5/market/time; get_server_time no longer requires credentials; private reads still fail closed without credentials; signed private reads include X-BAPI-SIGN-TYPE: 2; signed GET query handling is deterministic and consistent with what is sent; wallet_balance signs/sends accountType=UNIFIED; safe retCode classifications added for 10002/10003/10004/10005/10006/10007/10010; 10006 remains exit code 2 / inconclusive; no raw retMsg or raw response body exposure; wallet smoke output remains sanitized; no query-api, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
-- Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: REQUIRED before B2d; B2d real wallet_balance smoke is NO-GO until Human Owner separately authorizes B2d
+- Stage 53-B2c.1b query-api read-only preflight harness: ACCEPTED / PUSHED / REMOTE-VISIBLE on HEAD 00d84d8; get_query_api_info() supports signed read-only GET /v5/user/query-api; sanitized ApiKeyInfo model; scripts/smoke_query_api.py exists; no-flag latch exits 3 with sanitized authorization_required JSON; success output exact approved field set; operation and endpoint_family absent from success output; unsafe readOnly/permissions/expiry metadata fail closed; stale and malformed expiredAt regression tests exist; rate limit remains exit 2 / inconclusive; no real query-api execution, credentials use, Bybit call, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
+- Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b implementation checkpoints are code/test ready for mocked/local behavior only; B2d real wallet_balance smoke is NO-GO until Human Owner separately authorizes B2d
 - Stage 53-B2 permanent real-smoke preflight: safe credential presence check, safe credential hygiene check, and Human Owner external key active/not expired confirmation are REQUIRED before any real Bybit smoke gate; any missing required env var, hygiene warning, expired/uncertain key, or missing owner confirmation stops the smoke
 - 7-day note is not treated as verified API key expiry; if secret availability is uncertain, recreate the testnet key rather than exposing or guessing it
 - Bybit auth/signing helper, timestamp/recv_window handling, redaction helpers, minimal ServerTime model, read-only client skeleton, and get_server_time() only: PRESENT
@@ -53,6 +54,7 @@ Current verdict:
 - Mocked tests for auth and get_server_time skeleton behavior: PRESENT
 - B2c wallet_balance smoke harness and mocked tests: PRESENT
 - B2c.1a authenticated readiness hardening: PRESENT
+- B2c.1b query-api read-only preflight harness and mocked tests: PRESENT
 - Service startup wiring for B1 client: NOT PRESENT
 - B2b real server_time smoke execution: SUCCESS for server_time only; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only
 - Credentials use for smoke: USED LOCALLY ONLY by Human Owner for B2b; credentials must not be stored or disclosed
@@ -65,6 +67,14 @@ Current verdict:
 - Unsupervised production live: NO-GO
 
 Last accepted evidence:
+- Stage 53-B2c.1b query-api read-only preflight harness ACCEPTED / PUSHED / REMOTE-VISIBLE: 00d84d8 feat: add Stage 53-B2 query-api preflight harness
+  - Classification: code-ready candidate / accepted implementation checkpoint; test-ready for mocked query-api preflight behavior only; not runtime-ready.
+  - Exists: get_query_api_info() signed read-only GET /v5/user/query-api support; sanitized ApiKeyInfo model with boolean/status summary fields; scripts/smoke_query_api.py; tests/scripts/test_smoke_query_api.py; direct no-flag latch exits 3 with sanitized authorization_required JSON.
+  - Success output exact approved field set: endpoint, status, exchange, read_only, permissions_safe, key_active, deadline_days_present, expired_at_present, elapsed_ms. Operation and endpoint_family are absent from success output.
+  - Safety behavior: unsafe readOnly, unsafe permissions, expired/non-positive/missing/stale/malformed expiry metadata fail closed; stale and malformed expiredAt regression tests exist; rate limit remains exit code 2 / inconclusive.
+  - Does not exist / is not authorized: real query-api execution; credentials use; Bybit call; real wallet_balance smoke; open_positions smoke; order_status; write/live methods; service wiring.
+  - Not verified: runtime readiness, trading readiness, live readiness, probe readiness, real query-api execution, real wallet_balance smoke, open_positions smoke, order_status, service startup wiring.
+  - B2d wallet_balance real smoke remains unauthorized until separate Human Owner decision. No automatic progression and no automatic retry are allowed.
 - Stage 53-B2c.1a authenticated readiness hardening ACCEPTED / PUSHED / REMOTE-VISIBLE: 189cb0a feat: harden Stage 53-B2 authenticated smoke readiness
   - Classification: code-ready candidate / accepted implementation checkpoint; test-ready for mocked/local authenticated-readiness hardening only; not runtime-ready.
   - Exists: unsigned public `/v5/market/time` methodology for server_time; get_server_time no longer requires credentials; private reads still fail closed without credentials; private signed reads include `X-BAPI-SIGN-TYPE: 2`; deterministic signed GET query handling consistent with what is sent; wallet_balance signs/sends `accountType=UNIFIED`; safe retCode classifications for 10002 timestamp_or_recv_window_error, 10003 invalid_key_or_environment, 10004 invalid_signature, 10005 permission_denied, 10006 rate_limited, 10007 authentication_failed, and 10010 ip_mismatch; 10006 remains exit code 2 / inconclusive in smoke harnesses.

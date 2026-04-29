@@ -95,6 +95,42 @@ hardening. It did not add query-api support, open_positions smoke,
 `order_status`, write/live methods, service wiring, runtime readiness, trading
 readiness, live readiness, or probe readiness.
 
+Stage 53-B2c.1b query-api read-only preflight harness is implemented,
+committed, pushed, and remote-visible at:
+
+`00d84d8 feat: add Stage 53-B2 query-api preflight harness`
+
+B2c.1b includes:
+- `get_query_api_info()` signed read-only support for `GET /v5/user/query-api`
+- sanitized `ApiKeyInfo` boolean/status summary model
+- `scripts/smoke_query_api.py`
+- direct no-flag latch that exits 3 with sanitized `authorization_required` JSON
+- no-flag path that does not load settings/client/credentials or call Bybit
+- mocked tests only
+
+Query-api success output is exactly:
+- endpoint
+- status
+- exchange
+- read_only
+- permissions_safe
+- key_active
+- deadline_days_present
+- expired_at_present
+- elapsed_ms
+
+`operation` and `endpoint_family` are absent from query-api success output.
+Unsafe `readOnly`, unsafe permissions, expired/non-positive/missing/stale/
+malformed expiry metadata, including stale and malformed `expiredAt`, fail
+closed. Rate limit remains exit code 2 / inconclusive.
+
+B2c.1b did not run real query-api execution, did not use credentials, did not
+call Bybit, did not run real wallet_balance smoke, did not add open_positions
+smoke, did not add `order_status`, did not add write/live methods, and did not
+add service wiring. B2d real wallet_balance smoke remains unauthorized pending a
+separate Human Owner decision. Runtime readiness, trading readiness, live
+readiness, and probe readiness remain not approved.
+
 ## 2. Stage 53-B2 Scope
 
 Stage 53-B2 is a plan for real Bybit testnet read-only connectivity smoke.
@@ -115,6 +151,8 @@ implementation or real-smoke step requires a separate Human Owner decision.
 - B2c.1: authenticated readiness audit / query-api preflight decision; no real wallet smoke
 - B2c.1a: implemented authenticated readiness hardening at 189cb0a; mocked/local
   hardening only; no real wallet smoke
+- B2c.1b: implemented query-api read-only preflight harness + mocked tests at
+  00d84d8; no real query-api execution; no real wallet smoke
 - B2d: execute real wallet_balance smoke only after explicit Human Owner authorization
 - B2e: implement open_positions smoke harness + mocked tests only
 - B2f: execute real open_positions smoke only after explicit Human Owner authorization

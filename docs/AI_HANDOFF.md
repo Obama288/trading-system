@@ -27,11 +27,13 @@ Runtime status:
 - Stage 53-B2b real server_time smoke: SUCCESS for server_time only; Human Owner executed exactly one real Bybit testnet server_time smoke locally after safe credential presence and hygiene checks; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; not runtime-ready
 - Stage 53-B2c wallet_balance smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE at c9b1337; mocked tests only; direct no-flag latch exits 3; --allow-real-smoke required for real-capable path; not runtime-ready; no real wallet_balance smoke or credentials use for B2c implementation
 - Stage 53-B2c.1a authenticated readiness hardening: ACCEPTED / PUSHED / REMOTE-VISIBLE at 189cb0a; server_time now uses unsigned public /v5/market/time; get_server_time no longer requires credentials; private reads fail closed without credentials; signed private reads include X-BAPI-SIGN-TYPE: 2; deterministic signed GET query handling is consistent with what is sent; wallet_balance signs/sends accountType=UNIFIED; safe retCode classifications added for 10002/10003/10004/10005/10006/10007/10010; 10006 remains exit code 2 / inconclusive; no query-api, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
-- Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: REQUIRED before B2d; B2d real wallet_balance smoke is NO-GO until Human Owner separately authorizes B2d
+- Stage 53-B2c.1b query-api read-only preflight harness: ACCEPTED / PUSHED / REMOTE-VISIBLE at 00d84d8; get_query_api_info() supports signed read-only GET /v5/user/query-api; sanitized ApiKeyInfo model; scripts/smoke_query_api.py exists; no-flag latch exits 3 with sanitized authorization_required JSON; success output exact approved field set with no operation or endpoint_family; unsafe readOnly/permissions/expiry metadata fail closed; stale/malformed expiredAt regression tests exist; rate limit remains exit 2 / inconclusive; no real query-api execution, credentials use, Bybit call, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
+- Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b are mocked/local implementation checkpoints only; B2d real wallet_balance smoke is NO-GO until Human Owner separately authorizes B2d
 - Stage 53-B2 permanent real-smoke preflight: safe credential presence check, safe credential hygiene check, and Human Owner external key active/not expired confirmation are required before any real Bybit smoke gate; any missing required env var, hygiene warning, expired/uncertain key, or missing owner confirmation stops the smoke; 7-day note is not verified API key expiry
 
 Latest known commits:
 - 189cb0a feat: harden Stage 53-B2 authenticated smoke readiness
+- 00d84d8 feat: add Stage 53-B2 query-api preflight harness
 - c9b1337 feat: add Stage 53-B2 wallet-balance smoke harness
 - a511e2f feat: add Stage 53-B2 server-time smoke harness
 - 0596afb feat: add Bybit B1 read-only open positions
@@ -69,6 +71,7 @@ Latest known commits:
 - Stage 53-B2b real server_time smoke: SUCCESS, local owner-run; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; no wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
 - Stage 53-B2c wallet_balance smoke harness: ACCEPTED / PUSHED / REMOTE-VISIBLE, commit c9b1337; mocked tests only; no real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
 - Stage 53-B2c.1a authenticated readiness hardening: ACCEPTED / PUSHED / REMOTE-VISIBLE, commit 189cb0a; mocked/local hardening only; no query-api, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
+- Stage 53-B2c.1b query-api read-only preflight harness: ACCEPTED / PUSHED / REMOTE-VISIBLE, commit 00d84d8; mocked tests only; no real query-api execution, credentials use, Bybit call, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness
 - Live Path Audit completed
 - Legacy 11-item live blocker audit completed; canonical current taxonomy is 14 live blockers.
 
@@ -77,7 +80,7 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 53-B2c.1a authenticated readiness hardening checkpoint.
+Stage 53-B2c.1b query-api read-only preflight harness checkpoint.
 
 Stage 53-B implementation:
 BLOCKED beyond accepted Slice 3 open_positions.
@@ -96,6 +99,9 @@ B2c wallet_balance smoke harness is accepted, pushed, and remote-visible on c9b1
 
 Stage 53-B2c.1a implementation state:
 B2c.1a authenticated readiness hardening is accepted, pushed, and remote-visible on 189cb0a. It changes server_time to unsigned public /v5/market/time methodology, allows get_server_time without credentials, keeps private reads fail-closed without credentials, adds X-BAPI-SIGN-TYPE: 2 to private signed reads, ensures signed GET query handling is deterministic and consistent with what is sent, keeps wallet_balance signing/sending accountType=UNIFIED, and adds safe retCode classifications for 10002/10003/10004/10005/10006/10007/10010. 10006 remains exit code 2 / inconclusive in smoke harnesses. It did not add query-api, open_positions smoke, order_status, write/live methods, service wiring, or runtime readiness.
+
+Stage 53-B2c.1b implementation state:
+B2c.1b query-api read-only preflight harness is accepted, pushed, and remote-visible on 00d84d8. It adds get_query_api_info() signed read-only GET /v5/user/query-api support, sanitized ApiKeyInfo boolean/status summary output, scripts/smoke_query_api.py, and mocked tests. The direct no-flag latch exits 3 with sanitized authorization_required JSON and does not load settings/client/credentials or call Bybit. Success output includes exactly endpoint/status/exchange/read_only/permissions_safe/key_active/deadline_days_present/expired_at_present/elapsed_ms; operation and endpoint_family are absent. Unsafe readOnly, unsafe permissions, and expired/non-positive/missing/stale/malformed expiry metadata fail closed. No real query-api execution, credentials use, Bybit call, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, or service wiring was added. Runtime readiness is not confirmed.
 
 Stage 53-B2c.1 required gate:
 B2c.1 is an authenticated readiness audit / query-api preflight decision before B2d. It is not real wallet smoke, must not call wallet_balance or open_positions, and does not authorize order_status or write/live methods. It must audit signing/query-string behavior, whether server_time is signed or unsigned, whether X-BAPI-SIGN-TYPE: 2 is present or intentionally omitted, whether to add /v5/user/query-api as a new read-only preflight endpoint, and docs wording around key active/not expired checks. Query-api is not currently in the B1/B2 endpoint set and requires explicit Human Owner decision. /v5/market/time is public and should be treated as unsigned connectivity/time; B2b remains valid as a real testnet connectivity checkpoint, but signed server_time usage should be tracked as an audit/backlog issue if present.

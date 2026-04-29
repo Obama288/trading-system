@@ -34,7 +34,7 @@
 - Stage 53-B design lock: CLOSED
 - Commit: 5e5eb48 docs: add stage 53-B design lock
 - Owner decisions: ANSWERED / APPROVED
-- Runtime/client implementation: B2a server_time smoke harness accepted/pushed/remote-visible at a511e2f; B2b real server_time smoke succeeded locally with LASTEXITCODE=0 and elapsed_ms=1534; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337 with mocked tests only; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a with mocked/local tests only; no runtime/service wiring; no real wallet_balance/open_positions smoke; no order_status or write/live methods
+- Runtime/client implementation: B2a server_time smoke harness accepted/pushed/remote-visible at a511e2f; B2b real server_time smoke succeeded locally with LASTEXITCODE=0 and elapsed_ms=1534; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337 with mocked tests only; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a with mocked/local tests only; B2c.1b query-api read-only preflight harness accepted/pushed/remote-visible at 00d84d8 with mocked tests only; no runtime/service wiring; no real query-api execution; no real wallet_balance/open_positions smoke; no order_status or write/live methods
 
 ## Q1 fix and regression status
 
@@ -94,6 +94,18 @@
   - server_time no-flag latch LASTEXITCODE=3; wallet_balance no-flag latch LASTEXITCODE=3
   - tests/scripts: 40 passed; tests/libs/exchange: 86 passed; tests/libs/config: 19 passed
   - no query-api support, open_positions smoke, order_status, write/live methods, service wiring, runtime readiness, trading readiness, live readiness, or probe readiness was added
+- B2c.1b evidence:
+  - 00d84d8 feat: add Stage 53-B2 query-api preflight harness
+  - get_query_api_info() supports signed read-only GET /v5/user/query-api
+  - sanitized ApiKeyInfo model with boolean/status summary fields
+  - scripts/smoke_query_api.py exists
+  - no-flag latch exits 3 with sanitized authorization_required JSON
+  - success output exact approved field set: endpoint, status, exchange, read_only, permissions_safe, key_active, deadline_days_present, expired_at_present, elapsed_ms
+  - operation and endpoint_family are absent from success output
+  - unsafe readOnly/permissions/expiry metadata fail closed
+  - stale and malformed expiredAt regression tests exist
+  - rate limit remains exit 2 / inconclusive
+  - no real query-api execution, credentials use, Bybit call, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, runtime readiness, trading readiness, live readiness, or probe readiness was added
 - B2c.1 required next gate:
   - authenticated readiness audit / query-api preflight decision before B2d
   - not real wallet smoke; must not call wallet_balance or open_positions
@@ -104,8 +116,8 @@
 
 ## Current stage
 
-- Current gate: Stage 53-B2c.1a authenticated readiness hardening checkpoint
-- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; B2b server_time smoke succeeded locally; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a; B2d real wallet_balance smoke NO-GO pending Human Owner decision
+- Current gate: Stage 53-B2c.1b query-api read-only preflight harness checkpoint
+- Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; B2b server_time smoke succeeded locally; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a; B2c.1b query-api preflight harness accepted/pushed/remote-visible at 00d84d8; B2d real wallet_balance smoke NO-GO pending Human Owner decision
 - Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
 - Next allowed task: Stage 53-B2 docs/status cleanup and static safety checks; B2c.1 authenticated readiness audit / query-api preflight decision. B2d real wallet_balance smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
@@ -119,6 +131,7 @@
 - B2b scope already completed: real testnet server_time smoke succeeded locally; LASTEXITCODE=0; elapsed_ms=1534; sanitized output only; credentials were used locally only and must not be stored or disclosed; not runtime-ready
 - B2c scope already present: wallet_balance smoke harness; mocked tests only; direct no-flag latch exits 3 with authorization_required JSON; --allow-real-smoke required; sanitized mocked success output only; no real wallet_balance smoke or credentials use for B2c implementation; not runtime-ready
 - B2c.1a scope already present: unsigned public server_time methodology; get_server_time no longer requires credentials; private reads fail closed without credentials; signed private reads include X-BAPI-SIGN-TYPE: 2; deterministic signed/sent GET query handling; wallet_balance signs/sends accountType=UNIFIED; safe retCode categories for 10002/10003/10004/10005/10006/10007/10010; no query-api, open_positions smoke, order_status, write/live methods, service wiring, or readiness approval; not runtime-ready
+- B2c.1b scope already present: get_query_api_info() signed read-only GET /v5/user/query-api support; sanitized ApiKeyInfo model; scripts/smoke_query_api.py; mocked tests; direct no-flag latch exits 3; exact success output field set; unsafe readOnly/permissions/expiry metadata fail closed; stale/malformed expiredAt covered; no real query-api execution, credentials use, Bybit call, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or readiness approval; not runtime-ready
 - Current authorized state: READ_ONLY_TESTNET_SMOKE. Future READ_ONLY_ACTIVE / READ_ONLY_DEGRADED / READ_ONLY_HALTED, OMS, reconciliation, kill switch, risk controls, runbook, write client, ExchangePort refactor, dependency changes, CI secret scanning, and service wiring remain future-gate/backlog concepts only
 - Withdrawal permission: forbidden
 - Secrets: no secrets in repo, prompts, docs, or logs
