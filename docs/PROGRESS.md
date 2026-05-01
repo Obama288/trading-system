@@ -5,11 +5,11 @@
 Date: 2026-04-29
 
 Stage:
-Stage 54-BG2 design lock active; Stage 54-BG1 remains closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
+Stage 54-BG2-A public-only skeleton active; Stage 54-BG2 design lock remains recorded; Stage 54-BG1 remains closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
 
 Target:
-Docs-only design lock for Stage 54-BG2 after the accepted Stage 54-BG1
-config-only checkpoint.
+Docs-only/status checkpoint update after accepted Stage 54-BG2-A public-only
+Bitget connectivity skeleton at `ad8df47`.
 
 Not target:
 - Stage 54-BG implementation
@@ -39,6 +39,7 @@ Readiness levels:
 - Docs-ready: GO - planning trail reflects Stage 54-BG Bitget candidate and Stage 54-AP fallback boundary
 - Docs-ready: GO - Stage 54-BG1 config-only checkpoint recorded with final QA PASS and P2 env-isolation finding closed
 - Docs-ready: GO - Stage 54-BG2 design lock recorded for Bitget Demo API planning only
+- Docs-ready: GO - Stage 54-BG2-A public-only skeleton evidence recorded at HEAD `ad8df47`
 - Docs-ready: GO - status reflects B2c wallet_balance smoke harness checkpoint at HEAD c9b1337
 - Docs-ready: GO - status reflects B2c.1a authenticated readiness hardening checkpoint at HEAD 189cb0a
 - Code-ready: code-ready candidate / accepted implementation checkpoint for Stage 53-B2c.1a mocked/local authenticated-readiness hardening only
@@ -57,6 +58,9 @@ Current verdict:
 - Stage 54-BG2 design lock: DESIGNED / DOCS-ONLY; Bitget Demo API planning only; future demo private REST requests must account for `paptrading: 1`; auth shape uses API key, secret key, and passphrase; private requests require signing; public and private paths must remain split; WebSocket demo endpoints remain out of scope unless later authorized; see `docs/STAGE_54_BG2_DESIGN_LOCK.md`
 - Stage 54-BG2 locked boundaries: no API/exchange/Beget/network operations; no private smoke; no orders/cancels/set_leverage/withdraw/transfer; no runtime/service wiring; no generic exchange adapter; no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback; no readiness beyond docs-ready for BG2
 - Stage 54-BG2 locked implementation posture: keep Bitget exchange-specific; keep `BITGET_BG1_` naming unless later owner-approved; passphrase remains `SecretStr`; future signing helpers must redact all secret-bearing data; future private read-only path must fail closed without credentials
+- Stage 54-BG2-A public-only skeleton: ACCEPTED / REMOTE-VISIBLE on `ad8df47`; public unsigned Bitget connectivity skeleton only; mocked tests only; no credentials, no `SecretStr`, no signing, no passphrase, no `paptrading` header, no private endpoints, no smoke script, no runtime/service wiring, no generic exchange adapter, and no real API/exchange/Beget/network operations
+- Stage 54-BG2-A test evidence: `python -m pytest tests\libs\exchange\test_bitget_public.py -q --basetemp=.pytest-temp-run` -> 8 passed; `python -m pytest tests\libs\exchange -q --basetemp=.pytest-temp-run` -> 107 passed
+- Stage 54-BG2-A readiness: code-ready/test-ready for public-only skeleton only; not runtime-ready, trading-ready, live-ready, or probe-ready
 - Stage 54-AP fallback: Alpaca Paper remains fallback-only and must stay a separate architecture track
 - Generic adapter boundary: do not create a generic exchange adapter yet
 - Real live execution: NO-GO
@@ -256,8 +260,8 @@ Blocked work:
 - Real live execution
 
 Next gate:
-Stage 54-BG2 docs-only design lock complete; only the Human Owner may
-authorize the next Bitget implementation slice.
+Stage 54-BG2-A complete at `ad8df47`; next possible slice is BG2-B signing
+helper with mocked tests only, if separately authorized by the Human Owner.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -271,8 +275,8 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B2 docs/status maintenance and Stage 54-BG2 follow-up planning; any
-Bitget public connectivity skeleton, signing helper, any Bitget private smoke, B2c.1c
+Stage 53-B2 docs/status maintenance and Stage 54-BG2/BG2-B follow-up planning; any
+Bitget signing helper, any Bitget private smoke, B2c.1c
 query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke,
 open_positions smoke, order_status, and any write/live methods require
 separate Human Owner authorization.

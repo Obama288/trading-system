@@ -36,6 +36,8 @@ Runtime status:
 - Stage 54-BG1 config-only checkpoint: COMPLETE; `BitgetBg1Settings` plus mocked/env-isolated config tests accepted; final QA PASS; previous P2 env-isolation finding closed; validation evidence `tests/libs/config/test_bitget_bg1_settings.py` 12 passed and `tests/libs/config` 36 passed; no exchange tests, script tests, or broader repo regression were run
 - Stage 54-BG2 design lock: DOCS-ONLY / DESIGN LOCK; Bitget Demo API planning only; future demo private REST requests must account for `paptrading: 1`; auth shape uses API key, secret key, and passphrase; private requests require signing; public endpoints stay separate from private/authenticated endpoints; WebSocket demo endpoints remain future/out of scope unless explicitly authorized
 - Stage 54-BG2 safety boundary: no API/exchange/Beget/network operations; no private smoke; no orders/cancels/set_leverage/withdraw/transfer; no runtime/service wiring; no generic exchange adapter; no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback; `production` / `mainnet` / `live` / `testnet` remain fail-closed for the BG1/BG2 path
+- Stage 54-BG2-A public-only skeleton: ACCEPTED / REMOTE-VISIBLE on `ad8df47`; public unsigned Bitget connectivity skeleton only; mocked tests only; no credentials, no `SecretStr`, no signing, no passphrase, no `paptrading` header, no private endpoints, no smoke script, no runtime/service wiring, no generic exchange adapter, and no real API/exchange/Beget/network operations
+- Stage 54-BG2-A test evidence: `tests/libs/exchange/test_bitget_public.py` 8 passed and `tests/libs/exchange` 107 passed; readiness is code-ready/test-ready for public-only skeleton only; not runtime-ready, trading-ready, live-ready, or probe-ready
 - Stage 54-AP fallback planning: Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction
 - Generic adapter boundary: do not create a generic exchange adapter yet
 - Beget API access: AVAILABLE / OPERATIONAL CAPABILITY ONLY; no secrets recorded; does not imply deployment readiness or runtime readiness; any Beget API operation that changes infrastructure, deployment, runtime, secrets, or server state is Protected Lane and requires explicit Human Owner authorization
@@ -97,7 +99,7 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 54-BG2 design lock active; Stage 54-BG1 config-only checkpoint remains closed; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
+Stage 54-BG2-A public-only skeleton active; Stage 54-BG2 design lock remains recorded; Stage 54-BG1 config-only checkpoint remains closed; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
 
 Stage 53-B implementation:
 BLOCKED beyond accepted Slice 3 open_positions.
@@ -160,7 +162,7 @@ No runtime implementation is authorized by the decision-sync PR, B1-CONFIG, Slic
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B2 docs/status cleanup and Stage 54-BG2 follow-up planning. Only the Human Owner may authorize the next Bitget slice. The likely next implementation candidate, if separately approved, is Bitget public connectivity skeleton or signing helper with mocked tests only. No private smoke or runtime wiring is authorized.
+Stage 53-B2 docs/status cleanup and Stage 54-BG2/BG2-B follow-up planning. Only the Human Owner may authorize the next Bitget slice. The next possible implementation candidate, if separately approved, is BG2-B signing helper with mocked tests only. No private smoke or runtime wiring is authorized.
 
 ## Historical stage groups
 
