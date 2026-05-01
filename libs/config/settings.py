@@ -21,6 +21,7 @@ _BYBIT_B1_FORBIDDEN_ENDPOINTS = frozenset({
     "live_reconcile",
     "live_execution",
 })
+_BITGET_BG1_ALLOWED_ENVIRONMENTS = frozenset({"demo", "simulated"})
 
 
 class AppSettings(BaseSettings):
@@ -119,6 +120,36 @@ class BybitB1Settings(BaseSettings):
             raise ValueError(
                 "allowed_endpoints must be exactly server_time, wallet_balance, open_positions"
             )
+        return v
+
+
+class BitgetBg1Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        env_prefix="BITGET_BG1_",
+        extra="ignore",
+        populate_by_name=True,
+    )
+
+    exchange: str = "bitget"
+    environment: str = "demo"
+    api_key: SecretStr | None = Field(default=None, repr=False, exclude=True)
+    api_secret: SecretStr | None = Field(default=None, repr=False, exclude=True)
+    passphrase: SecretStr | None = Field(default=None, repr=False, exclude=True)
+
+    @field_validator("exchange")
+    @classmethod
+    def bitget_only(cls, v: str) -> str:
+        if v != "bitget":
+            raise ValueError("exchange must be bitget")
+        return v
+
+    @field_validator("environment")
+    @classmethod
+    def demo_or_simulated_only(cls, v: str) -> str:
+        if v not in _BITGET_BG1_ALLOWED_ENVIRONMENTS:
+            raise ValueError("environment must be demo or simulated")
         return v
 
 
