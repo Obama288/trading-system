@@ -5,14 +5,17 @@
 Date: 2026-04-29
 
 Stage:
-Stage 54-BG planning active; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
+Stage 54-BG1 closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
 
 Target:
-Docs-only planning update for Bitget Demo as the primary Stage 54-BG
-candidate and Alpaca Paper as a separate fallback-only Stage 54-AP track.
+Docs-only checkpoint record for Stage 54-BG1 after Human Owner acceptance:
+`BitgetBg1Settings` plus mocked/env-isolated config tests.
 
 Not target:
 - Stage 54-BG implementation
+- Bitget client implementation
+- Bitget auth/signing
+- Bitget smoke scripts
 - Generic exchange adapter creation
 - Alpaca integration into a crypto-CEX abstraction
 - Stage 53-B runtime implementation
@@ -33,6 +36,7 @@ Not target:
 
 Readiness levels:
 - Docs-ready: GO - planning trail reflects Stage 54-BG Bitget candidate and Stage 54-AP fallback boundary
+- Docs-ready: GO - Stage 54-BG1 config-only checkpoint recorded with final QA PASS and P2 env-isolation finding closed
 - Docs-ready: GO - status reflects B2c wallet_balance smoke harness checkpoint at HEAD c9b1337
 - Docs-ready: GO - status reflects B2c.1a authenticated readiness hardening checkpoint at HEAD 189cb0a
 - Code-ready: code-ready candidate / accepted implementation checkpoint for Stage 53-B2c.1a mocked/local authenticated-readiness hardening only
@@ -40,10 +44,14 @@ Readiness levels:
 - Runtime-ready: not runtime-ready; B2b confirmed server_time connectivity only and B2c.1a is mocked/local hardening behavior only
 
 Current verdict:
+- Tower Control Architect role: DOCUMENTED / ACTIVE as the GPT project-control role; responsible for context recovery from `docs/PROGRESS.md`, stage-gate discipline, scope control, prompt architecture, and GO/HOLD/NO-GO recommendations only; no final readiness authority
+- Historical stage groups: DOCUMENTED as compact pre-Stage-43 chronology only; not authoritative renumbering; official current stage/gate remains defined by `docs/PROGRESS.md`
+- Beget API access: AVAILABLE / OPERATIONAL CAPABILITY ONLY; no secrets recorded; does not imply deployment readiness, runtime readiness, probe readiness, trading readiness, or live readiness; any Beget API operation that changes infra/runtime/server state requires separate explicit Human Owner authorization under Protected Lane
 - Stage 54-BG planning: PRIMARY CANDIDATE selected at planning level only; Bitget Demo / Simulated Trading should start with docs-only architecture planning, then `BitgetBg1Settings` plus mocked tests only
 - Stage 54-BG proposed env namespace: `BITGET_BG1_ENVIRONMENT`, `BITGET_BG1_API_KEY`, `BITGET_BG1_API_SECRET`, `BITGET_BG1_PASSPHRASE`
 - Stage 54-BG alias boundary: no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback in the first implementation
 - Stage 54-BG safety boundary: Bitget production/mainnet must fail closed by default; no private Bitget smoke before config, environment, and passphrase boundaries are locked
+- Stage 54-BG1 checkpoint: COMPLETE as a config-only slice; `BitgetBg1Settings` and mocked/env-isolated config tests accepted; final QA PASS; previous P2 env-isolation finding closed; validation evidence `tests/libs/config/test_bitget_bg1_settings.py` 12 passed and `tests/libs/config` 36 passed
 - Stage 54-AP fallback: Alpaca Paper remains fallback-only and must stay a separate architecture track
 - Generic adapter boundary: do not create a generic exchange adapter yet
 - Real live execution: NO-GO
@@ -243,8 +251,8 @@ Blocked work:
 - Real live execution
 
 Next gate:
-Stage 54-BG docs-only architecture planning, followed by `BitgetBg1Settings`
-plus mocked tests only if separately authorized.
+Stage 54-BG2 decision point: continue Bitget with the next separately
+authorized slice only after this BG1 config-only checkpoint.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -258,8 +266,8 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B2 docs/status maintenance and Stage 54-BG docs-only architecture
-planning; any Bitget implementation, any Bitget private smoke, B2c.1c
+Stage 53-B2 docs/status maintenance and Stage 54-BG follow-up planning; any
+Bitget client/auth/smoke implementation, any Bitget private smoke, B2c.1c
 query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke,
 open_positions smoke, order_status, and any write/live methods require
 separate Human Owner authorization.

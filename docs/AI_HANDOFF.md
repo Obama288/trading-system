@@ -33,8 +33,10 @@ Runtime status:
 - Stage 54-BG planning: Bitget Demo / Simulated Trading is the primary candidate for the next exchange-specific read-only sandbox track; start with docs-only architecture planning, then `BitgetBg1Settings` plus mocked tests only
 - Stage 54-BG proposed env namespace: `BITGET_BG1_ENVIRONMENT`, `BITGET_BG1_API_KEY`, `BITGET_BG1_API_SECRET`, `BITGET_BG1_PASSPHRASE`
 - Stage 54-BG first-slice safety boundary: no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback, Bitget production/mainnet fail-closed by default, and no private Bitget smoke before config/environment/passphrase boundaries are locked
+- Stage 54-BG1 config-only checkpoint: COMPLETE; `BitgetBg1Settings` plus mocked/env-isolated config tests accepted; final QA PASS; previous P2 env-isolation finding closed; validation evidence `tests/libs/config/test_bitget_bg1_settings.py` 12 passed and `tests/libs/config` 36 passed; no exchange tests, script tests, or broader repo regression were run
 - Stage 54-AP fallback planning: Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction
 - Generic adapter boundary: do not create a generic exchange adapter yet
+- Beget API access: AVAILABLE / OPERATIONAL CAPABILITY ONLY; no secrets recorded; does not imply deployment readiness or runtime readiness; any Beget API operation that changes infrastructure, deployment, runtime, secrets, or server state is Protected Lane and requires explicit Human Owner authorization
 - Stage 53-B2 testnet API access runbook: DOCUMENTED in docs/STAGE_53B2_SMOKE_PLAN.md; Human Owner must obtain testnet credentials from https://testnet.bybit.com / https://testnet.bybit.com/app/user/api-management; use API Transaction / Транзакция API, read-only only, withdrawal/transfer/trade/order/write disabled; BYBIT_B1_ENVIRONMENT=testnet; BYBIT_B1_API_KEY and BYBIT_B1_API_SECRET must come from the same testnet key pair; BYBIT_API_KEY / BYBIT_API_SECRET should be missing during B2 flow; retCode 10003 troubleshooting covers mainnet/testnet mismatch, demo/testnet-demo mismatch, deleted/disabled/expired key, wrong key/secret pair, IP whitelist mismatch, and endpoint compatibility issue
 - Stage 53-B2 Pit-stop audit: RECORDED as audit-only, not an implementation gate; repo was aligned at 8153c61; tracked diff was empty; full local regression passed with 408 passed and 5 warnings; targeted suites passed with tests/scripts 60, tests/libs/exchange 99, tests/libs/config 19; server_time, wallet_balance, and query_api no-flag latches all exited 3; checked BYBIT env names were missing; no runtime/trading/live/probe readiness is claimed
 - Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b are mocked/local implementation checkpoints only; private real testnet path is blocked due unavailable usable Bybit testnet API access
@@ -93,7 +95,7 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 54-BG planning active; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
+Stage 54-BG1 config-only checkpoint closed; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
 
 Stage 53-B implementation:
 BLOCKED beyond accepted Slice 3 open_positions.
@@ -156,7 +158,20 @@ No runtime implementation is authorized by the decision-sync PR, B1-CONFIG, Slic
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B2 docs/status cleanup and Stage 54-BG docs-only architecture planning. Any Bitget implementation, Bitget private smoke, B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation only after explicit approval.
+Stage 53-B2 docs/status cleanup and Stage 54-BG follow-up planning. Any Bitget client/auth/smoke implementation, Bitget private smoke, B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation only after explicit approval.
+
+## Historical stage groups
+
+These groups preserve pre-Stage-43 chronology without renumbering official
+stages. `docs/PROGRESS.md` remains the authoritative source for the current
+stage and gate.
+
+- Stage Group A - Architecture foundation: money-path, authority rules, service boundaries, deterministic control, advisory-only LLM boundary.
+- Stage Group B - Paper trading core: signal, risk, review, orchestrator, paper execution, position manager, journal/audit flow.
+- Stage Group C - Safety and authority hardening: kill-switch authority, DB source-of-truth rules, operator actions, idempotency, max_open_positions guard, fail-closed behavior.
+- Stage Group D - Paper runtime validation: local paper runtime, VPS paper runtime, 9 services healthy, execution-service paper mode.
+- Stage Group E - Quality and regression cleanup: Q1 audit backlog, recover_position payload validation, freshness datetime handling, true EMA, regression baseline.
+- Stage Group F - Exchange-readiness preparation: Stage 53 design lock, Bybit public adapter, Bybit read-only/private-testnet planning, smoke harnesses, blocked Bybit B2 real private testnet path.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -302,6 +317,18 @@ These decisions authorize planning only. Stage 53-B1 implementation, live tradin
 - Position manager owns internal position state
 - Dashboard aggregates and must not mutate trading state
 - Journal records and must not become trading authority
+
+---
+
+## Agent roles
+
+- Human Owner: final authority for stage transitions, GO/NO-GO, risk acceptance, and readiness approval
+- Tower Control Architect: project-control architect, prompt architect, stage-gate coordinator, and readiness-separation helper; no final readiness authority
+- Codex: repo executor
+- Claude: independent reviewer / architecture guardian
+- All agents use the 3-lane operating model in docs/HOW_WE_WORK.md: Fast Lane, Standard Lane, Protected Lane
+- Commit only after explicit Human Owner instruction
+- Every agent report must identify Agent, Task Type, Scope, Lane, Changed Files, Commands Run, Readiness Claims, Not Verified, and Decision Needed
 
 ---
 

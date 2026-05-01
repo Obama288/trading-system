@@ -38,9 +38,23 @@
 - Stage 54-BG planning: Bitget Demo / Simulated Trading is the primary candidate replacement track after the blocked Bybit private testnet path; begin with docs-only architecture planning, then `BitgetBg1Settings` plus mocked tests only
 - Stage 54-BG proposed env namespace: `BITGET_BG1_ENVIRONMENT`, `BITGET_BG1_API_KEY`, `BITGET_BG1_API_SECRET`, `BITGET_BG1_PASSPHRASE`
 - Stage 54-BG safety boundary: no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback in the first implementation; production/mainnet must fail closed by default; no private Bitget smoke before config, environment, and passphrase boundaries are locked
+- Beget API access: AVAILABLE / OPERATIONAL CAPABILITY ONLY; no secrets recorded; does not imply deployment readiness or runtime readiness; any Beget API operation that changes infrastructure, deployment, runtime, secrets, or server state is Protected Lane and requires explicit Human Owner authorization
 - Stage 54-AP fallback planning: Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction
 - Generic adapter boundary: do not create a generic exchange adapter yet
 - Pit-stop audit: audit-only checkpoint recorded; repo aligned at 8153c61; `.pytest-temp-run/` generated artifact removed; full local regression 408 passed / 5 warnings; targeted suites passed; no-flag server_time, wallet_balance, and query_api latches all exited 3; checked BYBIT env names were missing; no runtime/trading/live/probe readiness is claimed
+
+## Historical stage groups
+
+These groups preserve pre-Stage-43 chronology without renumbering official
+stages. `docs/PROGRESS.md` remains the authoritative source for the current
+stage and gate.
+
+- Stage Group A - Architecture foundation: money-path, authority rules, service boundaries, deterministic control, advisory-only LLM boundary.
+- Stage Group B - Paper trading core: signal, risk, review, orchestrator, paper execution, position manager, journal/audit flow.
+- Stage Group C - Safety and authority hardening: kill-switch authority, DB source-of-truth rules, operator actions, idempotency, max_open_positions guard, fail-closed behavior.
+- Stage Group D - Paper runtime validation: local paper runtime, VPS paper runtime, 9 services healthy, execution-service paper mode.
+- Stage Group E - Quality and regression cleanup: Q1 audit backlog, recover_position payload validation, freshness datetime handling, true EMA, regression baseline.
+- Stage Group F - Exchange-readiness preparation: Stage 53 design lock, Bybit public adapter, Bybit read-only/private-testnet planning, smoke harnesses, blocked Bybit B2 real private testnet path.
 
 ## Q1 fix and regression status
 
@@ -144,11 +158,11 @@
 
 ## Current stage
 
-- Current gate: Stage 54-BG planning active; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access
+- Current gate: Stage 54-BG1 closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access
 - Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; B2b server_time smoke succeeded locally; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a; B2c.1b query-api preflight harness accepted/pushed/remote-visible at 00d84d8; B2c.1c real query-api preflight failed safely with retCode=10003 invalid_key_or_environment; B2d real wallet_balance smoke BLOCKED / NO-GO due unavailable usable Bybit testnet API access
 - Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
-- Next allowed task: Stage 53-B2 docs/status cleanup and Stage 54-BG docs-only architecture planning; any Bitget implementation, Bitget private smoke, B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
+- Next allowed task: Stage 53-B2 docs/status cleanup and Stage 54-BG follow-up planning; any Bitget implementation, Bitget private smoke, B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
 - Live trading: NO-GO
 - Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no live reconcile
 - B1-CONFIG scope already present: config-only settings; no client, no private API calls, no service startup wiring, no runtime behavior change
@@ -202,10 +216,10 @@
 
 ## Agent roles
 
-- GPT: senior architect / final reviewer
-- Claude: independent reviewer
-- Claude Code / Codex: executor
+- Human Owner: final authority for stage transitions, GO/NO-GO, risk acceptance, and readiness approval
+- Tower Control Architect: project-control architect, prompt architect, stage-gate coordinator, and readiness-separation helper; no final readiness authority
+- Codex: repo executor
+- Claude: independent reviewer / architecture guardian
 - All agents use the 3-lane operating model in docs/HOW_WE_WORK.md: Fast Lane, Standard Lane, Protected Lane
-- Human Owner keeps final authority for accept/reject, START/HOLD, GO/NO-GO, stage transitions, and risk acceptance
 - Commit only after explicit Human Owner instruction
 - Every agent report must identify Agent, Task Type, Scope, Lane, Changed Files, Commands Run, Readiness Claims, Not Verified, and Decision Needed
