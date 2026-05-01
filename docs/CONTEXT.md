@@ -38,6 +38,8 @@
 - Stage 54-BG planning: Bitget Demo / Simulated Trading is the primary candidate replacement track after the blocked Bybit private testnet path; begin with docs-only architecture planning, then `BitgetBg1Settings` plus mocked tests only
 - Stage 54-BG proposed env namespace: `BITGET_BG1_ENVIRONMENT`, `BITGET_BG1_API_KEY`, `BITGET_BG1_API_SECRET`, `BITGET_BG1_PASSPHRASE`
 - Stage 54-BG safety boundary: no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback in the first implementation; production/mainnet must fail closed by default; no private Bitget smoke before config, environment, and passphrase boundaries are locked
+- Stage 54-BG2 design lock: DOCS-ONLY / DESIGN LOCK; Bitget Demo API planning only; future demo private REST requests must account for `paptrading: 1`; auth shape uses API key, secret key, and passphrase; private requests require signing; public endpoints stay separate from private/authenticated endpoints; WebSocket demo endpoints remain future/out of scope unless explicitly authorized
+- Stage 54-BG2 safety boundary: no API/exchange/Beget/network operations; no private smoke; no orders/cancels/set_leverage/withdraw/transfer; no runtime/service wiring; no generic exchange adapter; no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback; `production` / `mainnet` / `live` / `testnet` remain fail-closed for the BG1/BG2 path
 - Beget API access: AVAILABLE / OPERATIONAL CAPABILITY ONLY; no secrets recorded; does not imply deployment readiness or runtime readiness; any Beget API operation that changes infrastructure, deployment, runtime, secrets, or server state is Protected Lane and requires explicit Human Owner authorization
 - Stage 54-AP fallback planning: Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction
 - Generic adapter boundary: do not create a generic exchange adapter yet
@@ -158,11 +160,11 @@ stage and gate.
 
 ## Current stage
 
-- Current gate: Stage 54-BG1 closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access
+- Current gate: Stage 54-BG2 design lock active; Stage 54-BG1 remains closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access
 - Status: owner decisions OI-1..OI-9 ANSWERED / APPROVED; B1-CONFIG config-only slice complete on c17c7d0; Slice 1 accepted/pushed at 828b64a; Slice 2 accepted/pushed at 66a898d; Slice 3 accepted/pushed/remote-visible at 0596afb; B2a accepted/pushed/remote-visible at a511e2f; B2b server_time smoke succeeded locally; B2c wallet_balance smoke harness accepted/pushed/remote-visible at c9b1337; B2c.1a authenticated readiness hardening accepted/pushed/remote-visible at 189cb0a; B2c.1b query-api preflight harness accepted/pushed/remote-visible at 00d84d8; B2c.1c real query-api preflight failed safely with retCode=10003 invalid_key_or_environment; B2d real wallet_balance smoke BLOCKED / NO-GO due unavailable usable Bybit testnet API access
 - Stage 53-B1 architecture plan: docs/STAGE_53B1_ARCHITECTURE.md
 - Stage 53-B1 implementation owner inputs B1-OI-1..B1-OI-6: ANSWERED / APPROVED
-- Next allowed task: Stage 53-B2 docs/status cleanup and Stage 54-BG follow-up planning; any Bitget implementation, Bitget private smoke, B2c.1c query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke, open_positions smoke, order_status, or any write/live implementation requires separate approval
+- Next allowed task: Stage 53-B2 docs/status cleanup and Stage 54-BG2 follow-up planning; only the Human Owner may authorize the next Bitget slice; the likely next implementation candidate, if separately approved, is Bitget public connectivity skeleton or signing helper with mocked tests only; no private smoke or runtime wiring is authorized
 - Live trading: NO-GO
 - Stage 53-B1 first implementation scope: Bybit testnet authenticated read-only server time/connectivity, wallet balance, and open positions only; order status deferred; no place order; no cancel order; no set_leverage; no live reconcile
 - B1-CONFIG scope already present: config-only settings; no client, no private API calls, no service startup wiring, no runtime behavior change

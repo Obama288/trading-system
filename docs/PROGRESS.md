@@ -5,14 +5,15 @@
 Date: 2026-04-29
 
 Stage:
-Stage 54-BG1 closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
+Stage 54-BG2 design lock active; Stage 54-BG1 remains closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
 
 Target:
-Docs-only checkpoint record for Stage 54-BG1 after Human Owner acceptance:
-`BitgetBg1Settings` plus mocked/env-isolated config tests.
+Docs-only design lock for Stage 54-BG2 after the accepted Stage 54-BG1
+config-only checkpoint.
 
 Not target:
 - Stage 54-BG implementation
+- Stage 54-BG2 implementation
 - Bitget client implementation
 - Bitget auth/signing
 - Bitget smoke scripts
@@ -37,6 +38,7 @@ Not target:
 Readiness levels:
 - Docs-ready: GO - planning trail reflects Stage 54-BG Bitget candidate and Stage 54-AP fallback boundary
 - Docs-ready: GO - Stage 54-BG1 config-only checkpoint recorded with final QA PASS and P2 env-isolation finding closed
+- Docs-ready: GO - Stage 54-BG2 design lock recorded for Bitget Demo API planning only
 - Docs-ready: GO - status reflects B2c wallet_balance smoke harness checkpoint at HEAD c9b1337
 - Docs-ready: GO - status reflects B2c.1a authenticated readiness hardening checkpoint at HEAD 189cb0a
 - Code-ready: code-ready candidate / accepted implementation checkpoint for Stage 53-B2c.1a mocked/local authenticated-readiness hardening only
@@ -52,6 +54,9 @@ Current verdict:
 - Stage 54-BG alias boundary: no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback in the first implementation
 - Stage 54-BG safety boundary: Bitget production/mainnet must fail closed by default; no private Bitget smoke before config, environment, and passphrase boundaries are locked
 - Stage 54-BG1 checkpoint: COMPLETE as a config-only slice; `BitgetBg1Settings` and mocked/env-isolated config tests accepted; final QA PASS; previous P2 env-isolation finding closed; validation evidence `tests/libs/config/test_bitget_bg1_settings.py` 12 passed and `tests/libs/config` 36 passed
+- Stage 54-BG2 design lock: DESIGNED / DOCS-ONLY; Bitget Demo API planning only; future demo private REST requests must account for `paptrading: 1`; auth shape uses API key, secret key, and passphrase; private requests require signing; public and private paths must remain split; WebSocket demo endpoints remain out of scope unless later authorized; see `docs/STAGE_54_BG2_DESIGN_LOCK.md`
+- Stage 54-BG2 locked boundaries: no API/exchange/Beget/network operations; no private smoke; no orders/cancels/set_leverage/withdraw/transfer; no runtime/service wiring; no generic exchange adapter; no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback; no readiness beyond docs-ready for BG2
+- Stage 54-BG2 locked implementation posture: keep Bitget exchange-specific; keep `BITGET_BG1_` naming unless later owner-approved; passphrase remains `SecretStr`; future signing helpers must redact all secret-bearing data; future private read-only path must fail closed without credentials
 - Stage 54-AP fallback: Alpaca Paper remains fallback-only and must stay a separate architecture track
 - Generic adapter boundary: do not create a generic exchange adapter yet
 - Real live execution: NO-GO
@@ -251,8 +256,8 @@ Blocked work:
 - Real live execution
 
 Next gate:
-Stage 54-BG2 decision point: continue Bitget with the next separately
-authorized slice only after this BG1 config-only checkpoint.
+Stage 54-BG2 docs-only design lock complete; only the Human Owner may
+authorize the next Bitget implementation slice.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -266,8 +271,8 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B2 docs/status maintenance and Stage 54-BG follow-up planning; any
-Bitget client/auth/smoke implementation, any Bitget private smoke, B2c.1c
+Stage 53-B2 docs/status maintenance and Stage 54-BG2 follow-up planning; any
+Bitget public connectivity skeleton, signing helper, any Bitget private smoke, B2c.1c
 query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke,
 open_positions smoke, order_status, and any write/live methods require
 separate Human Owner authorization.
