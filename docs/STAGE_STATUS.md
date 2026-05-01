@@ -255,15 +255,19 @@ Legacy summarized list below: not the current authoritative blocker count.
 ## Session startup prompt
 
 ```
-Read docs/CONTEXT.md, docs/STAGE_STATUS.md, docs/PROGRESS.md, docs/HOW_WE_WORK.md, docs/AI_HANDOFF.md, and docs/AI_COMMANDS.md first.
+Repo: `Obama288/trading-system`
+Check branch/ref first.
+Read in source-of-truth order: `docs/PROGRESS.md`, `docs/AI_COMMANDS.md`, `docs/HOW_WE_WORK.md`, `docs/AI_HANDOFF.md`, `docs/CONTEXT.md`, then `docs/STAGE_STATUS.md`.
 Then give me:
-1. current stage
-2. latest relevant commit
+1. current gate
+2. latest relevant commit and checked branch/ref
 3. current runtime mode
-4. tests status
-5. next allowed task
-6. forbidden scope
-7. operating lane for the requested task
+4. live status
+5. key blockers
+6. tests status
+7. next allowed lane
+8. next allowed task
+9. forbidden scope
 Do not modify files until I approve the plan.
 ```
 

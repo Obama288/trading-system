@@ -1,9 +1,18 @@
 # AI Hot Commands - Trading System
 
-These commands work across all AI agents (Claude, GPT, Codex).
+These commands work across all AI agents (Claude, Tower Control Architect, Codex).
 Any AI receiving these commands must respond with the relevant context.
 
 ## Working Protocol
+
+### Context recovery order
+1. Read `docs/PROGRESS.md` first.
+2. Read `docs/AI_COMMANDS.md`.
+3. Read `docs/HOW_WE_WORK.md`.
+4. Read `docs/AI_HANDOFF.md` and `docs/CONTEXT.md`.
+5. Read current-stage docs only as needed.
+6. Treat chat memory as secondary.
+7. If chat memory conflicts with `docs/PROGRESS.md`, `docs/PROGRESS.md` wins.
 
 ### Environment defaults
 - Windows PowerShell (not Bash)
@@ -57,6 +66,7 @@ Not Verified must explicitly state skipped tests, runtime checks, deployment che
 Decision Needed belongs to the Human Owner; use `None` only when no owner decision is needed.
 
 ### Tool roles
+- Tower Control Architect - GPT project-control architect, context recovery, gate discipline, prompt architecture, and readiness separation only
 - Claude (Sasha) — strategy, architecture, risk analysis
 - Claude Code — code review, reading files, focused fixes
 - Codex — code changes and tests
@@ -93,13 +103,20 @@ Signals: this output needs code review by Claude (browser session)
 `!checkpoint`
 Signals: save current progress to `docs/PROGRESS.md` with timestamp
 
+`!startup`
+Returns: repo, primary source of truth, current gate, mode, live status, key blockers, next allowed lane, and no-edit/no-branch/no-commit/no-probe/no-secrets reminder
+
+`!sync`
+Returns: branch/head, dirty files, dirty-file classification, current `docs/PROGRESS.md` gate, allowed files, blocked files, and GO/HOLD before edits
+
 ## Current State
 
 Last updated: 2026-04-29 (B2c.1c/B2d blocked - unavailable usable Bybit testnet API access)
-Current stage: Stage 53-B2c.1c/B2d blocked due unavailable usable Bybit testnet API access
+Current stage: Stage 54-BG planning active; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access
 Stage 53-B owner decisions: ANSWERED / APPROVED
 Stage 53-B implementation beyond B2a: BLOCKED; separate explicit approval required
 B1-CONFIG config-only slice: CLOSED on c17c7d0; no client, private API calls, service startup wiring, runtime behavior, or live enablement
+Stage 54-BG planning boundary: Bitget Demo / Simulated Trading is the primary planning candidate; proposed env namespace = `BITGET_BG1_ENVIRONMENT`, `BITGET_BG1_API_KEY`, `BITGET_BG1_API_SECRET`, `BITGET_BG1_PASSPHRASE`; no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback in the first implementation; production/mainnet must fail closed; no private Bitget smoke, wallet/balance/positions real smoke, order_status, write/live methods, service wiring, or readiness claims are authorized
 Stage 53-B1 Slice 1 server-time skeleton: ACCEPTED / PUSHED on 828b64a; code-ready candidate / accepted implementation checkpoint; mocked server-time skeleton tests only; not runtime-ready
 Stage 53-B1 Slice 2 wallet_balance: ACCEPTED / PUSHED on 66a898d; code-ready candidate / accepted implementation checkpoint; mocked wallet_balance tests only; not runtime-ready
 Stage 53-B1 Slice 3 open_positions: ACCEPTED / PUSHED / REMOTE-VISIBLE on 0596afb; code-ready candidate / accepted implementation checkpoint; mocked open_positions tests only; not runtime-ready
@@ -181,6 +198,20 @@ No trading readiness, live readiness, probe readiness, real query-api retry, rea
 - Stage 53-B implementation beyond B2a: BLOCKED; separate explicit approval required
 
 ## Stage Map
+
+Official current stage and gate remain defined by `docs/PROGRESS.md`.
+
+## Historical Stage Groups
+
+These groups preserve pre-Stage-43 project chronology without assigning exact
+stage numbers that are not recorded in this file.
+
+- Stage Group A - Architecture foundation: money-path, authority rules, service boundaries, deterministic control, advisory-only LLM boundary.
+- Stage Group B - Paper trading core: signal, risk, review, orchestrator, paper execution, position manager, journal/audit flow.
+- Stage Group C - Safety and authority hardening: kill-switch authority, DB source-of-truth rules, operator actions, idempotency, max_open_positions guard, fail-closed behavior.
+- Stage Group D - Paper runtime validation: local paper runtime, VPS paper runtime, 9 services healthy, execution-service paper mode.
+- Stage Group E - Quality and regression cleanup: Q1 audit backlog, recover_position payload validation, freshness datetime handling, true EMA, regression baseline.
+- Stage Group F - Exchange-readiness preparation: Stage 53 design lock, Bybit public adapter, Bybit read-only/private-testnet planning, smoke harnesses, blocked Bybit B2 real private testnet path.
 
 - Stage 43 - Dashboards MVP
 - Stage 44 - Operator audit hardening

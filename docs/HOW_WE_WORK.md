@@ -11,6 +11,27 @@ Only the human owner can make final project decisions:
 - declare GO / NO-GO
 - accept or reject known risk
 
+## Pre-change Sync Gate
+
+Before edits, branches, commits, or PRs, run the compact sync gate:
+- `git status --short --branch`
+- `git rev-parse HEAD`
+- `git log -1 --oneline`
+- `git diff --name-only`
+
+Rules:
+- Dirty files must be classified before editing: accepted current-task / pre-existing pending / generated / unknown.
+- Unknown dirty files block new edits.
+- Docs must not promote status based on unaccepted dirty code/test files.
+- No branch may be created to bypass unclassified dirty files.
+- After a clean or accepted sync gate, work in one bounded pass, not fragmented micro-steps.
+
+## Evidence Before Status
+
+- No evidence -> no status promotion.
+- Uncommitted code is not project reality until accepted by the Human Owner and recorded in source-of-truth docs.
+- Avoid duplicating `docs/PROGRESS.md` current status across multiple docs; summarize only what the target doc needs.
+
 ## 3-Lane Operating Model
 
 The lanes reduce unnecessary handoff loops while preserving Human Owner authority and docs/code/test/runtime separation.
@@ -73,10 +94,16 @@ Rules:
 **Human Owner:**
 Owns final GO/NO-GO, START/HOLD, stage transitions, risk acceptance, accepting/rejecting diffs.
 
-**GPT:**
-Project control assistant and prompt architect.
-Helps interpret roadmap from docs, drafts prompts, separates docs-ready/code-ready/test-ready/runtime-ready, summarizes findings into decision options.
-Does not own roadmap, approve readiness, or make GO/NO-GO decisions.
+**Tower Control Architect:**
+GPT-based project-control architect.
+Restores context from `docs/PROGRESS.md` first.
+Keeps stage order and gate discipline.
+Preserves architecture boundaries and source-of-truth rules.
+Prepares scoped prompts for Codex and review prompts for Claude.
+Checks scope drift, stale docs, and readiness overclaims.
+Separates docs-ready, code-ready, test-ready, runtime-ready, trading-ready, live-ready, and probe-ready claims.
+May recommend START/HOLD/GO/NO-GO options.
+Does not own the roadmap, approve readiness, accept risk, or make final project decisions.
 
 **Codex:**
 Repo executor.
@@ -94,7 +121,7 @@ The agent that writes code cannot be the final approver of readiness.
 Default flow by lane:
 1. Fast Lane: agent scopes, edits or inspects, verifies scope, reports; Human Owner accepts/rejects if a decision is needed.
 2. Standard Lane: agent plans or proceeds within accepted scope, implements, runs compact QA, reports; Human Owner accepts/rejects or asks for review.
-3. Protected Lane: Human Owner authorizes, agent implements only inside that authorization, mandatory QA and independent review occur where required, GPT may structure decision options, Human Owner decides.
+3. Protected Lane: Human Owner authorizes, agent implements only inside that authorization, mandatory QA and independent review occur where required, Tower Control Architect may structure decision options, Human Owner decides.
 4. PROGRESS.md checkpoint records confirmed project reality when the Human Owner requests a checkpoint or accepts a status change.
 
 ## Readiness Levels
