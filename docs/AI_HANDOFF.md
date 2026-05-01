@@ -40,6 +40,8 @@ Runtime status:
 - Stage 54-BG2-A test evidence: `tests/libs/exchange/test_bitget_public.py` 8 passed and `tests/libs/exchange` 107 passed; readiness is code-ready/test-ready for public-only skeleton only; not runtime-ready, trading-ready, live-ready, or probe-ready
 - Stage 54-BG2-B signing helper: ACCEPTED on `07cea3b`; Bitget-specific signing helper only; mocked tests only; deterministic payload uses timestamp + uppercased method + request path + optional query string + body; HMAC-SHA256 Base64 signature; required headers are `ACCESS-KEY`, `ACCESS-SIGN`, `ACCESS-TIMESTAMP`, `ACCESS-PASSPHRASE`, and `Content-Type: application/json`; no env reads; missing/empty credentials fail closed; redaction/safe repr prevents exposing api_key, api_secret, passphrase, or signature; no private client, no endpoint methods, no network calls, no `paptrading` header, no smoke script, no runtime/service wiring, and no generic exchange adapter
 - Stage 54-BG2-B test evidence: `tests/libs/exchange/test_bitget_auth.py` 15 passed and `tests/libs/exchange` 122 passed; readiness is code-ready/test-ready for signing helper only; not runtime-ready, trading-ready, live-ready, or probe-ready
+- Stage 54-BG2-C private read-only preflight runbook: DOCS-ONLY / PLANNING; candidate future endpoint is `GET /api/v3/account/info` for a private read-only preflight discussion only, not an approved call; future demo private requests must include explicit `paptrading: 1` marker handling; future private output must remain sanitized to high-level summaries only and must never expose raw uid, raw permissions, raw IPs, raw response body, raw error messages, API keys, secrets, passphrases, signatures, account IDs, balances, positions, or signed payloads
+- Stage 54-BG2-C guardrails: safe env presence/hygiene checks required; no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback; `BITGET_BG1_` namespace only unless later owner-approved; fail closed if credentials are missing/empty, environment is not demo/simulated, permissions include trade/transfer/withdraw/write-like capability, response cannot prove safe read-only posture, or result is rate-limited/inconclusive; no automatic retry after a real preflight failure; no private client, no private smoke, no runtime wiring, and no real API/exchange/Beget/network operations are authorized
 - Stage 54-AP fallback planning: Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction
 - Generic adapter boundary: do not create a generic exchange adapter yet
 - Beget API access: AVAILABLE / OPERATIONAL CAPABILITY ONLY; no secrets recorded; does not imply deployment readiness or runtime readiness; any Beget API operation that changes infrastructure, deployment, runtime, secrets, or server state is Protected Lane and requires explicit Human Owner authorization
@@ -101,7 +103,7 @@ Latest known commits:
 ## Current gate
 
 Current gate:
-Stage 54-BG2-B signing helper active; Stage 54-BG2-A remains remote-visible; Stage 54-BG2 design lock remains recorded; Stage 54-BG1 config-only checkpoint remains closed; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
+Stage 54-BG2-C private read-only preflight runbook active; Stage 54-BG2-B remains remote-visible; Stage 54-BG2-A remains remote-visible; Stage 54-BG2 design lock remains recorded; Stage 54-BG1 config-only checkpoint remains closed; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
 
 Stage 53-B implementation:
 BLOCKED beyond accepted Slice 3 open_positions.
@@ -164,7 +166,7 @@ No runtime implementation is authorized by the decision-sync PR, B1-CONFIG, Slic
 No live trading enablement is allowed.
 
 Next safe work:
-Stage 53-B2 docs/status cleanup and Stage 54-BG2/BG2-C/BG2-D follow-up planning. Only the Human Owner may authorize the next Bitget slice. The next possible work, if separately approved, is BG2-C private read-only preflight design/runbook or BG2-D mocked private read-only client skeleton. No private smoke or runtime wiring is authorized.
+Stage 53-B2 docs/status cleanup and Stage 54-BG2/BG2-D follow-up planning. Only the Human Owner may authorize the next Bitget slice. The next possible implementation candidate, if separately approved, is BG2-D mocked private read-only preflight parser/client skeleton only. No private smoke or runtime wiring is authorized.
 
 ## Historical stage groups
 

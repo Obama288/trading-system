@@ -5,17 +5,18 @@
 Date: 2026-04-29
 
 Stage:
-Stage 54-BG2-B signing helper active; Stage 54-BG2-A remains remote-visible; Stage 54-BG2 design lock remains recorded; Stage 54-BG1 remains closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
+Stage 54-BG2-C private read-only preflight runbook active; Stage 54-BG2-B remains remote-visible; Stage 54-BG2-A remains remote-visible; Stage 54-BG2 design lock remains recorded; Stage 54-BG1 remains closed as a config-only slice; Bybit Stage 53-B2c.1c/B2d private real testnet path remains blocked due unavailable usable Bybit testnet API access.
 
 Target:
-Docs-only/status checkpoint update after accepted Stage 54-BG2-B Bitget
-signing helper at `07cea3b`.
+Docs-only design/runbook update for a future Stage 54-BG2-C Bitget Demo
+private read-only preflight.
 
 Not target:
 - Stage 54-BG implementation
 - Stage 54-BG2 implementation
 - Bitget client implementation
 - Bitget private client implementation
+- Bitget private preflight implementation
 - Bitget smoke scripts
 - Generic exchange adapter creation
 - Alpaca integration into a crypto-CEX abstraction
@@ -41,6 +42,7 @@ Readiness levels:
 - Docs-ready: GO - Stage 54-BG2 design lock recorded for Bitget Demo API planning only
 - Docs-ready: GO - Stage 54-BG2-A public-only skeleton evidence recorded at HEAD `ad8df47`
 - Docs-ready: GO - Stage 54-BG2-B signing helper evidence recorded at HEAD `07cea3b`
+- Docs-ready: GO - Stage 54-BG2-C private read-only preflight runbook recorded for planning only
 - Docs-ready: GO - status reflects B2c wallet_balance smoke harness checkpoint at HEAD c9b1337
 - Docs-ready: GO - status reflects B2c.1a authenticated readiness hardening checkpoint at HEAD 189cb0a
 - Code-ready: code-ready candidate / accepted implementation checkpoint for Stage 53-B2c.1a mocked/local authenticated-readiness hardening only
@@ -65,6 +67,9 @@ Current verdict:
 - Stage 54-BG2-B signing helper: ACCEPTED on `07cea3b`; Bitget-specific signing helper only; mocked tests only; deterministic payload uses timestamp + uppercased method + request path + optional query string + body; HMAC-SHA256 Base64 signature; required headers are `ACCESS-KEY`, `ACCESS-SIGN`, `ACCESS-TIMESTAMP`, `ACCESS-PASSPHRASE`, and `Content-Type: application/json`; no env reads; missing/empty credentials fail closed; redaction/safe repr prevents exposing api_key, api_secret, passphrase, or signature; no private client, no endpoint methods, no network calls, no `paptrading` header, no smoke script, no runtime/service wiring, and no generic exchange adapter
 - Stage 54-BG2-B test evidence: `python -m pytest tests\libs\exchange\test_bitget_auth.py -q --basetemp=.pytest-temp-run` -> 15 passed; `python -m pytest tests\libs\exchange -q --basetemp=.pytest-temp-run` -> 122 passed
 - Stage 54-BG2-B readiness: code-ready/test-ready for signing helper only; not runtime-ready, trading-ready, live-ready, or probe-ready
+- Stage 54-BG2-C private read-only preflight runbook: DOCS-ONLY / PLANNING; candidate future endpoint is `GET /api/v3/account/info` for a private read-only preflight discussion only, not an approved call; future sanitized output must stay at high-level summaries only such as status, exchange, endpoint, read_only / permissions_safe summary, ip_whitelist_present summary, and elapsed_ms only if a future smoke is separately approved; raw uid, raw permissions, raw IPs, raw response body, raw error messages, API keys, secrets, passphrases, signatures, account IDs, balances, positions, and signed payloads remain forbidden in logs, docs, and output
+- Stage 54-BG2-C required future guardrails: future demo private requests must include explicit `paptrading: 1` marker handling; no `paptrading` runtime behavior is implemented in BG2-C; safe env presence and hygiene checks are required; no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback; `BITGET_BG1_` namespace only unless later owner-approved; fail closed if credentials are missing/empty, if environment is not demo/simulated, if permissions include trade/transfer/withdraw/write-like capability, if the response cannot prove safe read-only posture, or if result is rate-limited/inconclusive; no automatic retry after a real preflight failure; see `docs/STAGE_54_BG2C_PRIVATE_PREFLIGHT_RUNBOOK.md`
+- Stage 54-BG2-C readiness: docs-ready only; not code-ready, test-ready, runtime-ready, trading-ready, live-ready, or probe-ready
 - Stage 54-AP fallback: Alpaca Paper remains fallback-only and must stay a separate architecture track
 - Generic adapter boundary: do not create a generic exchange adapter yet
 - Real live execution: NO-GO
@@ -264,9 +269,9 @@ Blocked work:
 - Real live execution
 
 Next gate:
-Stage 54-BG2-B complete at `07cea3b`; next possible slice is BG2-C private
-read-only preflight design/runbook or BG2-D mocked private read-only client
-skeleton, if separately authorized by the Human Owner.
+Stage 54-BG2-C runbook complete; next possible slice is BG2-D mocked private
+read-only preflight parser/client skeleton, if separately authorized by the
+Human Owner.
 
 Stage 53-B1 maximum scope:
 - Bybit only
@@ -280,7 +285,7 @@ Stage 53-B1 maximum scope:
 - No live reconcile
 
 Next allowed lane:
-Stage 53-B2 docs/status maintenance and Stage 54-BG2/BG2-C/BG2-D follow-up planning; any
+Stage 53-B2 docs/status maintenance and Stage 54-BG2/BG2-D follow-up planning; any
 Bitget private client, any Bitget private smoke, B2c.1c
 query-api retry, B2d real wallet_balance smoke, mainnet read-only smoke,
 open_positions smoke, order_status, and any write/live methods require

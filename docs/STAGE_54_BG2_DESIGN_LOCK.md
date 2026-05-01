@@ -61,6 +61,12 @@ Authoritative status:
   - Bitget signing helper with mocked tests only.
 - No private smoke or runtime wiring is authorized.
 
+## BG2-C follow-up
+
+- A separate BG2-C docs-only runbook may define a future private read-only preflight path.
+- Candidate future endpoint for discussion: `GET /api/v3/account/info`.
+- BG2-C does not approve implementation, credentials use, real API calls, private smoke, runtime wiring, or any readiness claim beyond docs-ready.
+
 ## Not authorized by this document
 
 - Code implementation.
