@@ -206,5 +206,29 @@ python -m research.signal_observation.run_csv_summary --context-4h data\BTCUSDT_
 Real historical CSV files should stay local and should not be committed unless
 the Human Owner explicitly approves them.
 
+## A12 Setup A funnel diagnostics
+
+Stage 54-SQ-A12 adds diagnostics-only reporting for the existing Setup A
+research detector.
+
+Current scope:
+- counts Setup A funnel drop-off stages over local CSV candles;
+- writes deterministic text and JSON diagnostics artifacts;
+- keeps normal Setup A detector output unchanged;
+- does not change detector, outcome, summary, loader, indicator, or session
+  logic;
+- no exchange calls;
+- no API calls;
+- no private endpoints;
+- no execution;
+- no runtime wiring;
+- no paper, trading, live, or probe readiness.
+
+Run local Bitget diagnostics with:
+
+```powershell
+python -m research.signal_observation.run_setup_a_diagnostics
+```
+
 The package exists to support later offline detector and outcome-tracker
 implementation without touching the money path.
