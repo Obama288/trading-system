@@ -1,0 +1,305 @@
+Setup A sensitivity diagnostics
+
+=== variant: baseline ===
+
+  symbol: BTCUSDT
+  source_exchange: bitget_public
+  windows_checked: 1152
+  passed_touches: 215
+  failed_min_touches: 937
+  breakout_candidates: 9
+  body_passed: 7
+  volume_passed: 5
+  retest_reached: 5
+  retest_found: 4
+  observations: 4
+  resolved: 4
+  wins: 1
+  losses: 3
+  flats: 0
+  win_rate: 0.25
+  expectancy_r: -0.25
+  profit_factor: 0.6666666666666666666666666667
+  avg_win_r: 2
+  avg_loss_r: -1
+
+  symbol: ETHUSDT
+  source_exchange: bitget_public
+  windows_checked: 1152
+  passed_touches: 239
+  failed_min_touches: 913
+  breakout_candidates: 3
+  body_passed: 2
+  volume_passed: 2
+  retest_reached: 2
+  retest_found: 2
+  observations: 2
+  resolved: 2
+  wins: 1
+  losses: 1
+  flats: 0
+  win_rate: 0.5
+  expectancy_r: -0.1266485671531873708520686200
+  profit_factor: 0.3510107210156417275556838769
+  avg_win_r: 0.1369976556210866431773616465
+  avg_loss_r: -0.3902947899274613848814988865
+
+  symbol: SOLUSDT
+  source_exchange: bitget_public
+  windows_checked: 1152
+  passed_touches: 228
+  failed_min_touches: 924
+  breakout_candidates: 6
+  body_passed: 3
+  volume_passed: 1
+  retest_reached: 1
+  retest_found: 1
+  observations: 1
+  resolved: 1
+  wins: 0
+  losses: 1
+  flats: 0
+  win_rate: 0
+  expectancy_r: -1
+  profit_factor: 0
+  avg_win_r: n/a
+  avg_loss_r: -1
+
+  --- totals ---
+  total_observations: 7
+  total_resolved: 7
+  total_wins: 2
+  total_losses: 5
+  total_flats: 0
+  aggregate_win_rate: 0.2857142857142857142857142857
+  aggregate_expectancy_r: -0.3218995906151963916720196057
+  aggregate_profit_factor: 0.4867549351182395595064208905
+  largest_dropoff_stage: min_touches
+
+=== variant: relaxed_touches ===
+
+  symbol: BTCUSDT
+  source_exchange: bitget_public
+  windows_checked: 1152
+  passed_touches: 602
+  failed_min_touches: 550
+  breakout_candidates: 15
+  body_passed: 12
+  volume_passed: 10
+  retest_reached: 10
+  retest_found: 8
+  observations: 8
+  resolved: 8
+  wins: 1
+  losses: 7
+  flats: 0
+  win_rate: 0.125
+  expectancy_r: -0.4499503559050556532124012492
+  profit_factor: 0.3571681875591632676605357867
+  avg_win_r: 2
+  avg_loss_r: -0.799943263891492175099887142
+
+  symbol: ETHUSDT
+  source_exchange: bitget_public
+  windows_checked: 1152
+  passed_touches: 665
+  failed_min_touches: 487
+  breakout_candidates: 12
+  body_passed: 10
+  volume_passed: 9
+  retest_reached: 9
+  retest_found: 8
+  observations: 8
+  resolved: 8
+  wins: 3
+  losses: 5
+  flats: 0
+  win_rate: 0.375
+  expectancy_r: 0.1531999235771245509843493278
+  profit_factor: 1.420965898931502853125043825
+  avg_win_r: 1.378999218540362214392453882
+  avg_loss_r: -0.5822796534008180470605134048
+
+  symbol: SOLUSDT
+  source_exchange: bitget_public
+  windows_checked: 1152
+  passed_touches: 613
+  failed_min_touches: 539
+  breakout_candidates: 12
+  body_passed: 7
+  volume_passed: 4
+  retest_reached: 4
+  retest_found: 4
+  observations: 4
+  resolved: 4
+  wins: 1
+  losses: 3
+  flats: 0
+  win_rate: 0.25
+  expectancy_r: -0.25
+  profit_factor: 0.6666666666666666666666666667
+  avg_win_r: 2
+  avg_loss_r: -1
+
+  --- totals ---
+  total_observations: 20
+  total_resolved: 20
+  total_wins: 5
+  total_losses: 15
+  total_flats: 0
+  aggregate_win_rate: 0.25
+  aggregate_expectancy_r: -0.1687001729311724408912207686
+  aggregate_profit_factor: 0.7068887905459225609196849110
+  largest_dropoff_stage: no_breakout
+
+=== variant: relaxed_touches_wider_zone ===
+
+  symbol: BTCUSDT
+  source_exchange: bitget_public
+  windows_checked: 1152
+  passed_touches: 792
+  failed_min_touches: 360
+  breakout_candidates: 20
+  body_passed: 14
+  volume_passed: 11
+  retest_reached: 11
+  retest_found: 9
+  observations: 9
+  resolved: 9
+  wins: 1
+  losses: 8
+  flats: 0
+  win_rate: 0.1111111111111111111111111111
+  expectancy_r: -0.5110669830267161361888011104
+  profit_factor: 0.3030485388732564478925536229
+  avg_win_r: 2
+  avg_loss_r: -0.8249503559050556532124012492
+
+  symbol: ETHUSDT
+  source_exchange: bitget_public
+  windows_checked: 1152
+  passed_touches: 831
+  failed_min_touches: 321
+  breakout_candidates: 15
+  body_passed: 11
+  volume_passed: 10
+  retest_reached: 10
+  retest_found: 9
+  observations: 9
+  resolved: 9
+  wins: 3
+  losses: 6
+  flats: 0
+  win_rate: 0.3333333333333333333333333333
+  expectancy_r: 0.09227888914453215082504871204
+  profit_factor: 1.251175897017734425323242990
+  avg_win_r: 1.378999218540362214392453882
+  avg_loss_r: -0.551081275553382880958653873
+
+  symbol: SOLUSDT
+  source_exchange: bitget_public
+  windows_checked: 1152
+  passed_touches: 741
+  failed_min_touches: 411
+  breakout_candidates: 13
+  body_passed: 8
+  volume_passed: 5
+  retest_reached: 5
+  retest_found: 5
+  observations: 5
+  resolved: 5
+  wins: 2
+  losses: 3
+  flats: 0
+  win_rate: 0.4
+  expectancy_r: -0.1870327447619664361952232125
+  profit_factor: 0.6882787587300559396746279793
+  avg_win_r: 1.032418138095083909511941969
+  avg_loss_r: -1
+
+  --- totals ---
+  total_observations: 23
+  total_resolved: 23
+  total_wins: 6
+  total_losses: 17
+  total_flats: 0
+  aggregate_win_rate: 0.2608695652173913043478260870
+  aggregate_expectancy_r: -0.2045328942934560021412994630
+  aggregate_profit_factor: 0.6355010397187980367222374895
+  largest_dropoff_stage: no_breakout
+
+=== variant: relaxed_touches_wider_zone_longer_lookback ===
+
+  symbol: BTCUSDT
+  source_exchange: bitget_public
+  windows_checked: 1128
+  passed_touches: 870
+  failed_min_touches: 258
+  breakout_candidates: 16
+  body_passed: 13
+  volume_passed: 10
+  retest_reached: 10
+  retest_found: 8
+  observations: 8
+  resolved: 8
+  wins: 1
+  losses: 7
+  flats: 0
+  win_rate: 0.125
+  expectancy_r: -0.4499503559050556532124012492
+  profit_factor: 0.3571681875591632676605357867
+  avg_win_r: 2
+  avg_loss_r: -0.799943263891492175099887142
+
+  symbol: ETHUSDT
+  source_exchange: bitget_public
+  windows_checked: 1128
+  passed_touches: 851
+  failed_min_touches: 277
+  breakout_candidates: 13
+  body_passed: 8
+  volume_passed: 7
+  retest_reached: 7
+  retest_found: 6
+  observations: 6
+  resolved: 6
+  wins: 2
+  losses: 4
+  flats: 0
+  win_rate: 0.3333333333333333333333333333
+  expectancy_r: -0.1080644201037636320255822424
+  profit_factor: 0.7672182795635081418797042284
+  avg_win_r: 1.068498827810543321588680823
+  avg_loss_r: -0.696346044060917108832713775
+
+  symbol: SOLUSDT
+  source_exchange: bitget_public
+  windows_checked: 1128
+  passed_touches: 777
+  failed_min_touches: 351
+  breakout_candidates: 9
+  body_passed: 5
+  volume_passed: 5
+  retest_reached: 5
+  retest_found: 4
+  observations: 4
+  resolved: 4
+  wins: 2
+  losses: 2
+  flats: 0
+  win_rate: 0.5
+  expectancy_r: 0.01620906904754195475597098440
+  profit_factor: 1.032418138095083909511941969
+  avg_win_r: 1.032418138095083909511941969
+  avg_loss_r: -1
+
+  --- totals ---
+  total_observations: 18
+  total_resolved: 18
+  total_wins: 5
+  total_losses: 13
+  total_flats: 0
+  aggregate_win_rate: 0.2777777777777777777777777778
+  aggregate_expectancy_r: -0.2323973939818255110460455283
+  aggregate_profit_factor: 0.5971922658917843048345168659
+  largest_dropoff_stage: no_breakout
