@@ -34,5 +34,18 @@ not be committed unless the Human Owner explicitly approves them.
 A2 only loads candles. It does not detect setups, calculate outcomes, call
 exchanges, call private APIs, place orders, or wire into runtime services.
 
+## A3 indicator utilities
+
+Stage 54-SQ-A3 adds deterministic research utilities:
+- true range;
+- ATR with Wilder smoothing;
+- EMA with a simple-average seed;
+- strict pivot high and pivot low markers;
+- timezone-aware UTC session labels.
+
+These utilities are pure local calculations over already-loaded candle data.
+They do not detect setups, calculate outcomes, call exchanges, call private
+APIs, place orders, or wire into runtime services.
+
 The package exists to support later offline detector and outcome-tracker
 implementation without touching the money path.
