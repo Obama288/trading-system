@@ -131,5 +131,42 @@ Current scope:
 Real historical CSV files should stay local and should not be committed unless
 the Human Owner explicitly approves them.
 
+## A8 OKX public candle downloader
+
+Stage 54-SQ-A8 adds a public-market-data downloader that writes OKX historical
+candles to local CSV files accepted by the A7 runner.
+
+Public data only:
+- no keys;
+- no secrets;
+- no auth headers;
+- no account endpoints;
+- no balances;
+- no positions;
+- no execution;
+- no runtime wiring;
+- no trading, live, or probe readiness.
+
+Example BTC 1H download:
+
+```powershell
+python -m research.signal_observation.okx_public_downloader --inst-id BTC-USDT --bar 1H --output data\BTCUSDT_1h.csv --limit 300
+```
+
+Example BTC 4H download:
+
+```powershell
+python -m research.signal_observation.okx_public_downloader --inst-id BTC-USDT --bar 4H --output data\BTCUSDT_4h.csv --limit 300
+```
+
+Then run the local CSV summary:
+
+```powershell
+python -m research.signal_observation.run_csv_summary --context-4h data\BTCUSDT_4h.csv --trigger-1h data\BTCUSDT_1h.csv --symbol BTCUSDT --source-exchange okx_public
+```
+
+Real historical CSV files should stay local and should not be committed unless
+the Human Owner explicitly approves them.
+
 The package exists to support later offline detector and outcome-tracker
 implementation without touching the money path.
