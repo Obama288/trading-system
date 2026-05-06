@@ -293,7 +293,11 @@ def detect_setup_b_with_diagnostics(
             )
             if invalid_reason is not None:
                 _increment(failures, invalid_reason)
-                if invalid_reason in {"pullback_too_deep", "prior_structure_broken"}:
+                if invalid_reason in {
+                    "pullback_too_shallow",
+                    "pullback_too_deep",
+                    "prior_structure_broken",
+                }:
                     counters.pullback_invalidated_before_bos += 1
                 continue
 
@@ -315,6 +319,7 @@ def detect_setup_b_with_diagnostics(
             observation = _build_observation(
                 candles=candles_4h,
                 atr_values=atr_values,
+                pivots=pivots,
                 symbol=symbol,
                 direction=direction,
                 swing=swing,
@@ -338,6 +343,7 @@ def _build_observation(
     *,
     candles: Sequence[Candle],
     atr_values: Sequence[Decimal | None],
+    pivots: Sequence[Pivot],
     symbol: str,
     direction: SignalDirection,
     swing: Pivot,
@@ -415,7 +421,7 @@ def _build_observation(
         pullback_start_time=pullback[0].timestamp,
         pullback_end_time=pullback[-1].timestamp,
         bos_time=signal_time,
-        trend_age_swings=_trend_age_swings(candles, swing),
+        trend_age_swings=_trend_age_swings(pivots, swing),
         pullback_depth=pullback_depth,
         pullback_duration=len(pullback),
         bos_body_ratio=_body_ratio(bos_candle),
@@ -498,24 +504,66 @@ def _resolve_target_outcome(
     if not window:
         return TargetOutcome(target_r, target, "flat", False, None, None, None)
 
+    for offset, candle in enumerate(window, start=1):
+        resolution_window = window[:offset]
+        if direction is SignalDirection.LONG:
+            if candle.low <= stop:
+                mae_r, mfe_r = _excursions_for_window(
+                    resolution_window,
+                    entry_price=entry_price,
+                    initial_r=initial_r,
+                    direction=direction,
+                )
+                return TargetOutcome(target_r, target, "loss", True, offset, mae_r, mfe_r)
+            if candle.high >= target:
+                mae_r, mfe_r = _excursions_for_window(
+                    resolution_window,
+                    entry_price=entry_price,
+                    initial_r=initial_r,
+                    direction=direction,
+                )
+                return TargetOutcome(target_r, target, "win", True, offset, mae_r, mfe_r)
+        else:
+            if candle.high >= stop:
+                mae_r, mfe_r = _excursions_for_window(
+                    resolution_window,
+                    entry_price=entry_price,
+                    initial_r=initial_r,
+                    direction=direction,
+                )
+                return TargetOutcome(target_r, target, "loss", True, offset, mae_r, mfe_r)
+            if candle.low <= target:
+                mae_r, mfe_r = _excursions_for_window(
+                    resolution_window,
+                    entry_price=entry_price,
+                    initial_r=initial_r,
+                    direction=direction,
+                )
+                return TargetOutcome(target_r, target, "win", True, offset, mae_r, mfe_r)
+
+    mae_r, mfe_r = _excursions_for_window(
+        window,
+        entry_price=entry_price,
+        initial_r=initial_r,
+        direction=direction,
+    )
+    return TargetOutcome(target_r, target, "flat", True, len(window), mae_r, mfe_r)
+
+
+def _excursions_for_window(
+    window: Sequence[Candle],
+    *,
+    entry_price: Decimal,
+    initial_r: Decimal,
+    direction: SignalDirection,
+) -> tuple[Decimal, Decimal]:
     if direction is SignalDirection.LONG:
         mfe_r = max((candle.high - entry_price) / initial_r for candle in window)
         mae_r = min((candle.low - entry_price) / initial_r for candle in window)
-        for offset, candle in enumerate(window, start=1):
-            if candle.low <= stop:
-                return TargetOutcome(target_r, target, "loss", True, offset, mae_r, mfe_r)
-            if candle.high >= target:
-                return TargetOutcome(target_r, target, "win", True, offset, mae_r, mfe_r)
     else:
         mfe_r = max((entry_price - candle.low) / initial_r for candle in window)
         mae_r = min((entry_price - candle.high) / initial_r for candle in window)
-        for offset, candle in enumerate(window, start=1):
-            if candle.high >= stop:
-                return TargetOutcome(target_r, target, "loss", True, offset, mae_r, mfe_r)
-            if candle.low <= target:
-                return TargetOutcome(target_r, target, "win", True, offset, mae_r, mfe_r)
-
-    return TargetOutcome(target_r, target, "flat", True, len(window), mae_r, mfe_r)
+    return mae_r, mfe_r
 
 
 def _swing_pivots_for_direction(
@@ -562,8 +610,6 @@ def _pullback_invalid_reason(
 ) -> str | None:
     if len(pullback) < MIN_PULLBACK_CANDLES:
         return "pullback_too_short"
-    if len(pullback) > MAX_PULLBACK_CANDLES:
-        return "pullback_too_long"
     if direction is SignalDirection.LONG:
         pullback_low = min(candle.low for candle in pullback)
         if pullback_low <= prior_opposite.price:
@@ -633,8 +679,18 @@ def _volume_ratio(candles: Sequence[Candle], index: int) -> Decimal | None:
     return candles[index].volume / average_volume
 
 
-def _trend_age_swings(candles: Sequence[Candle], swing: Pivot) -> int:
-    return sum(1 for candle in candles[: swing.index + 1] if candle.timestamp <= swing.timestamp)
+def _trend_age_swings(pivots: Sequence[Pivot], swing: Pivot) -> int:
+    confirmed = [
+        pivot
+        for pivot in pivots
+        if pivot.confirmation_index <= swing.confirmation_index and pivot.index <= swing.index
+    ]
+    highs = [pivot for pivot in confirmed if pivot.kind is PivotKind.HIGH]
+    lows = [pivot for pivot in confirmed if pivot.kind is PivotKind.LOW]
+    if len(highs) < 2 or len(lows) < 2:
+        return len(confirmed)
+    trend_start_index = min(highs[-2].index, lows[-2].index)
+    return sum(1 for pivot in confirmed if pivot.index >= trend_start_index)
 
 
 def _add_outcome_counts(counters: SetupBCounters, observation: SetupBObservation) -> None:

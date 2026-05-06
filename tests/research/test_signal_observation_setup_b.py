@@ -115,6 +115,16 @@ def test_entry_uses_bos_close_and_records_next_bar_open() -> None:
     assert observation.signal_hour_utc == observation.signal_time.hour
 
 
+def test_trend_age_swings_counts_confirmed_swings_not_candles() -> None:
+    observation = detect_setup_b(
+        _long_setup_candles(),
+        symbol="BTCUSDT",
+        direction=SignalDirection.LONG,
+    )[0]
+
+    assert observation.trend_age_swings == 4
+
+
 def test_stop_buffer_uses_minimum_of_percent_entry_and_atr() -> None:
     entry = Decimal("100")
 
@@ -139,12 +149,97 @@ def test_multi_r_outcome_records_1r_1_5r_and_2r() -> None:
     assert observation.mae_2r is not None
 
 
+def test_target_resolution_mae_mfe_stop_at_resolution_bar() -> None:
+    outcomes = evaluate_multi_r_outcomes(
+        _outcome_candles(
+            [
+                ("100", "102", "99", "101"),
+                ("101", "104", "98", "103"),
+                ("103", "105", "98", "105"),
+                ("105", "130", "90", "120"),
+            ]
+        ),
+        entry_index=0,
+        entry_price=Decimal("100"),
+        stop=Decimal("95"),
+        initial_r=Decimal("5"),
+        direction=SignalDirection.LONG,
+    )
+
+    outcome = outcomes[Decimal("1")]
+    assert outcome.outcome == "win"
+    assert outcome.bars_to_resolution == 3
+    assert outcome.mfe_r == Decimal("1")
+    assert outcome.mae_r == Decimal("-0.4")
+
+
+def test_stop_resolution_mae_mfe_stop_at_resolution_bar() -> None:
+    outcomes = evaluate_multi_r_outcomes(
+        _outcome_candles(
+            [
+                ("100", "102", "99", "101"),
+                ("101", "103", "95", "96"),
+                ("96", "130", "90", "120"),
+            ]
+        ),
+        entry_index=0,
+        entry_price=Decimal("100"),
+        stop=Decimal("95"),
+        initial_r=Decimal("5"),
+        direction=SignalDirection.LONG,
+    )
+
+    outcome = outcomes[Decimal("1")]
+    assert outcome.outcome == "loss"
+    assert outcome.bars_to_resolution == 2
+    assert outcome.mfe_r == Decimal("0.6")
+    assert outcome.mae_r == Decimal("-1")
+
+
 def test_timeout_creates_flat_outcome() -> None:
     candles = _long_setup_candles(outcome_high=Decimal("112"), outcome_low=Decimal("104"))
     observation = detect_setup_b(candles, symbol="BTCUSDT", direction=SignalDirection.LONG)[0]
 
     assert observation.outcome_1r == "flat"
     assert observation.bars_to_resolution_1r == OUTCOME_WINDOW_CANDLES
+
+
+def test_timeout_mae_mfe_use_full_timeout_window() -> None:
+    outcomes = evaluate_multi_r_outcomes(
+        _outcome_candles(
+            [
+                ("100", "102", "99", "101"),
+                ("101", "103", "98", "102"),
+                ("102", "104", "96", "103"),
+            ]
+        ),
+        entry_index=0,
+        entry_price=Decimal("100"),
+        stop=Decimal("95"),
+        initial_r=Decimal("5"),
+        direction=SignalDirection.LONG,
+        outcome_window_candles=3,
+    )
+
+    outcome = outcomes[Decimal("1")]
+    assert outcome.outcome == "flat"
+    assert outcome.mfe_r == Decimal("0.8")
+    assert outcome.mae_r == Decimal("-0.8")
+
+
+def test_same_candle_stop_first_remains_explicit() -> None:
+    outcomes = evaluate_multi_r_outcomes(
+        _outcome_candles([("100", "106", "94", "101")]),
+        entry_index=0,
+        entry_price=Decimal("100"),
+        stop=Decimal("95"),
+        initial_r=Decimal("5"),
+        direction=SignalDirection.LONG,
+    )
+
+    outcome = outcomes[Decimal("1")]
+    assert outcome.outcome == "loss"
+    assert outcome.bars_to_resolution == 1
 
 
 def test_evaluate_multi_r_outcomes_handles_short_target() -> None:
@@ -297,3 +392,7 @@ def _candles(rows: list[tuple[str, str, str, str]]) -> list[Candle]:
             )
         )
     return candles
+
+
+def _outcome_candles(rows: list[tuple[str, str, str, str]]) -> list[Candle]:
+    return _candles([("100", "100", "100", "100"), *rows])

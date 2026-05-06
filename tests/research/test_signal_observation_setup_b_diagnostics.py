@@ -31,6 +31,23 @@ def test_setup_b_diagnostics_counters_are_deterministic() -> None:
     assert summary.entry_observations == len(observations) == 1
 
 
+def test_setup_b_diagnostics_failure_buckets_reconcile() -> None:
+    summary, _ = diagnose_setup_b(
+        _long_setup_candles(),
+        symbol="BTCUSDT",
+        direction=SignalDirection.LONG,
+    )
+    invalid_failures = (
+        summary.failures_by_reason.get("pullback_too_shallow", 0)
+        + summary.failures_by_reason.get("pullback_too_deep", 0)
+        + summary.failures_by_reason.get("prior_structure_broken", 0)
+    )
+
+    assert summary.pullback_invalidated_before_bos == invalid_failures
+    assert summary.pullback_candidates == summary.valid_pullbacks + invalid_failures
+    assert "pullback_too_long" not in summary.failures_by_reason
+
+
 def test_setup_b_diagnostics_match_normal_detector_output() -> None:
     candles = _long_setup_candles()
     normal = detect_setup_b(candles, symbol="BTCUSDT", direction=SignalDirection.LONG)

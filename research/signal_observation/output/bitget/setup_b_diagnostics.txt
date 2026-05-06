@@ -8,7 +8,7 @@ pivots_detected: 351
 trend_detected: 51
 pullback_candidates: 764
 valid_pullbacks: 116
-pullback_invalidated_before_bos: 625
+pullback_invalidated_before_bos: 648
 bos_candidates: 17
 bos_confirmed: 9
 entry_observations: 9
@@ -37,7 +37,7 @@ pivots_detected: 351
 trend_detected: 53
 pullback_candidates: 797
 valid_pullbacks: 216
-pullback_invalidated_before_bos: 546
+pullback_invalidated_before_bos: 581
 bos_candidates: 27
 bos_confirmed: 12
 entry_observations: 12
@@ -66,7 +66,7 @@ pivots_detected: 345
 trend_detected: 57
 pullback_candidates: 846
 valid_pullbacks: 169
-pullback_invalidated_before_bos: 674
+pullback_invalidated_before_bos: 677
 bos_candidates: 23
 bos_confirmed: 13
 entry_observations: 13
@@ -95,7 +95,7 @@ pivots_detected: 345
 trend_detected: 47
 pullback_candidates: 735
 valid_pullbacks: 191
-pullback_invalidated_before_bos: 527
+pullback_invalidated_before_bos: 544
 bos_candidates: 17
 bos_confirmed: 9
 entry_observations: 9
@@ -124,7 +124,7 @@ pivots_detected: 333
 trend_detected: 47
 pullback_candidates: 689
 valid_pullbacks: 97
-pullback_invalidated_before_bos: 577
+pullback_invalidated_before_bos: 592
 bos_candidates: 16
 bos_confirmed: 11
 entry_observations: 11
@@ -153,7 +153,7 @@ pivots_detected: 333
 trend_detected: 52
 pullback_candidates: 744
 valid_pullbacks: 114
-pullback_invalidated_before_bos: 595
+pullback_invalidated_before_bos: 630
 bos_candidates: 24
 bos_confirmed: 14
 entry_observations: 14
