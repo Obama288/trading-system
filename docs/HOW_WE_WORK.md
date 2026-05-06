@@ -26,6 +26,22 @@ Rules:
 - No branch may be created to bypass unclassified dirty files.
 - After a clean or accepted sync gate, work in one bounded pass, not fragmented micro-steps.
 
+## Context Restore Before New Work
+
+Before starting any new stage or new chat continuation, restore context from the
+source-of-truth docs and stage map:
+1. `docs/PROGRESS.md`
+2. `docs/AI_COMMANDS.md`
+3. `docs/HOW_WE_WORK.md`
+4. `docs/AI_HANDOFF.md`
+5. `docs/STAGE_MAP.md`
+6. `docs/PROJECT_ORIGIN.md`
+7. `docs/CONTEXT.md`
+8. Current-stage docs as needed
+
+Do not infer the current stage from memory alone.
+If docs conflict, `docs/PROGRESS.md` wins.
+
 ## Evidence Before Status
 
 - No evidence -> no status promotion.

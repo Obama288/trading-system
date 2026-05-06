@@ -57,6 +57,18 @@ This deterministic boundary exists because a trading system can fail dangerously
 when state is inferred twice, recomputed in the wrong service, silently cached, or
 allowed to drift between DB, journal, exchange, and runtime services.
 
+## Why LLMs Are Excluded From Execution-Critical Decisions
+
+LLMs, research outputs, summaries, and recommendations are advisory only.
+They are useful for analysis, review, planning, and prompt architecture, but they
+must not directly approve trades, override risk decisions, mutate authoritative
+state, or trigger execution.
+
+This boundary exists because execution-critical decisions must be reproducible,
+auditable, and traceable to deterministic services and DB-backed state. A model
+may recommend START/HOLD/GO/NO-GO options, but the Human Owner and documented
+authority boundaries decide what is accepted.
+
 ## Why The Main Boundaries Exist
 
 Kill Switch:
@@ -147,4 +159,3 @@ The project now keeps exchange-readiness work, Bitget/Bybit private-preflight
 planning, and signal-quality research as separate tracks. That separation is an
 important historical outcome of the early corrections: advisory research and
 execution authority must not collapse into one path.
-

@@ -1,5 +1,27 @@
 # AI Handoff - Hephaestus
 
+## New chat restore protocol
+
+Every new Tower Control, Codex, Claude, or reviewer chat must restore project
+context from repo docs before relying on task text or memory.
+
+Read in this order:
+1. `docs/PROGRESS.md`
+2. `docs/AI_COMMANDS.md`
+3. `docs/HOW_WE_WORK.md`
+4. `docs/AI_HANDOFF.md`
+5. `docs/STAGE_MAP.md`
+6. `docs/PROJECT_ORIGIN.md`
+7. `docs/CONTEXT.md`
+8. Current-stage docs as needed
+
+Rules:
+- Do not use chat memory as source of truth.
+- Do not use `.codex/worktrees` as source of truth.
+- Do not use detached worktrees as source of truth.
+- If docs conflict, `docs/PROGRESS.md` wins.
+- Live trading remains NO-GO unless `docs/PROGRESS.md` explicitly says otherwise.
+
 ## Current project status
 
 Project:
@@ -45,7 +67,7 @@ Runtime status:
 - Stage 54-AP fallback planning: Alpaca Paper remains fallback-only and must stay a separate architecture track; do not fold Alpaca into a crypto-CEX abstraction
 - Generic adapter boundary: do not create a generic exchange adapter yet
 - Beget API access: AVAILABLE / OPERATIONAL CAPABILITY ONLY; no secrets recorded; does not imply deployment readiness or runtime readiness; any Beget API operation that changes infrastructure, deployment, runtime, secrets, or server state is Protected Lane and requires explicit Human Owner authorization
-- Stage 53-B2 testnet API access runbook: DOCUMENTED in docs/STAGE_53B2_SMOKE_PLAN.md; Human Owner must obtain testnet credentials from https://testnet.bybit.com / https://testnet.bybit.com/app/user/api-management; use API Transaction / Транзакция API, read-only only, withdrawal/transfer/trade/order/write disabled; BYBIT_B1_ENVIRONMENT=testnet; BYBIT_B1_API_KEY and BYBIT_B1_API_SECRET must come from the same testnet key pair; BYBIT_API_KEY / BYBIT_API_SECRET should be missing during B2 flow; retCode 10003 troubleshooting covers mainnet/testnet mismatch, demo/testnet-demo mismatch, deleted/disabled/expired key, wrong key/secret pair, IP whitelist mismatch, and endpoint compatibility issue
+- Stage 53-B2 testnet API access runbook: DOCUMENTED in docs/STAGE_53B2_SMOKE_PLAN.md; Human Owner must obtain testnet credentials from https://testnet.bybit.com / https://testnet.bybit.com/app/user/api-management; use API Transaction key type, read-only only, withdrawal/transfer/trade/order/write disabled; BYBIT_B1_ENVIRONMENT=testnet; BYBIT_B1_API_KEY and BYBIT_B1_API_SECRET must come from the same testnet key pair; BYBIT_API_KEY / BYBIT_API_SECRET should be missing during B2 flow; retCode 10003 troubleshooting covers mainnet/testnet mismatch, demo/testnet-demo mismatch, deleted/disabled/expired key, wrong key/secret pair, IP whitelist mismatch, and endpoint compatibility issue
 - Stage 53-B2 Pit-stop audit: RECORDED as audit-only, not an implementation gate; repo was aligned at 8153c61; tracked diff was empty; full local regression passed with 408 passed and 5 warnings; targeted suites passed with tests/scripts 60, tests/libs/exchange 99, tests/libs/config 19; server_time, wallet_balance, and query_api no-flag latches all exited 3; checked BYBIT env names were missing; no runtime/trading/live/probe readiness is claimed
 - Stage 53-B2c.1 authenticated readiness audit / query-api preflight decision: B2c.1a and B2c.1b are mocked/local implementation checkpoints only; private real testnet path is blocked due unavailable usable Bybit testnet API access
 - Stage 53-B2 permanent real-smoke preflight: safe credential presence check, safe credential hygiene check, and Human Owner external key active/not expired confirmation are required before any real Bybit smoke gate; any missing required env var, hygiene warning, expired/uncertain key, or missing owner confirmation stops the smoke; 7-day note is not verified API key expiry
@@ -130,7 +152,7 @@ Stage 53-B2c.1c / B2d blocked state:
 B2c.1c real query-api preflight was attempted once and failed safely with retCode=10003, error_category=invalid_key_or_environment, and LASTEXITCODE=1. The likely cause is an ordinary/mainnet Bybit API key used against the testnet API endpoint, or no usable Bybit testnet API access. No further query-api retry is authorized. B2d real wallet_balance testnet smoke is blocked / NO-GO because usable Bybit testnet API credentials are unavailable. The ordinary/mainnet Bybit key must not be substituted into the testnet flow. Any mainnet read-only smoke would require a new separately authorized stage and guardrails; it is not a continuation of B2d.
 
 Stage 53-B2 testnet API access runbook:
-The practical runbook is in docs/STAGE_53B2_SMOKE_PLAN.md. Human Owner should use https://testnet.bybit.com and https://testnet.bybit.com/app/user/api-management, create an API Transaction / Транзакция API key rather than third-party application binding, keep permissions read-only with withdrawal/transfer/trade/order/write disabled, set BYBIT_B1_ENVIRONMENT=testnet, and ensure BYBIT_B1_API_KEY and BYBIT_B1_API_SECRET come from the same testnet key pair. BYBIT_API_KEY / BYBIT_API_SECRET should be missing during B2 flow. B2d remains blocked until query-api preflight succeeds or the Human Owner explicitly accepts a documented alternative.
+The practical runbook is in docs/STAGE_53B2_SMOKE_PLAN.md. Human Owner should use https://testnet.bybit.com and https://testnet.bybit.com/app/user/api-management, create an API Transaction key rather than third-party application binding, keep permissions read-only with withdrawal/transfer/trade/order/write disabled, set BYBIT_B1_ENVIRONMENT=testnet, and ensure BYBIT_B1_API_KEY and BYBIT_B1_API_SECRET come from the same testnet key pair. BYBIT_API_KEY / BYBIT_API_SECRET should be missing during B2 flow. B2d remains blocked until query-api preflight succeeds or the Human Owner explicitly accepts a documented alternative.
 
 Stage 53-B2 Pit-stop audit record:
 The Pit-stop was an audit-only checkpoint, not an implementation gate. Repo HEAD/origin main were aligned at 8153c61 and the tracked diff was empty. No-flag latches for server_time, wallet_balance, and query_api all returned sanitized authorization_required JSON with LASTEXITCODE=3. Tests passed: tests/scripts 60, tests/libs/exchange 99, tests/libs/config 19, and full local regression 408 passed with 5 warnings. All checked BYBIT env names were missing and no values were printed. B2d remains blocked / NO-GO; B2c.1c query-api failed safely with retCode=10003 invalid_key_or_environment due no usable testnet API access / environment mismatch. No mainnet smoke, real query-api retry, real wallet_balance smoke, open_positions smoke, order_status, write/live methods, service wiring, or runtime/trading/live/probe readiness is authorized. Follow-up backlog: clean async mock warnings; add env-isolation guard tests; add static guard for generic BYBIT_API_KEY/BYBIT_API_SECRET in B2 flow; audit transaction ownership and handler-level log redaction; plan future authority map / reconciliation / TradingState / OMS work; review dependencies and secret scanning; repeat docs source-of-truth audits.
