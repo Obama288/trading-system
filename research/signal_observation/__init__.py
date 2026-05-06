@@ -11,6 +11,7 @@ from .models import (
     SetupId,
     SignalObservation,
 )
+from .outcomes import resolve_outcome
 from .sessions import session_label
 from .setup_a import detect_setup_a
 
@@ -26,6 +27,7 @@ __all__ = [
     "OutcomeResult",
     "pivot_highs",
     "pivot_lows",
+    "resolve_outcome",
     "SetupId",
     "SignalObservation",
     "session_label",

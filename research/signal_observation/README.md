@@ -56,12 +56,29 @@ Current scope:
 - long Setup A observations only;
 - already-loaded local 4H and 1H candles only;
 - no Setup B detector;
-- no outcome tracking;
 - no statistics report;
 - no exchange calls;
 - no API calls;
 - no private endpoints;
 - no execution.
+
+## A5 outcome tracker
+
+Stage 54-SQ-A5 adds deterministic simulated R outcome tracking for an already
+detected `SignalObservation` and local trigger candles.
+
+Current scope:
+- resolves stop, target, or window-close outcomes;
+- calculates MFE_R, MAE_R, and final_R;
+- supports long and short observation directions;
+- uses local candles only;
+- no statistics report;
+- no account balance, position size, dollars, leverage, fees, or slippage;
+- no exchange calls;
+- no API calls;
+- no private endpoints;
+- no execution;
+- no runtime wiring.
 
 The package exists to support later offline detector and outcome-tracker
 implementation without touching the money path.
