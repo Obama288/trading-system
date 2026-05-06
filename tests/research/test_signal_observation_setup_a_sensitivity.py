@@ -7,6 +7,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from research.signal_observation.candles import Candle
+from research.signal_observation.csv_loader import load_ohlcv_csv
 from research.signal_observation.models import BtcScore
 from research.signal_observation.setup_a import detect_setup_a
 from research.signal_observation.setup_a_sensitivity import (
@@ -104,7 +105,7 @@ def _trigger_candles(*, retest: bool = True) -> list[Candle]:
     return candles
 
 
-_BASELINE_VARIANT = VARIANTS[0]  # min_touches=3, touch_tolerance_atr=0.25, lookback_4h=48
+_BASELINE_VARIANT = VARIANTS[0]  # min_touches=3, touch_tolerance_atr=0.15, lookback_4h=48
 _RELAXED_VARIANT = VARIANTS[1]   # min_touches=2, touch_tolerance_atr=0.25, lookback_4h=48
 _WIDER_VARIANT = VARIANTS[2]     # min_touches=2, touch_tolerance_atr=0.35, lookback_4h=48
 
@@ -163,6 +164,38 @@ def test_baseline_variant_does_not_mutate_normal_detector() -> None:
 
     assert before == after
     assert len(before) == 1
+
+
+def test_baseline_variant_matches_normal_detector_on_bitget_dataset() -> None:
+    """Baseline sensitivity counts must match normal Setup A output."""
+
+    repo_root = Path(__file__).parent.parent.parent
+    data_dir = repo_root / "research" / "signal_observation" / "data" / "bitget"
+    expected_counts = {
+        "BTCUSDT": 4,
+        "ETHUSDT": 1,
+        "SOLUSDT": 1,
+    }
+
+    for symbol, expected_count in expected_counts.items():
+        context = load_ohlcv_csv(data_dir / f"{symbol}_USDT-FUTURES_4H.csv")
+        trigger = load_ohlcv_csv(data_dir / f"{symbol}_USDT-FUTURES_1H.csv")
+        normal_observations = detect_setup_a(
+            context,
+            trigger,
+            symbol=symbol,
+            source_exchange="bitget_public",
+        )
+        sensitivity = run_sensitivity_variant(
+            context,
+            trigger,
+            symbol=symbol,
+            source_exchange="bitget_public",
+            variant=_BASELINE_VARIANT,
+        )
+
+        assert len(normal_observations) == expected_count
+        assert sensitivity.observations == len(normal_observations)
 
 
 def _context_candles_strict_2touches() -> list[Candle]:

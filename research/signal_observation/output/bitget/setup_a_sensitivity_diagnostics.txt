@@ -5,12 +5,12 @@ Setup A sensitivity diagnostics
   symbol: BTCUSDT
   source_exchange: bitget_public
   windows_checked: 1152
-  passed_touches: 215
-  failed_min_touches: 937
-  breakout_candidates: 9
-  body_passed: 7
-  volume_passed: 5
-  retest_reached: 5
+  passed_touches: 109
+  failed_min_touches: 1043
+  breakout_candidates: 5
+  body_passed: 5
+  volume_passed: 4
+  retest_reached: 4
   retest_found: 4
   observations: 4
   resolved: 4
@@ -26,31 +26,31 @@ Setup A sensitivity diagnostics
   symbol: ETHUSDT
   source_exchange: bitget_public
   windows_checked: 1152
-  passed_touches: 239
-  failed_min_touches: 913
-  breakout_candidates: 3
-  body_passed: 2
-  volume_passed: 2
-  retest_reached: 2
-  retest_found: 2
-  observations: 2
-  resolved: 2
-  wins: 1
+  passed_touches: 110
+  failed_min_touches: 1042
+  breakout_candidates: 1
+  body_passed: 1
+  volume_passed: 1
+  retest_reached: 1
+  retest_found: 1
+  observations: 1
+  resolved: 1
+  wins: 0
   losses: 1
   flats: 0
-  win_rate: 0.5
-  expectancy_r: -0.1266485671531873708520686200
-  profit_factor: 0.3510107210156417275556838769
-  avg_win_r: 0.1369976556210866431773616465
+  win_rate: 0
+  expectancy_r: -0.3902947899274613848814988865
+  profit_factor: 0E+28
+  avg_win_r: n/a
   avg_loss_r: -0.3902947899274613848814988865
 
   symbol: SOLUSDT
   source_exchange: bitget_public
   windows_checked: 1152
-  passed_touches: 228
-  failed_min_touches: 924
-  breakout_candidates: 6
-  body_passed: 3
+  passed_touches: 62
+  failed_min_touches: 1090
+  breakout_candidates: 3
+  body_passed: 2
   volume_passed: 1
   retest_reached: 1
   retest_found: 1
@@ -66,14 +66,14 @@ Setup A sensitivity diagnostics
   avg_loss_r: -1
 
   --- totals ---
-  total_observations: 7
-  total_resolved: 7
-  total_wins: 2
+  total_observations: 6
+  total_resolved: 6
+  total_wins: 1
   total_losses: 5
   total_flats: 0
-  aggregate_win_rate: 0.2857142857142857142857142857
-  aggregate_expectancy_r: -0.3218995906151963916720196057
-  aggregate_profit_factor: 0.4867549351182395595064208905
+  aggregate_win_rate: 0.1666666666666666666666666667
+  aggregate_expectancy_r: -0.3983824649879102308135831477
+  aggregate_profit_factor: 0.4555502752545336451276921790
   largest_dropoff_stage: min_touches
 
 === variant: relaxed_touches ===

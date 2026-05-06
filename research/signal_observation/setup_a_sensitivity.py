@@ -41,7 +41,7 @@ class SensitivityVariant:
 
 
 VARIANTS: tuple[SensitivityVariant, ...] = (
-    SensitivityVariant("baseline", 3, Decimal("0.25"), 48),
+    SensitivityVariant("baseline", 3, Decimal("0.15"), 48),
     SensitivityVariant("relaxed_touches", 2, Decimal("0.25"), 48),
     SensitivityVariant("relaxed_touches_wider_zone", 2, Decimal("0.35"), 48),
     SensitivityVariant(
