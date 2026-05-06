@@ -1,10 +1,10 @@
-observations: 0
-resolved: 0
+observations: 1
+resolved: 1
 wins: 0
-losses: 0
+losses: 1
 flats: 0
-win_rate: None
-expectancy_r: None
-profit_factor: None
+win_rate: 0
+expectancy_r: -1
+profit_factor: 0
 avg_win_r: None
-avg_loss_r: None
+avg_loss_r: -1
