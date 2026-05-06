@@ -255,5 +255,30 @@ Run local Bitget Setup B diagnostics with:
 python -m research.signal_observation.run_setup_b_diagnostics
 ```
 
+## B2 Setup B metrics analysis
+
+Stage 54-SQ-B2 analyzes existing local Setup B observation JSON artifacts and
+writes deterministic text and JSON signal-quality reports.
+
+Current scope:
+- local JSON artifacts only;
+- aggregate metrics by target, symbol, direction, and symbol plus direction;
+- MAE/MFE, timing, flat-rate, and sample-size warning diagnostics;
+- no detector changes;
+- no parameter changes;
+- no 1H implementation;
+- no exchange calls;
+- no API calls;
+- no private endpoints;
+- no execution;
+- no runtime wiring;
+- no paper, trading, live, or probe readiness.
+
+Run local Bitget Setup B analysis with:
+
+```powershell
+python -m research.signal_observation.run_setup_b_analysis
+```
+
 The package exists to support later offline detector and outcome-tracker
 implementation without touching the money path.
