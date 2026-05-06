@@ -230,5 +230,30 @@ Run local Bitget diagnostics with:
 python -m research.signal_observation.run_setup_a_diagnostics
 ```
 
+## B1 Setup B detector and diagnostics
+
+Stage 54-SQ-B1 adds a deterministic research detector and diagnostics runner
+for Setup B: Trend Pullback BOS / Continuation.
+
+Current scope:
+- local Bitget 4H CSV candles only;
+- BTCUSDT, ETHUSDT, and SOLUSDT USDT-FUTURES research data;
+- long and short structural trend pullback BOS observations;
+- simulated 1R, 1.5R, and 2R outcomes over a 10-candle 4H window;
+- deterministic text and JSON diagnostics artifacts;
+- no 1H implementation;
+- no exchange calls;
+- no API calls;
+- no private endpoints;
+- no execution;
+- no runtime wiring;
+- no paper, trading, live, or probe readiness.
+
+Run local Bitget Setup B diagnostics with:
+
+```powershell
+python -m research.signal_observation.run_setup_b_diagnostics
+```
+
 The package exists to support later offline detector and outcome-tracker
 implementation without touching the money path.
