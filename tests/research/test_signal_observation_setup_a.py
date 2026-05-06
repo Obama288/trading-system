@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import ast
+from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
 
 import pytest
 
 from research.signal_observation.csv_loader import load_ohlcv_csv
-from research.signal_observation.models import Direction, ObservationStatus, SetupId
+from research.signal_observation.models import BtcScore, Direction, ObservationStatus, SetupId
 from research.signal_observation.setup_a import detect_setup_a
 
 
@@ -15,7 +16,24 @@ FIXTURE_DIR = Path("tests/fixtures/signal_observation")
 
 
 def _known_context():
-    return load_ohlcv_csv(FIXTURE_DIR / "known_breakout_retest_4h.csv")
+    candles = load_ohlcv_csv(FIXTURE_DIR / "known_breakout_retest_4h.csv")
+    breakout = candles[-1]
+    seed = candles[:-1]
+    start_time = breakout.timestamp - timedelta(hours=4 * 48)
+    full_base = []
+    for index in range(48):
+        source = seed[index % len(seed)]
+        full_base.append(
+            type(source)(
+                timestamp=start_time + timedelta(hours=4 * index),
+                open=source.open,
+                high=source.high,
+                low=source.low,
+                close=source.close,
+                volume=source.volume,
+            )
+        )
+    return full_base + [breakout]
 
 
 def _known_trigger():
@@ -60,6 +78,18 @@ def test_returned_observation_has_expected_setup_fields_and_decimal_risk() -> No
     assert observation.target_price_theoretical == (
         observation.entry_price_theoretical + (Decimal("2") * initial_r)
     )
+
+
+def test_detector_passes_custom_btc_score_to_observation() -> None:
+    observations = detect_setup_a(
+        _known_context(),
+        _known_trigger(),
+        symbol="ETHUSDT",
+        source_exchange="fixture",
+        btc_score=BtcScore.BULLISH,
+    )
+
+    assert observations[0].btc_score is BtcScore.BULLISH
 
 
 def test_detector_returns_no_signal_when_retest_is_missing() -> None:
@@ -156,7 +186,13 @@ def test_short_direction_is_not_silently_accepted() -> None:
 
 
 def test_detector_does_not_import_exchange_api_network_or_private_libraries() -> None:
-    text = Path("research/signal_observation/setup_a.py").read_text()
+    setup_a_path = (
+        Path(__file__).parent.parent.parent
+        / "research"
+        / "signal_observation"
+        / "setup_a.py"
+    )
+    text = setup_a_path.read_text()
     forbidden_tokens = (
         "requests",
         "httpx",
@@ -173,7 +209,13 @@ def test_detector_does_not_import_exchange_api_network_or_private_libraries() ->
 
 
 def test_detector_uses_no_float_literals_for_price_or_r_calculations() -> None:
-    tree = ast.parse(Path("research/signal_observation/setup_a.py").read_text())
+    setup_a_path = (
+        Path(__file__).parent.parent.parent
+        / "research"
+        / "signal_observation"
+        / "setup_a.py"
+    )
+    tree = ast.parse(setup_a_path.read_text())
 
     for node in ast.walk(tree):
         assert not isinstance(node, ast.Constant) or not isinstance(node.value, float)

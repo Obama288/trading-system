@@ -28,6 +28,7 @@ def detect_setup_a(
     symbol: str,
     source_exchange: str,
     direction: Direction = Direction.LONG,
+    btc_score: BtcScore = BtcScore.CHOP,
 ) -> list[SignalObservation]:
     """Detect complete SQ_1.0 Setup A long observations from local candles."""
 
@@ -50,10 +51,10 @@ def detect_setup_a(
         atr_4h = context_atr[index]
         if atr_4h is None:
             continue
-        if index < VOLUME_LOOKBACK:
+        if index < LOOKBACK_CANDLES_4H:
             continue
 
-        base = context_candles_4h[max(0, index - LOOKBACK_CANDLES_4H) : index]
+        base = context_candles_4h[index - LOOKBACK_CANDLES_4H : index]
         if not base:
             continue
         range_high = max(candle.high for candle in base)
@@ -95,6 +96,7 @@ def detect_setup_a(
             range_high=range_high,
             symbol=symbol,
             source_exchange=source_exchange,
+            btc_score=btc_score,
         )
         if observation is not None:
             observations.append(observation)
@@ -110,6 +112,7 @@ def _detect_retest_observation(
     range_high: Decimal,
     symbol: str,
     source_exchange: str,
+    btc_score: BtcScore,
 ) -> SignalObservation | None:
     after_breakout = [
         (index, candle)
@@ -157,7 +160,7 @@ def _detect_retest_observation(
                 stop_price_theoretical=stop,
                 target_price_theoretical=target,
                 initial_r=initial_r,
-                btc_score=BtcScore.CHOP,
+                btc_score=btc_score,
                 session_utc_hour=signal_time.hour,
                 session_label=session_label(signal_time),
                 status=ObservationStatus.VALID,
