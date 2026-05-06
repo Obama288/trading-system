@@ -47,5 +47,21 @@ These utilities are pure local calculations over already-loaded candle data.
 They do not detect setups, calculate outcomes, call exchanges, call private
 APIs, place orders, or wire into runtime services.
 
+## A4 Setup A detector
+
+Stage 54-SQ-A4 adds a deterministic research detector for Setup A:
+Breakout -> Retest -> Continuation.
+
+Current scope:
+- long Setup A observations only;
+- already-loaded local 4H and 1H candles only;
+- no Setup B detector;
+- no outcome tracking;
+- no statistics report;
+- no exchange calls;
+- no API calls;
+- no private endpoints;
+- no execution.
+
 The package exists to support later offline detector and outcome-tracker
 implementation without touching the money path.

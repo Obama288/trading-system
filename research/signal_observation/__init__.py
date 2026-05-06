@@ -12,12 +12,14 @@ from .models import (
     SignalObservation,
 )
 from .sessions import session_label
+from .setup_a import detect_setup_a
 
 __all__ = [
     "atr",
     "BtcScore",
     "Candle",
     "Direction",
+    "detect_setup_a",
     "ema",
     "load_ohlcv_csv",
     "ObservationStatus",
