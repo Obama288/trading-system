@@ -70,6 +70,12 @@ Current verdict:
 - Stage 54-BG2-C private read-only preflight runbook: DOCS-ONLY / PLANNING; candidate future endpoint is `GET /api/v3/account/info` for a private read-only preflight discussion only, not an approved call; future sanitized output must stay at high-level summaries only such as status, exchange, endpoint, read_only / permissions_safe summary, ip_whitelist_present summary, and elapsed_ms only if a future smoke is separately approved; raw uid, raw permissions, raw IPs, raw response body, raw error messages, API keys, secrets, passphrases, signatures, account IDs, balances, positions, and signed payloads remain forbidden in logs, docs, and output
 - Stage 54-BG2-C required future guardrails: future demo private requests must include explicit `paptrading: 1` marker handling; no `paptrading` runtime behavior is implemented in BG2-C; safe env presence and hygiene checks are required; no generic `BITGET_API_KEY` / `BITGET_API_SECRET` fallback; `BITGET_BG1_` namespace only unless later owner-approved; fail closed if credentials are missing/empty, if environment is not demo/simulated, if permissions include trade/transfer/withdraw/write-like capability, if the response cannot prove safe read-only posture, or if result is rate-limited/inconclusive; no automatic retry after a real preflight failure; see `docs/STAGE_54_BG2C_PRIVATE_PREFLIGHT_RUNBOOK.md`
 - Stage 54-BG2-C readiness: docs-ready only; not code-ready, test-ready, runtime-ready, trading-ready, live-ready, or probe-ready
+- Stage 54-SQ-A automated signal observation collector: ACTIVE FOR RESEARCH-LAYER IMPLEMENTATION PLANNING / APPROVED BY HUMAN OWNER
+- Stage 54-SQ-A purpose: collect automated signal observations from public OHLCV for BTC/ETH/SOL, detect Setup A/B candidates, calculate simulated outcomes in R, and generate statistics
+- Stage 54-SQ-A scope: research-layer only
+- Stage 54-SQ-A not authorized: paper execution, live trading, private exchange API, exchange operations, orders, cancels, set_leverage, runtime wiring, or risk_engine/execution_service/orchestrator/position_manager/kill_switch changes
+- Stage 54-BG2-C relationship: remains documented as docs-only/planning; Stage 54-SQ-A is a separate research/signal-quality track
+- Stage 54-SQ-A claim boundary: Live trading remains NO-GO; no signal edge or profitability is claimed
 - Stage 54-AP fallback: Alpaca Paper remains fallback-only and must stay a separate architecture track
 - Generic adapter boundary: do not create a generic exchange adapter yet
 - Real live execution: NO-GO
