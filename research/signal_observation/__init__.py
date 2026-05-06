@@ -1,4 +1,4 @@
-"""Research-layer signal observation models and helpers."""
+"""Research-layer signal observation models, loaders, and helpers."""
 
 from .candles import Candle
 from .csv_loader import load_ohlcv_csv
