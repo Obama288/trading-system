@@ -1,6 +1,6 @@
 """Research-layer signal observation models, loaders, and helpers."""
 
-# CLI modules stay unexported to avoid import-time side effects.
+# Downloader and runner CLI modules stay unexported to avoid import-time side effects.
 
 from .candles import Candle
 from .csv_loader import load_ohlcv_csv

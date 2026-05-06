@@ -6,8 +6,7 @@ signal observation collection.
 Current scope:
 - pure typed data objects only;
 - local CSV candle loading only;
-- no exchange calls;
-- no data download from remote systems;
+- optional public candle downloaders for local CSV creation;
 - no execution;
 - no private API;
 - no API keys or secrets;
@@ -131,10 +130,49 @@ Current scope:
 Real historical CSV files should stay local and should not be committed unless
 the Human Owner explicitly approves them.
 
+## A8B Bitget public candle downloader
+
+Stage 54-SQ-A8B adds the primary venue-aligned public OHLCV downloader for
+Stage 54-SQ research statistics. It writes Bitget public mix-market historical
+candles to local CSV files accepted by the A7 runner.
+
+Public market data only:
+- no keys;
+- no secrets;
+- no auth headers;
+- no account endpoints;
+- no balances;
+- no positions;
+- no execution;
+- no runtime wiring;
+- no trading, live, or probe readiness.
+
+Example BTCUSDT 1H USDT-FUTURES download:
+
+```powershell
+python -m research.signal_observation.bitget_public_downloader --symbol BTCUSDT --product-type USDT-FUTURES --granularity 1H --output data\BTCUSDT_1h.csv --limit 200
+```
+
+Example BTCUSDT 4H USDT-FUTURES download:
+
+```powershell
+python -m research.signal_observation.bitget_public_downloader --symbol BTCUSDT --product-type USDT-FUTURES --granularity 4H --output data\BTCUSDT_4h.csv --limit 200
+```
+
+Then run the local CSV summary:
+
+```powershell
+python -m research.signal_observation.run_csv_summary --context-4h data\BTCUSDT_4h.csv --trigger-1h data\BTCUSDT_1h.csv --symbol BTCUSDT --source-exchange bitget_public
+```
+
+Real historical CSV files should stay local and should not be committed unless
+the Human Owner explicitly approves them.
+
 ## A8 OKX public candle downloader
 
 Stage 54-SQ-A8 adds a public-market-data downloader that writes OKX historical
-candles to local CSV files accepted by the A7 runner.
+candles to local CSV files accepted by the A7 runner. OKX is optional secondary
+comparison data after the Bitget venue-aligned downloader.
 
 Public data only:
 - no keys;
