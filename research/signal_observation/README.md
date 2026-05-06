@@ -280,5 +280,32 @@ Run local Bitget Setup B analysis with:
 python -m research.signal_observation.run_setup_b_analysis
 ```
 
+## B3 Setup B random-entry baseline
+
+Stage 54-SQ-B3 compares Setup B against seeded random entries with the same
+symbol, direction, and count distribution. Random stops use risk distances
+sampled from actual Setup B observations in each symbol/direction bucket.
+
+Current scope:
+- local 4H CSV candles and local Setup B JSON artifacts only;
+- seeded random baseline analysis;
+- same 1R, 1.5R, 2R targets and 10-bar 4H timeout;
+- no detector changes;
+- no parameter changes;
+- no target or timeout changes;
+- no 1H implementation;
+- no exchange calls;
+- no API calls;
+- no private endpoints;
+- no execution;
+- no runtime wiring;
+- no paper, trading, live, or probe readiness.
+
+Run local Bitget Setup B random baseline with:
+
+```powershell
+python -m research.signal_observation.run_setup_b_random_baseline
+```
+
 The package exists to support later offline detector and outcome-tracker
 implementation without touching the money path.

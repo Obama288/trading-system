@@ -1,0 +1,75 @@
+Setup B random-entry baseline
+
+Scope: exploratory research baseline only.
+No profitability, paper-trading, live-trading, or readiness claim.
+
+seed: 5403
+iterations: 1000
+timeout_bars_4h: 10
+
+Bucket distribution
+- BTCUSDT / long: 9
+- BTCUSDT / short: 12
+- ETHUSDT / long: 13
+- ETHUSDT / short: 9
+- SOLUSDT / long: 11
+- SOLUSDT / short: 14
+
+Setup B vs random baseline
+target: 1r
+  setup_b_expectancy_r: 0
+  random_median_expectancy_r: 0
+  random_p75_expectancy_r: 0.05882352941176470588235294118
+  random_p90_expectancy_r: 0.1176470588235294117647058824
+  setup_b_win_rate: 0.2647058823529411764705882353
+  random_median_win_rate: 0.2794117647058823529411764706
+  setup_b_flat_rate: 0.4705882352941176470588235294
+  random_median_flat_rate: 0.4558823529411764705882352941
+  setup_b_avg_mae_r: -0.6254794953530823033244704397
+  random_median_avg_mae_r: -0.6537096543666702461729040685
+  setup_b_avg_mfe_r: 0.6648809346582791125114117131
+  random_median_avg_mfe_r: 0.6647430706035306414020997605
+  beats_random_median_expectancy: False
+  beats_random_p75_expectancy: False
+  beats_random_p90_expectancy: False
+  beats_random_median_mfe: True
+  flat_rate_better_than_random_median: False
+  inconclusive: True
+target: 1_5r
+  setup_b_expectancy_r: -0.04411764705882352941176470588
+  random_median_expectancy_r: -0.05147058823529411764705882355
+  random_p75_expectancy_r: 0.007352941176470588235294117647
+  random_p90_expectancy_r: 0.06617647058823529411764705882
+  setup_b_win_rate: 0.1470588235294117647058823529
+  random_median_win_rate: 0.1617647058823529411764705882
+  setup_b_flat_rate: 0.5882352941176470588235294118
+  random_median_flat_rate: 0.544117647058823529411764706
+  setup_b_avg_mae_r: -0.6292861067109779507145892836
+  random_median_avg_mae_r: -0.682254672501149795240162779
+  setup_b_avg_mfe_r: 0.7556925662051747967961102778
+  random_median_avg_mfe_r: 0.728503031310120738423324188
+  beats_random_median_expectancy: True
+  beats_random_p75_expectancy: False
+  beats_random_p90_expectancy: False
+  beats_random_median_mfe: True
+  flat_rate_better_than_random_median: False
+  inconclusive: True
+target: 2r
+  setup_b_expectancy_r: -0.2058823529411764705882352941
+  random_median_expectancy_r: -0.1176470588235294117647058824
+  random_p75_expectancy_r: -0.04411764705882352941176470588
+  random_p90_expectancy_r: 0.01470588235294117647058823529
+  setup_b_win_rate: 0.04411764705882352941176470588
+  random_median_win_rate: 0.08823529411764705882352941175
+  setup_b_flat_rate: 0.6617647058823529411764705882
+  random_median_flat_rate: 0.602941176470588235294117647
+  setup_b_avg_mae_r: -0.6579022652571900203049043904
+  random_median_avg_mae_r: -0.6968376204249287070293232185
+  setup_b_avg_mfe_r: 0.7822912888746622923170013776
+  random_median_avg_mfe_r: 0.7668578501228306415504356945
+  beats_random_median_expectancy: False
+  beats_random_p75_expectancy: False
+  beats_random_p90_expectancy: False
+  beats_random_median_mfe: True
+  flat_rate_better_than_random_median: False
+  inconclusive: True
