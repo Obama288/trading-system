@@ -1,11 +1,11 @@
-﻿[
+[
     {
         "File":  "research\\signal_observation\\data\\bitget\\BTCUSDT_USDT-FUTURES_1H.csv",
         "HeaderExact":  true,
-        "DataRows":  200,
+        "DataRows":  1200,
         "AscendingTimestamps":  true,
-        "FirstTimestamp":  "2026-04-28T03:00:00Z",
-        "LastTimestamp":  "2026-05-06T10:00:00Z"
+        "FirstTimestamp":  "2026-03-17T07:00:00Z",
+        "LastTimestamp":  "2026-05-06T11:00:00Z"
     },
     {
         "File":  "research\\signal_observation\\data\\bitget\\BTCUSDT_USDT-FUTURES_4H.csv",
@@ -18,10 +18,10 @@
     {
         "File":  "research\\signal_observation\\data\\bitget\\ETHUSDT_USDT-FUTURES_1H.csv",
         "HeaderExact":  true,
-        "DataRows":  200,
+        "DataRows":  1200,
         "AscendingTimestamps":  true,
-        "FirstTimestamp":  "2026-04-28T03:00:00Z",
-        "LastTimestamp":  "2026-05-06T10:00:00Z"
+        "FirstTimestamp":  "2026-03-17T07:00:00Z",
+        "LastTimestamp":  "2026-05-06T11:00:00Z"
     },
     {
         "File":  "research\\signal_observation\\data\\bitget\\ETHUSDT_USDT-FUTURES_4H.csv",
@@ -34,10 +34,10 @@
     {
         "File":  "research\\signal_observation\\data\\bitget\\SOLUSDT_USDT-FUTURES_1H.csv",
         "HeaderExact":  true,
-        "DataRows":  200,
+        "DataRows":  1200,
         "AscendingTimestamps":  true,
-        "FirstTimestamp":  "2026-04-28T03:00:00Z",
-        "LastTimestamp":  "2026-05-06T10:00:00Z"
+        "FirstTimestamp":  "2026-03-17T07:00:00Z",
+        "LastTimestamp":  "2026-05-06T11:00:00Z"
     },
     {
         "File":  "research\\signal_observation\\data\\bitget\\SOLUSDT_USDT-FUTURES_4H.csv",

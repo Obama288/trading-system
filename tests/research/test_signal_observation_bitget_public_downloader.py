@@ -60,12 +60,50 @@ def _success_payload() -> dict:
     }
 
 
-def _run_download(payload: dict | None = None):
+def _success_payload_page_two() -> dict:
+    return {
+        "code": "00000",
+        "msg": "success",
+        "data": [
+            [
+                "1714572000000",
+                "104",
+                "105",
+                "103",
+                "104.5",
+                "14",
+                "1463",
+            ],
+            [
+                "1714564800000",
+                "999",
+                "999",
+                "999",
+                "999",
+                "999",
+                "999",
+            ],
+        ],
+    }
+
+
+def _run_download(
+    payload: dict | None = None,
+    *,
+    payloads: list[dict] | None = None,
+    limit: int = 123,
+    start_time: str | None = "1714561200000",
+    end_time: str | None = "1714564800000",
+    max_pages: int = 1,
+):
     output = _NonClosingStringIO()
     requests = []
+    payload_queue = list(payloads) if payloads is not None else None
 
     def fake_urlopen(request):
         requests.append(request)
+        if payload_queue is not None:
+            return _MockResponse(payload_queue.pop(0))
         return _MockResponse(payload or _success_payload())
 
     with patch(
@@ -77,9 +115,10 @@ def _run_download(payload: dict | None = None):
             product_type="USDT-FUTURES",
             granularity="1H",
             output_csv="out.csv",
-            limit=123,
-            start_time="1714561200000",
-            end_time="1714564800000",
+            limit=limit,
+            start_time=start_time,
+            end_time=end_time,
+            max_pages=max_pages,
         )
     return path, output.getvalue(), requests
 
@@ -110,6 +149,17 @@ def test_rejects_invalid_limit() -> None:
             granularity="1H",
             output_csv="out.csv",
             limit=201,
+        )
+
+
+def test_rejects_invalid_max_pages() -> None:
+    with pytest.raises(ValueError, match="max_pages"):
+        download_bitget_history_candles(
+            symbol="BTCUSDT",
+            product_type="USDT-FUTURES",
+            granularity="1H",
+            output_csv="out.csv",
+            max_pages=0,
         )
 
 
@@ -151,6 +201,52 @@ def test_sorts_candles_ascending() -> None:
     assert lines[2].startswith("2024-05-01T12:00:00Z")
 
 
+def test_multi_page_download_accumulates_deduplicates_and_sorts() -> None:
+    _path, csv_text, requests = _run_download(
+        payloads=[_success_payload(), _success_payload_page_two()],
+        limit=2,
+        end_time="1714572000000",
+        max_pages=2,
+    )
+    lines = csv_text.splitlines()
+    second_query = parse_qs(urlparse(requests[1].full_url).query)
+
+    assert len(requests) == 2
+    assert second_query["startTime"] == ["1714564800001"]
+    assert lines == [
+        "timestamp,open,high,low,close,volume",
+        "2024-05-01T11:00:00Z,100,101,99,100.5,10",
+        "2024-05-01T12:00:00Z,999,999,999,999,999",
+        "2024-05-01T14:00:00Z,104,105,103,104.5,14",
+    ]
+
+
+def test_max_pages_guard_limits_public_requests() -> None:
+    _path, _csv_text, requests = _run_download(
+        payloads=[_success_payload(), _success_payload_page_two()],
+        limit=2,
+        end_time="1714572000000",
+        max_pages=1,
+    )
+
+    assert len(requests) == 1
+
+
+def test_backward_pagination_uses_end_time_cursor_when_no_start_time() -> None:
+    _path, _csv_text, requests = _run_download(
+        payloads=[_success_payload(), _success_payload_page_two()],
+        limit=2,
+        start_time=None,
+        end_time=None,
+        max_pages=2,
+    )
+    second_query = parse_qs(urlparse(requests[1].full_url).query)
+
+    assert len(requests) == 2
+    assert "startTime" not in second_query
+    assert second_query["endTime"] == ["1714561199999"]
+
+
 def test_empty_candle_response_writes_header_only() -> None:
     _path, csv_text, _requests = _run_download(
         {"code": "00000", "msg": "success", "data": []}
@@ -165,11 +261,17 @@ def test_raises_on_nonzero_bitget_code() -> None:
 
 
 def test_no_auth_headers_are_used() -> None:
-    _path, _csv_text, requests = _run_download()
-    headers = dict(requests[0].header_items())
+    _path, _csv_text, requests = _run_download(
+        payloads=[_success_payload(), _success_payload_page_two()],
+        limit=2,
+        end_time="1714572000000",
+        max_pages=2,
+    )
 
-    assert all(not key.upper().startswith("ACCESS") for key in headers)
-    assert all(not key.upper().startswith("OK-ACCESS") for key in headers)
+    for request in requests:
+        headers = dict(request.header_items())
+        assert all(not key.upper().startswith("ACCESS") for key in headers)
+        assert all(not key.upper().startswith("OK-ACCESS") for key in headers)
 
 
 def test_no_private_endpoint_strings_or_external_dependencies() -> None:
