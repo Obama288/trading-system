@@ -14,6 +14,7 @@ from .models import (
 from .outcomes import resolve_outcome
 from .sessions import session_label
 from .setup_a import detect_setup_a
+from .summary import SummaryMetrics, summarize_outcomes
 
 __all__ = [
     "atr",
@@ -31,5 +32,7 @@ __all__ = [
     "SetupId",
     "SignalObservation",
     "session_label",
+    "summarize_outcomes",
+    "SummaryMetrics",
     "true_range",
 ]

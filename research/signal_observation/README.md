@@ -80,5 +80,29 @@ Current scope:
 - no execution;
 - no runtime wiring.
 
+## A6 local fixture summary runner
+
+Stage 54-SQ-A6 connects the existing local research pieces:
+
+```text
+CSV candles -> Setup A detector -> outcome tracker -> summary metrics
+```
+
+Current scope:
+- local fixture CSVs only;
+- summary metrics over resolved `OutcomeResult` objects;
+- no real historical data download;
+- no exchange calls;
+- no API calls;
+- no private endpoints;
+- no runtime wiring;
+- no trading or live readiness.
+
+Run the local fixture summary with:
+
+```powershell
+python -m research.signal_observation.run_fixture_summary
+```
+
 The package exists to support later offline detector and outcome-tracker
 implementation without touching the money path.
