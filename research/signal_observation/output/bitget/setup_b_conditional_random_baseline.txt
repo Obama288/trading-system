@@ -1,0 +1,165 @@
+Setup B conditional random-entry baseline
+
+Scope: exploratory research only.
+No profitability, paper-trading, live-trading, or readiness claim.
+
+seed: 5403
+iterations: 1000
+timeout_bars_4h: 10
+
+Condition: volatility_regime=high
+  observation_count: 25
+  bucket_distribution:
+    BTCUSDT / long: 1
+    BTCUSDT / short: 6
+    ETHUSDT / long: 4
+    ETHUSDT / short: 7
+    SOLUSDT / long: 3
+    SOLUSDT / short: 4
+  eligible_candle_counts:
+    BTCUSDT: 395
+    ETHUSDT: 395
+    SOLUSDT: 395
+  target: 1r
+    setup_b_expectancy_r: 0.12
+    conditional_random_median_expectancy_r: 0.04
+    conditional_random_p75_expectancy_r: 0.1200
+    conditional_random_p90_expectancy_r: 0.200
+    setup_b_avg_mfe_r: 0.6744961806087753429246434716
+    conditional_random_median_avg_mfe_r: 0.6290757932894599284597770875
+    beats_conditional_random_median_expectancy: True
+    beats_conditional_random_p75_expectancy: False
+    beats_conditional_random_p90_expectancy: False
+    beats_conditional_random_median_mfe: True
+    meaningful_margin_over_p75: 0.0000
+    meaningful_margin_classification: weak
+  target: 1_5r
+    setup_b_expectancy_r: 0.18
+    conditional_random_median_expectancy_r: -0.04
+    conditional_random_p75_expectancy_r: 0.0600
+    conditional_random_p90_expectancy_r: 0.1600
+    setup_b_avg_mfe_r: 0.8542027427311640724276106108
+    conditional_random_median_avg_mfe_r: 0.686542815202523473686528568
+    beats_conditional_random_median_expectancy: True
+    beats_conditional_random_p75_expectancy: True
+    beats_conditional_random_p90_expectancy: True
+    beats_conditional_random_median_mfe: True
+    meaningful_margin_over_p75: 0.1200
+    meaningful_margin_classification: potentially_meaningful
+  target: 2r
+    setup_b_expectancy_r: 0.12
+    conditional_random_median_expectancy_r: -0.12
+    conditional_random_p75_expectancy_r: 0.00
+    conditional_random_p90_expectancy_r: 0.0800
+    setup_b_avg_mfe_r: 0.9092592974692458466876704852
+    conditional_random_median_avg_mfe_r: 0.713074196394255413754489450
+    beats_conditional_random_median_expectancy: True
+    beats_conditional_random_p75_expectancy: True
+    beats_conditional_random_p90_expectancy: True
+    beats_conditional_random_median_mfe: True
+    meaningful_margin_over_p75: 0.12
+    meaningful_margin_classification: potentially_meaningful
+
+Condition: slow_trend_state=below_sma_falling
+  observation_count: 26
+  bucket_distribution:
+    BTCUSDT / long: 1
+    BTCUSDT / short: 9
+    ETHUSDT / long: 1
+    ETHUSDT / short: 7
+    SOLUSDT / short: 8
+  eligible_candle_counts:
+    BTCUSDT: 519
+    ETHUSDT: 516
+    SOLUSDT: 590
+  target: 1r
+    setup_b_expectancy_r: 0.07692307692307692307692307692
+    conditional_random_median_expectancy_r: 0.0769230769230769230769230769
+    conditional_random_p75_expectancy_r: 0.1538461538461538461538461538
+    conditional_random_p90_expectancy_r: 0.2307692307692307692307692308
+    setup_b_avg_mfe_r: 0.7057602876635329341570094696
+    conditional_random_median_avg_mfe_r: 0.6054620876557115676265367955
+    beats_conditional_random_median_expectancy: True
+    beats_conditional_random_p75_expectancy: False
+    beats_conditional_random_p90_expectancy: False
+    beats_conditional_random_median_mfe: True
+    meaningful_margin_over_p75: -0.07692307692307692307692307688
+    meaningful_margin_classification: weak
+  target: 1_5r
+    setup_b_expectancy_r: 0.09615384615384615384615384615
+    conditional_random_median_expectancy_r: 0.03846153846153846153846153846
+    conditional_random_p75_expectancy_r: 0.1346153846153846153846153846
+    conditional_random_p90_expectancy_r: 0.2307692307692307692307692308
+    setup_b_avg_mfe_r: 0.8489052735953002518827728565
+    conditional_random_median_avg_mfe_r: 0.667102302719200372871248231
+    beats_conditional_random_median_expectancy: True
+    beats_conditional_random_p75_expectancy: False
+    beats_conditional_random_p90_expectancy: False
+    beats_conditional_random_median_mfe: True
+    meaningful_margin_over_p75: -0.03846153846153846153846153845
+    meaningful_margin_classification: weak
+  target: 2r
+    setup_b_expectancy_r: -0.07692307692307692307692307692
+    conditional_random_median_expectancy_r: 0
+    conditional_random_p75_expectancy_r: 0.07692307692307692307692307692
+    conditional_random_p90_expectancy_r: 0.1923076923076923076923076923
+    setup_b_avg_mfe_r: 0.872522859365146876389687485
+    conditional_random_median_avg_mfe_r: 0.7102028819358695742028951645
+    beats_conditional_random_median_expectancy: False
+    beats_conditional_random_p75_expectancy: False
+    beats_conditional_random_p90_expectancy: False
+    beats_conditional_random_median_mfe: True
+    meaningful_margin_over_p75: -0.1538461538461538461538461538
+    meaningful_margin_classification: weak
+
+Condition: volatility_regime=high AND slow_trend_state=below_sma_falling
+  observation_count: 18
+  bucket_distribution:
+    BTCUSDT / long: 1
+    BTCUSDT / short: 6
+    ETHUSDT / long: 1
+    ETHUSDT / short: 6
+    SOLUSDT / short: 4
+  eligible_candle_counts:
+    BTCUSDT: 256
+    ETHUSDT: 243
+    SOLUSDT: 244
+  target: 1r
+    setup_b_expectancy_r: 0.2222222222222222222222222222
+    conditional_random_median_expectancy_r: 0.1666666666666666666666666667
+    conditional_random_p75_expectancy_r: 0.2222222222222222222222222222
+    conditional_random_p90_expectancy_r: 0.3333333333333333333333333333
+    setup_b_avg_mfe_r: 0.7205611119868122936898964394
+    conditional_random_median_avg_mfe_r: 0.6726697742185797844938720065
+    beats_conditional_random_median_expectancy: True
+    beats_conditional_random_p75_expectancy: False
+    beats_conditional_random_p90_expectancy: False
+    beats_conditional_random_median_mfe: True
+    meaningful_margin_over_p75: 0E-28
+    meaningful_margin_classification: weak
+  target: 1_5r
+    setup_b_expectancy_r: 0.2777777777777777777777777778
+    conditional_random_median_expectancy_r: 0.08333333333333333333333333335
+    conditional_random_p75_expectancy_r: 0.1944444444444444444444444444
+    conditional_random_p90_expectancy_r: 0.3055555555555555555555555556
+    setup_b_avg_mfe_r: 0.9273260916660317526271102206
+    conditional_random_median_avg_mfe_r: 0.740914403537708657203257579
+    beats_conditional_random_median_expectancy: True
+    beats_conditional_random_p75_expectancy: True
+    beats_conditional_random_p90_expectancy: False
+    beats_conditional_random_median_mfe: True
+    meaningful_margin_over_p75: 0.0833333333333333333333333334
+    meaningful_margin_classification: potentially_meaningful
+  target: 2r
+    setup_b_expectancy_r: 0.1666666666666666666666666667
+    conditional_random_median_expectancy_r: 0
+    conditional_random_p75_expectancy_r: 0.1111111111111111111111111111
+    conditional_random_p90_expectancy_r: 0.2777777777777777777777777778
+    setup_b_avg_mfe_r: 0.961440382222476876914875795
+    conditional_random_median_avg_mfe_r: 0.775733660267238666360826912
+    beats_conditional_random_median_expectancy: True
+    beats_conditional_random_p75_expectancy: True
+    beats_conditional_random_p90_expectancy: False
+    beats_conditional_random_median_mfe: True
+    meaningful_margin_over_p75: 0.0555555555555555555555555556
+    meaningful_margin_classification: potentially_meaningful
