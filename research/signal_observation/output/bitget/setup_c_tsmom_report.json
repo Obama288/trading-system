@@ -66,18 +66,19 @@
     "gate_results": {
       "beats_random_median": true,
       "beats_random_p75": true,
-      "costs_do_not_dominate_gross": true,
-      "discovery_post_cost_moderate_gt_0": true,
+      "costs_do_not_dominate_volatility_targeted_gross": true,
+      "discovery_volatility_targeted_post_cost_moderate_gt_0": true,
       "two_of_three_symbols_positive": true,
-      "validation_post_cost_moderate_gte_0": true
+      "validation_volatility_targeted_post_cost_moderate_gte_0": true
     },
     "notes": [
       "PASS is research-only and not paper-ready",
       "funding costs excluded",
       "moderate cost is the primary gate"
     ],
-    "positive_symbol_count": 2,
+    "positive_symbol_count": 3,
     "primary_lookback_only": true,
+    "primary_metric": "volatility_targeted_post_cost_return",
     "sensitivity_better_than_primary": true
   },
   "known_limitations": [
@@ -119,7 +120,14 @@
           },
           "rebalance_observations": 1797,
           "sharpe_like": "0.01369736334167655651570663129",
-          "turnover": 949
+          "turnover": 949,
+          "volatility_targeted_cost_to_gross_ratio_moderate": "0.1383822452204500922872373107",
+          "volatility_targeted_gross_return": "150.7026979390373184692768748",
+          "volatility_targeted_post_cost_return": {
+            "conservative": "119.4208313866623970635444910",
+            "moderate": "129.8481202374540375321219521",
+            "optimistic": "140.2754090882456780006994131"
+          }
         },
         "full": {
           "average_interval_return": "-0.0002453134795307666483070570023",
@@ -149,7 +157,14 @@
           },
           "rebalance_observations": 2568,
           "sharpe_like": "-0.006826502955999699897792343278",
-          "turnover": 1385
+          "turnover": 1385,
+          "volatility_targeted_cost_to_gross_ratio_moderate": "0.2969020347062974863159803166",
+          "volatility_targeted_gross_return": "106.0907590303460209732496069",
+          "volatility_targeted_post_cost_return": {
+            "conservative": "58.84291570087816431037123008",
+            "moderate": "74.59219681070078319799735549",
+            "optimistic": "90.34147792052340208562348117"
+          }
         },
         "validation": {
           "average_interval_return": "-0.002009309775534224365908624093",
@@ -179,7 +194,14 @@
           },
           "rebalance_observations": 771,
           "sharpe_like": "-0.06207734464477043290207546323",
-          "turnover": 436
+          "turnover": 436,
+          "volatility_targeted_cost_to_gross_ratio_moderate": "0.2385904934517046036702210960",
+          "volatility_targeted_gross_return": "-44.61193890869129749602726646",
+          "volatility_targeted_post_cost_return": {
+            "conservative": "-60.57791568578423275317326062",
+            "moderate": "-55.25592342675325433412459589",
+            "optimistic": "-49.93393116772227591507593115"
+          }
         }
       },
       "per_symbol": {
@@ -212,7 +234,14 @@
             },
             "rebalance_observations": 599,
             "sharpe_like": "0.04257580707840751250583703258",
-            "turnover": 333
+            "turnover": 333,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1363356237266231258909654307",
+            "volatility_targeted_gross_return": "72.69775642684175434573893656",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "57.83081547787236106383235761",
+              "moderate": "62.78646246086215882446788390",
+              "optimistic": "67.74210944385195658510341023"
+            }
           },
           "ETHUSDT": {
             "average_interval_return": "0.0009536641039220070894106536269",
@@ -242,7 +271,14 @@
             },
             "rebalance_observations": 599,
             "sharpe_like": "0.02560767217170044239392842918",
-            "turnover": 311
+            "turnover": 311,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.09555991144572730749612273893",
+            "volatility_targeted_gross_return": "66.36685609738391222748271702",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "56.85383975998791113664327572",
+              "moderate": "60.02484520578657816692308946",
+              "optimistic": "63.19585065158524519720290316"
+            }
           },
           "SOLUSDT": {
             "average_interval_return": "-0.0005265412808207498180726458449",
@@ -272,7 +308,14 @@
             },
             "rebalance_observations": 599,
             "sharpe_like": "-0.01142647280880649338775678716",
-            "turnover": 305
+            "turnover": 305,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.3953633849559452901858500688",
+            "volatility_targeted_gross_return": "11.63808541481165189605522097",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "4.736176148802124863068857685",
+              "moderate": "7.036812570805300540730978765",
+              "optimistic": "9.337448992808476218393099967"
+            }
           }
         },
         "full": {
@@ -304,7 +347,14 @@
             },
             "rebalance_observations": 856,
             "sharpe_like": "0.01472065534332750173346064884",
-            "turnover": 487
+            "turnover": 487,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.2396756608793251092440195487",
+            "volatility_targeted_gross_return": "61.83839110291988298942982684",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "39.60665521996013164743412772",
+              "moderate": "47.01723384761338209476602738",
+              "optimistic": "54.42781247526663254209792718"
+            }
           },
           "ETHUSDT": {
             "average_interval_return": "0.0004708272105570623687640377610",
@@ -334,7 +384,14 @@
             },
             "rebalance_observations": 856,
             "sharpe_like": "0.01289990065540617969526091990",
-            "turnover": 445
+            "turnover": 445,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1365410600367270173077386930",
+            "volatility_targeted_gross_return": "67.94232125400878809709021539",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "54.02694640594147612001620923",
+              "moderate": "58.66540468863058011237421124",
+              "optimistic": "63.30386297131968410473221321"
+            }
           },
           "SOLUSDT": {
             "average_interval_return": "-0.001574151058961524890192068321",
@@ -364,7 +421,14 @@
             },
             "rebalance_observations": 856,
             "sharpe_like": "-0.03593015356202413562319457121",
-            "turnover": 453
+            "turnover": 453,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.3123893195119296801722347412",
+            "volatility_targeted_gross_return": "-23.68995332658265011327043414",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-34.79068592502344345707910660",
+              "moderate": "-31.09044172554317900914288247",
+              "optimistic": "-27.39019752606291456120665823"
+            }
           }
         },
         "validation": {
@@ -396,7 +460,14 @@
             },
             "rebalance_observations": 257,
             "sharpe_like": "-0.06098694717581654094873197614",
-            "turnover": 154
+            "turnover": 154,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.4521316985727581191163815017",
+            "volatility_targeted_gross_return": "-10.85936532392187135630910972",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-18.22416025791222941639822988",
+              "moderate": "-15.76922861324877672970185652",
+              "optimistic": "-13.31429696858532404300548306"
+            }
           },
           "ETHUSDT": {
             "average_interval_return": "-0.0006545397121106492564006427981",
@@ -426,7 +497,14 @@
             },
             "rebalance_observations": 257,
             "sharpe_like": "-0.01883557876886048050903794930",
-            "turnover": 134
+            "turnover": 134,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "1.862881994844196933576586081",
+            "volatility_targeted_gross_return": "1.575465156624875869607498320",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-2.826893354046435016627066552",
+              "moderate": "-1.359440517155998054548878286",
+              "optimistic": "0.1080123197344389075293099978"
+            }
           },
           "SOLUSDT": {
             "average_interval_return": "-0.004015856339530880019373134720",
@@ -456,25 +534,50 @@
             },
             "rebalance_observations": 257,
             "sharpe_like": "-0.1057592002311568993679852475",
-            "turnover": 148
+            "turnover": 148,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.07923495485964529045289919933",
+            "volatility_targeted_gross_return": "-35.32803874139430200932565514",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-39.52686207382556832014796428",
+              "moderate": "-38.12725429634847954987386121",
+              "optimistic": "-36.72764651887139077959975823"
+            }
           }
         }
       },
       "random_baseline": {
         "discovery": {
-          "median": "-0.690109349967842162684536576",
-          "p75": "0.3518900965453555668995186148",
-          "p90": "1.249874572398343306800181623"
+          "median": "-36.30150523983425505060970972",
+          "metric": "volatility_targeted_post_cost_return",
+          "p75": "12.03066768546926919104552809",
+          "p90": "58.16686028548011102776335115",
+          "raw_return_diagnostics": {
+            "median": "-0.690109349967842162684536576",
+            "p75": "0.3518900965453555668995186148",
+            "p90": "1.249874572398343306800181623"
+          }
         },
         "full": {
-          "median": "-0.9491502868697982495069976505",
-          "p75": "0.2434597444918480353508317017",
-          "p90": "1.415638867958035289721452932"
+          "median": "-54.7462483317588675203942933",
+          "metric": "volatility_targeted_post_cost_return",
+          "p75": "3.749596562652667831667911039",
+          "p90": "60.94179563551794366922608237",
+          "raw_return_diagnostics": {
+            "median": "-0.9491502868697982495069976505",
+            "p75": "0.2434597444918480353508317017",
+            "p90": "1.415638867958035289721452932"
+          }
         },
         "validation": {
-          "median": "-0.2777755546253368865030023760",
-          "p75": "0.3856285209172177017263508657",
-          "p90": "0.9211236350254653457619415528"
+          "median": "-17.43224935238312399918851520",
+          "metric": "volatility_targeted_post_cost_return",
+          "p75": "15.83390645773697137354720068",
+          "p90": "46.04890476702418180921713266",
+          "raw_return_diagnostics": {
+            "median": "-0.2777755546253368865030023760",
+            "p75": "0.3856285209172177017263508657",
+            "p90": "0.9211236350254653457619415528"
+          }
         }
       },
       "role": "sensitivity"
@@ -509,7 +612,14 @@
           },
           "rebalance_observations": 1797,
           "sharpe_like": "0.01166524957702006038506129550",
-          "turnover": 631
+          "turnover": 631,
+          "volatility_targeted_cost_to_gross_ratio_moderate": "0.1413581908667226729541555665",
+          "volatility_targeted_gross_return": "96.65081324801834907712810387",
+          "volatility_targeted_post_cost_return": {
+            "conservative": "76.15723708821232990635854454",
+            "moderate": "82.98842914148100296328173085",
+            "optimistic": "89.81962119474967602020491756"
+          }
         },
         "full": {
           "average_interval_return": "0.0005007045935249019402046482562",
@@ -539,7 +649,14 @@
           },
           "rebalance_observations": 2568,
           "sharpe_like": "0.01393447139690274651721863311",
-          "turnover": 929
+          "turnover": 929,
+          "volatility_targeted_cost_to_gross_ratio_moderate": "0.1516004575990618623027681617",
+          "volatility_targeted_gross_return": "136.0619250694833407030171529",
+          "volatility_targeted_post_cost_return": {
+            "conservative": "105.1213499159689285653844187",
+            "moderate": "115.4348749671403992779286620",
+            "optimistic": "125.7484000183118699904729076"
+          }
         },
         "validation": {
           "average_interval_return": "0.0006523333215980671199567635851",
@@ -569,7 +686,14 @@
           },
           "rebalance_observations": 771,
           "sharpe_like": "0.02011905221742586007157078002",
-          "turnover": 298
+          "turnover": 298,
+          "volatility_targeted_cost_to_gross_ratio_moderate": "0.1767183333308637531548667721",
+          "volatility_targeted_gross_return": "39.41111182146499162588904904",
+          "volatility_targeted_post_cost_return": {
+            "conservative": "28.96411282775659865902587333",
+            "moderate": "32.44644582565939631464693189",
+            "optimistic": "35.92877882356219397026799044"
+          }
         }
       },
       "per_symbol": {
@@ -602,7 +726,14 @@
             },
             "rebalance_observations": 599,
             "sharpe_like": "0.008085493212918827500704641590",
-            "turnover": 193
+            "turnover": 193,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.2449697980107749786844146493",
+            "volatility_targeted_gross_return": "24.01967532603288011697656310",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "15.19353280667887470708876839",
+              "moderate": "18.13558031313020984371803329",
+              "optimistic": "21.07762781958154498034729821"
+            }
           },
           "ETHUSDT": {
             "average_interval_return": "0.001495060642214576333948183086",
@@ -632,7 +763,14 @@
             },
             "rebalance_observations": 599,
             "sharpe_like": "0.04016441891759411012671834461",
-            "turnover": 203
+            "turnover": 203,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.06491401839030598487980750182",
+            "volatility_targeted_gross_return": "64.99232711171180258007122012",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "58.66395743567413927037750072",
+              "moderate": "60.77341399435336037360874055",
+              "optimistic": "62.88287055303258147683998026"
+            }
           },
           "SOLUSDT": {
             "average_interval_return": "-0.0003986139822881561542913192890",
@@ -662,7 +800,14 @@
             },
             "rebalance_observations": 599,
             "sharpe_like": "-0.008650080927180227650776026274",
-            "turnover": 235
+            "turnover": 235,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.4659594359228169184140453923",
+            "volatility_targeted_gross_return": "7.638810810273666380080320647",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "2.299746845859315928892275546",
+              "moderate": "4.079434833997432745954957178",
+              "optimistic": "5.859122822135549563017638895"
+            }
           }
         },
         "full": {
@@ -694,7 +839,14 @@
             },
             "rebalance_observations": 856,
             "sharpe_like": "0.02092829650741426493803000909",
-            "turnover": 287
+            "turnover": 287,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1772933528134253804818479842",
+            "volatility_targeted_gross_return": "49.44891848413493285236137254",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "36.29847165755986325526625410",
+              "moderate": "40.68195393308488645429796028",
+              "optimistic": "45.06543620860990965332966638"
+            }
           },
           "ETHUSDT": {
             "average_interval_return": "0.0008758079520892556432546354405",
@@ -724,7 +876,14 @@
             },
             "rebalance_observations": 856,
             "sharpe_like": "0.02400063405746330262570905584",
-            "turnover": 301
+            "turnover": 301,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1036312830517089058953879049",
+            "volatility_targeted_gross_return": "60.83681814007909647774377495",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "51.37992185911928278726945571",
+              "moderate": "54.53222061943922068409422880",
+              "optimistic": "57.68451937975915858091900179"
+            }
           },
           "SOLUSDT": {
             "average_interval_return": "0.0001040561497561269480549148259",
@@ -754,7 +913,14 @@
             },
             "rebalance_observations": 856,
             "sharpe_like": "0.002373565200365838464579716007",
-            "turnover": 341
+            "turnover": 341,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.2155279102823526520022900785",
+            "volatility_targeted_gross_return": "25.77618844526931137291200538",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "17.44295639928978252284870809",
+              "moderate": "20.22070041461629213953647380",
+              "optimistic": "22.99844442994280175622423955"
+            }
           }
         },
         "validation": {
@@ -786,7 +952,14 @@
             },
             "rebalance_observations": 257,
             "sharpe_like": "0.05608870059502994097334076273",
-            "turnover": 94
+            "turnover": 94,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1133682791982293168729640243",
+            "volatility_targeted_gross_return": "25.42924315810205273538480944",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "21.10493885088098854817748576",
+              "moderate": "22.54637361995467661057992700",
+              "optimistic": "23.98780838902836467298236822"
+            }
           },
           "ETHUSDT": {
             "average_interval_return": "-0.0005675086291755968615135942852",
@@ -816,7 +989,14 @@
             },
             "rebalance_observations": 257,
             "sharpe_like": "-0.01633037805574710640277927351",
-            "turnover": 98
+            "turnover": 98,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.5019082903007101098386901842",
+            "volatility_targeted_gross_return": "-4.155508971632706102327445158",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-7.284035576554856483108045000",
+              "moderate": "-6.241193374914139689514511725",
+              "optimistic": "-5.198351173273422895920978436"
+            }
           },
           "SOLUSDT": {
             "average_interval_return": "0.001275649181252335423951390448",
@@ -846,25 +1026,50 @@
             },
             "rebalance_observations": 257,
             "sharpe_like": "0.03342642928707222142493823512",
-            "turnover": 106
+            "turnover": 106,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1100551631303818795012099907",
+            "volatility_targeted_gross_return": "18.13737763499564499283168472",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "15.14320955343046659395643255",
+              "moderate": "16.14126558061885939358151664",
+              "optimistic": "17.13932160780725219320660067"
+            }
           }
         }
       },
       "random_baseline": {
         "discovery": {
-          "median": "-0.7020889042404821238989811785",
-          "p75": "0.3647698298204615913890990702",
-          "p90": "1.249874572398343306800181623"
+          "median": "-36.30150523983425505060970972",
+          "metric": "volatility_targeted_post_cost_return",
+          "p75": "11.74204992482635266866404073",
+          "p90": "58.05104049959549487037434352",
+          "raw_return_diagnostics": {
+            "median": "-0.7020889042404821238989811785",
+            "p75": "0.3647698298204615913890990702",
+            "p90": "1.249874572398343306800181623"
+          }
         },
         "full": {
-          "median": "-0.964201672997346296862298119",
-          "p75": "0.2434597444918480353508317017",
-          "p90": "1.396890080951525927642185384"
+          "median": "-54.1831275700871638056665374",
+          "metric": "volatility_targeted_post_cost_return",
+          "p75": "3.749596562652667831667911039",
+          "p90": "60.15950585384755594948403843",
+          "raw_return_diagnostics": {
+            "median": "-0.964201672997346296862298119",
+            "p75": "0.2434597444918480353508317017",
+            "p90": "1.396890080951525927642185384"
+          }
         },
         "validation": {
-          "median": "-0.2777755546253368865030023760",
-          "p75": "0.3856285209172177017263508657",
-          "p90": "0.9186488975714083145976005517"
+          "median": "-17.32396734341217941780797602",
+          "metric": "volatility_targeted_post_cost_return",
+          "p75": "15.85773014455758246561193029",
+          "p90": "45.88377388969573638729685609",
+          "raw_return_diagnostics": {
+            "median": "-0.2777755546253368865030023760",
+            "p75": "0.3856285209172177017263508657",
+            "p90": "0.9186488975714083145976005517"
+          }
         }
       },
       "role": "primary"
@@ -899,7 +1104,14 @@
           },
           "rebalance_observations": 1797,
           "sharpe_like": "0.007200285233096506324685712779",
-          "turnover": 529
+          "turnover": 529,
+          "volatility_targeted_cost_to_gross_ratio_moderate": "0.1893331964166246577743383428",
+          "volatility_targeted_gross_return": "62.27049680506419251423262653",
+          "volatility_targeted_post_cost_return": {
+            "conservative": "44.58568850123316705214237096",
+            "moderate": "50.48062460251017553950578953",
+            "optimistic": "56.37556070378718402686920810"
+          }
         },
         "full": {
           "average_interval_return": "-0.0003748156541571131457784238417",
@@ -929,7 +1141,14 @@
           },
           "rebalance_observations": 2568,
           "sharpe_like": "-0.01043057141182925594076558576",
-          "turnover": 781
+          "turnover": 781,
+          "volatility_targeted_cost_to_gross_ratio_moderate": "1.684160243457509224542386990",
+          "volatility_targeted_gross_return": "-10.55773778289653982149859714",
+          "volatility_targeted_post_cost_return": {
+            "conservative": "-37.22912113510191008491226205",
+            "moderate": "-28.33866001770011999710770701",
+            "optimistic": "-19.44819890029832990930315205"
+          }
         },
         "validation": {
           "average_interval_return": "-0.001875177045199412859104143803",
@@ -959,7 +1178,14 @@
           },
           "rebalance_observations": 771,
           "sharpe_like": "-0.05791891349979077343751437914",
-          "turnover": 252
+          "turnover": 252,
+          "volatility_targeted_cost_to_gross_ratio_moderate": "0.08226273870491357936811131283",
+          "volatility_targeted_gross_return": "-72.82823458796073233573122358",
+          "volatility_targeted_post_cost_return": {
+            "conservative": "-81.81480963633507713705463293",
+            "moderate": "-78.81928462021029553661349647",
+            "optimistic": "-75.82375960408551393617236005"
+          }
         }
       },
       "per_symbol": {
@@ -992,7 +1218,14 @@
             },
             "rebalance_observations": 599,
             "sharpe_like": "-0.03099200638611975750438116612",
-            "turnover": 195
+            "turnover": 195,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.3246339595115009612129092306",
+            "volatility_targeted_gross_return": "-17.31459086499313445176558302",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-25.74594714972971287478788524",
+              "moderate": "-22.93549505481752006711378447",
+              "optimistic": "-20.12504295990532725943968380"
+            }
           },
           "ETHUSDT": {
             "average_interval_return": "0.002081231081891893046651428265",
@@ -1022,7 +1255,14 @@
             },
             "rebalance_observations": 599,
             "sharpe_like": "0.05595415128342342329883174716",
-            "turnover": 183
+            "turnover": 183,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.05126820768617437416835343970",
+            "volatility_targeted_gross_return": "75.40969925310399119515345896",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "69.61051906881386518864093010",
+              "moderate": "71.54357913024390719081177307",
+              "optimistic": "73.47663919167394919298261598"
+            }
           },
           "SOLUSDT": {
             "average_interval_return": "-0.0004680060007864331859403168656",
@@ -1052,7 +1292,14 @@
             },
             "rebalance_observations": 599,
             "sharpe_like": "-0.01015605919346699596463968198",
-            "turnover": 151
+            "turnover": 151,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.5515290219514167013849483357",
+            "volatility_targeted_gross_return": "4.175388416953335770844750614",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "0.721116582149014738289326108",
+              "moderate": "1.872540527083788415807800945",
+              "optimistic": "3.023964472018562093326275770"
+            }
           }
         },
         "full": {
@@ -1084,7 +1331,14 @@
             },
             "rebalance_observations": 856,
             "sharpe_like": "-0.01953397557924037456226509559",
-            "turnover": 265
+            "turnover": 265,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.5636807859455833392532929800",
+            "volatility_targeted_gross_return": "-13.91641362480744260478137126",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-25.68303607917036798540295042",
+              "moderate": "-21.76082859438272619186242402",
+              "optimistic": "-17.83862110959508439832189766"
+            }
           },
           "ETHUSDT": {
             "average_interval_return": "0.0006853741704018826493735717932",
@@ -1114,7 +1368,14 @@
             },
             "rebalance_observations": 856,
             "sharpe_like": "0.01877988943672759462608822255",
-            "turnover": 277
+            "turnover": 277,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1576171731118331416378708790",
+            "volatility_targeted_gross_return": "37.83110828377845238345716447",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "28.88685976871323271243758017",
+              "moderate": "31.86827594040163926944410832",
+              "optimistic": "34.84969211209004582645063639"
+            }
           },
           "SOLUSDT": {
             "average_interval_return": "-0.001322351908436850696067557027",
@@ -1144,7 +1405,14 @@
             },
             "rebalance_observations": 856,
             "sharpe_like": "-0.03017707364773633793199908216",
-            "turnover": 239
+            "turnover": 239,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1152710917209707930102723108",
+            "volatility_targeted_gross_return": "-34.47243244186754960017439036",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-40.43294482464477481194689178",
+              "moderate": "-38.44610736371903307468939132",
+              "optimistic": "-36.45926990279329133743189088"
+            }
           }
         },
         "validation": {
@@ -1176,7 +1444,14 @@
             },
             "rebalance_observations": 257,
             "sharpe_like": "0.01148381454560801446124927347",
-            "turnover": 70
+            "turnover": 70,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.6543245459525811073550156445",
+            "volatility_targeted_gross_return": "3.398177240185691846984211755",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "0.062911070559344889384934807",
+              "moderate": "1.174666460434793875251360467",
+              "optimistic": "2.286421850310242861117786115"
+            }
           },
           "ETHUSDT": {
             "average_interval_return": "-0.002568004389841371155954973064",
@@ -1206,7 +1481,14 @@
             },
             "rebalance_observations": 257,
             "sharpe_like": "-0.07408917189255051481600054452",
-            "turnover": 94
+            "turnover": 94,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.05579539217498129989570440412",
+            "volatility_targeted_gross_return": "-37.57859096932553881169629447",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-40.72365930010063247620334993",
+              "moderate": "-39.67530318984226792136766474",
+              "optimistic": "-38.62694707958390336653197957"
+            }
           },
           "SOLUSDT": {
             "average_interval_return": "-0.003313609490859419134068400828",
@@ -1236,33 +1518,60 @@
             },
             "rebalance_observations": 257,
             "sharpe_like": "-0.08710929706863082958592674059",
-            "turnover": 88
+            "turnover": 88,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.04323211489945080796459102325",
+            "volatility_targeted_gross_return": "-38.64782085882088537101914096",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-41.15406140679378955023621790",
+              "moderate": "-40.31864789080282149049719226",
+              "optimistic": "-39.48323437481185343075816666"
+            }
           }
         }
       },
       "random_baseline": {
         "discovery": {
-          "median": "-0.714278748328309691182516129",
-          "p75": "0.3417581572063147395465236877",
-          "p90": "1.241564778349102448015687627"
+          "median": "-37.35648734389874882950672984",
+          "metric": "volatility_targeted_post_cost_return",
+          "p75": "7.774880448982085642243395417",
+          "p90": "56.93054668517078668684648269",
+          "raw_return_diagnostics": {
+            "median": "-0.714278748328309691182516129",
+            "p75": "0.3417581572063147395465236877",
+            "p90": "1.241564778349102448015687627"
+          }
         },
         "full": {
-          "median": "-0.981097133179079931877295538",
-          "p75": "0.2154878363752807541496308913",
-          "p90": "1.328130878362092603946597286"
+          "median": "-54.7462483317588675203942933",
+          "metric": "volatility_targeted_post_cost_return",
+          "p75": "2.834241521416615851680968399",
+          "p90": "59.62580126176789565579591771",
+          "raw_return_diagnostics": {
+            "median": "-0.981097133179079931877295538",
+            "p75": "0.2154878363752807541496308913",
+            "p90": "1.328130878362092603946597286"
+          }
         },
         "validation": {
-          "median": "-0.2837704964501612498791099588",
-          "p75": "0.3756613143088427703753111312",
-          "p90": "0.9100437362019627139107472151"
+          "median": "-17.94035666070686275718815320",
+          "metric": "volatility_targeted_post_cost_return",
+          "p75": "14.98973625763980119821161663",
+          "p90": "45.04346791292594815129185635",
+          "raw_return_diagnostics": {
+            "median": "-0.2837704964501612498791099588",
+            "p75": "0.3756613143088427703753111312",
+            "p90": "0.9100437362019627139107472151"
+          }
         }
       },
       "role": "sensitivity"
     }
   },
   "primary_lookback": 40,
+  "primary_metric": "volatility_targeted_post_cost_return",
   "random_iterations": 1000,
   "random_seed": 5403,
+  "raw_return_metrics_are_diagnostic_only": true,
   "rebalance_bars": 6,
   "schema": "setup_c_tsmom_report_v1",
   "scope": "research_only_local_4h_ohlcv",

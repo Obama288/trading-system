@@ -143,7 +143,6 @@ def build_tsmom_intervals(
             direction = tsmom_direction(lookback_value)
             proxy = _volatility_proxy_from_atr(candles, atr_values, index)
             if proxy is None:
-                previous_direction = direction
                 continue
             interval_return = (candles[next_index].close / candles[index].close) - Decimal("1")
             signed_return = Decimal(direction) * interval_return
@@ -241,6 +240,8 @@ def analyze_tsmom(
         "sensitivity_lookbacks": [20, 60],
         "rebalance_bars": REBALANCE_BARS,
         "volatility_proxy": "ATR(20) / close",
+        "primary_metric": "volatility_targeted_post_cost_return",
+        "raw_return_metrics_are_diagnostic_only": True,
         "random_seed": seed,
         "random_iterations": random_iterations,
         "cost_bps_per_turnover": _json_safe(COST_BPS),
@@ -269,11 +270,20 @@ def summarize_intervals(intervals: Sequence[TsmomInterval]) -> dict[str, object]
         scenario: [item.post_cost_returns[scenario] for item in intervals]
         for scenario in COST_SCENARIOS
     }
+    scenario_normalized_returns = {
+        scenario: [item.post_cost_normalized_returns[scenario] for item in intervals]
+        for scenario in COST_SCENARIOS
+    }
     direction_counts = Counter(item.direction for item in intervals)
     turnover_total = sum(item.turnover_units for item in intervals)
     gross_total = sum(gross_returns, Decimal("0"))
+    normalized_gross_total = sum(normalized_returns, Decimal("0"))
     moderate_cost_total = sum(
         cost_return(item.turnover_units, COST_BPS["moderate"])
+        for item in intervals
+    )
+    moderate_normalized_cost_total = sum(
+        cost_return(item.turnover_units, COST_BPS["moderate"]) / item.vol_proxy
         for item in intervals
     )
     return _json_safe(
@@ -287,9 +297,14 @@ def summarize_intervals(intervals: Sequence[TsmomInterval]) -> dict[str, object]
             "direction_changes": sum(1 for item in intervals if item.turnover_units > 0),
             "turnover": turnover_total,
             "gross_return": gross_total,
+            "volatility_targeted_gross_return": normalized_gross_total,
             "post_cost_return": {
                 scenario: sum(values, Decimal("0"))
                 for scenario, values in scenario_returns.items()
+            },
+            "volatility_targeted_post_cost_return": {
+                scenario: sum(values, Decimal("0"))
+                for scenario, values in scenario_normalized_returns.items()
             },
             "average_interval_return": _average(gross_returns),
             "average_normalized_return": _average(normalized_returns),
@@ -304,6 +319,11 @@ def summarize_intervals(intervals: Sequence[TsmomInterval]) -> dict[str, object]
             "cost_to_gross_ratio_moderate": (
                 moderate_cost_total / abs(gross_total)
                 if gross_total != Decimal("0")
+                else None
+            ),
+            "volatility_targeted_cost_to_gross_ratio_moderate": (
+                moderate_normalized_cost_total / abs(normalized_gross_total)
+                if normalized_gross_total != Decimal("0")
                 else None
             ),
             "date_range": _date_range(intervals),
@@ -327,22 +347,21 @@ def random_baseline_summary(
         "discovery": [],
         "validation": [],
     }
+    raw_split_values: dict[str, list[Decimal]] = {
+        "full": [],
+        "discovery": [],
+        "validation": [],
+    }
     for iteration in range(iterations):
         rng = random.Random(seed + iteration)
         randomized = _randomized_intervals(template_intervals, rng)
-        split_values["full"].append(_post_cost_total(randomized, "moderate"))
-        split_values["discovery"].append(
-            _post_cost_total(
-                [item for item in randomized if item.split == "discovery"],
-                "moderate",
-            )
-        )
-        split_values["validation"].append(
-            _post_cost_total(
-                [item for item in randomized if item.split == "validation"],
-                "moderate",
-            )
-        )
+        for split in ("full", "discovery", "validation"):
+            if split == "full":
+                scoped = randomized
+            else:
+                scoped = [item for item in randomized if item.split == split]
+            split_values[split].append(_post_cost_normalized_total(scoped, "moderate"))
+            raw_split_values[split].append(_post_cost_total(scoped, "moderate"))
 
     return _json_safe(
         {
@@ -350,6 +369,12 @@ def random_baseline_summary(
                 "median": _median(values),
                 "p75": _percentile(values, Decimal("0.75")),
                 "p90": _percentile(values, Decimal("0.90")),
+                "metric": "volatility_targeted_post_cost_return",
+                "raw_return_diagnostics": {
+                    "median": _median(raw_split_values[split]),
+                    "p75": _percentile(raw_split_values[split], Decimal("0.75")),
+                    "p90": _percentile(raw_split_values[split], Decimal("0.90")),
+                },
             }
             for split, values in split_values.items()
         }
@@ -377,45 +402,50 @@ def evaluate_c1_gate(lookback_results: dict[str, object]) -> dict[str, object]:
 
     discovery = metrics["discovery"]  # type: ignore[index]
     validation = metrics["validation"]  # type: ignore[index]
-    discovery_post_cost = Decimal(str(discovery["post_cost_return"]["moderate"]))
-    validation_post_cost = Decimal(str(validation["post_cost_return"]["moderate"]))
+    discovery_post_cost = Decimal(
+        str(discovery["volatility_targeted_post_cost_return"]["moderate"])
+    )
+    validation_post_cost = Decimal(
+        str(validation["volatility_targeted_post_cost_return"]["moderate"])
+    )
     random_discovery = random_summary["discovery"]  # type: ignore[index]
     random_median = Decimal(str(random_discovery["median"]))
     random_p75 = Decimal(str(random_discovery["p75"]))
     positive_symbols = sum(
         1
         for symbol_metrics in per_symbol_full.values()
-        if Decimal(str(symbol_metrics["post_cost_return"]["moderate"])) > Decimal("0")
+        if Decimal(str(symbol_metrics["volatility_targeted_post_cost_return"]["moderate"]))
+        > Decimal("0")
     )
-    cost_ratio_value = metrics["full"]["cost_to_gross_ratio_moderate"]  # type: ignore[index]
+    cost_ratio_value = metrics["full"]["volatility_targeted_cost_to_gross_ratio_moderate"]  # type: ignore[index]
     costs_do_not_dominate = (
         cost_ratio_value is not None
         and Decimal(str(cost_ratio_value)) <= Decimal("0.50")
     )
     gate_results = {
-        "discovery_post_cost_moderate_gt_0": discovery_post_cost > Decimal("0"),
+        "discovery_volatility_targeted_post_cost_moderate_gt_0": discovery_post_cost > Decimal("0"),
         "beats_random_median": discovery_post_cost > random_median,
         "beats_random_p75": discovery_post_cost > random_p75,
         "two_of_three_symbols_positive": positive_symbols >= 2,
-        "costs_do_not_dominate_gross": costs_do_not_dominate,
-        "validation_post_cost_moderate_gte_0": validation_post_cost >= Decimal("0"),
+        "costs_do_not_dominate_volatility_targeted_gross": costs_do_not_dominate,
+        "validation_volatility_targeted_post_cost_moderate_gte_0": validation_post_cost >= Decimal("0"),
     }
 
     sensitivity_better_than_primary = _sensitivity_better_than_primary(lookback_results)
     passes = (
-        gate_results["discovery_post_cost_moderate_gt_0"]
+        gate_results["discovery_volatility_targeted_post_cost_moderate_gt_0"]
         and gate_results["beats_random_p75"]
         and gate_results["two_of_three_symbols_positive"]
-        and gate_results["costs_do_not_dominate_gross"]
-        and gate_results["validation_post_cost_moderate_gte_0"]
+        and gate_results["costs_do_not_dominate_volatility_targeted_gross"]
+        and gate_results["validation_volatility_targeted_post_cost_moderate_gte_0"]
     )
     if passes:
         decision = RESULT_PASS
     elif (
-        not gate_results["discovery_post_cost_moderate_gt_0"]
+        not gate_results["discovery_volatility_targeted_post_cost_moderate_gt_0"]
         or not gate_results["beats_random_median"]
         or not gate_results["two_of_three_symbols_positive"]
-        or not gate_results["costs_do_not_dominate_gross"]
+        or not gate_results["costs_do_not_dominate_volatility_targeted_gross"]
     ):
         decision = RESULT_FAIL
     else:
@@ -428,6 +458,7 @@ def evaluate_c1_gate(lookback_results: dict[str, object]) -> dict[str, object]:
         {
             "decision": decision,
             "primary_lookback_only": True,
+            "primary_metric": "volatility_targeted_post_cost_return",
             "gate_results": gate_results,
             "positive_symbol_count": positive_symbols,
             "sensitivity_better_than_primary": sensitivity_better_than_primary,
@@ -484,6 +515,8 @@ def format_tsmom_report(report: dict[str, object]) -> str:
         f"random_seed: {report['random_seed']}",
         f"random_iterations: {report['random_iterations']}",
         "funding_costs_excluded: True",
+        "primary_metric: volatility_targeted_post_cost_return",
+        "raw_return_metrics: diagnostic_only",
         "",
         "Lookback summaries",
     ]
@@ -499,19 +532,28 @@ def format_tsmom_report(report: dict[str, object]) -> str:
         lines.extend(
             [
                 f"lookback: {lookback} ({role})",
-                f"  discovery_post_cost_moderate: {discovery['post_cost_return']['moderate']}",
-                f"  validation_post_cost_moderate: {validation['post_cost_return']['moderate']}",
-                f"  full_post_cost_moderate: {full['post_cost_return']['moderate']}",
-                f"  discovery_random_median/p75/p90: "
+                "  discovery_volatility_targeted_post_cost_moderate: "
+                f"{discovery['volatility_targeted_post_cost_return']['moderate']}",
+                "  validation_volatility_targeted_post_cost_moderate: "
+                f"{validation['volatility_targeted_post_cost_return']['moderate']}",
+                "  full_volatility_targeted_post_cost_moderate: "
+                f"{full['volatility_targeted_post_cost_return']['moderate']}",
+                f"  discovery_volatility_targeted_random_median/p75/p90: "
                 f"{random_summary['median']} / {random_summary['p75']} / {random_summary['p90']}",
+                f"  raw_discovery_post_cost_moderate: {discovery['post_cost_return']['moderate']}",
+                f"  raw_validation_post_cost_moderate: {validation['post_cost_return']['moderate']}",
+                f"  raw_full_post_cost_moderate: {full['post_cost_return']['moderate']}",
                 f"  turnover: {full['turnover']}",
-                f"  cost_to_gross_ratio_moderate: {full['cost_to_gross_ratio_moderate']}",
+                "  volatility_targeted_cost_to_gross_ratio_moderate: "
+                f"{full['volatility_targeted_cost_to_gross_ratio_moderate']}",
+                f"  raw_cost_to_gross_ratio_moderate: {full['cost_to_gross_ratio_moderate']}",
             ]
         )
-        lines.append("  per_symbol_full_post_cost_moderate:")
+        lines.append("  per_symbol_full_volatility_targeted_post_cost_moderate:")
         for symbol, symbol_metrics in sorted(item["per_symbol"]["full"].items()):
             lines.append(
-                f"    {symbol}: {symbol_metrics['post_cost_return']['moderate']}"
+                f"    {symbol}: "
+                f"{symbol_metrics['volatility_targeted_post_cost_return']['moderate']}"
             )
 
     lines.extend(["", "Primary gate"])
@@ -593,6 +635,13 @@ def _split_by_timestamp(timestamps: Sequence[str]) -> dict[str, str]:
 
 def _post_cost_total(intervals: Sequence[TsmomInterval], scenario: str) -> Decimal:
     return sum((item.post_cost_returns[scenario] for item in intervals), Decimal("0"))
+
+
+def _post_cost_normalized_total(intervals: Sequence[TsmomInterval], scenario: str) -> Decimal:
+    return sum(
+        (item.post_cost_normalized_returns[scenario] for item in intervals),
+        Decimal("0"),
+    )
 
 
 def _average(values: Sequence[Decimal]) -> Decimal | None:
@@ -701,12 +750,14 @@ def _sign(value: Decimal) -> int:
 def _sensitivity_better_than_primary(lookback_results: dict[str, object]) -> bool:
     primary = lookback_results[str(PRIMARY_LOOKBACK)]  # type: ignore[index]
     primary_value = Decimal(
-        str(primary["metrics"]["discovery"]["post_cost_return"]["moderate"])  # type: ignore[index]
+        str(
+            primary["metrics"]["discovery"]["volatility_targeted_post_cost_return"]["moderate"]  # type: ignore[index]
+        )
     )
     for lookback in ("20", "60"):
         value = Decimal(
             str(
-                lookback_results[lookback]["metrics"]["discovery"]["post_cost_return"]["moderate"]  # type: ignore[index]
+                lookback_results[lookback]["metrics"]["discovery"]["volatility_targeted_post_cost_return"]["moderate"]  # type: ignore[index]
             )
         )
         if value > primary_value:

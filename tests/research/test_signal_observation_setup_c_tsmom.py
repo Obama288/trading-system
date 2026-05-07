@@ -5,6 +5,7 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 
+import research.signal_observation.setup_c_tsmom as setup_c_tsmom
 from research.signal_observation.candles import Candle
 from research.signal_observation.setup_c_tsmom import (
     COST_BPS,
@@ -16,6 +17,7 @@ from research.signal_observation.setup_c_tsmom import (
     close_to_close_return,
     cost_return,
     evaluate_c1_gate,
+    format_tsmom_report,
     random_baseline_summary,
     random_directions,
     rebalance_indices,
@@ -56,10 +58,11 @@ def _interval(
     direction: int = 1,
     turnover: int = 1,
     interval_return: str = "0.01",
+    vol_proxy: str = "0.02",
 ) -> TsmomInterval:
     raw_return = Decimal(interval_return)
     signed_return = Decimal(direction) * raw_return
-    vol = Decimal("0.02")
+    vol = Decimal(vol_proxy)
     post_cost = {
         scenario: signed_return - cost_return(turnover, bps)
         for scenario, bps in COST_BPS.items()
@@ -89,32 +92,52 @@ def _lookback_result(
     random_median: str,
     random_p75: str,
     symbol_values: tuple[str, str, str],
+    vt_discovery: str | None = None,
+    vt_validation: str | None = None,
+    vt_random_median: str | None = None,
+    vt_random_p75: str | None = None,
+    vt_symbol_values: tuple[str, str, str] | None = None,
     cost_ratio: str | None = "0.25",
+    vt_cost_ratio: str | None = "0.25",
 ) -> dict[str, object]:
-    def metrics(value: str) -> dict[str, object]:
+    vt_discovery = discovery if vt_discovery is None else vt_discovery
+    vt_validation = validation if vt_validation is None else vt_validation
+    vt_random_median = random_median if vt_random_median is None else vt_random_median
+    vt_random_p75 = random_p75 if vt_random_p75 is None else vt_random_p75
+    vt_symbol_values = symbol_values if vt_symbol_values is None else vt_symbol_values
+
+    def metrics(value: str, vt_value: str) -> dict[str, object]:
         return {
             "post_cost_return": {"moderate": value},
+            "volatility_targeted_post_cost_return": {"moderate": vt_value},
             "cost_to_gross_ratio_moderate": cost_ratio,
+            "volatility_targeted_cost_to_gross_ratio_moderate": vt_cost_ratio,
+            "turnover": 0,
         }
 
     return {
         "metrics": {
-            "full": metrics(discovery),
-            "discovery": metrics(discovery),
-            "validation": metrics(validation),
+            "full": metrics(discovery, vt_discovery),
+            "discovery": metrics(discovery, vt_discovery),
+            "validation": metrics(validation, vt_validation),
         },
         "per_symbol": {
             "full": {
-                "BTCUSDT": metrics(symbol_values[0]),
-                "ETHUSDT": metrics(symbol_values[1]),
-                "SOLUSDT": metrics(symbol_values[2]),
+                "BTCUSDT": metrics(symbol_values[0], vt_symbol_values[0]),
+                "ETHUSDT": metrics(symbol_values[1], vt_symbol_values[1]),
+                "SOLUSDT": metrics(symbol_values[2], vt_symbol_values[2]),
             }
         },
         "random_baseline": {
             "discovery": {
-                "median": random_median,
-                "p75": random_p75,
-                "p90": random_p75,
+                "median": vt_random_median,
+                "p75": vt_random_p75,
+                "p90": vt_random_p75,
+                "raw_return_diagnostics": {
+                    "median": random_median,
+                    "p75": random_p75,
+                    "p90": random_p75,
+                },
             }
         },
     }
@@ -222,6 +245,49 @@ def test_random_baseline_samples_per_rebalance_and_is_deterministic() -> None:
     assert set(first) == {"full", "discovery", "validation"}
 
 
+def test_random_baseline_summary_uses_volatility_targeted_metric() -> None:
+    template = [
+        _interval(
+            symbol="BTCUSDT",
+            timestamp="2026-01-01T00:00:00+00:00",
+            interval_return="0",
+            vol_proxy="0.02",
+        )
+    ]
+
+    summary = random_baseline_summary(
+        template,
+        iterations=RANDOM_ITERATIONS,
+        seed=5403,
+    )
+
+    assert summary["full"]["metric"] == "volatility_targeted_post_cost_return"
+    assert summary["full"]["median"] == "-0.02"
+    assert summary["full"]["raw_return_diagnostics"]["median"] == "-0.0004"
+
+
+def test_skipped_invalid_vol_proxy_does_not_update_turnover_state(monkeypatch) -> None:
+    candles = _candles(75, start="100", step="1")
+
+    def proxy_or_skip(
+        candles_arg: list[Candle],
+        atr_values: list[Decimal | None],
+        index: int,
+    ) -> Decimal | None:
+        if index == 60:
+            return None
+        return Decimal("0.02")
+
+    monkeypatch.setattr(setup_c_tsmom, "_volatility_proxy_from_atr", proxy_or_skip)
+
+    intervals = build_tsmom_intervals({"BTCUSDT": candles}, lookback=40)
+
+    assert len(intervals) == 1
+    assert intervals[0].timestamp == candles[66].timestamp.isoformat()
+    assert intervals[0].direction == 1
+    assert intervals[0].turnover_units == 1
+
+
 def test_c1_pass_gate_requires_2_of_3_positive_symbols() -> None:
     primary = _lookback_result(
         discovery="0.05",
@@ -248,8 +314,54 @@ def test_c1_cannot_pass_if_validation_post_cost_moderate_is_negative() -> None:
 
     gate = evaluate_c1_gate(_gate_payload(primary))
 
-    assert gate["gate_results"]["validation_post_cost_moderate_gte_0"] is False
+    assert (
+        gate["gate_results"]["validation_volatility_targeted_post_cost_moderate_gte_0"]
+        is False
+    )
     assert gate["decision"] == RESULT_PARK
+
+
+def test_c1_gate_uses_volatility_targeted_metrics_not_raw_metrics() -> None:
+    primary = _lookback_result(
+        discovery="0.50",
+        validation="0.20",
+        random_median="0.00",
+        random_p75="0.10",
+        symbol_values=("0.30", "0.20", "0.10"),
+        vt_discovery="-0.01",
+        vt_validation="0.10",
+        vt_random_median="-0.02",
+        vt_random_p75="-0.005",
+        vt_symbol_values=("0.10", "0.10", "0.10"),
+    )
+
+    gate = evaluate_c1_gate(_gate_payload(primary))
+
+    assert (
+        gate["gate_results"]["discovery_volatility_targeted_post_cost_moderate_gt_0"]
+        is False
+    )
+    assert gate["decision"] != "SETUP_C_TSMOM_PASS_CANDIDATE"
+
+
+def test_c1_gate_symbol_count_uses_volatility_targeted_metrics() -> None:
+    primary = _lookback_result(
+        discovery="0.50",
+        validation="0.20",
+        random_median="0.00",
+        random_p75="0.10",
+        symbol_values=("0.30", "0.20", "0.10"),
+        vt_discovery="0.50",
+        vt_validation="0.20",
+        vt_random_median="0.00",
+        vt_random_p75="0.10",
+        vt_symbol_values=("0.20", "-0.01", "-0.01"),
+    )
+
+    gate = evaluate_c1_gate(_gate_payload(primary))
+
+    assert gate["gate_results"]["two_of_three_symbols_positive"] is False
+    assert gate["decision"] == RESULT_FAIL
 
 
 def test_sensitivity_lookbacks_cannot_become_primary_pass() -> None:
@@ -275,6 +387,42 @@ def test_sensitivity_lookbacks_cannot_become_primary_pass() -> None:
     assert gate["decision"] == RESULT_PARK
 
 
+def test_report_headline_fields_are_volatility_targeted() -> None:
+    primary = _lookback_result(
+        discovery="0.50",
+        validation="0.20",
+        random_median="0.00",
+        random_p75="0.10",
+        symbol_values=("0.30", "0.20", "0.10"),
+        vt_discovery="-0.01",
+        vt_validation="0.10",
+        vt_random_median="-0.02",
+        vt_random_p75="-0.005",
+        vt_symbol_values=("0.10", "0.10", "0.10"),
+    )
+    payload = _gate_payload(primary)
+    report = {
+        "gate": evaluate_c1_gate(payload),
+        "primary_lookback": 40,
+        "random_seed": 5403,
+        "random_iterations": RANDOM_ITERATIONS,
+        "lookbacks": {
+            lookback: {
+                "role": "primary" if lookback == "40" else "sensitivity",
+                **result,
+            }
+            for lookback, result in payload.items()
+        },
+        "known_limitations": ["funding costs excluded"],
+    }
+
+    text = format_tsmom_report(report)
+
+    assert "primary_metric: volatility_targeted_post_cost_return" in text
+    assert "discovery_volatility_targeted_post_cost_moderate: -0.01" in text
+    assert "raw_discovery_post_cost_moderate: 0.50" in text
+
+
 def test_summary_contains_expected_cost_fields() -> None:
     intervals = [
         _interval(symbol="BTCUSDT", turnover=1, interval_return="0.02"),
@@ -286,6 +434,7 @@ def test_summary_contains_expected_cost_fields() -> None:
     assert summary["rebalance_observations"] == 2
     assert summary["turnover"] == 3
     assert summary["post_cost_return"]["moderate"] == "0.0088"
+    assert summary["volatility_targeted_post_cost_return"]["moderate"] == "0.44"
     assert summary["cost_to_gross_ratio_moderate"] == "0.12"
 
 
