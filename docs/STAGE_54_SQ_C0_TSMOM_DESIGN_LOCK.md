@@ -96,6 +96,12 @@ Primary Setup C signal:
 - Signal is evaluated only on rebalance bars.
 - No intrabar execution assumption.
 
+Rebalance provenance:
+
+- the 6-bar rebalance period is a pre-specified design choice;
+- it was not selected from C1 results;
+- it must not be changed during C1 based on observed performance.
+
 Sensitivity lookbacks:
 
 - 20-bar lookback;
@@ -176,11 +182,16 @@ Definitions:
 - A long-to-short flip is two sides: close old exposure and open new exposure.
 - A same-direction maintained position has no new turnover cost.
 - Moderate cost is the primary gate.
+- C1 bps-per-turnover metrics exclude funding costs.
 
 Rules:
 
 - Report optimistic, moderate, and conservative scenarios.
 - No cost-free PASS is allowed.
+- Funding-cost exclusion is a known limitation.
+- Any C1 PASS is not funding-cost-complete.
+- Funding impact must be evaluated in a later stage before any paper or live
+  discussion.
 - If C1 cannot map turnover costs cleanly, STOP and ask before substituting a
   different model.
 
@@ -196,6 +207,12 @@ The random baseline must preserve:
 - same available bars;
 - same cost model;
 - randomized direction.
+
+Random direction sampling:
+
+- use i.i.d. uniform `+1` / `-1` direction;
+- sample independently per symbol per rebalance bar;
+- preserve the same rebalance schedule, volatility targeting, costs, and bars.
 
 Purpose:
 
@@ -238,11 +255,14 @@ if all are true:
 
 - post-cost moderate result > 0;
 - beats random p75 under the same cost model;
-- result is not carried by only one symbol;
+- at least 2 of 3 symbols individually show post-cost moderate result > 0;
+- pooled result alone is insufficient for PASS if only one symbol is positive;
 - turnover is not so high that costs dominate gross performance;
-- validation / time split does not materially reverse the result.
+- validation post-cost moderate result is >= 0.
 
 A PASS candidate is still research-only. It is not paper-ready or live-ready.
+
+If validation post-cost moderate result is negative, C1 cannot PASS.
 
 ### PARK
 
@@ -276,6 +296,7 @@ Rules:
 
 - no parameter changes after discovery;
 - report discovery and validation separately;
+- validation post-cost moderate result must be >= 0 for PASS;
 - if data length or implementation constraints make this split invalid, STOP
   and ask.
 
@@ -291,6 +312,13 @@ Rules:
 - No ML or meta-labeling in C1.
 - No stop or target overlay in C1.
 - No paper or live claims.
+
+## C1 Implementation Note
+
+C1 must implement and test deterministic close-to-close lookback return
+calculation if no existing utility exists.
+
+That utility is research-only and must not modify existing detector logic.
 
 ## Family Stop-Loss
 
