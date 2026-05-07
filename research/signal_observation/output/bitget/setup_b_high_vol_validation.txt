@@ -1,0 +1,73 @@
+Setup B Stage B5 high-volatility out-of-time validation
+
+Scope: exploratory research only.
+No profitability, paper-trading, live-trading, or readiness claim.
+
+discovery_start: 2025-10-17T16:00:00+00:00
+validation_target: 1_5r
+gate_min_n: 20
+seed: 5403
+iterations: 1000
+timeout_bars: 10
+
+CSV extension
+  BTCUSDT: status=ok rows_added=4000 first=2023-12-17T16:00:00+00:00 total=5200
+  ETHUSDT: status=ok rows_added=4000 first=2023-12-17T16:00:00+00:00 total=5200
+  SOLUSDT: status=ok rows_added=4000 first=2023-12-17T16:00:00+00:00 total=5200
+
+Validation window
+  BTCUSDT: val_n=4000 disc_n=1200 total=5200
+  ETHUSDT: val_n=4000 disc_n=1200 total=5200
+  SOLUSDT: val_n=4000 disc_n=1200 total=5200
+
+All validation observations: 208
+High-vol validation observations: 62
+
+ATR p67 thresholds (validation-calibrated)
+  BTCUSDT: p67=1234.665490949887674797942834 n_atr=3987
+  ETHUSDT: p67=69.86883587560500061546625386 n_atr=3987
+  SOLUSDT: p67=4.808127419599639536787967061 n_atr=3987
+
+Eligible candle counts (validation window, high-ATR)
+  BTCUSDT: 1328
+  ETHUSDT: 1328
+  SOLUSDT: 1328
+
+B5 Gate evaluation (target: 1_5r)
+  gate_result: PASS
+  c1_n_high_vol_sufficient: True (n=62, required>=20)
+  c2_expectancy_beats_p75_random: True (actual=0.008064516129032258064516129032, p75=-0.008064516129032258064516129032)
+  c3_expectancy_positive: True (actual=0.008064516129032258064516129032)
+  c4_flat_rate_le_random_median: True (actual=0.6451612903225806451612903226, median=0.693548387096774193548387097)
+
+Actual vs conditional random (high-vol validation)
+  target: 1r
+    n: 62
+    actual_expectancy_r: 0.09677419354838709677419354839
+    actual_flat_rate: 0.4838709677419354838709677419
+    random_median_expectancy_r: 0
+    random_p75_expectancy_r: 0.04838709677419354838709677419
+    random_median_flat_rate: 0.5967741935483870967741935485
+    beats_p75_expectancy: True
+    meaningful_margin_over_p75: 0.04838709677419354838709677420
+    meaningful_margin_classification: weak
+  target: 1_5r
+    n: 62
+    actual_expectancy_r: 0.008064516129032258064516129032
+    actual_flat_rate: 0.6451612903225806451612903226
+    random_median_expectancy_r: -0.06451612903225806451612903225
+    random_p75_expectancy_r: -0.008064516129032258064516129032
+    random_median_flat_rate: 0.693548387096774193548387097
+    beats_p75_expectancy: True
+    meaningful_margin_over_p75: 0.01612903225806451612903225806
+    meaningful_margin_classification: weak
+  target: 2r
+    n: 62
+    actual_expectancy_r: -0.01612903225806451612903225806
+    actual_flat_rate: 0.6935483870967741935483870968
+    random_median_expectancy_r: -0.1129032258064516129032258065
+    random_p75_expectancy_r: -0.04838709677419354838709677419
+    random_median_flat_rate: 0.725806451612903225806451613
+    beats_p75_expectancy: True
+    meaningful_margin_over_p75: 0.03225806451612903225806451613
+    meaningful_margin_classification: weak
