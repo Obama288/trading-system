@@ -1,0 +1,182 @@
+{
+  "b6_decision": {
+    "decision": "B7_EXIT_RESEARCH_LONG_SHOT",
+    "live_trading_recommended": false,
+    "median_flat_mfe_r": "0.763110634974942283868400540",
+    "mfe_opportunity": true,
+    "mfe_support": true,
+    "moderate_post_cost_expectancy_r": "-0.07193548387096774193548387097",
+    "paper_trading_recommended": false,
+    "pct_flat_mfe_ge_1_0r": "0.25",
+    "post_cost_negative_under_all_scenarios": true
+  },
+  "flat_trade_breakdown": {
+    "avg_flat_mfe_r": "0.7384122613033897092587107868",
+    "flat_classification_counts": {
+      "adverse_flat": 5,
+      "dead_flat": 0,
+      "near_win": 19,
+      "ordinary_flat": 16
+    },
+    "flat_count": 40,
+    "median_flat_mfe_r": "0.763110634974942283868400540",
+    "pct_flat_dead_flat": "0",
+    "pct_flat_mfe_ge_0_5r": "0.7",
+    "pct_flat_mfe_ge_0_7r": "0.525",
+    "pct_flat_mfe_ge_1_0r": "0.25",
+    "pct_flat_near_win": "0.475"
+  },
+  "interpretation": {
+    "cost_handling": "subtract cost_r from each 1.5R trade outcome; preserve original win/loss/flat class counts",
+    "live_trading_authorized": false,
+    "paper_trading_authorized": false,
+    "random_cost_handling": "subtract the same cost_r from B5 pre-cost random expectancy distribution",
+    "time_to_peak_mfe": "not_available_in_b5_observations"
+  },
+  "mfe_breakdown": {
+    "avg_mfe_r": "0.9237487294296575068674451316",
+    "avg_time_to_peak_mfe_bars": null,
+    "median_mfe_r": "0.763110634974942283868400540",
+    "median_time_to_peak_mfe_bars": null,
+    "n": 62,
+    "p25_mfe_r": "0.3259537582905409328004189649",
+    "p75_mfe_r": "1.138280071121665975798772852",
+    "p90_mfe_r": "1.609463526195189441616836799",
+    "pct_reached_0_3r": "0.7903225806451612903225806452",
+    "pct_reached_0_5r": "0.6290322580645161290322580645",
+    "pct_reached_0_7r": "0.5161290322580645161290322581",
+    "pct_reached_1_0r": "0.3064516129032258064516129032",
+    "pct_reached_1_5r": "0.1451612903225806451612903226",
+    "time_to_peak_mfe_source": "not_available_in_b5_observations"
+  },
+  "post_cost_scenarios": {
+    "conservative": {
+      "cost_r": "0.12",
+      "edge_survives_costs": false,
+      "n": 62,
+      "post_cost_avg_r": "-0.1119354838709677419354838710",
+      "post_cost_expectancy_r": "-0.1119354838709677419354838710",
+      "post_cost_negative_count": 53,
+      "post_cost_nonpositive_count": 53,
+      "post_cost_positive_count": 9,
+      "post_cost_profit_factor": "0.6415289256198347107438016529",
+      "post_cost_total_r": "-6.94"
+    },
+    "moderate": {
+      "cost_r": "0.08",
+      "edge_survives_costs": false,
+      "n": 62,
+      "post_cost_avg_r": "-0.07193548387096774193548387097",
+      "post_cost_expectancy_r": "-0.07193548387096774193548387097",
+      "post_cost_negative_count": 53,
+      "post_cost_nonpositive_count": 53,
+      "post_cost_positive_count": 9,
+      "post_cost_profit_factor": "0.7412993039443155452436194896",
+      "post_cost_total_r": "-4.46"
+    },
+    "optimistic": {
+      "cost_r": "0.04",
+      "edge_survives_costs": false,
+      "n": 62,
+      "post_cost_avg_r": "-0.03193548387096774193548387097",
+      "post_cost_expectancy_r": "-0.03193548387096774193548387097",
+      "post_cost_negative_count": 53,
+      "post_cost_nonpositive_count": 53,
+      "post_cost_positive_count": 9,
+      "post_cost_profit_factor": "0.8690476190476190476190476190",
+      "post_cost_total_r": "-1.98"
+    }
+  },
+  "random_post_cost_comparison": {
+    "conservative": {
+      "assumption": "same cost_r subtracted from pre-cost random expectancy distribution",
+      "cost_r": "0.12",
+      "expectancy_distribution_post_cost": {
+        "max": "0.0654838709677419354838709677",
+        "mean": "-0.1803225806451612903225806452",
+        "median": "-0.1845161290322580645161290322",
+        "min": "-0.4264516129032258064516129032",
+        "p10": "-0.2812903225806451612903225806",
+        "p25": "-0.2329032258064516129032258065",
+        "p75": "-0.1280645161290322580645161290",
+        "p90": "-0.07967741935483870967741935484"
+      },
+      "random_median_expectancy_post_cost": "-0.1845161290322580645161290322",
+      "random_p75_expectancy_post_cost": "-0.1280645161290322580645161290",
+      "random_p90_expectancy_post_cost": "-0.07967741935483870967741935484"
+    },
+    "moderate": {
+      "assumption": "same cost_r subtracted from pre-cost random expectancy distribution",
+      "cost_r": "0.08",
+      "expectancy_distribution_post_cost": {
+        "max": "0.1054838709677419354838709677",
+        "mean": "-0.1403225806451612903225806452",
+        "median": "-0.1445161290322580645161290322",
+        "min": "-0.3864516129032258064516129032",
+        "p10": "-0.2412903225806451612903225806",
+        "p25": "-0.1929032258064516129032258065",
+        "p75": "-0.08806451612903225806451612903",
+        "p90": "-0.03967741935483870967741935484"
+      },
+      "random_median_expectancy_post_cost": "-0.1445161290322580645161290322",
+      "random_p75_expectancy_post_cost": "-0.08806451612903225806451612903",
+      "random_p90_expectancy_post_cost": "-0.03967741935483870967741935484"
+    },
+    "optimistic": {
+      "assumption": "same cost_r subtracted from pre-cost random expectancy distribution",
+      "cost_r": "0.04",
+      "expectancy_distribution_post_cost": {
+        "max": "0.1454838709677419354838709677",
+        "mean": "-0.1003225806451612903225806452",
+        "median": "-0.1045161290322580645161290322",
+        "min": "-0.3464516129032258064516129032",
+        "p10": "-0.2012903225806451612903225806",
+        "p25": "-0.1529032258064516129032258065",
+        "p75": "-0.04806451612903225806451612903",
+        "p90": "0.00032258064516129032258064516"
+      },
+      "random_median_expectancy_post_cost": "-0.1045161290322580645161290322",
+      "random_p75_expectancy_post_cost": "-0.04806451612903225806451612903",
+      "random_p90_expectancy_post_cost": "0.00032258064516129032258064516"
+    }
+  },
+  "raw_validation_high_vol_metrics": {
+    "avg_bars_to_resolution": "8.338709677419354838709677419",
+    "avg_mae_r": "-0.5917481367256460440354805789",
+    "avg_mfe_r": "0.9237487294296575068674451316",
+    "expectancy_r": "0.008064516129032258064516129032",
+    "flat_rate": "0.6451612903225806451612903226",
+    "flats": 40,
+    "losses": 13,
+    "median_bars_to_resolution": "10",
+    "median_mae_r": "-0.540411852159642464687635415",
+    "median_mfe_r": "0.763110634974942283868400540",
+    "n": 62,
+    "profit_factor": "1.038461538461538461538461538",
+    "win_rate": "0.1451612903225806451612903226",
+    "wins": 9
+  },
+  "reconstruction": {
+    "all_validation_observations": 208,
+    "atr_threshold_info": {
+      "BTCUSDT": {
+        "n_validation_atr": 3987,
+        "p67_threshold": "1234.665490949887674797942834"
+      },
+      "ETHUSDT": {
+        "n_validation_atr": 3987,
+        "p67_threshold": "69.86883587560500061546625386"
+      },
+      "SOLUSDT": {
+        "n_validation_atr": 3987,
+        "p67_threshold": "4.808127419599639536787967061"
+      }
+    },
+    "expected_n": 62,
+    "matched_expected_n": true,
+    "reconstructed_n": 62
+  },
+  "schema": "setup_b_cost_aware_report_v1",
+  "scope": "analysis-only research report over reconstructed B5 validation high-vol subset",
+  "validation_target": "1_5r"
+}

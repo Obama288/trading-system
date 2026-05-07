@@ -1,0 +1,72 @@
+Setup B Stage B6 cost-aware high-volatility report
+
+Scope: analysis-only research report.
+No detector change, parameter change, runtime wiring, paper trading, or live trading.
+
+validation_target: 1_5r
+reconstructed_n: 62
+matched_expected_n: True
+
+Raw validation high-vol metrics
+  n: 62
+  wins/losses/flats: 9/13/40
+  expectancy_r: 0.008064516129032258064516129032
+  profit_factor: 1.038461538461538461538461538
+  avg_mfe_r: 0.9237487294296575068674451316
+  median_mfe_r: 0.763110634974942283868400540
+
+Post-cost scenarios
+  optimistic: cost_r=0.04
+    expectancy_r=-0.03193548387096774193548387097
+    total_r=-1.98
+    profit_factor=0.8690476190476190476190476190
+    edge_survives_costs=False
+  moderate: cost_r=0.08
+    expectancy_r=-0.07193548387096774193548387097
+    total_r=-4.46
+    profit_factor=0.7412993039443155452436194896
+    edge_survives_costs=False
+  conservative: cost_r=0.12
+    expectancy_r=-0.1119354838709677419354838710
+    total_r=-6.94
+    profit_factor=0.6415289256198347107438016529
+    edge_survives_costs=False
+
+Random post-cost comparison
+  optimistic:
+    median_expectancy=-0.1045161290322580645161290322
+    p75_expectancy=-0.04806451612903225806451612903
+    p90_expectancy=0.00032258064516129032258064516
+  moderate:
+    median_expectancy=-0.1445161290322580645161290322
+    p75_expectancy=-0.08806451612903225806451612903
+    p90_expectancy=-0.03967741935483870967741935484
+  conservative:
+    median_expectancy=-0.1845161290322580645161290322
+    p75_expectancy=-0.1280645161290322580645161290
+    p90_expectancy=-0.07967741935483870967741935484
+
+MFE breakdown
+  avg_mfe_r: 0.9237487294296575068674451316
+  median_mfe_r: 0.763110634974942283868400540
+  p25/p75/p90: 0.3259537582905409328004189649 / 1.138280071121665975798772852 / 1.609463526195189441616836799
+  pct_reached_0_5r: 0.6290322580645161290322580645
+  pct_reached_1_0r: 0.3064516129032258064516129032
+  pct_reached_1_5r: 0.1451612903225806451612903226
+
+Flat-trade breakdown
+  flat_count: 40
+  avg_flat_mfe_r: 0.7384122613033897092587107868
+  median_flat_mfe_r: 0.763110634974942283868400540
+  pct_flat_mfe_ge_0_7r: 0.525
+  pct_flat_mfe_ge_1_0r: 0.25
+  classifications: {'near_win': 19, 'dead_flat': 0, 'adverse_flat': 5, 'ordinary_flat': 16}
+
+B6 decision
+  decision: B7_EXIT_RESEARCH_LONG_SHOT
+  mfe_opportunity: True
+  post_cost_negative_under_all_scenarios: True
+
+Interpretation
+  The B5 validation pass remains real but the raw edge is extremely small.
+  Cost-aware evidence does not authorize paper trading or live trading.
