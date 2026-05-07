@@ -1,0 +1,38 @@
+Setup B Stage B8 discovery-window cross-check
+
+Scope: analysis-only research over local 4H CSV files.
+No detector change, entry/filter/data change, runtime wiring, paper trading, or live trading.
+
+discovery_start: 2025-10-17T16:00:00+00:00
+discovery_high_vol_n: 16
+symbol_direction_breakdown: {'BTCUSDT_long': 1, 'BTCUSDT_short': 6, 'ETHUSDT_long': 4, 'ETHUSDT_short': 5}
+seed: 5403
+iterations: 1000
+
+Discovery fixed 1R metrics
+  n: 16
+  wins/losses/flats: 4/2/10
+  raw_expectancy_r: 0.125
+  post_cost_moderate_expectancy_r: 0.045
+  random_p75_post_cost_moderate_expectancy_r: 0.107500
+  win_rate: 0.25
+  flat_rate: 0.625
+  avg_mfe_r: 0.6777573941809844988623545212
+  median_mfe_r: 0.7475418364856270664802780945
+  avg_mae_r: -0.6144790942578973576942297486
+  median_mae_r: -0.6315033438435005357125140715
+
+B8 gate
+  n_ge_15: True
+  post_cost_moderate_expectancy_gt_0: True
+  beats_conditional_random_p75: False
+  decision: RETIRE_HIGH_VOL_SETUP_B
+
+B7 validation side-by-side
+  validation_n: 62
+  validation_post_cost_moderate_expectancy_r: 0.01677419354838709677419354839
+  validation_random_p75_post_cost_moderate_expectancy_r: -0.03161290322580645161290322581
+
+Interpretation
+  B8 is a cheap discovery-window cross-check only.
+  A pass does not authorize paper trading, live trading, or runtime wiring.
