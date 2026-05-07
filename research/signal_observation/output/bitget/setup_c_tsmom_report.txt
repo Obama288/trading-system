@@ -1,0 +1,61 @@
+Setup C TSMOM / volatility targeting report
+
+Scope: research-only local 4H OHLCV evaluation.
+No detector/runtime/private API/paper/live readiness claim.
+
+decision: SETUP_C_TSMOM_PASS_CANDIDATE
+primary_lookback: 40
+random_seed: 5403
+random_iterations: 1000
+funding_costs_excluded: True
+
+Lookback summaries
+lookback: 20 (sensitivity)
+  discovery_post_cost_moderate: 0.5396128215018782332630267980
+  validation_post_cost_moderate: -1.723577836936886986115549178
+  full_post_cost_moderate: -1.183965015435008752852522378
+  discovery_random_median/p75/p90: -0.690109349967842162684536576 / 0.3518900965453555668995186148 / 1.249874572398343306800181623
+  turnover: 1385
+  cost_to_gross_ratio_moderate: 0.8794139141479900276134027381
+  per_symbol_full_post_cost_moderate:
+    BTCUSDT: 0.1196801987992111654898717806
+    ETHUSDT: 0.2250280922368453876620163234
+    SOLUSDT: -1.528673306471065306004410483
+lookback: 40 (primary)
+  discovery_post_cost_moderate: 0.5304604052198384329588720053
+  validation_post_cost_moderate: 0.3837489909521097494866647236
+  full_post_cost_moderate: 0.9142093961719481824455367270
+  discovery_random_median/p75/p90: -0.7020889042404821238989811785 / 0.3647698298204615913890990702 / 1.249874572398343306800181623
+  turnover: 929
+  cost_to_gross_ratio_moderate: 0.2890008434425119337398534324
+  per_symbol_full_post_cost_moderate:
+    BTCUSDT: 0.3322457249923006842845616992
+    ETHUSDT: 0.6292916069884028306259679361
+    SOLUSDT: -0.0473279358087553324649929090
+lookback: 60 (sensitivity)
+  discovery_post_cost_moderate: 0.2716349019732807560103024514
+  validation_post_cost_moderate: -1.546561501848747314369294874
+  full_post_cost_moderate: -1.274926599875466558358992424
+  discovery_random_median/p75/p90: -0.714278748328309691182516129 / 0.3417581572063147395465236877 / 1.241564778349102448015687627
+  turnover: 781
+  cost_to_gross_ratio_moderate: 0.3245624588872856916709644314
+  per_symbol_full_post_cost_moderate:
+    BTCUSDT: -0.5232736561175339103889410636
+    ETHUSDT: 0.4758802898640115478637774565
+    SOLUSDT: -1.227533233621944195833828815
+
+Primary gate
+  discovery_post_cost_moderate_gt_0: True
+  beats_random_median: True
+  beats_random_p75: True
+  two_of_three_symbols_positive: True
+  costs_do_not_dominate_gross: True
+  validation_post_cost_moderate_gte_0: True
+
+Known limitations
+- funding costs excluded
+- research-only normalized return calculation
+- no execution or slippage model beyond bps turnover costs
+- no sizing with capital
+- no private API
+- no paper or live readiness

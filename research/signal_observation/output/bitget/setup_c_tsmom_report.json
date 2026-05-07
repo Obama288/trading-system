@@ -1,0 +1,1275 @@
+{
+  "autocorrelation_diagnostics": {
+    "20": {
+      "BTCUSDT": {
+        "observations": 5175,
+        "same_sign_rate": "0.4937198067632850241545893720"
+      },
+      "ETHUSDT": {
+        "observations": 5177,
+        "same_sign_rate": "0.4958470156461271006374348078"
+      },
+      "SOLUSDT": {
+        "observations": 5179,
+        "same_sign_rate": "0.4914076076462637574821394092"
+      },
+      "pooled": {
+        "observations": 15531,
+        "same_sign_rate": "0.4936578455991243319811988925"
+      }
+    },
+    "40": {
+      "BTCUSDT": {
+        "observations": 5155,
+        "same_sign_rate": "0.5076624636275460717749757517"
+      },
+      "ETHUSDT": {
+        "observations": 5157,
+        "same_sign_rate": "0.4954430870661237153383750242"
+      },
+      "SOLUSDT": {
+        "observations": 5159,
+        "same_sign_rate": "0.5053304904051172707889125800"
+      },
+      "pooled": {
+        "observations": 15471,
+        "same_sign_rate": "0.5028117122357960054295132829"
+      }
+    },
+    "60": {
+      "BTCUSDT": {
+        "observations": 5135,
+        "same_sign_rate": "0.4852969814995131450827653359"
+      },
+      "ETHUSDT": {
+        "observations": 5137,
+        "same_sign_rate": "0.4999026669262215300759197975"
+      },
+      "SOLUSDT": {
+        "observations": 5139,
+        "same_sign_rate": "0.4934812220276318349873516248"
+      },
+      "pooled": {
+        "observations": 15411,
+        "same_sign_rate": "0.4928946856141716955421452209"
+      }
+    }
+  },
+  "cost_bps_per_turnover": {
+    "conservative": "6",
+    "moderate": "4",
+    "optimistic": "2"
+  },
+  "funding_costs_excluded": true,
+  "gate": {
+    "decision": "SETUP_C_TSMOM_PASS_CANDIDATE",
+    "gate_results": {
+      "beats_random_median": true,
+      "beats_random_p75": true,
+      "costs_do_not_dominate_gross": true,
+      "discovery_post_cost_moderate_gt_0": true,
+      "two_of_three_symbols_positive": true,
+      "validation_post_cost_moderate_gte_0": true
+    },
+    "notes": [
+      "PASS is research-only and not paper-ready",
+      "funding costs excluded",
+      "moderate cost is the primary gate"
+    ],
+    "positive_symbol_count": 2,
+    "primary_lookback_only": true,
+    "sensitivity_better_than_primary": true
+  },
+  "known_limitations": [
+    "funding costs excluded",
+    "research-only normalized return calculation",
+    "no execution or slippage model beyond bps turnover costs",
+    "no sizing with capital",
+    "no private API",
+    "no paper or live readiness"
+  ],
+  "lookbacks": {
+    "20": {
+      "metrics": {
+        "discovery": {
+          "average_interval_return": "0.0005115263336126200518992914847",
+          "average_normalized_return": "0.08386349356652048885324255693",
+          "average_post_cost_normalized_return": {
+            "conservative": "0.06645566576887167337982442460",
+            "moderate": "0.07225827503475461187096380195",
+            "optimistic": "0.07806088430063755036210317924"
+          },
+          "cost_to_gross_ratio_moderate": "0.4129620378660311810762886407",
+          "date_range": {
+            "first": "2023-12-27T16:00:00+00:00",
+            "last": "2025-08-19T16:00:00+00:00"
+          },
+          "direction_changes": 476,
+          "direction_counts": {
+            "flat": 0,
+            "long": 954,
+            "short": 843
+          },
+          "gross_return": "0.919212821501878233263026798",
+          "max_drawdown_like": "-1.798536451274569834116062871",
+          "post_cost_return": {
+            "conservative": "0.3498128215018782332630267980",
+            "moderate": "0.5396128215018782332630267980",
+            "optimistic": "0.7294128215018782332630267980"
+          },
+          "rebalance_observations": 1797,
+          "sharpe_like": "0.01369736334167655651570663129",
+          "turnover": 949
+        },
+        "full": {
+          "average_interval_return": "-0.0002453134795307666483070570023",
+          "average_normalized_return": "0.04131260086851480567494143571",
+          "average_post_cost_normalized_return": {
+            "conservative": "0.02291390798320800790902306467",
+            "moderate": "0.02904680561164360716432918827",
+            "optimistic": "0.03517970324007920641963531198"
+          },
+          "cost_to_gross_ratio_moderate": "0.8794139141479900276134027381",
+          "date_range": {
+            "first": "2023-12-27T16:00:00+00:00",
+            "last": "2026-05-04T20:00:00+00:00"
+          },
+          "direction_changes": 694,
+          "direction_counts": {
+            "flat": 0,
+            "long": 1310,
+            "short": 1258
+          },
+          "gross_return": "-0.6299650154350087528525223818",
+          "max_drawdown_like": "-2.210089331993966153934390742",
+          "post_cost_return": {
+            "conservative": "-1.460965015435008752852522378",
+            "moderate": "-1.183965015435008752852522378",
+            "optimistic": "-0.9069650154350087528525223808"
+          },
+          "rebalance_observations": 2568,
+          "sharpe_like": "-0.006826502955999699897792343278",
+          "turnover": 1385
+        },
+        "validation": {
+          "average_interval_return": "-0.002009309775534224365908624093",
+          "average_normalized_return": "-0.05786243697625330414530125351",
+          "average_post_cost_normalized_return": {
+            "conservative": "-0.07857057806197695558128827577",
+            "moderate": "-0.07166786436673573843595926834",
+            "optimistic": "-0.06476515067149452129063026089"
+          },
+          "cost_to_gross_ratio_moderate": "0.1125758423867156064301522341",
+          "date_range": {
+            "first": "2025-08-20T16:00:00+00:00",
+            "last": "2026-05-04T20:00:00+00:00"
+          },
+          "direction_changes": 218,
+          "direction_counts": {
+            "flat": 0,
+            "long": 356,
+            "short": 415
+          },
+          "gross_return": "-1.549177836936886986115549176",
+          "max_drawdown_like": "-2.184761157908418243798204941",
+          "post_cost_return": {
+            "conservative": "-1.810777836936886986115549178",
+            "moderate": "-1.723577836936886986115549178",
+            "optimistic": "-1.636377836936886986115549178"
+          },
+          "rebalance_observations": 771,
+          "sharpe_like": "-0.06207734464477043290207546323",
+          "turnover": 436
+        }
+      },
+      "per_symbol": {
+        "discovery": {
+          "BTCUSDT": {
+            "average_interval_return": "0.001107456177736602884359866671",
+            "average_normalized_return": "0.1213652027159294730312837004",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.09654560179945302347885201604",
+              "moderate": "0.1048188021049451733296625775",
+              "optimistic": "0.1130920024104373231804731389"
+            },
+            "cost_to_gross_ratio_moderate": "0.2007940559333344946876778307",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 167,
+            "direction_counts": {
+              "flat": 0,
+              "long": 326,
+              "short": 273
+            },
+            "gross_return": "0.6633662504642251277315601362",
+            "max_drawdown_like": "-0.5214758270185363338018632653",
+            "post_cost_return": {
+              "conservative": "0.4635662504642251277315601362",
+              "moderate": "0.5301662504642251277315601362",
+              "optimistic": "0.5967662504642251277315601362"
+            },
+            "rebalance_observations": 599,
+            "sharpe_like": "0.04257580707840751250583703258",
+            "turnover": 333
+          },
+          "ETHUSDT": {
+            "average_interval_return": "0.0009536641039220070894106536269",
+            "average_normalized_return": "0.1107960869739297366068158882",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.09491459058428699688922082758",
+              "moderate": "0.1002084227141679101284191811",
+              "optimistic": "0.1055022548440488233676175345"
+            },
+            "cost_to_gross_ratio_moderate": "0.2177700355106144814558475494",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 156,
+            "direction_counts": {
+              "flat": 0,
+              "long": 330,
+              "short": 269
+            },
+            "gross_return": "0.5712447982492822465569815225",
+            "max_drawdown_like": "-1.062503543182126097412609113",
+            "post_cost_return": {
+              "conservative": "0.3846447982492822465569815225",
+              "moderate": "0.4468447982492822465569815225",
+              "optimistic": "0.5090447982492822465569815225"
+            },
+            "rebalance_observations": 599,
+            "sharpe_like": "0.02560767217170044239392842918",
+            "turnover": 311
+          },
+          "SOLUSDT": {
+            "average_interval_return": "-0.0005265412808207498180726458449",
+            "average_normalized_return": "0.01942919100970225692162808175",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.007906804922874999771400430192",
+              "moderate": "0.01174760028515075215480964735",
+              "optimistic": "0.01558839564742650453821886472"
+            },
+            "cost_to_gross_ratio_moderate": "0.3868125736741671261692518269",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 153,
+            "direction_counts": {
+              "flat": 0,
+              "long": 298,
+              "short": 301
+            },
+            "gross_return": "-0.3153982272116291410255148611",
+            "max_drawdown_like": "-1.146292385492721238659530710",
+            "post_cost_return": {
+              "conservative": "-0.4983982272116291410255148595",
+              "moderate": "-0.4373982272116291410255148606",
+              "optimistic": "-0.3763982272116291410255148611"
+            },
+            "rebalance_observations": 599,
+            "sharpe_like": "-0.01142647280880649338775678716",
+            "turnover": 305
+          }
+        },
+        "full": {
+          "BTCUSDT": {
+            "average_interval_return": "0.0003673834098121625765068595568",
+            "average_normalized_return": "0.07224111110154191938017503136",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.04626945703266370519560061650",
+              "moderate": "0.05492667505562310992379208806",
+              "optimistic": "0.06358389307858251465198355979"
+            },
+            "cost_to_gross_ratio_moderate": "0.6194348666269306352256477706",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 244,
+            "direction_counts": {
+              "flat": 0,
+              "long": 451,
+              "short": 405
+            },
+            "gross_return": "0.3144801987992111654898717806",
+            "max_drawdown_like": "-0.6456150551627904457859946277",
+            "post_cost_return": {
+              "conservative": "0.0222801987992111654898717806",
+              "moderate": "0.1196801987992111654898717806",
+              "optimistic": "0.2170801987992111654898717806"
+            },
+            "rebalance_observations": 856,
+            "sharpe_like": "0.01472065534332750173346064884",
+            "turnover": 487
+          },
+          "ETHUSDT": {
+            "average_interval_return": "0.0004708272105570623687640377610",
+            "average_normalized_return": "0.07937187062384204216949791518",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.06311559159572602350469183321",
+              "moderate": "0.06853435127176469639296052715",
+              "optimistic": "0.07395311094780336928122922104"
+            },
+            "cost_to_gross_ratio_moderate": "0.4416565580133200275872169630",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 223,
+            "direction_counts": {
+              "flat": 0,
+              "long": 448,
+              "short": 408
+            },
+            "gross_return": "0.4030280922368453876620163234",
+            "max_drawdown_like": "-1.062503543182126097412609113",
+            "post_cost_return": {
+              "conservative": "0.1360280922368453876620163234",
+              "moderate": "0.2250280922368453876620163234",
+              "optimistic": "0.3140280922368453876620163234"
+            },
+            "rebalance_observations": 856,
+            "sharpe_like": "0.01289990065540617969526091990",
+            "turnover": 445
+          },
+          "SOLUSDT": {
+            "average_interval_return": "-0.001574151058961524890192068321",
+            "average_normalized_return": "-0.02767517911983954452484863801",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.04064332467876570497322325537",
+              "moderate": "-0.03632060949245698482376504961",
+              "optimistic": "-0.03199789430614826467430684373"
+            },
+            "cost_to_gross_ratio_moderate": "0.1344739069262526881435498828",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 227,
+            "direction_counts": {
+              "flat": 0,
+              "long": 411,
+              "short": 445
+            },
+            "gross_return": "-1.347473306471065306004410483",
+            "max_drawdown_like": "-1.419840401711079815697691689",
+            "post_cost_return": {
+              "conservative": "-1.619273306471065306004410483",
+              "moderate": "-1.528673306471065306004410483",
+              "optimistic": "-1.438073306471065306004410483"
+            },
+            "rebalance_observations": 856,
+            "sharpe_like": "-0.03593015356202413562319457121",
+            "turnover": 453
+          }
+        },
+        "validation": {
+          "BTCUSDT": {
+            "average_interval_return": "-0.001357533274961143821952094769",
+            "average_normalized_return": "-0.04225433978179716481054128296",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.07091112940821879150349505790",
+              "moderate": "-0.06135886619941158260584379969",
+              "optimistic": "-0.05180660299060437370819254109"
+            },
+            "cost_to_gross_ratio_moderate": "0.1765619453859559467391399104",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 77,
+            "direction_counts": {
+              "flat": 0,
+              "long": 125,
+              "short": 132
+            },
+            "gross_return": "-0.3488860516650139622416883556",
+            "max_drawdown_like": "-0.5935511705369348154314496258",
+            "post_cost_return": {
+              "conservative": "-0.4412860516650139622416883556",
+              "moderate": "-0.4104860516650139622416883556",
+              "optimistic": "-0.3796860516650139622416883556"
+            },
+            "rebalance_observations": 257,
+            "sharpe_like": "-0.06098694717581654094873197614",
+            "turnover": 154
+          },
+          "ETHUSDT": {
+            "average_interval_return": "-0.0006545397121106492564006427981",
+            "average_normalized_return": "0.006130214617217415835048631595",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.01099958503520013625146718503",
+              "moderate": "-0.005289651817727618889295246249",
+              "optimistic": "0.0004202813997448984728766925984"
+            },
+            "cost_to_gross_ratio_moderate": "0.3186366043574599630600031910",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 67,
+            "direction_counts": {
+              "flat": 0,
+              "long": 118,
+              "short": 139
+            },
+            "gross_return": "-0.1682167060124368588949651991",
+            "max_drawdown_like": "-0.5672763086504269605565791799",
+            "post_cost_return": {
+              "conservative": "-0.2486167060124368588949651991",
+              "moderate": "-0.2218167060124368588949651991",
+              "optimistic": "-0.1950167060124368588949651991"
+            },
+            "rebalance_observations": 257,
+            "sharpe_like": "-0.01883557876886048050903794930",
+            "turnover": 134
+          },
+          "SOLUSDT": {
+            "average_interval_return": "-0.004015856339530880019373134720",
+            "average_normalized_return": "-0.1374631857641801634604111095",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.1538010197425119389889025847",
+              "moderate": "-0.1483550750830680138127387596",
+              "optimistic": "-0.1429091304236240886365749347"
+            },
+            "cost_to_gross_ratio_moderate": "0.05736016806304330692513419059",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 74,
+            "direction_counts": {
+              "flat": 0,
+              "long": 113,
+              "short": 144
+            },
+            "gross_return": "-1.032075079259436164978895623",
+            "max_drawdown_like": "-1.226180220672053499874264538",
+            "post_cost_return": {
+              "conservative": "-1.120875079259436164978895621",
+              "moderate": "-1.091275079259436164978895621",
+              "optimistic": "-1.061675079259436164978895621"
+            },
+            "rebalance_observations": 257,
+            "sharpe_like": "-0.1057592002311568993679852475",
+            "turnover": 148
+          }
+        }
+      },
+      "random_baseline": {
+        "discovery": {
+          "median": "-0.690109349967842162684536576",
+          "p75": "0.3518900965453555668995186148",
+          "p90": "1.249874572398343306800181623"
+        },
+        "full": {
+          "median": "-0.9491502868697982495069976505",
+          "p75": "0.2434597444918480353508317017",
+          "p90": "1.415638867958035289721452932"
+        },
+        "validation": {
+          "median": "-0.2777755546253368865030023760",
+          "p75": "0.3856285209172177017263508657",
+          "p90": "0.9211236350254653457619415528"
+        }
+      },
+      "role": "sensitivity"
+    },
+    "40": {
+      "metrics": {
+        "discovery": {
+          "average_interval_return": "0.0004356485282247292336999844179",
+          "average_normalized_return": "0.05378453714413931501231391423",
+          "average_post_cost_normalized_return": {
+            "conservative": "0.04238020984318994429958739262",
+            "moderate": "0.04618165227683973453716289975",
+            "optimistic": "0.04998309471048952477473840710"
+          },
+          "cost_to_gross_ratio_moderate": "0.3224074155712632560417890319",
+          "date_range": {
+            "first": "2023-12-27T16:00:00+00:00",
+            "last": "2025-08-19T16:00:00+00:00"
+          },
+          "direction_changes": 317,
+          "direction_counts": {
+            "flat": 0,
+            "long": 974,
+            "short": 823
+          },
+          "gross_return": "0.7828604052198384329588719990",
+          "max_drawdown_like": "-1.466908737495462365525770812",
+          "post_cost_return": {
+            "conservative": "0.4042604052198384329588720046",
+            "moderate": "0.5304604052198384329588720053",
+            "optimistic": "0.6566604052198384329588720033"
+          },
+          "rebalance_observations": 1797,
+          "sharpe_like": "0.01166524957702006038506129550",
+          "turnover": 631
+        },
+        "full": {
+          "average_interval_return": "0.0005007045935249019402046482562",
+          "average_normalized_return": "0.05298361568126298313980418727",
+          "average_post_cost_normalized_return": {
+            "conservative": "0.04093510510746453604571044342",
+            "moderate": "0.04495127529873068507707502414",
+            "optimistic": "0.04896744548999683410843960576"
+          },
+          "cost_to_gross_ratio_moderate": "0.2890008434425119337398534324",
+          "date_range": {
+            "first": "2023-12-27T16:00:00+00:00",
+            "last": "2026-05-04T20:00:00+00:00"
+          },
+          "direction_changes": 466,
+          "direction_counts": {
+            "flat": 0,
+            "long": 1318,
+            "short": 1250
+          },
+          "gross_return": "1.285809396171948182445536722",
+          "max_drawdown_like": "-1.466908737495462365525770812",
+          "post_cost_return": {
+            "conservative": "0.7284093961719481824455367256",
+            "moderate": "0.9142093961719481824455367270",
+            "optimistic": "1.100009396171948182445536722"
+          },
+          "rebalance_observations": 2568,
+          "sharpe_like": "0.01393447139690274651721863311",
+          "turnover": 929
+        },
+        "validation": {
+          "average_interval_return": "0.0006523333215980671199567635851",
+          "average_normalized_return": "0.05111687655183526799726206101",
+          "average_post_cost_normalized_return": {
+            "conservative": "0.03756694270785551058239412883",
+            "moderate": "0.04208358732251542972068343955",
+            "optimistic": "0.04660023193717534885897275025"
+          },
+          "cost_to_gross_ratio_moderate": "0.2370021655165227144849550438",
+          "date_range": {
+            "first": "2025-08-20T16:00:00+00:00",
+            "last": "2026-05-04T20:00:00+00:00"
+          },
+          "direction_changes": 149,
+          "direction_counts": {
+            "flat": 0,
+            "long": 344,
+            "short": 427
+          },
+          "gross_return": "0.5029489909521097494866647241",
+          "max_drawdown_like": "-1.086382606332008800744328510",
+          "post_cost_return": {
+            "conservative": "0.3241489909521097494866647236",
+            "moderate": "0.3837489909521097494866647236",
+            "optimistic": "0.4433489909521097494866647231"
+          },
+          "rebalance_observations": 771,
+          "sharpe_like": "0.02011905221742586007157078002",
+          "turnover": 298
+        }
+      },
+      "per_symbol": {
+        "discovery": {
+          "BTCUSDT": {
+            "average_interval_return": "0.0002104989247477675214430894648",
+            "average_normalized_return": "0.04009962491825188667274885326",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.02536482939345388098011480533",
+              "moderate": "0.03027642790171988287765948796",
+              "optimistic": "0.03518802640998588477520417063"
+            },
+            "cost_to_gross_ratio_moderate": "0.6122666387470887011574718752",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 97,
+            "direction_counts": {
+              "flat": 0,
+              "long": 341,
+              "short": 258
+            },
+            "gross_return": "0.1260888559239127453444105894",
+            "max_drawdown_like": "-0.6188256454625549530577878269",
+            "post_cost_return": {
+              "conservative": "0.0102888559239127453444105894",
+              "moderate": "0.0488888559239127453444105894",
+              "optimistic": "0.0874888559239127453444105894"
+            },
+            "rebalance_observations": 599,
+            "sharpe_like": "0.008085493212918827500704641590",
+            "turnover": 193
+          },
+          "ETHUSDT": {
+            "average_interval_return": "0.001495060642214576333948183086",
+            "average_normalized_return": "0.1085013808208878173290003675",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.09793648987591676005071369068",
+              "moderate": "0.1014581201909071124768092497",
+              "optimistic": "0.1049797505058974649029048084"
+            },
+            "cost_to_gross_ratio_moderate": "0.09067141600464127971982944315",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 102,
+            "direction_counts": {
+              "flat": 0,
+              "long": 323,
+              "short": 276
+            },
+            "gross_return": "0.8955413246865312240349616684",
+            "max_drawdown_like": "-0.6296723381169750953828026470",
+            "post_cost_return": {
+              "conservative": "0.7737413246865312240349616678",
+              "moderate": "0.8143413246865312240349616674",
+              "optimistic": "0.8549413246865312240349616680"
+            },
+            "rebalance_observations": 599,
+            "sharpe_like": "0.04016441891759411012671834461",
+            "turnover": 203
+          },
+          "SOLUSDT": {
+            "average_interval_return": "-0.0003986139822881561542913192890",
+            "average_normalized_return": "0.01275260569327824103519252195",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.003839310260199191867933682047",
+              "moderate": "0.006810408737892208257019961900",
+              "optimistic": "0.009781507215585224646106241895"
+            },
+            "cost_to_gross_ratio_moderate": "0.3936846690341128338852907612",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 118,
+            "direction_counts": {
+              "flat": 0,
+              "long": 310,
+              "short": 289
+            },
+            "gross_return": "-0.2387697753906055364205002541",
+            "max_drawdown_like": "-0.9529151583316623938856118042",
+            "post_cost_return": {
+              "conservative": "-0.3797697753906055364205002541",
+              "moderate": "-0.3327697753906055364205002541",
+              "optimistic": "-0.2857697753906055364205002541"
+            },
+            "rebalance_observations": 599,
+            "sharpe_like": "-0.008650080927180227650776026274",
+            "turnover": 235
+          }
+        },
+        "full": {
+          "BTCUSDT": {
+            "average_interval_return": "0.0005222496787293232293043945084",
+            "average_normalized_return": "0.05776742813567165052845954736",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.04240475660929890567204001647",
+              "moderate": "0.04752564711808982062417986014",
+              "optimistic": "0.05264653762688073557631970371"
+            },
+            "cost_to_gross_ratio_moderate": "0.2567969976717195118236534815",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 144,
+            "direction_counts": {
+              "flat": 0,
+              "long": 456,
+              "short": 400
+            },
+            "gross_return": "0.4470457249923006842845616992",
+            "max_drawdown_like": "-0.6188256454625549530577878269",
+            "post_cost_return": {
+              "conservative": "0.2748457249923006842845616992",
+              "moderate": "0.3322457249923006842845616992",
+              "optimistic": "0.3896457249923006842845616992"
+            },
+            "rebalance_observations": 856,
+            "sharpe_like": "0.02092829650741426493803000909",
+            "turnover": 287
+          },
+          "ETHUSDT": {
+            "average_interval_return": "0.0008758079520892556432546354405",
+            "average_normalized_return": "0.07107104922906436504409319504",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.06002327319990570419073534546",
+              "moderate": "0.06370586520962525780852129533",
+              "optimistic": "0.06738845721934481142630724508"
+            },
+            "cost_to_gross_ratio_moderate": "0.1605993702979557274124696006",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 151,
+            "direction_counts": {
+              "flat": 0,
+              "long": 440,
+              "short": 416
+            },
+            "gross_return": "0.7496916069884028306259679371",
+            "max_drawdown_like": "-0.7064091191723604434172296315",
+            "post_cost_return": {
+              "conservative": "0.5690916069884028306259679365",
+              "moderate": "0.6292916069884028306259679361",
+              "optimistic": "0.6894916069884028306259679367"
+            },
+            "rebalance_observations": 856,
+            "sharpe_like": "0.02400063405746330262570905584",
+            "turnover": 301
+          },
+          "SOLUSDT": {
+            "average_interval_return": "0.0001040561497561269480549148259",
+            "average_normalized_return": "0.03011236967905293384685981937",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.02037728551318899827435596739",
+              "moderate": "0.02362231356847697679852391799",
+              "optimistic": "0.02686734162376495532269186863"
+            },
+            "cost_to_gross_ratio_moderate": "1.531344324828248773000271540",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 171,
+            "direction_counts": {
+              "flat": 0,
+              "long": 422,
+              "short": 434
+            },
+            "gross_return": "0.0890720641912446675350070910",
+            "max_drawdown_like": "-0.9529151583316623938856118042",
+            "post_cost_return": {
+              "conservative": "-0.1155279358087553324649929090",
+              "moderate": "-0.0473279358087553324649929090",
+              "optimistic": "0.0208720641912446675350070910"
+            },
+            "rebalance_observations": 856,
+            "sharpe_like": "0.002373565200365838464579716007",
+            "turnover": 341
+          }
+        },
+        "validation": {
+          "BTCUSDT": {
+            "average_interval_return": "0.001248859412717462797432494591",
+            "average_normalized_return": "0.09894647143230370714157513401",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.08212038463377816555711083953",
+              "moderate": "0.08772908023328667941859893774",
+              "optimistic": "0.09333777583279519328008703588"
+            },
+            "cost_to_gross_ratio_moderate": "0.1171496971201709151346704941",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 47,
+            "direction_counts": {
+              "flat": 0,
+              "long": 115,
+              "short": 142
+            },
+            "gross_return": "0.3209568690683879389401511098",
+            "max_drawdown_like": "-0.3153913257823327640266295417",
+            "post_cost_return": {
+              "conservative": "0.2645568690683879389401511098",
+              "moderate": "0.2833568690683879389401511098",
+              "optimistic": "0.3021568690683879389401511098"
+            },
+            "rebalance_observations": 257,
+            "sharpe_like": "0.05608870059502994097334076273",
+            "turnover": 94
+          },
+          "ETHUSDT": {
+            "average_interval_return": "-0.0005675086291755968615135942852",
+            "average_normalized_return": "-0.01616929560946578249932858038",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.02834255088153640654905854086",
+              "moderate": "-0.02428479912417953186581522072",
+              "optimistic": "-0.02022704736682265718257190053"
+            },
+            "cost_to_gross_ratio_moderate": "0.2687698037313584141145517736",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 49,
+            "direction_counts": {
+              "flat": 0,
+              "long": 117,
+              "short": 140
+            },
+            "gross_return": "-0.1458497176981283934089937313",
+            "max_drawdown_like": "-0.5331059579555935245792965227",
+            "post_cost_return": {
+              "conservative": "-0.2046497176981283934089937313",
+              "moderate": "-0.1850497176981283934089937313",
+              "optimistic": "-0.1654497176981283934089937313"
+            },
+            "rebalance_observations": 257,
+            "sharpe_like": "-0.01633037805574710640277927351",
+            "turnover": 98
+          },
+          "SOLUSDT": {
+            "average_interval_return": "0.001275649181252335423951390448",
+            "average_normalized_return": "0.07057345383266787934953962926",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.05892299437132477273913008774",
+              "moderate": "0.06280648085843914160926660171",
+              "optimistic": "0.06668996734555351047940311545"
+            },
+            "cost_to_gross_ratio_moderate": "0.1293306554589846957986662140",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 53,
+            "direction_counts": {
+              "flat": 0,
+              "long": 112,
+              "short": 145
+            },
+            "gross_return": "0.3278418395818502039555073451",
+            "max_drawdown_like": "-0.5293784708439495603753484967",
+            "post_cost_return": {
+              "conservative": "0.2642418395818502039555073451",
+              "moderate": "0.2854418395818502039555073451",
+              "optimistic": "0.3066418395818502039555073451"
+            },
+            "rebalance_observations": 257,
+            "sharpe_like": "0.03342642928707222142493823512",
+            "turnover": 106
+          }
+        }
+      },
+      "random_baseline": {
+        "discovery": {
+          "median": "-0.7020889042404821238989811785",
+          "p75": "0.3647698298204615913890990702",
+          "p90": "1.249874572398343306800181623"
+        },
+        "full": {
+          "median": "-0.964201672997346296862298119",
+          "p75": "0.2434597444918480353508317017",
+          "p90": "1.396890080951525927642185384"
+        },
+        "validation": {
+          "median": "-0.2777755546253368865030023760",
+          "p75": "0.3856285209172177017263508657",
+          "p90": "0.9186488975714083145976005517"
+        }
+      },
+      "role": "primary"
+    },
+    "60": {
+      "metrics": {
+        "discovery": {
+          "average_interval_return": "0.0002689120211314862303897064282",
+          "average_normalized_return": "0.03465247457154379104854347609",
+          "average_post_cost_normalized_return": {
+            "conservative": "0.02481117890997950308967299441",
+            "moderate": "0.02809161079716759907596315500",
+            "optimistic": "0.03137204268435569506225331558"
+          },
+          "cost_to_gross_ratio_moderate": "0.4378822786515115653671358109",
+          "date_range": {
+            "first": "2023-12-27T16:00:00+00:00",
+            "last": "2025-08-19T16:00:00+00:00"
+          },
+          "direction_changes": 266,
+          "direction_counts": {
+            "flat": 0,
+            "long": 964,
+            "short": 833
+          },
+          "gross_return": "0.4832349019732807560103024514",
+          "max_drawdown_like": "-1.692811950715054228716770584",
+          "post_cost_return": {
+            "conservative": "0.1658349019732807560103024514",
+            "moderate": "0.2716349019732807560103024514",
+            "optimistic": "0.3774349019732807560103024514"
+          },
+          "rebalance_observations": 1797,
+          "sharpe_like": "0.007200285233096506324685712779",
+          "turnover": 529
+        },
+        "full": {
+          "average_interval_return": "-0.0003748156541571131457784238417",
+          "average_normalized_return": "-0.004111268607046939182826556519",
+          "average_post_cost_normalized_return": {
+            "conservative": "-0.01449732131429202106110290578",
+            "moderate": "-0.01103530374521032710167745600",
+            "optimistic": "-0.00757328617612863314225200625"
+          },
+          "cost_to_gross_ratio_moderate": "0.3245624588872856916709644314",
+          "date_range": {
+            "first": "2023-12-27T16:00:00+00:00",
+            "last": "2026-05-04T20:00:00+00:00"
+          },
+          "direction_changes": 392,
+          "direction_counts": {
+            "flat": 0,
+            "long": 1313,
+            "short": 1255
+          },
+          "gross_return": "-0.9625265998754665583589924254",
+          "max_drawdown_like": "-2.129869507363227440678667164",
+          "post_cost_return": {
+            "conservative": "-1.431126599875466558358992422",
+            "moderate": "-1.274926599875466558358992424",
+            "optimistic": "-1.118726599875466558358992424"
+          },
+          "rebalance_observations": 2568,
+          "sharpe_like": "-0.01043057141182925594076558576",
+          "turnover": 781
+        },
+        "validation": {
+          "average_interval_return": "-0.001875177045199412859104143803",
+          "average_normalized_return": "-0.09445944823341210419679795536",
+          "average_post_cost_normalized_return": {
+            "conservative": "-0.1061151875957653399961798092",
+            "moderate": "-0.1022299411416475947297191913",
+            "optimistic": "-0.09834469468752984946325857335"
+          },
+          "cost_to_gross_ratio_moderate": "0.06972104311195408702732024378",
+          "date_range": {
+            "first": "2025-08-20T16:00:00+00:00",
+            "last": "2026-05-04T20:00:00+00:00"
+          },
+          "direction_changes": 126,
+          "direction_counts": {
+            "flat": 0,
+            "long": 349,
+            "short": 422
+          },
+          "gross_return": "-1.445761501848747314369294872",
+          "max_drawdown_like": "-1.832568016238489161757296586",
+          "post_cost_return": {
+            "conservative": "-1.596961501848747314369294872",
+            "moderate": "-1.546561501848747314369294874",
+            "optimistic": "-1.496161501848747314369294874"
+          },
+          "rebalance_observations": 771,
+          "sharpe_like": "-0.05791891349979077343751437914",
+          "turnover": 252
+        }
+      },
+      "per_symbol": {
+        "discovery": {
+          "BTCUSDT": {
+            "average_interval_return": "-0.0008064890177110011695419921159",
+            "average_normalized_return": "-0.02890582782135748656388244244",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.04298154782926496306308495032",
+              "moderate": "-0.03828964115996247089668411431",
+              "optimistic": "-0.03359773449065997873028327846"
+            },
+            "cost_to_gross_ratio_moderate": "0.1614616262850297259860600818",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 98,
+            "direction_counts": {
+              "flat": 0,
+              "long": 344,
+              "short": 255
+            },
+            "gross_return": "-0.4830869216088897005556532774",
+            "max_drawdown_like": "-0.8749370891338653214766792121",
+            "post_cost_return": {
+              "conservative": "-0.6000869216088897005556532774",
+              "moderate": "-0.5610869216088897005556532774",
+              "optimistic": "-0.5220869216088897005556532774"
+            },
+            "rebalance_observations": 599,
+            "sharpe_like": "-0.03099200638611975750438116612",
+            "turnover": 195
+          },
+          "ETHUSDT": {
+            "average_interval_return": "0.002081231081891893046651428265",
+            "average_normalized_return": "0.1258926531771352106763830701",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.1162112171432618784451434559",
+              "moderate": "0.1194383624878863225222233273",
+              "optimistic": "0.1226655078325107665993031986"
+            },
+            "cost_to_gross_ratio_moderate": "0.05871701314247798842530437726",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 92,
+            "direction_counts": {
+              "flat": 0,
+              "long": 308,
+              "short": 291
+            },
+            "gross_return": "1.246657418053243934944205531",
+            "max_drawdown_like": "-0.6861651475458698526880589708",
+            "post_cost_return": {
+              "conservative": "1.136857418053243934944205532",
+              "moderate": "1.173457418053243934944205532",
+              "optimistic": "1.210057418053243934944205531"
+            },
+            "rebalance_observations": 599,
+            "sharpe_like": "0.05595415128342342329883174716",
+            "turnover": 183
+          },
+          "SOLUSDT": {
+            "average_interval_return": "-0.0004680060007864331859403168656",
+            "average_normalized_return": "0.006970598358853649033129800691",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.001203867415941593886960477643",
+              "moderate": "0.003126111063578945602350251995",
+              "optimistic": "0.005048354711216297317740026327"
+            },
+            "cost_to_gross_ratio_moderate": "0.2154560505024715800169166412",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 76,
+            "direction_counts": {
+              "flat": 0,
+              "long": 312,
+              "short": 287
+            },
+            "gross_return": "-0.2803355944710734783782498025",
+            "max_drawdown_like": "-0.9965191917719304190723228256",
+            "post_cost_return": {
+              "conservative": "-0.3709355944710734783782498025",
+              "moderate": "-0.3407355944710734783782498025",
+              "optimistic": "-0.3105355944710734783782498025"
+            },
+            "rebalance_observations": 599,
+            "sharpe_like": "-0.01015605919346699596463968198",
+            "turnover": 151
+          }
+        },
+        "full": {
+          "BTCUSDT": {
+            "average_interval_return": "-0.0004874692244363713906412862893",
+            "average_normalized_return": "-0.01625749255234514322988477951",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.03000354682146071026332120376",
+              "moderate": "-0.02542152873175552125217572900",
+              "optimistic": "-0.02083951064205033224103025428"
+            },
+            "cost_to_gross_ratio_moderate": "0.2540299356212961316459865682",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 133,
+            "direction_counts": {
+              "flat": 0,
+              "long": 458,
+              "short": 398
+            },
+            "gross_return": "-0.4172736561175339103889410636",
+            "max_drawdown_like": "-0.8749370891338653214766792121",
+            "post_cost_return": {
+              "conservative": "-0.5762736561175339103889410636",
+              "moderate": "-0.5232736561175339103889410636",
+              "optimistic": "-0.4702736561175339103889410636"
+            },
+            "rebalance_observations": 856,
+            "sharpe_like": "-0.01953397557924037456226509559",
+            "turnover": 265
+          },
+          "ETHUSDT": {
+            "average_interval_return": "0.0006853741704018826493735717932",
+            "average_normalized_return": "0.04419521995768510792459949120",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.03374633150550611298181960300",
+              "moderate": "0.03722929432289911129607956579",
+              "optimistic": "0.04071225714029210961033952849"
+            },
+            "cost_to_gross_ratio_moderate": "0.1888592507951522918679259142",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 139,
+            "direction_counts": {
+              "flat": 0,
+              "long": 427,
+              "short": 429
+            },
+            "gross_return": "0.5866802898640115478637774550",
+            "max_drawdown_like": "-0.9654480704285791262562431035",
+            "post_cost_return": {
+              "conservative": "0.4204802898640115478637774541",
+              "moderate": "0.4758802898640115478637774565",
+              "optimistic": "0.5312802898640115478637774550"
+            },
+            "rebalance_observations": 856,
+            "sharpe_like": "0.01877988943672759462608822255",
+            "turnover": 277
+          },
+          "SOLUSDT": {
+            "average_interval_return": "-0.001322351908436850696067557027",
+            "average_normalized_return": "-0.04027153322648078224319438126",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.04723474862692146590180711657",
+              "moderate": "-0.04491367682677457134893620481",
+              "optimistic": "-0.04259260502662767679606529308"
+            },
+            "cost_to_gross_ratio_moderate": "0.08445727818601142355212319553",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 120,
+            "direction_counts": {
+              "flat": 0,
+              "long": 428,
+              "short": 428
+            },
+            "gross_return": "-1.131933233621944195833828815",
+            "max_drawdown_like": "-1.773536447897695482078793027",
+            "post_cost_return": {
+              "conservative": "-1.275333233621944195833828815",
+              "moderate": "-1.227533233621944195833828815",
+              "optimistic": "-1.179733233621944195833828815"
+            },
+            "rebalance_observations": 856,
+            "sharpe_like": "-0.03017707364773633793199908216",
+            "turnover": 239
+          }
+        },
+        "validation": {
+          "BTCUSDT": {
+            "average_interval_return": "0.0002560827451025517127109424661",
+            "average_normalized_return": "0.01322247953379646633067786675",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.0002447901578184626046106412724",
+              "moderate": "0.004570686616477797179966383140",
+              "optimistic": "0.008896583075137131755322124961"
+            },
+            "cost_to_gross_ratio_moderate": "0.4254461435844973493665571021",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 35,
+            "direction_counts": {
+              "flat": 0,
+              "long": 114,
+              "short": 143
+            },
+            "gross_return": "0.0658132654913557901667122138",
+            "max_drawdown_like": "-0.3858053271021027037993435523",
+            "post_cost_return": {
+              "conservative": "0.0238132654913557901667122138",
+              "moderate": "0.0378132654913557901667122138",
+              "optimistic": "0.0518132654913557901667122138"
+            },
+            "rebalance_observations": 257,
+            "sharpe_like": "0.01148381454560801446124927347",
+            "turnover": 70
+          },
+          "ETHUSDT": {
+            "average_interval_return": "-0.002568004389841371155954973064",
+            "average_normalized_return": "-0.1462201983242238864268338306",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.1584578182883293092459274316",
+              "moderate": "-0.1543786116336275016395628978",
+              "optimistic": "-0.1502994049789256940331983641"
+            },
+            "cost_to_gross_ratio_moderate": "0.05697167128073431454973872451",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 47,
+            "direction_counts": {
+              "flat": 0,
+              "long": 119,
+              "short": 138
+            },
+            "gross_return": "-0.6599771281892323870804280775",
+            "max_drawdown_like": "-0.7846008241176599614204633988",
+            "post_cost_return": {
+              "conservative": "-0.7163771281892323870804280775",
+              "moderate": "-0.6975771281892323870804280775",
+              "optimistic": "-0.6787771281892323870804280775"
+            },
+            "rebalance_observations": 257,
+            "sharpe_like": "-0.07408917189255051481600054452",
+            "turnover": 94
+          },
+          "SOLUSDT": {
+            "average_interval_return": "-0.003313609490859419134068400828",
+            "average_normalized_return": "-0.1503806259098088924942379026",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.1601325346567851733472226377",
+              "moderate": "-0.1568818984077930797295610594",
+              "optimistic": "-0.1536312621588009861118994812"
+            },
+            "cost_to_gross_ratio_moderate": "0.04133407419388570964674354770",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 44,
+            "direction_counts": {
+              "flat": 0,
+              "long": 116,
+              "short": 141
+            },
+            "gross_return": "-0.8515976391508707174555790127",
+            "max_drawdown_like": "-1.076082071517202011293738513",
+            "post_cost_return": {
+              "conservative": "-0.9043976391508707174555790127",
+              "moderate": "-0.8867976391508707174555790127",
+              "optimistic": "-0.8691976391508707174555790127"
+            },
+            "rebalance_observations": 257,
+            "sharpe_like": "-0.08710929706863082958592674059",
+            "turnover": 88
+          }
+        }
+      },
+      "random_baseline": {
+        "discovery": {
+          "median": "-0.714278748328309691182516129",
+          "p75": "0.3417581572063147395465236877",
+          "p90": "1.241564778349102448015687627"
+        },
+        "full": {
+          "median": "-0.981097133179079931877295538",
+          "p75": "0.2154878363752807541496308913",
+          "p90": "1.328130878362092603946597286"
+        },
+        "validation": {
+          "median": "-0.2837704964501612498791099588",
+          "p75": "0.3756613143088427703753111312",
+          "p90": "0.9100437362019627139107472151"
+        }
+      },
+      "role": "sensitivity"
+    }
+  },
+  "primary_lookback": 40,
+  "random_iterations": 1000,
+  "random_seed": 5403,
+  "rebalance_bars": 6,
+  "schema": "setup_c_tsmom_report_v1",
+  "scope": "research_only_local_4h_ohlcv",
+  "sensitivity_lookbacks": [
+    20,
+    60
+  ],
+  "setup_family": "TSMOM / trend-following + volatility targeting",
+  "volatility_proxy": "ATR(20) / close"
+}
