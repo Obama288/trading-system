@@ -1,0 +1,58 @@
+Setup B Stage B7 bounded exit research
+
+Scope: analysis-only research over frozen high-vol validation entries.
+No detector change, entry/filter/data change, runtime wiring, paper trading, or live trading.
+
+reconstructed_n: 62
+matched_expected_n: True
+seed: 5403
+iterations: 1000
+timeout_bars: 10
+
+Variant metrics
+  A_FIXED_1R
+    n: 62
+    wins/losses/flats: 19/13/30
+    raw_expectancy_r: 0.09677419354838709677419354839
+    post_cost_moderate_expectancy_r: 0.01677419354838709677419354839
+    random_p75_post_cost_moderate_expectancy_r: -0.03161290322580645161290322581
+    flat_rate: 0.4838709677419354838709677419
+    avg_mfe_r: 0.8507928041231166727837781068
+    median_mfe_r: 0.763110634974942283868400540
+    avg_mae_r: -0.5469260995566085474221366168
+    median_mae_r: -0.3830737286714969207336136151
+    gate_passes: True
+  B_PROTECTIVE_AFTER_0_7R
+    n: 62
+    wins/losses/flats: 31/11/20
+    raw_expectancy_r: 0.03064516129032258064516129032
+    post_cost_moderate_expectancy_r: -0.04935483870967741935483870968
+    random_p75_post_cost_moderate_expectancy_r: -0.09774193548387096774193548387
+    flat_rate: 0.3225806451612903225806451613
+    avg_mfe_r: 0.7214092300835128580299888523
+    median_mfe_r: 0.7231168320375303121487219195
+    avg_mae_r: -0.4943109657313700918198151853
+    median_mae_r: -0.3082075089365805267083741377
+    gate_passes: False
+    threshold_provenance: B6 flat-MFE diagnostics; higher overfitting risk
+  C_BREAKEVEN_AFTER_1R
+    n: 62
+    wins/losses/flats: 9/13/40
+    raw_expectancy_r: 0.008064516129032258064516129032
+    post_cost_moderate_expectancy_r: -0.07193548387096774193548387097
+    random_p75_post_cost_moderate_expectancy_r: -0.08806451612903225806451612903
+    flat_rate: 0.6451612903225806451612903226
+    avg_mfe_r: 0.9237487294296575068674451316
+    median_mfe_r: 0.763110634974942283868400540
+    avg_mae_r: -0.5574438858929622010746661192
+    median_mae_r: -0.4228889978649586773129946005
+    gate_passes: False
+
+B7 decision
+  decision: EXIT_VARIANT_RESEARCH_CANDIDATE
+  paper_trading_recommended: False
+  live_trading_recommended: False
+
+Interpretation
+  Each variant was compared with a matched high-vol random baseline under the same exit logic.
+  A pass is a research candidate only, not readiness for paper trading or live trading.
