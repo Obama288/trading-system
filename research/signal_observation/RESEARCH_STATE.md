@@ -10,11 +10,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Data source: local/public OHLCV artifacts only unless a future owner-approved
   task explicitly authorizes download.
 - Active family: Setup C / TSMOM volatility-targeted.
-- Current status: PASS_CANDIDATE research-only after C2 diagnostics.
-- C3 diagnostics are present in pushed commit `866f201`, remote-visible on
-  `origin/main`.
-- C4 diagnostics are present in local commit `3ca2f76`, not pushed relative to
-  `origin/main` at time of writing.
+- Current status: **PASS_CANDIDATE research-only**. C1–C5 diagnostics complete.
+  C6 evidence summary and decision record written (see
+  `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`).
+- All C1–C5 commits are pushed and remote-visible on `origin/main` at `d7c9106`.
 
 ## Retired Family
 
@@ -46,20 +45,38 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   expected and does not prove edge.
 - Direction-change frequency is reported at rebalance points.
 
-Current concern:
-- C4 shows material regime dependence for the 40-bar primary. Raw high_vol is
-  negative and raw low_vol is positive, so regime dependence looks real.
-
 ## C4 Diagnostics
 
-- Raw non-volatility-targeted high_vol / low_vol regime split was added for the
+- Raw non-volatility-targeted high_vol / low_vol regime split added for the
   40-bar primary only.
-- The diagnostic uses the same regime bucket definitions as C3.
-- C4 is observational only; it introduces no strategy filter and no gate change.
+- Diagnostic uses same regime bucket definitions as C3.
+- Interpretation: `real_regime_dependence` — raw high_vol negative, raw low_vol
+  positive.
+- C4 is observational only; no filter, no gate change.
+
+## C5 Diagnostics
+
+- Discovery/validation split of high_vol / low_vol regime metrics for the 40-bar
+  primary.
+- Interpretation: `validation_only_or_discovery_only` — pattern (high_vol
+  negative, low_vol positive) appears in validation split only. Discovery had
+  positive high_vol and low_vol.
+- C5 is observational only; no filter, no gate change.
+- C5 independent review verdict: PASS WITH NOTES.
+
+## C6 Decision Record
+
+- Evidence summary written: `SETUP_C_EVIDENCE_SUMMARY.md`.
+- Setup C remains PASS_CANDIDATE research-only.
+- Escalation remains HOLD.
+- Recommended next step: Fork A — expand dataset / out-of-time validation,
+  because evidence is promising but single-dataset and regime-sensitive.
+- Owner may choose Fork B (define paper prerequisites, no approval) or Fork C
+  (park Setup C) instead.
 
 ## Next Research Action
 
-- Independent review / decision on C4 diagnostics.
+- Owner decision on C6 fork (A / B / C).
 - No paper, runtime, trading, or live escalation from Setup C without explicit
   owner approval and additional gates.
 

@@ -17,14 +17,13 @@ docs as needed.
 
 ## Recent Commits
 
-- `3ca2f76 research: add Setup C regime normalization diagnostic` - local
-  commit on `main`, not pushed relative to `origin/main` at time of writing.
-- `866f201 research: add Setup C funding and regime diagnostics` - pushed /
-  remote-visible on `origin/main`.
-- `a804e13 docs: add compact agent startup state` - pushed / remote-visible on
-  `origin/main`.
-- `0e1454a research: add Setup C TSMOM diagnostics` - pushed.
-- `dd5c8bb docs: add Tower Control GitHub source protocol` - pushed.
+All commits below are pushed and remote-visible on `origin/main` at `d7c9106`.
+
+- `d7c9106 research: add Setup C validation regime split diagnostic` - C5.
+- `84765ab docs: update compact state after Setup C C4` - pushed.
+- `3ca2f76 research: add Setup C regime normalization diagnostic` - C4, pushed.
+- `866f201 research: add Setup C funding and regime diagnostics` - C3, pushed.
+- `a804e13 docs: add compact agent startup state` - pushed.
 
 Do not claim remote visibility for local commits unless verified by GitHub or
 remote refs.
@@ -44,22 +43,24 @@ remote refs.
 - Price-action continuation family is retired after Setup A, Setup B, and SR1
   family review.
 - Active research family: Setup C / TSMOM volatility-targeted.
-- Setup C reached PASS_CANDIDATE research-only after C2 diagnostics.
-- C3 diagnostics are present in pushed commit `866f201` and add funding stress,
-  regime decomposition, sensitivity robustness, autocorrelation interpretation,
-  and direction-change frequency.
-- C4 diagnostics are present in local commit `3ca2f76` and add raw-vs-volatility
-  targeted regime-normalization comparison.
+- Setup C is **PASS_CANDIDATE research-only**. C1–C5 diagnostics complete.
+- C5 (discovery/validation regime split): interpretation
+  `validation_only_or_discovery_only`. High_vol weakness is concentrated in
+  the validation window; discovery had positive high_vol and low_vol.
+- C6 evidence summary and decision record written:
+  `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`.
 - Setup C remains research-only. No paper readiness, runtime readiness, trading
   readiness, or live readiness is claimed.
-- Current research concern: material regime dependence. C4 shows raw high_vol is
-  negative and raw low_vol is positive, so regime dependence looks real.
+- Escalation: **HOLD**.
 
 ## Next Allowed Work
 
-- Review or decide on C4 diagnostics before any escalation.
-- If C3 is accepted, next work should remain research-only unless the Human
-  Owner explicitly authorizes a different lane.
+- Owner decision on C6 fork:
+  - **Fork A (recommended)**: expand dataset / out-of-time validation.
+  - **Fork B**: define paper-trading prerequisites (no paper approval).
+  - **Fork C**: park Setup C.
+- All work remains research-only unless the Human Owner explicitly authorizes
+  a different lane.
 
 ## Deferred / Watchlist
 
