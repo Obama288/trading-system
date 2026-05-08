@@ -12,6 +12,12 @@ primary_metric: volatility_targeted_post_cost_return
 raw_return_metrics: diagnostic_only
 
 Lookback summaries
+Fixed sensitivity table
+lookback | role | vt_sharpe | vt_post_cost_moderate_full | turnover | vt_cost_to_gross
+20 | sensitivity | 0.02354345180342319438400506567 | 74.59219681070078319799735549 | 1385 | 0.2969020347062974863159803166
+40 | primary | 0.03019999341934398968485978677 | 115.4348749671403992779286620 | 929 | 0.1516004575990618623027681617
+60 | sensitivity | -0.002342309428707488694649135308 | -28.33866001770011999710770701 | 781 | 1.684160243457509224542386990
+
 lookback: 20 (sensitivity)
   discovery_volatility_targeted_post_cost_moderate: 129.8481202374540375321219521
   validation_volatility_targeted_post_cost_moderate: -55.25592342675325433412459589
@@ -23,10 +29,15 @@ lookback: 20 (sensitivity)
   turnover: 1385
   volatility_targeted_cost_to_gross_ratio_moderate: 0.2969020347062974863159803166
   raw_cost_to_gross_ratio_moderate: 0.8794139141479900276134027381
+  vol_proxy_skipped_intervals_total: 0
   per_symbol_full_volatility_targeted_post_cost_moderate:
     BTCUSDT: 47.01723384761338209476602738
     ETHUSDT: 58.66540468863058011237421124
     SOLUSDT: -31.09044172554317900914288247
+  turnover_cost_diagnostics_full_by_symbol:
+    BTCUSDT: turnover=487; vt_cost_to_gross=0.2396756608793251092440195487; raw_cost_to_gross=0.6194348666269306352256477706; skipped=0
+    ETHUSDT: turnover=445; vt_cost_to_gross=0.1365410600367270173077386930; raw_cost_to_gross=0.4416565580133200275872169630; skipped=0
+    SOLUSDT: turnover=453; vt_cost_to_gross=0.3123893195119296801722347412; raw_cost_to_gross=0.1344739069262526881435498828; skipped=0
 lookback: 40 (primary)
   discovery_volatility_targeted_post_cost_moderate: 82.98842914148100296328173085
   validation_volatility_targeted_post_cost_moderate: 32.44644582565939631464693189
@@ -38,10 +49,15 @@ lookback: 40 (primary)
   turnover: 929
   volatility_targeted_cost_to_gross_ratio_moderate: 0.1516004575990618623027681617
   raw_cost_to_gross_ratio_moderate: 0.2890008434425119337398534324
+  vol_proxy_skipped_intervals_total: 0
   per_symbol_full_volatility_targeted_post_cost_moderate:
     BTCUSDT: 40.68195393308488645429796028
     ETHUSDT: 54.53222061943922068409422880
     SOLUSDT: 20.22070041461629213953647380
+  turnover_cost_diagnostics_full_by_symbol:
+    BTCUSDT: turnover=287; vt_cost_to_gross=0.1772933528134253804818479842; raw_cost_to_gross=0.2567969976717195118236534815; skipped=0
+    ETHUSDT: turnover=301; vt_cost_to_gross=0.1036312830517089058953879049; raw_cost_to_gross=0.1605993702979557274124696006; skipped=0
+    SOLUSDT: turnover=341; vt_cost_to_gross=0.2155279102823526520022900785; raw_cost_to_gross=1.531344324828248773000271540; skipped=0
 lookback: 60 (sensitivity)
   discovery_volatility_targeted_post_cost_moderate: 50.48062460251017553950578953
   validation_volatility_targeted_post_cost_moderate: -78.81928462021029553661349647
@@ -53,10 +69,21 @@ lookback: 60 (sensitivity)
   turnover: 781
   volatility_targeted_cost_to_gross_ratio_moderate: 1.684160243457509224542386990
   raw_cost_to_gross_ratio_moderate: 0.3245624588872856916709644314
+  vol_proxy_skipped_intervals_total: 0
   per_symbol_full_volatility_targeted_post_cost_moderate:
     BTCUSDT: -21.76082859438272619186242402
     ETHUSDT: 31.86827594040163926944410832
     SOLUSDT: -38.44610736371903307468939132
+  turnover_cost_diagnostics_full_by_symbol:
+    BTCUSDT: turnover=265; vt_cost_to_gross=0.5636807859455833392532929800; raw_cost_to_gross=0.2540299356212961316459865682; skipped=0
+    ETHUSDT: turnover=277; vt_cost_to_gross=0.1576171731118331416378708790; raw_cost_to_gross=0.1888592507951522918679259142; skipped=0
+    SOLUSDT: turnover=239; vt_cost_to_gross=0.1152710917209707930102723108; raw_cost_to_gross=0.08445727818601142355212319553; skipped=0
+
+40-bar return sign autocorrelation
+  BTCUSDT: lag_1=0.8605899641066269891112163391; near_zero=False; observations=5159
+  ETHUSDT: lag_1=0.8619271220971755489899787297; near_zero=False; observations=5159
+  SOLUSDT: lag_1=0.8541354351398891666807033172; near_zero=False; observations=5159
+  pooled: lag_1=0.8591034353752290222316497181; near_zero=False; observations=15479
 
 Primary gate
   discovery_volatility_targeted_post_cost_moderate_gt_0: True

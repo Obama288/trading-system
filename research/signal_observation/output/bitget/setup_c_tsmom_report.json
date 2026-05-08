@@ -127,7 +127,8 @@
             "conservative": "119.4208313866623970635444910",
             "moderate": "129.8481202374540375321219521",
             "optimistic": "140.2754090882456780006994131"
-          }
+          },
+          "volatility_targeted_sharpe_like": "0.04719325744716358769119560619"
         },
         "full": {
           "average_interval_return": "-0.0002453134795307666483070570023",
@@ -164,7 +165,8 @@
             "conservative": "58.84291570087816431037123008",
             "moderate": "74.59219681070078319799735549",
             "optimistic": "90.34147792052340208562348117"
-          }
+          },
+          "volatility_targeted_sharpe_like": "0.02354345180342319438400506567"
         },
         "validation": {
           "average_interval_return": "-0.002009309775534224365908624093",
@@ -201,7 +203,8 @@
             "conservative": "-60.57791568578423275317326062",
             "moderate": "-55.25592342675325433412459589",
             "optimistic": "-49.93393116772227591507593115"
-          }
+          },
+          "volatility_targeted_sharpe_like": "-0.03406349231000924722962234893"
         }
       },
       "per_symbol": {
@@ -241,7 +244,8 @@
               "conservative": "57.83081547787236106383235761",
               "moderate": "62.78646246086215882446788390",
               "optimistic": "67.74210944385195658510341023"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.06829077915720669980861340468"
           },
           "ETHUSDT": {
             "average_interval_return": "0.0009536641039220070894106536269",
@@ -278,7 +282,8 @@
               "conservative": "56.85383975998791113664327572",
               "moderate": "60.02484520578657816692308946",
               "optimistic": "63.19585065158524519720290316"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.05777377801699875229266538607"
           },
           "SOLUSDT": {
             "average_interval_return": "-0.0005265412808207498180726458449",
@@ -315,7 +320,8 @@
               "conservative": "4.736176148802124863068857685",
               "moderate": "7.036812570805300540730978765",
               "optimistic": "9.337448992808476218393099967"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.01195438837804168911289394915"
           }
         },
         "full": {
@@ -354,7 +360,8 @@
               "conservative": "39.60665521996013164743412772",
               "moderate": "47.01723384761338209476602738",
               "optimistic": "54.42781247526663254209792718"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.04127447048701716321263115113"
           },
           "ETHUSDT": {
             "average_interval_return": "0.0004708272105570623687640377610",
@@ -391,7 +398,8 @@
               "conservative": "54.02694640594147612001620923",
               "moderate": "58.66540468863058011237421124",
               "optimistic": "63.30386297131968410473221321"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.04248722098381922959495351942"
           },
           "SOLUSDT": {
             "average_interval_return": "-0.001574151058961524890192068321",
@@ -428,7 +436,8 @@
               "conservative": "-34.79068592502344345707910660",
               "moderate": "-31.09044172554317900914288247",
               "optimistic": "-27.39019752606291456120665823"
-            }
+            },
+            "volatility_targeted_sharpe_like": "-0.01689268096905157434662471837"
           }
         },
         "validation": {
@@ -467,7 +476,8 @@
               "conservative": "-18.22416025791222941639822988",
               "moderate": "-15.76922861324877672970185652",
               "optimistic": "-13.31429696858532404300548306"
-            }
+            },
+            "volatility_targeted_sharpe_like": "-0.02509657051392010922896740324"
           },
           "ETHUSDT": {
             "average_interval_return": "-0.0006545397121106492564006427981",
@@ -504,7 +514,8 @@
               "conservative": "-2.826893354046435016627066552",
               "moderate": "-1.359440517155998054548878286",
               "optimistic": "0.1080123197344389075293099978"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.003506114472546436048001460468"
           },
           "SOLUSDT": {
             "average_interval_return": "-0.004015856339530880019373134720",
@@ -541,7 +552,8 @@
               "conservative": "-39.52686207382556832014796428",
               "moderate": "-38.12725429634847954987386121",
               "optimistic": "-36.72764651887139077959975823"
-            }
+            },
+            "volatility_targeted_sharpe_like": "-0.08249783488841837275235154549"
           }
         }
       },
@@ -580,7 +592,117 @@
           }
         }
       },
-      "role": "sensitivity"
+      "role": "sensitivity",
+      "turnover_cost_diagnostics": {
+        "BTCUSDT": {
+          "discovery": {
+            "raw_cost_to_gross_ratio_moderate": "0.2007940559333344946876778307",
+            "raw_gross_return": "0.6633662504642251277315601362",
+            "raw_post_cost_moderate": "0.5301662504642251277315601362",
+            "rebalance_observations": 599,
+            "turnover": 333,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1363356237266231258909654307",
+            "volatility_targeted_gross_return": "72.69775642684175434573893656",
+            "volatility_targeted_post_cost_moderate": "62.78646246086215882446788390"
+          },
+          "full": {
+            "raw_cost_to_gross_ratio_moderate": "0.6194348666269306352256477706",
+            "raw_gross_return": "0.3144801987992111654898717806",
+            "raw_post_cost_moderate": "0.1196801987992111654898717806",
+            "rebalance_observations": 856,
+            "turnover": 487,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.2396756608793251092440195487",
+            "volatility_targeted_gross_return": "61.83839110291988298942982684",
+            "volatility_targeted_post_cost_moderate": "47.01723384761338209476602738"
+          },
+          "validation": {
+            "raw_cost_to_gross_ratio_moderate": "0.1765619453859559467391399104",
+            "raw_gross_return": "-0.3488860516650139622416883556",
+            "raw_post_cost_moderate": "-0.4104860516650139622416883556",
+            "rebalance_observations": 257,
+            "turnover": 154,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.4521316985727581191163815017",
+            "volatility_targeted_gross_return": "-10.85936532392187135630910972",
+            "volatility_targeted_post_cost_moderate": "-15.76922861324877672970185652"
+          },
+          "vol_proxy_skipped_intervals": 0
+        },
+        "ETHUSDT": {
+          "discovery": {
+            "raw_cost_to_gross_ratio_moderate": "0.2177700355106144814558475494",
+            "raw_gross_return": "0.5712447982492822465569815225",
+            "raw_post_cost_moderate": "0.4468447982492822465569815225",
+            "rebalance_observations": 599,
+            "turnover": 311,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.09555991144572730749612273893",
+            "volatility_targeted_gross_return": "66.36685609738391222748271702",
+            "volatility_targeted_post_cost_moderate": "60.02484520578657816692308946"
+          },
+          "full": {
+            "raw_cost_to_gross_ratio_moderate": "0.4416565580133200275872169630",
+            "raw_gross_return": "0.4030280922368453876620163234",
+            "raw_post_cost_moderate": "0.2250280922368453876620163234",
+            "rebalance_observations": 856,
+            "turnover": 445,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1365410600367270173077386930",
+            "volatility_targeted_gross_return": "67.94232125400878809709021539",
+            "volatility_targeted_post_cost_moderate": "58.66540468863058011237421124"
+          },
+          "validation": {
+            "raw_cost_to_gross_ratio_moderate": "0.3186366043574599630600031910",
+            "raw_gross_return": "-0.1682167060124368588949651991",
+            "raw_post_cost_moderate": "-0.2218167060124368588949651991",
+            "rebalance_observations": 257,
+            "turnover": 134,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "1.862881994844196933576586081",
+            "volatility_targeted_gross_return": "1.575465156624875869607498320",
+            "volatility_targeted_post_cost_moderate": "-1.359440517155998054548878286"
+          },
+          "vol_proxy_skipped_intervals": 0
+        },
+        "SOLUSDT": {
+          "discovery": {
+            "raw_cost_to_gross_ratio_moderate": "0.3868125736741671261692518269",
+            "raw_gross_return": "-0.3153982272116291410255148611",
+            "raw_post_cost_moderate": "-0.4373982272116291410255148606",
+            "rebalance_observations": 599,
+            "turnover": 305,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.3953633849559452901858500688",
+            "volatility_targeted_gross_return": "11.63808541481165189605522097",
+            "volatility_targeted_post_cost_moderate": "7.036812570805300540730978765"
+          },
+          "full": {
+            "raw_cost_to_gross_ratio_moderate": "0.1344739069262526881435498828",
+            "raw_gross_return": "-1.347473306471065306004410483",
+            "raw_post_cost_moderate": "-1.528673306471065306004410483",
+            "rebalance_observations": 856,
+            "turnover": 453,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.3123893195119296801722347412",
+            "volatility_targeted_gross_return": "-23.68995332658265011327043414",
+            "volatility_targeted_post_cost_moderate": "-31.09044172554317900914288247"
+          },
+          "validation": {
+            "raw_cost_to_gross_ratio_moderate": "0.05736016806304330692513419059",
+            "raw_gross_return": "-1.032075079259436164978895623",
+            "raw_post_cost_moderate": "-1.091275079259436164978895621",
+            "rebalance_observations": 257,
+            "turnover": 148,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.07923495485964529045289919933",
+            "volatility_targeted_gross_return": "-35.32803874139430200932565514",
+            "volatility_targeted_post_cost_moderate": "-38.12725429634847954987386121"
+          },
+          "vol_proxy_skipped_intervals": 0
+        }
+      },
+      "vol_proxy_skipped_intervals": {
+        "by_symbol": {
+          "BTCUSDT": 0,
+          "ETHUSDT": 0,
+          "SOLUSDT": 0
+        },
+        "downstream_policy": "invalid volatility rows are skipped before interval creation",
+        "total": 0
+      }
     },
     "40": {
       "metrics": {
@@ -619,7 +741,8 @@
             "conservative": "76.15723708821232990635854454",
             "moderate": "82.98842914148100296328173085",
             "optimistic": "89.81962119474967602020491756"
-          }
+          },
+          "volatility_targeted_sharpe_like": "0.03024682262586323447100933013"
         },
         "full": {
           "average_interval_return": "0.0005007045935249019402046482562",
@@ -656,7 +779,8 @@
             "conservative": "105.1213499159689285653844187",
             "moderate": "115.4348749671403992779286620",
             "optimistic": "125.7484000183118699904729076"
-          }
+          },
+          "volatility_targeted_sharpe_like": "0.03019999341934398968485978677"
         },
         "validation": {
           "average_interval_return": "0.0006523333215980671199567635851",
@@ -693,7 +817,8 @@
             "conservative": "28.96411282775659865902587333",
             "moderate": "32.44644582565939631464693189",
             "optimistic": "35.92877882356219397026799044"
-          }
+          },
+          "volatility_targeted_sharpe_like": "0.03008855783078066661623579735"
         }
       },
       "per_symbol": {
@@ -733,7 +858,8 @@
               "conservative": "15.19353280667887470708876839",
               "moderate": "18.13558031313020984371803329",
               "optimistic": "21.07762781958154498034729821"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.02251678689274318245705497264"
           },
           "ETHUSDT": {
             "average_interval_return": "0.001495060642214576333948183086",
@@ -770,7 +896,8 @@
               "conservative": "58.66395743567413927037750072",
               "moderate": "60.77341399435336037360874055",
               "optimistic": "62.88287055303258147683998026"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.05657334418859950443510812773"
           },
           "SOLUSDT": {
             "average_interval_return": "-0.0003986139822881561542913192890",
@@ -807,7 +934,8 @@
               "conservative": "2.299746845859315928892275546",
               "moderate": "4.079434833997432745954957178",
               "optimistic": "5.859122822135549563017638895"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.007846100798349551437600309849"
           }
         },
         "full": {
@@ -846,7 +974,8 @@
               "conservative": "36.29847165755986325526625410",
               "moderate": "40.68195393308488645429796028",
               "optimistic": "45.06543620860990965332966638"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.03299488571869189328692098653"
           },
           "ETHUSDT": {
             "average_interval_return": "0.0008758079520892556432546354405",
@@ -883,7 +1012,8 @@
               "conservative": "51.37992185911928278726945571",
               "moderate": "54.53222061943922068409422880",
               "optimistic": "57.68451937975915858091900179"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.03803703516986601995253209160"
           },
           "SOLUSDT": {
             "average_interval_return": "0.0001040561497561269480549148259",
@@ -920,7 +1050,8 @@
               "conservative": "17.44295639928978252284870809",
               "moderate": "20.22070041461629213953647380",
               "optimistic": "22.99844442994280175622423955"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.01838080303720775317874650302"
           }
         },
         "validation": {
@@ -959,7 +1090,8 @@
               "conservative": "21.10493885088098854817748576",
               "moderate": "22.54637361995467661057992700",
               "optimistic": "23.98780838902836467298236822"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.05885181167464390803787909070"
           },
           "ETHUSDT": {
             "average_interval_return": "-0.0005675086291755968615135942852",
@@ -996,7 +1128,8 @@
               "conservative": "-7.284035576554856483108045000",
               "moderate": "-6.241193374914139689514511725",
               "optimistic": "-5.198351173273422895920978436"
-            }
+            },
+            "volatility_targeted_sharpe_like": "-0.009248205629234074976604439250"
           },
           "SOLUSDT": {
             "average_interval_return": "0.001275649181252335423951390448",
@@ -1033,7 +1166,8 @@
               "conservative": "15.14320955343046659395643255",
               "moderate": "16.14126558061885939358151664",
               "optimistic": "17.13932160780725219320660067"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.04224814677900408654806074890"
           }
         }
       },
@@ -1072,7 +1206,117 @@
           }
         }
       },
-      "role": "primary"
+      "role": "primary",
+      "turnover_cost_diagnostics": {
+        "BTCUSDT": {
+          "discovery": {
+            "raw_cost_to_gross_ratio_moderate": "0.6122666387470887011574718752",
+            "raw_gross_return": "0.1260888559239127453444105894",
+            "raw_post_cost_moderate": "0.0488888559239127453444105894",
+            "rebalance_observations": 599,
+            "turnover": 193,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.2449697980107749786844146493",
+            "volatility_targeted_gross_return": "24.01967532603288011697656310",
+            "volatility_targeted_post_cost_moderate": "18.13558031313020984371803329"
+          },
+          "full": {
+            "raw_cost_to_gross_ratio_moderate": "0.2567969976717195118236534815",
+            "raw_gross_return": "0.4470457249923006842845616992",
+            "raw_post_cost_moderate": "0.3322457249923006842845616992",
+            "rebalance_observations": 856,
+            "turnover": 287,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1772933528134253804818479842",
+            "volatility_targeted_gross_return": "49.44891848413493285236137254",
+            "volatility_targeted_post_cost_moderate": "40.68195393308488645429796028"
+          },
+          "validation": {
+            "raw_cost_to_gross_ratio_moderate": "0.1171496971201709151346704941",
+            "raw_gross_return": "0.3209568690683879389401511098",
+            "raw_post_cost_moderate": "0.2833568690683879389401511098",
+            "rebalance_observations": 257,
+            "turnover": 94,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1133682791982293168729640243",
+            "volatility_targeted_gross_return": "25.42924315810205273538480944",
+            "volatility_targeted_post_cost_moderate": "22.54637361995467661057992700"
+          },
+          "vol_proxy_skipped_intervals": 0
+        },
+        "ETHUSDT": {
+          "discovery": {
+            "raw_cost_to_gross_ratio_moderate": "0.09067141600464127971982944315",
+            "raw_gross_return": "0.8955413246865312240349616684",
+            "raw_post_cost_moderate": "0.8143413246865312240349616674",
+            "rebalance_observations": 599,
+            "turnover": 203,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.06491401839030598487980750182",
+            "volatility_targeted_gross_return": "64.99232711171180258007122012",
+            "volatility_targeted_post_cost_moderate": "60.77341399435336037360874055"
+          },
+          "full": {
+            "raw_cost_to_gross_ratio_moderate": "0.1605993702979557274124696006",
+            "raw_gross_return": "0.7496916069884028306259679371",
+            "raw_post_cost_moderate": "0.6292916069884028306259679361",
+            "rebalance_observations": 856,
+            "turnover": 301,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1036312830517089058953879049",
+            "volatility_targeted_gross_return": "60.83681814007909647774377495",
+            "volatility_targeted_post_cost_moderate": "54.53222061943922068409422880"
+          },
+          "validation": {
+            "raw_cost_to_gross_ratio_moderate": "0.2687698037313584141145517736",
+            "raw_gross_return": "-0.1458497176981283934089937313",
+            "raw_post_cost_moderate": "-0.1850497176981283934089937313",
+            "rebalance_observations": 257,
+            "turnover": 98,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.5019082903007101098386901842",
+            "volatility_targeted_gross_return": "-4.155508971632706102327445158",
+            "volatility_targeted_post_cost_moderate": "-6.241193374914139689514511725"
+          },
+          "vol_proxy_skipped_intervals": 0
+        },
+        "SOLUSDT": {
+          "discovery": {
+            "raw_cost_to_gross_ratio_moderate": "0.3936846690341128338852907612",
+            "raw_gross_return": "-0.2387697753906055364205002541",
+            "raw_post_cost_moderate": "-0.3327697753906055364205002541",
+            "rebalance_observations": 599,
+            "turnover": 235,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.4659594359228169184140453923",
+            "volatility_targeted_gross_return": "7.638810810273666380080320647",
+            "volatility_targeted_post_cost_moderate": "4.079434833997432745954957178"
+          },
+          "full": {
+            "raw_cost_to_gross_ratio_moderate": "1.531344324828248773000271540",
+            "raw_gross_return": "0.0890720641912446675350070910",
+            "raw_post_cost_moderate": "-0.0473279358087553324649929090",
+            "rebalance_observations": 856,
+            "turnover": 341,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.2155279102823526520022900785",
+            "volatility_targeted_gross_return": "25.77618844526931137291200538",
+            "volatility_targeted_post_cost_moderate": "20.22070041461629213953647380"
+          },
+          "validation": {
+            "raw_cost_to_gross_ratio_moderate": "0.1293306554589846957986662140",
+            "raw_gross_return": "0.3278418395818502039555073451",
+            "raw_post_cost_moderate": "0.2854418395818502039555073451",
+            "rebalance_observations": 257,
+            "turnover": 106,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1100551631303818795012099907",
+            "volatility_targeted_gross_return": "18.13737763499564499283168472",
+            "volatility_targeted_post_cost_moderate": "16.14126558061885939358151664"
+          },
+          "vol_proxy_skipped_intervals": 0
+        }
+      },
+      "vol_proxy_skipped_intervals": {
+        "by_symbol": {
+          "BTCUSDT": 0,
+          "ETHUSDT": 0,
+          "SOLUSDT": 0
+        },
+        "downstream_policy": "invalid volatility rows are skipped before interval creation",
+        "total": 0
+      }
     },
     "60": {
       "metrics": {
@@ -1111,7 +1355,8 @@
             "conservative": "44.58568850123316705214237096",
             "moderate": "50.48062460251017553950578953",
             "optimistic": "56.37556070378718402686920810"
-          }
+          },
+          "volatility_targeted_sharpe_like": "0.01948230539855718120551552229"
         },
         "full": {
           "average_interval_return": "-0.0003748156541571131457784238417",
@@ -1148,7 +1393,8 @@
             "conservative": "-37.22912113510191008491226205",
             "moderate": "-28.33866001770011999710770701",
             "optimistic": "-19.44819890029832990930315205"
-          }
+          },
+          "volatility_targeted_sharpe_like": "-0.002342309428707488694649135308"
         },
         "validation": {
           "average_interval_return": "-0.001875177045199412859104143803",
@@ -1185,7 +1431,8 @@
             "conservative": "-81.81480963633507713705463293",
             "moderate": "-78.81928462021029553661349647",
             "optimistic": "-75.82375960408551393617236005"
-          }
+          },
+          "volatility_targeted_sharpe_like": "-0.05566193774726304267208329388"
         }
       },
       "per_symbol": {
@@ -1225,7 +1472,8 @@
               "conservative": "-25.74594714972971287478788524",
               "moderate": "-22.93549505481752006711378447",
               "optimistic": "-20.12504295990532725943968380"
-            }
+            },
+            "volatility_targeted_sharpe_like": "-0.01622925371921622302105025616"
           },
           "ETHUSDT": {
             "average_interval_return": "0.002081231081891893046651428265",
@@ -1262,7 +1510,8 @@
               "conservative": "69.61051906881386518864093010",
               "moderate": "71.54357913024390719081177307",
               "optimistic": "73.47663919167394919298261598"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.06567773377579588023380145012"
           },
           "SOLUSDT": {
             "average_interval_return": "-0.0004680060007864331859403168656",
@@ -1299,7 +1548,8 @@
               "conservative": "0.721116582149014738289326108",
               "moderate": "1.872540527083788415807800945",
               "optimistic": "3.023964472018562093326275770"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.004288600796141630977411610694"
           }
         },
         "full": {
@@ -1338,7 +1588,8 @@
               "conservative": "-25.68303607917036798540295042",
               "moderate": "-21.76082859438272619186242402",
               "optimistic": "-17.83862110959508439832189766"
-            }
+            },
+            "volatility_targeted_sharpe_like": "-0.009281097555813947813227461241"
           },
           "ETHUSDT": {
             "average_interval_return": "0.0006853741704018826493735717932",
@@ -1375,7 +1626,8 @@
               "conservative": "28.88685976871323271243758017",
               "moderate": "31.86827594040163926944410832",
               "optimistic": "34.84969211209004582645063639"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.02364266381191863020171731690"
           },
           "SOLUSDT": {
             "average_interval_return": "-0.001322351908436850696067557027",
@@ -1412,7 +1664,8 @@
               "conservative": "-40.43294482464477481194689178",
               "moderate": "-38.44610736371903307468939132",
               "optimistic": "-36.45926990279329133743189088"
-            }
+            },
+            "volatility_targeted_sharpe_like": "-0.02458530727230354978965431204"
           }
         },
         "validation": {
@@ -1451,7 +1704,8 @@
               "conservative": "0.062911070559344889384934807",
               "moderate": "1.174666460434793875251360467",
               "optimistic": "2.286421850310242861117786115"
-            }
+            },
+            "volatility_targeted_sharpe_like": "0.007851129487015949424877728557"
           },
           "ETHUSDT": {
             "average_interval_return": "-0.002568004389841371155954973064",
@@ -1488,7 +1742,8 @@
               "conservative": "-40.72365930010063247620334993",
               "moderate": "-39.67530318984226792136766474",
               "optimistic": "-38.62694707958390336653197957"
-            }
+            },
+            "volatility_targeted_sharpe_like": "-0.08392378925580153316729838145"
           },
           "SOLUSDT": {
             "average_interval_return": "-0.003313609490859419134068400828",
@@ -1525,7 +1780,8 @@
               "conservative": "-41.15406140679378955023621790",
               "moderate": "-40.31864789080282149049719226",
               "optimistic": "-39.48323437481185343075816666"
-            }
+            },
+            "volatility_targeted_sharpe_like": "-0.09031090002938641747056978436"
           }
         }
       },
@@ -1564,7 +1820,117 @@
           }
         }
       },
-      "role": "sensitivity"
+      "role": "sensitivity",
+      "turnover_cost_diagnostics": {
+        "BTCUSDT": {
+          "discovery": {
+            "raw_cost_to_gross_ratio_moderate": "0.1614616262850297259860600818",
+            "raw_gross_return": "-0.4830869216088897005556532774",
+            "raw_post_cost_moderate": "-0.5610869216088897005556532774",
+            "rebalance_observations": 599,
+            "turnover": 195,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.3246339595115009612129092306",
+            "volatility_targeted_gross_return": "-17.31459086499313445176558302",
+            "volatility_targeted_post_cost_moderate": "-22.93549505481752006711378447"
+          },
+          "full": {
+            "raw_cost_to_gross_ratio_moderate": "0.2540299356212961316459865682",
+            "raw_gross_return": "-0.4172736561175339103889410636",
+            "raw_post_cost_moderate": "-0.5232736561175339103889410636",
+            "rebalance_observations": 856,
+            "turnover": 265,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.5636807859455833392532929800",
+            "volatility_targeted_gross_return": "-13.91641362480744260478137126",
+            "volatility_targeted_post_cost_moderate": "-21.76082859438272619186242402"
+          },
+          "validation": {
+            "raw_cost_to_gross_ratio_moderate": "0.4254461435844973493665571021",
+            "raw_gross_return": "0.0658132654913557901667122138",
+            "raw_post_cost_moderate": "0.0378132654913557901667122138",
+            "rebalance_observations": 257,
+            "turnover": 70,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.6543245459525811073550156445",
+            "volatility_targeted_gross_return": "3.398177240185691846984211755",
+            "volatility_targeted_post_cost_moderate": "1.174666460434793875251360467"
+          },
+          "vol_proxy_skipped_intervals": 0
+        },
+        "ETHUSDT": {
+          "discovery": {
+            "raw_cost_to_gross_ratio_moderate": "0.05871701314247798842530437726",
+            "raw_gross_return": "1.246657418053243934944205531",
+            "raw_post_cost_moderate": "1.173457418053243934944205532",
+            "rebalance_observations": 599,
+            "turnover": 183,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.05126820768617437416835343970",
+            "volatility_targeted_gross_return": "75.40969925310399119515345896",
+            "volatility_targeted_post_cost_moderate": "71.54357913024390719081177307"
+          },
+          "full": {
+            "raw_cost_to_gross_ratio_moderate": "0.1888592507951522918679259142",
+            "raw_gross_return": "0.5866802898640115478637774550",
+            "raw_post_cost_moderate": "0.4758802898640115478637774565",
+            "rebalance_observations": 856,
+            "turnover": 277,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1576171731118331416378708790",
+            "volatility_targeted_gross_return": "37.83110828377845238345716447",
+            "volatility_targeted_post_cost_moderate": "31.86827594040163926944410832"
+          },
+          "validation": {
+            "raw_cost_to_gross_ratio_moderate": "0.05697167128073431454973872451",
+            "raw_gross_return": "-0.6599771281892323870804280775",
+            "raw_post_cost_moderate": "-0.6975771281892323870804280775",
+            "rebalance_observations": 257,
+            "turnover": 94,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.05579539217498129989570440412",
+            "volatility_targeted_gross_return": "-37.57859096932553881169629447",
+            "volatility_targeted_post_cost_moderate": "-39.67530318984226792136766474"
+          },
+          "vol_proxy_skipped_intervals": 0
+        },
+        "SOLUSDT": {
+          "discovery": {
+            "raw_cost_to_gross_ratio_moderate": "0.2154560505024715800169166412",
+            "raw_gross_return": "-0.2803355944710734783782498025",
+            "raw_post_cost_moderate": "-0.3407355944710734783782498025",
+            "rebalance_observations": 599,
+            "turnover": 151,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.5515290219514167013849483357",
+            "volatility_targeted_gross_return": "4.175388416953335770844750614",
+            "volatility_targeted_post_cost_moderate": "1.872540527083788415807800945"
+          },
+          "full": {
+            "raw_cost_to_gross_ratio_moderate": "0.08445727818601142355212319553",
+            "raw_gross_return": "-1.131933233621944195833828815",
+            "raw_post_cost_moderate": "-1.227533233621944195833828815",
+            "rebalance_observations": 856,
+            "turnover": 239,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1152710917209707930102723108",
+            "volatility_targeted_gross_return": "-34.47243244186754960017439036",
+            "volatility_targeted_post_cost_moderate": "-38.44610736371903307468939132"
+          },
+          "validation": {
+            "raw_cost_to_gross_ratio_moderate": "0.04133407419388570964674354770",
+            "raw_gross_return": "-0.8515976391508707174555790127",
+            "raw_post_cost_moderate": "-0.8867976391508707174555790127",
+            "rebalance_observations": 257,
+            "turnover": 88,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.04323211489945080796459102325",
+            "volatility_targeted_gross_return": "-38.64782085882088537101914096",
+            "volatility_targeted_post_cost_moderate": "-40.31864789080282149049719226"
+          },
+          "vol_proxy_skipped_intervals": 0
+        }
+      },
+      "vol_proxy_skipped_intervals": {
+        "by_symbol": {
+          "BTCUSDT": 0,
+          "ETHUSDT": 0,
+          "SOLUSDT": 0
+        },
+        "downstream_policy": "invalid volatility rows are skipped before interval creation",
+        "total": 0
+      }
     }
   },
   "primary_lookback": 40,
@@ -1573,6 +1939,32 @@
   "random_seed": 5403,
   "raw_return_metrics_are_diagnostic_only": true,
   "rebalance_bars": 6,
+  "return_sign_autocorrelation_40": {
+    "BTCUSDT": {
+      "lag_1_sign_autocorrelation": "0.8605899641066269891112163391",
+      "lookback": 40,
+      "near_zero": false,
+      "observations": 5159
+    },
+    "ETHUSDT": {
+      "lag_1_sign_autocorrelation": "0.8619271220971755489899787297",
+      "lookback": 40,
+      "near_zero": false,
+      "observations": 5159
+    },
+    "SOLUSDT": {
+      "lag_1_sign_autocorrelation": "0.8541354351398891666807033172",
+      "lookback": 40,
+      "near_zero": false,
+      "observations": 5159
+    },
+    "pooled": {
+      "lag_1_sign_autocorrelation": "0.8591034353752290222316497181",
+      "lookback": 40,
+      "near_zero": false,
+      "observations": 15479
+    }
+  },
   "schema": "setup_c_tsmom_report_v1",
   "scope": "research_only_local_4h_ohlcv",
   "sensitivity_lookbacks": [

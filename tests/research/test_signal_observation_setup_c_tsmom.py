@@ -12,9 +12,11 @@ from research.signal_observation.setup_c_tsmom import (
     RANDOM_ITERATIONS,
     RESULT_FAIL,
     RESULT_PARK,
+    RESULT_PASS,
     TsmomInterval,
     build_tsmom_intervals,
     close_to_close_return,
+    count_vol_proxy_skipped_intervals,
     cost_return,
     evaluate_c1_gate,
     format_tsmom_report,
@@ -110,6 +112,7 @@ def _lookback_result(
         return {
             "post_cost_return": {"moderate": value},
             "volatility_targeted_post_cost_return": {"moderate": vt_value},
+            "volatility_targeted_sharpe_like": vt_value,
             "cost_to_gross_ratio_moderate": cost_ratio,
             "volatility_targeted_cost_to_gross_ratio_moderate": vt_cost_ratio,
             "turnover": 0,
@@ -139,6 +142,37 @@ def _lookback_result(
                     "p90": random_p75,
                 },
             }
+        },
+        "turnover_cost_diagnostics": {
+            "BTCUSDT": {
+                "full": {
+                    "turnover": 0,
+                    "volatility_targeted_cost_to_gross_ratio_moderate": vt_cost_ratio,
+                    "raw_cost_to_gross_ratio_moderate": cost_ratio,
+                },
+                "vol_proxy_skipped_intervals": 0,
+            },
+            "ETHUSDT": {
+                "full": {
+                    "turnover": 0,
+                    "volatility_targeted_cost_to_gross_ratio_moderate": vt_cost_ratio,
+                    "raw_cost_to_gross_ratio_moderate": cost_ratio,
+                },
+                "vol_proxy_skipped_intervals": 0,
+            },
+            "SOLUSDT": {
+                "full": {
+                    "turnover": 0,
+                    "volatility_targeted_cost_to_gross_ratio_moderate": vt_cost_ratio,
+                    "raw_cost_to_gross_ratio_moderate": cost_ratio,
+                },
+                "vol_proxy_skipped_intervals": 0,
+            },
+        },
+        "vol_proxy_skipped_intervals": {
+            "total": 0,
+            "by_symbol": {"BTCUSDT": 0, "ETHUSDT": 0, "SOLUSDT": 0},
+            "downstream_policy": "invalid volatility rows are skipped before interval creation",
         },
     }
 
@@ -288,6 +322,27 @@ def test_skipped_invalid_vol_proxy_does_not_update_turnover_state(monkeypatch) -
     assert intervals[0].turnover_units == 1
 
 
+def test_vol_proxy_skipped_intervals_are_documented(monkeypatch) -> None:
+    candles = _candles(75, start="100", step="1")
+
+    def proxy_or_skip(
+        candles_arg: list[Candle],
+        atr_values: list[Decimal | None],
+        index: int,
+    ) -> Decimal | None:
+        if index == 60:
+            return None
+        return Decimal("0.02")
+
+    monkeypatch.setattr(setup_c_tsmom, "_volatility_proxy_from_atr", proxy_or_skip)
+
+    skipped = count_vol_proxy_skipped_intervals({"BTCUSDT": candles}, lookback=40)
+
+    assert skipped["total"] == 1
+    assert skipped["by_symbol"]["BTCUSDT"] == 1
+    assert "skipped before interval creation" in skipped["downstream_policy"]
+
+
 def test_c1_pass_gate_requires_2_of_3_positive_symbols() -> None:
     primary = _lookback_result(
         discovery="0.05",
@@ -342,6 +397,27 @@ def test_c1_gate_uses_volatility_targeted_metrics_not_raw_metrics() -> None:
         is False
     )
     assert gate["decision"] != "SETUP_C_TSMOM_PASS_CANDIDATE"
+
+
+def test_c1_gate_random_baseline_comparison_uses_volatility_targeted_metrics() -> None:
+    primary = _lookback_result(
+        discovery="0.50",
+        validation="0.20",
+        random_median="0.00",
+        random_p75="0.10",
+        symbol_values=("0.30", "0.20", "0.10"),
+        vt_discovery="0.50",
+        vt_validation="0.20",
+        vt_random_median="0.40",
+        vt_random_p75="0.60",
+        vt_symbol_values=("0.30", "0.20", "0.10"),
+    )
+
+    gate = evaluate_c1_gate(_gate_payload(primary))
+
+    assert gate["gate_results"]["beats_random_median"] is True
+    assert gate["gate_results"]["beats_random_p75"] is False
+    assert gate["decision"] != RESULT_PASS
 
 
 def test_c1_gate_symbol_count_uses_volatility_targeted_metrics() -> None:
@@ -413,14 +489,23 @@ def test_report_headline_fields_are_volatility_targeted() -> None:
             }
             for lookback, result in payload.items()
         },
+        "return_sign_autocorrelation_40": {
+            "BTCUSDT": {
+                "lag_1_sign_autocorrelation": "0",
+                "near_zero": True,
+                "observations": 10,
+            }
+        },
         "known_limitations": ["funding costs excluded"],
     }
 
     text = format_tsmom_report(report)
 
     assert "primary_metric: volatility_targeted_post_cost_return" in text
+    assert "Fixed sensitivity table" in text
     assert "discovery_volatility_targeted_post_cost_moderate: -0.01" in text
     assert "raw_discovery_post_cost_moderate: 0.50" in text
+    assert "40-bar return sign autocorrelation" in text
 
 
 def test_summary_contains_expected_cost_fields() -> None:
@@ -435,6 +520,7 @@ def test_summary_contains_expected_cost_fields() -> None:
     assert summary["turnover"] == 3
     assert summary["post_cost_return"]["moderate"] == "0.0088"
     assert summary["volatility_targeted_post_cost_return"]["moderate"] == "0.44"
+    assert summary["volatility_targeted_sharpe_like"] is not None
     assert summary["cost_to_gross_ratio_moderate"] == "0.12"
 
 
