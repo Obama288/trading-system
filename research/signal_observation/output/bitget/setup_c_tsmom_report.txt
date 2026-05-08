@@ -141,6 +141,13 @@ C3 interpretation
 - No strategy filter is introduced by this diagnostic.
 - Regime decomposition is observational only.
 
+C4 regime normalization diagnostic
+  policy: observational_only; no_filter; no_gate_change
+  high_vol: count=1284; raw_gross=-0.7571345635304149547962462341; raw_post_cost_moderate=-0.9519345635304149547962462335; turnover=487; raw_cost_to_gross=0.2572858371326679803515475523; vt_post_cost_moderate=-21.00573539550553016603580585
+  low_vol: count=1284; raw_gross=2.042943959702363137241782960; raw_post_cost_moderate=1.866143959702363137241782962; turnover=442; raw_cost_to_gross=0.08654177671410919314630127258; vt_post_cost_moderate=136.4406103626459294439644680
+  interpretation_result: real_regime_dependence
+  interpretation: Raw high_vol is also negative while raw low_vol is positive; regime dependence looks real.
+
 Known limitations
 - funding costs excluded
 - research-only normalized return calculation

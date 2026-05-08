@@ -313,6 +313,7 @@ def analyze_tsmom(
             "high autocorrelation indicates low independent information per bar",
             "interpretation should focus on rebalance intervals and direction-change frequency",
         ],
+        "c4_regime_normalization": _primary_regime_normalization(lookback_results),
         "c3_interpretation": _c3_interpretation(lookback_results, gate),
         "gate": gate,
         "known_limitations": [
@@ -701,6 +702,22 @@ def format_tsmom_report(report: dict[str, object]) -> str:
     lines.extend(["", "C3 interpretation"])
     for item in report["c3_interpretation"]:  # type: ignore[index]
         lines.append(f"- {item}")
+
+    c4 = report["c4_regime_normalization"]  # type: ignore[index]
+    lines.extend(["", "C4 regime normalization diagnostic"])
+    lines.append("  policy: observational_only; no_filter; no_gate_change")
+    for bucket in ("high_vol", "low_vol"):
+        values = c4["buckets"][bucket]
+        lines.append(
+            f"  {bucket}: count={values['count']}; "
+            f"raw_gross={values['raw_gross_return']}; "
+            f"raw_post_cost_moderate={values['raw_post_cost_moderate']}; "
+            f"turnover={values['turnover']}; "
+            f"raw_cost_to_gross={values['raw_cost_to_gross_ratio_moderate']}; "
+            f"vt_post_cost_moderate={values['volatility_targeted_post_cost_moderate']}"
+        )
+    lines.append(f"  interpretation_result: {c4['interpretation_result']}")
+    lines.append(f"  interpretation: {c4['interpretation']}")
 
     lines.extend(["", "Known limitations"])
     for limitation in report["known_limitations"]:  # type: ignore[index]
@@ -1164,6 +1181,83 @@ def _sensitivity_robustness_diagnostics(
             "interpretation": "sensitivity strength is not robust unless validation is non-negative",
         }
     return output
+
+
+def _primary_regime_normalization(
+    lookback_results: dict[str, object],
+) -> dict[str, object]:
+    primary = lookback_results[str(PRIMARY_LOOKBACK)]  # type: ignore[index]
+    regime = primary["regime_decomposition"]["full"]  # type: ignore[index]
+    high_vol = _regime_normalization_bucket(regime["high_vol"])
+    low_vol = _regime_normalization_bucket(regime["low_vol"])
+    interpretation_result, interpretation = _regime_normalization_interpretation(
+        high_vol,
+        low_vol,
+    )
+    return _json_safe(
+        {
+            "lookback": PRIMARY_LOOKBACK,
+            "diagnostic_only": True,
+            "candidate_inclusion_unchanged": True,
+            "strategy_filter_introduced": False,
+            "primary_gate_unchanged": True,
+            "bucket_source": "same high_vol/low_vol definitions as C3 regime_decomposition",
+            "buckets": {
+                "high_vol": high_vol,
+                "low_vol": low_vol,
+            },
+            "comparison": {
+                "raw_high_vol_post_cost_moderate": high_vol["raw_post_cost_moderate"],
+                "raw_low_vol_post_cost_moderate": low_vol["raw_post_cost_moderate"],
+                "vt_high_vol_post_cost_moderate": high_vol["volatility_targeted_post_cost_moderate"],
+                "vt_low_vol_post_cost_moderate": low_vol["volatility_targeted_post_cost_moderate"],
+            },
+            "interpretation_result": interpretation_result,
+            "interpretation": interpretation,
+        }
+    )  # type: ignore[return-value]
+
+
+def _regime_normalization_bucket(metrics: dict[str, object]) -> dict[str, object]:
+    return {
+        "count": metrics["rebalance_observations"],
+        "raw_gross_return": metrics["gross_return"],
+        "raw_post_cost_moderate": metrics["post_cost_return"][PRIMARY_COST_SCENARIO],  # type: ignore[index]
+        "turnover": metrics["turnover"],
+        "raw_cost_to_gross_ratio_moderate": metrics["cost_to_gross_ratio_moderate"],
+        "volatility_targeted_gross_return": metrics["volatility_targeted_gross_return"],
+        "volatility_targeted_post_cost_moderate": metrics["volatility_targeted_post_cost_return"][PRIMARY_COST_SCENARIO],  # type: ignore[index]
+        "volatility_targeted_cost_to_gross_ratio_moderate": metrics["volatility_targeted_cost_to_gross_ratio_moderate"],
+    }
+
+
+def _regime_normalization_interpretation(
+    high_vol: dict[str, object],
+    low_vol: dict[str, object],
+) -> tuple[str, str]:
+    raw_high = Decimal(str(high_vol["raw_post_cost_moderate"]))
+    raw_low = Decimal(str(low_vol["raw_post_cost_moderate"]))
+    vt_high = Decimal(str(high_vol["volatility_targeted_post_cost_moderate"]))
+    vt_low = Decimal(str(low_vol["volatility_targeted_post_cost_moderate"]))
+    if raw_high < Decimal("0") and raw_low > Decimal("0"):
+        return (
+            "real_regime_dependence",
+            "Raw high_vol is also negative while raw low_vol is positive; regime dependence looks real.",
+        )
+    if (
+        raw_high > Decimal("0")
+        and raw_low > Decimal("0")
+        and vt_high < Decimal("0")
+        and vt_low > raw_low
+    ):
+        return (
+            "normalization_artifact",
+            "Raw buckets are both positive while volatility-targeted high_vol is negative and low_vol is amplified; concern may be normalization-driven.",
+        )
+    return (
+        "inconclusive",
+        "Raw and volatility-targeted regime buckets are mixed or ambiguous; normalization impact is inconclusive.",
+    )
 
 
 def _c3_interpretation(

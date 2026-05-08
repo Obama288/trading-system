@@ -186,30 +186,42 @@ def _lookback_result(
             "full": {
                 "high_vol": {
                     "rebalance_observations": 1,
+                    "gross_return": "-0.01",
+                    "post_cost_return": {"moderate": "-0.02"},
                     "volatility_targeted_gross_return": vt_discovery,
                     "volatility_targeted_post_cost_return": {"moderate": vt_discovery},
                     "turnover": 0,
+                    "cost_to_gross_ratio_moderate": "0.1",
                     "volatility_targeted_cost_to_gross_ratio_moderate": vt_cost_ratio,
                 },
                 "low_vol": {
                     "rebalance_observations": 0,
+                    "gross_return": "0.01",
+                    "post_cost_return": {"moderate": "0.01"},
                     "volatility_targeted_gross_return": "0",
                     "volatility_targeted_post_cost_return": {"moderate": "0"},
                     "turnover": 0,
+                    "cost_to_gross_ratio_moderate": "0.1",
                     "volatility_targeted_cost_to_gross_ratio_moderate": None,
                 },
                 "volatility_expanding": {
                     "rebalance_observations": 1,
+                    "gross_return": "-0.01",
+                    "post_cost_return": {"moderate": "-0.02"},
                     "volatility_targeted_gross_return": vt_discovery,
                     "volatility_targeted_post_cost_return": {"moderate": vt_discovery},
                     "turnover": 0,
+                    "cost_to_gross_ratio_moderate": "0.1",
                     "volatility_targeted_cost_to_gross_ratio_moderate": vt_cost_ratio,
                 },
                 "volatility_contracting": {
                     "rebalance_observations": 0,
+                    "gross_return": "0.01",
+                    "post_cost_return": {"moderate": "0.01"},
                     "volatility_targeted_gross_return": "0",
                     "volatility_targeted_post_cost_return": {"moderate": "0"},
                     "turnover": 0,
+                    "cost_to_gross_ratio_moderate": "0.1",
                     "volatility_targeted_cost_to_gross_ratio_moderate": None,
                 },
                 "policy": {"candidate_inclusion_unchanged": True},
@@ -552,6 +564,32 @@ def test_report_headline_fields_are_volatility_targeted() -> None:
             "high autocorrelation indicates low independent information per bar",
             "interpretation should focus on rebalance intervals and direction-change frequency",
         ],
+        "c4_regime_normalization": {
+            "diagnostic_only": True,
+            "candidate_inclusion_unchanged": True,
+            "strategy_filter_introduced": False,
+            "primary_gate_unchanged": True,
+            "buckets": {
+                "high_vol": {
+                    "count": 1,
+                    "raw_gross_return": "-0.01",
+                    "raw_post_cost_moderate": "-0.02",
+                    "turnover": 0,
+                    "raw_cost_to_gross_ratio_moderate": "0.1",
+                    "volatility_targeted_post_cost_moderate": "-1",
+                },
+                "low_vol": {
+                    "count": 1,
+                    "raw_gross_return": "0.02",
+                    "raw_post_cost_moderate": "0.01",
+                    "turnover": 0,
+                    "raw_cost_to_gross_ratio_moderate": "0.1",
+                    "volatility_targeted_post_cost_moderate": "1",
+                },
+            },
+            "interpretation_result": "real_regime_dependence",
+            "interpretation": "Raw high_vol is also negative while raw low_vol is positive; regime dependence looks real.",
+        },
         "c3_interpretation": [
             "Funding stress does not invalidate the 40-bar primary candidate under the tested scenarios.",
             "Regime decomposition shows a material regime-dependence concern: high_vol is -1 and low_vol is 1.",
@@ -577,6 +615,8 @@ def test_report_headline_fields_are_volatility_targeted() -> None:
     assert "Funding stress does not invalidate the 40-bar primary candidate" in text
     assert "Regime decomposition shows a material regime-dependence concern" in text
     assert "Escalation to paper, runtime, trading, or live remains HOLD / NO-GO" in text
+    assert "C4 regime normalization diagnostic" in text
+    assert "interpretation_result: real_regime_dependence" in text
 
 
 def test_summary_contains_expected_cost_fields() -> None:
@@ -634,6 +674,54 @@ def test_regime_decomposition_is_observational_and_keeps_all_intervals() -> None
     assert high_low_count == len(intervals)
     assert expansion_count == len(intervals)
     assert full["policy"]["candidate_inclusion_unchanged"] is True
+
+
+def test_c4_regime_normalization_diagnostic_is_observational() -> None:
+    primary = _lookback_result(
+        discovery="0.05",
+        validation="0.01",
+        random_median="0.00",
+        random_p75="0.02",
+        symbol_values=("0.03", "0.02", "0.01"),
+        vt_discovery="0.05",
+        vt_validation="0.01",
+        vt_random_median="0.00",
+        vt_random_p75="0.02",
+        vt_symbol_values=("0.03", "0.02", "0.01"),
+    )
+    payload = _gate_payload(primary)
+    before_gate = evaluate_c1_gate(payload)
+
+    diagnostic = setup_c_tsmom._primary_regime_normalization(payload)
+    after_gate = evaluate_c1_gate(payload)
+
+    assert diagnostic["diagnostic_only"] is True
+    assert diagnostic["candidate_inclusion_unchanged"] is True
+    assert diagnostic["strategy_filter_introduced"] is False
+    assert diagnostic["primary_gate_unchanged"] is True
+    assert diagnostic["buckets"]["high_vol"]["raw_post_cost_moderate"] == "-0.02"
+    assert diagnostic["buckets"]["low_vol"]["raw_post_cost_moderate"] == "0.01"
+    assert diagnostic["interpretation_result"] == "real_regime_dependence"
+    assert before_gate == after_gate
+
+
+def test_c4_regime_normalization_can_flag_normalization_artifact() -> None:
+    high_vol = {
+        "raw_post_cost_moderate": "0.01",
+        "volatility_targeted_post_cost_moderate": "-1",
+    }
+    low_vol = {
+        "raw_post_cost_moderate": "0.02",
+        "volatility_targeted_post_cost_moderate": "1",
+    }
+
+    result, interpretation = setup_c_tsmom._regime_normalization_interpretation(
+        high_vol,
+        low_vol,
+    )
+
+    assert result == "normalization_artifact"
+    assert "normalization-driven" in interpretation
 
 
 def test_sensitivity_robustness_marks_discovery_only_strength_not_robust() -> None:

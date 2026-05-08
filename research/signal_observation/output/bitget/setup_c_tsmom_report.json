@@ -69,6 +69,44 @@
     "No strategy filter is introduced by this diagnostic.",
     "Regime decomposition is observational only."
   ],
+  "c4_regime_normalization": {
+    "bucket_source": "same high_vol/low_vol definitions as C3 regime_decomposition",
+    "buckets": {
+      "high_vol": {
+        "count": 1284,
+        "raw_cost_to_gross_ratio_moderate": "0.2572858371326679803515475523",
+        "raw_gross_return": "-0.7571345635304149547962462341",
+        "raw_post_cost_moderate": "-0.9519345635304149547962462335",
+        "turnover": 487,
+        "volatility_targeted_cost_to_gross_ratio_moderate": "0.5823835720149351245636205459",
+        "volatility_targeted_gross_return": "-13.27474309453161475589997753",
+        "volatility_targeted_post_cost_moderate": "-21.00573539550553016603580585"
+      },
+      "low_vol": {
+        "count": 1284,
+        "raw_cost_to_gross_ratio_moderate": "0.08654177671410919314630127258",
+        "raw_gross_return": "2.042943959702363137241782960",
+        "raw_post_cost_moderate": "1.866143959702363137241782962",
+        "turnover": 442,
+        "volatility_targeted_cost_to_gross_ratio_moderate": "0.08635560147361407504839903579",
+        "volatility_targeted_gross_return": "149.3366681640149554589171295",
+        "volatility_targeted_post_cost_moderate": "136.4406103626459294439644680"
+      }
+    },
+    "candidate_inclusion_unchanged": true,
+    "comparison": {
+      "raw_high_vol_post_cost_moderate": "-0.9519345635304149547962462335",
+      "raw_low_vol_post_cost_moderate": "1.866143959702363137241782962",
+      "vt_high_vol_post_cost_moderate": "-21.00573539550553016603580585",
+      "vt_low_vol_post_cost_moderate": "136.4406103626459294439644680"
+    },
+    "diagnostic_only": true,
+    "interpretation": "Raw high_vol is also negative while raw low_vol is positive; regime dependence looks real.",
+    "interpretation_result": "real_regime_dependence",
+    "lookback": 40,
+    "primary_gate_unchanged": true,
+    "strategy_filter_introduced": false
+  },
   "cost_bps_per_turnover": {
     "conservative": "6",
     "moderate": "4",
