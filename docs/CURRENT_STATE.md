@@ -17,8 +17,12 @@ docs as needed.
 
 ## Recent Commits
 
-- `866f201 research: add Setup C funding and regime diagnostics` - local commit
-  on `main`, not pushed relative to `origin/main` at time of writing.
+- `3ca2f76 research: add Setup C regime normalization diagnostic` - local
+  commit on `main`, not pushed relative to `origin/main` at time of writing.
+- `866f201 research: add Setup C funding and regime diagnostics` - pushed /
+  remote-visible on `origin/main`.
+- `a804e13 docs: add compact agent startup state` - pushed / remote-visible on
+  `origin/main`.
 - `0e1454a research: add Setup C TSMOM diagnostics` - pushed.
 - `dd5c8bb docs: add Tower Control GitHub source protocol` - pushed.
 
@@ -41,17 +45,19 @@ remote refs.
   family review.
 - Active research family: Setup C / TSMOM volatility-targeted.
 - Setup C reached PASS_CANDIDATE research-only after C2 diagnostics.
-- C3 diagnostics are present in local commit `866f201` and add funding stress,
+- C3 diagnostics are present in pushed commit `866f201` and add funding stress,
   regime decomposition, sensitivity robustness, autocorrelation interpretation,
   and direction-change frequency.
+- C4 diagnostics are present in local commit `3ca2f76` and add raw-vs-volatility
+  targeted regime-normalization comparison.
 - Setup C remains research-only. No paper readiness, runtime readiness, trading
   readiness, or live readiness is claimed.
-- Current research concern: material regime dependence in C3 diagnostics. The
-  40-bar primary high_vol bucket is negative and low_vol is strongly positive.
+- Current research concern: material regime dependence. C4 shows raw high_vol is
+  negative and raw low_vol is positive, so regime dependence looks real.
 
 ## Next Allowed Work
 
-- Review or decide on C3 diagnostics before any escalation.
+- Review or decide on C4 diagnostics before any escalation.
 - If C3 is accepted, next work should remain research-only unless the Human
   Owner explicitly authorizes a different lane.
 

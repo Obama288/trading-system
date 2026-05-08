@@ -11,7 +11,9 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   task explicitly authorizes download.
 - Active family: Setup C / TSMOM volatility-targeted.
 - Current status: PASS_CANDIDATE research-only after C2 diagnostics.
-- C3 diagnostics are present in local commit `866f201`, not pushed relative to
+- C3 diagnostics are present in pushed commit `866f201`, remote-visible on
+  `origin/main`.
+- C4 diagnostics are present in local commit `3ca2f76`, not pushed relative to
   `origin/main` at time of writing.
 
 ## Retired Family
@@ -45,12 +47,19 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Direction-change frequency is reported at rebalance points.
 
 Current concern:
-- C3 shows material regime dependence for the 40-bar primary. The high_vol
-  bucket is negative and the low_vol bucket is strongly positive.
+- C4 shows material regime dependence for the 40-bar primary. Raw high_vol is
+  negative and raw low_vol is positive, so regime dependence looks real.
+
+## C4 Diagnostics
+
+- Raw non-volatility-targeted high_vol / low_vol regime split was added for the
+  40-bar primary only.
+- The diagnostic uses the same regime bucket definitions as C3.
+- C4 is observational only; it introduces no strategy filter and no gate change.
 
 ## Next Research Action
 
-- Independent review / decision on C3 diagnostics.
+- Independent review / decision on C4 diagnostics.
 - No paper, runtime, trading, or live escalation from Setup C without explicit
   owner approval and additional gates.
 
