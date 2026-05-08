@@ -1,5 +1,17 @@
 # Hephaestus Context
 
+## Compact startup entry points
+
+Routine agent startup should use:
+- `docs/CURRENT_STATE.md`
+- `docs/BOUNDARIES.md`
+- recent commits
+- `research/signal_observation/RESEARCH_STATE.md` when research status matters
+- `docs/AGENT_PROMPTS.md` for role-specific startup prompts
+
+This file remains historical context. Do not force new sessions to read the full
+context wall unless compact state is missing, stale, or conflicting.
+
 ## Project
 
 - Name: Hephaestus

@@ -6,20 +6,20 @@ Every new Tower Control, Codex, Claude, or reviewer chat must restore project
 context from repo docs before relying on task text or memory.
 
 Read in this order:
-1. `docs/PROGRESS.md`
-2. `docs/AI_COMMANDS.md`
-3. `docs/HOW_WE_WORK.md`
-4. `docs/AI_HANDOFF.md`
-5. `docs/STAGE_MAP.md`
-6. `docs/PROJECT_ORIGIN.md`
-7. `docs/CONTEXT.md`
-8. Current-stage docs as needed
+1. `docs/CURRENT_STATE.md`
+2. `docs/BOUNDARIES.md`
+3. Recent commits
+4. `research/signal_observation/RESEARCH_STATE.md` when research status matters
+5. `docs/AGENT_PROMPTS.md` for role-specific startup prompts
+6. Long historical docs only when compact state is missing, stale, or conflicting
 
 Rules:
 - Do not use chat memory as source of truth.
 - Do not use `.codex/worktrees` as source of truth.
 - Do not use detached worktrees as source of truth.
-- If docs conflict, `docs/PROGRESS.md` wins.
+- `docs/CURRENT_STATE.md` is the short current project status entry point.
+- `docs/BOUNDARIES.md` is the compact safety boundary entry point.
+- If compact docs conflict with `docs/PROGRESS.md`, `docs/PROGRESS.md` wins.
 - Live trading remains NO-GO unless `docs/PROGRESS.md` explicitly says otherwise.
 
 ## Tower Control startup protocol

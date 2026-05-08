@@ -6,13 +6,19 @@ Any AI receiving these commands must respond with the relevant context.
 ## Working Protocol
 
 ### Context recovery order
-1. Read `docs/PROGRESS.md` first.
-2. Read `docs/AI_COMMANDS.md`.
-3. Read `docs/HOW_WE_WORK.md`.
-4. Read `docs/AI_HANDOFF.md` and `docs/CONTEXT.md`.
-5. Read current-stage docs only as needed.
-6. Treat chat memory as secondary.
-7. If chat memory conflicts with `docs/PROGRESS.md`, `docs/PROGRESS.md` wins.
+1. Read `docs/CURRENT_STATE.md`.
+2. Read `docs/BOUNDARIES.md`.
+3. Read recent commits.
+4. Read `research/signal_observation/RESEARCH_STATE.md` when research status matters.
+5. Read `docs/AGENT_PROMPTS.md` for role-specific startup prompts.
+6. Read long historical docs only when the compact state is missing, stale, or conflicting.
+7. Treat chat memory as secondary.
+8. If compact docs conflict with `docs/PROGRESS.md`, `docs/PROGRESS.md` wins.
+
+`docs/CURRENT_STATE.md` is the short current project status entry point.
+`docs/BOUNDARIES.md` is the compact safety boundary entry point.
+`research/signal_observation/RESEARCH_STATE.md` is the compact research-track
+state entry point.
 
 ### Tower Control GitHub startup protocol
 
