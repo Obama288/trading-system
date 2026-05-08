@@ -55,12 +55,37 @@
       }
     }
   },
+  "autocorrelation_interpretation": [
+    "high return-sign autocorrelation is expected for overlapping lookback windows",
+    "return-sign autocorrelation does not by itself prove edge",
+    "high autocorrelation indicates low independent information per bar",
+    "interpretation should focus on rebalance intervals and direction-change frequency"
+  ],
+  "c3_interpretation": [
+    "Funding stress does not invalidate the 40-bar primary candidate under the tested scenarios.",
+    "Regime decomposition shows a material regime-dependence concern: high_vol is -21.00573539550553016603580585 and low_vol is 136.4406103626459294439644680.",
+    "Setup C remains SETUP_C_TSMOM_PASS_CANDIDATE research-only.",
+    "Escalation to paper, runtime, trading, or live remains HOLD / NO-GO.",
+    "No strategy filter is introduced by this diagnostic.",
+    "Regime decomposition is observational only."
+  ],
   "cost_bps_per_turnover": {
     "conservative": "6",
     "moderate": "4",
     "optimistic": "2"
   },
   "funding_costs_excluded": true,
+  "funding_stress_assumptions": {
+    "applied_to": "volatility_targeted_post_cost_return",
+    "diagnostic_only": true,
+    "funding_intervals_per_rebalance": "3",
+    "rates_per_8h": {
+      "favorable": "-0.0001",
+      "high_cost": "0.0003",
+      "mild_cost": "0.0001",
+      "neutral": "0"
+    }
+  },
   "gate": {
     "decision": "SETUP_C_TSMOM_PASS_CANDIDATE",
     "gate_results": {
@@ -79,7 +104,23 @@
     "positive_symbol_count": 3,
     "primary_lookback_only": true,
     "primary_metric": "volatility_targeted_post_cost_return",
-    "sensitivity_better_than_primary": true
+    "sensitivity_better_than_primary": true,
+    "sensitivity_robustness": {
+      "20": {
+        "diagnostic_only": true,
+        "discovery_better_than_primary": true,
+        "interpretation": "sensitivity strength is not robust unless validation is non-negative",
+        "robust_sensitivity_candidate": false,
+        "validation_non_negative": false
+      },
+      "60": {
+        "diagnostic_only": true,
+        "discovery_better_than_primary": false,
+        "interpretation": "sensitivity strength is not robust unless validation is non-negative",
+        "robust_sensitivity_candidate": false,
+        "validation_non_negative": false
+      }
+    }
   },
   "known_limitations": [
     "funding costs excluded",
@@ -91,6 +132,178 @@
   ],
   "lookbacks": {
     "20": {
+      "direction_change_frequency": {
+        "discovery": {
+          "BTCUSDT": {
+            "direction_change_pct": "0.2787979966611018363939899833",
+            "direction_changes": 167,
+            "rebalance_observations": 599
+          },
+          "ETHUSDT": {
+            "direction_change_pct": "0.2604340567612687813021702838",
+            "direction_changes": 156,
+            "rebalance_observations": 599
+          },
+          "SOLUSDT": {
+            "direction_change_pct": "0.2554257095158597662771285476",
+            "direction_changes": 153,
+            "rebalance_observations": 599
+          },
+          "pooled": {
+            "direction_change_pct": "0.2648859209794101279910962716",
+            "direction_changes": 476,
+            "rebalance_observations": 1797
+          }
+        },
+        "full": {
+          "BTCUSDT": {
+            "direction_change_pct": "0.2850467289719626168224299065",
+            "direction_changes": 244,
+            "rebalance_observations": 856
+          },
+          "ETHUSDT": {
+            "direction_change_pct": "0.2605140186915887850467289720",
+            "direction_changes": 223,
+            "rebalance_observations": 856
+          },
+          "SOLUSDT": {
+            "direction_change_pct": "0.2651869158878504672897196262",
+            "direction_changes": 227,
+            "rebalance_observations": 856
+          },
+          "pooled": {
+            "direction_change_pct": "0.2702492211838006230529595016",
+            "direction_changes": 694,
+            "rebalance_observations": 2568
+          }
+        },
+        "validation": {
+          "BTCUSDT": {
+            "direction_change_pct": "0.2996108949416342412451361868",
+            "direction_changes": 77,
+            "rebalance_observations": 257
+          },
+          "ETHUSDT": {
+            "direction_change_pct": "0.2607003891050583657587548638",
+            "direction_changes": 67,
+            "rebalance_observations": 257
+          },
+          "SOLUSDT": {
+            "direction_change_pct": "0.2879377431906614785992217899",
+            "direction_changes": 74,
+            "rebalance_observations": 257
+          },
+          "pooled": {
+            "direction_change_pct": "0.2827496757457846952010376135",
+            "direction_changes": 218,
+            "rebalance_observations": 771
+          }
+        }
+      },
+      "funding_stress": {
+        "discovery": {
+          "favorable": {
+            "baseline_vt_post_cost_return": "129.8481202374540375321219521",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "133.1439298728507498519565750",
+            "funding_impact_on_vt_post_cost_return": "3.295809635396712319834622924",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "-0.0001"
+          },
+          "high_cost": {
+            "baseline_vt_post_cost_return": "129.8481202374540375321219521",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "119.9606913312639005726180833",
+            "funding_impact_on_vt_post_cost_return": "-9.887428906190136959503868751",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0003"
+          },
+          "mild_cost": {
+            "baseline_vt_post_cost_return": "129.8481202374540375321219521",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "126.5523106020573252122873292",
+            "funding_impact_on_vt_post_cost_return": "-3.295809635396712319834622924",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0001"
+          },
+          "neutral": {
+            "baseline_vt_post_cost_return": "129.8481202374540375321219521",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "129.8481202374540375321219521",
+            "funding_impact_on_vt_post_cost_return": "0",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0"
+          }
+        },
+        "full": {
+          "favorable": {
+            "baseline_vt_post_cost_return": "74.59219681070078319799735549",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "77.59918490961394468077722765",
+            "funding_impact_on_vt_post_cost_return": "3.006988098913161482779872163",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "-0.0001"
+          },
+          "high_cost": {
+            "baseline_vt_post_cost_return": "74.59219681070078319799735549",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "65.57123251396129874965773905",
+            "funding_impact_on_vt_post_cost_return": "-9.020964296739484448339616444",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0003"
+          },
+          "mild_cost": {
+            "baseline_vt_post_cost_return": "74.59219681070078319799735549",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "71.58520871178762171521748333",
+            "funding_impact_on_vt_post_cost_return": "-3.006988098913161482779872163",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0001"
+          },
+          "neutral": {
+            "baseline_vt_post_cost_return": "74.59219681070078319799735549",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "74.59219681070078319799735549",
+            "funding_impact_on_vt_post_cost_return": "0",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0"
+          }
+        },
+        "validation": {
+          "favorable": {
+            "baseline_vt_post_cost_return": "-55.25592342675325433412459589",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-55.54474496323680517117934665",
+            "funding_impact_on_vt_post_cost_return": "-0.2888215364835508370547507602",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "-0.0001"
+          },
+          "high_cost": {
+            "baseline_vt_post_cost_return": "-55.25592342675325433412459589",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-54.38945881730260182296034361",
+            "funding_impact_on_vt_post_cost_return": "0.8664646094506525111642522788",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0003"
+          },
+          "mild_cost": {
+            "baseline_vt_post_cost_return": "-55.25592342675325433412459589",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-54.96710189026970349706984513",
+            "funding_impact_on_vt_post_cost_return": "0.2888215364835508370547507602",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0001"
+          },
+          "neutral": {
+            "baseline_vt_post_cost_return": "-55.25592342675325433412459589",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-55.25592342675325433412459589",
+            "funding_impact_on_vt_post_cost_return": "0",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0"
+          }
+        }
+      },
       "metrics": {
         "discovery": {
           "average_interval_return": "0.0005115263336126200518992914847",
@@ -592,6 +805,494 @@
           }
         }
       },
+      "regime_decomposition": {
+        "discovery": {
+          "high_vol": {
+            "average_interval_return": "-0.001284244613271567382072401324",
+            "average_normalized_return": "-0.01470524282020770733173507758",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.02628942482976344067740122030",
+              "moderate": "-0.02242803082657819622884583950",
+              "optimistic": "-0.01856663682339295178029045845"
+            },
+            "cost_to_gross_ratio_moderate": "0.1597178561784749901305590098",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 231,
+            "direction_counts": {
+              "flat": 0,
+              "long": 424,
+              "short": 475
+            },
+            "gross_return": "-1.154535907331139076483088790",
+            "max_drawdown_like": "-1.566531924907511404015777243",
+            "post_cost_return": {
+              "conservative": "-1.431135907331139076483088790",
+              "moderate": "-1.338935907331139076483088790",
+              "optimistic": "-1.246735907331139076483088792"
+            },
+            "rebalance_observations": 899,
+            "sharpe_like": "-0.02903777208115048483464550780",
+            "turnover": 461,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.5251724232501593424471331851",
+            "volatility_targeted_gross_return": "-13.22001329536672889122983474",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-23.63419292195733316898369705",
+              "moderate": "-20.16279971309379840973240971",
+              "optimistic": "-16.69140650423026365048112215"
+            },
+            "volatility_targeted_sharpe_like": "-0.009360788605722182302465885609"
+          },
+          "low_vol": {
+            "average_interval_return": "0.002309297025426522616643781281",
+            "average_normalized_return": "0.1825419946931002754571344205",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.1593040359784184078313231487",
+              "moderate": "0.1670500222166456970399269072",
+              "optimistic": "0.1747960084548729862485306635"
+            },
+            "cost_to_gross_ratio_moderate": "0.09412905106871215455655082357",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 245,
+            "direction_counts": {
+              "flat": 0,
+              "long": 530,
+              "short": 368
+            },
+            "gross_return": "2.073748728833017309746115590",
+            "max_drawdown_like": "-0.591298395258497777463218763",
+            "post_cost_return": {
+              "conservative": "1.780948728833017309746115588",
+              "moderate": "1.878548728833017309746115590",
+              "optimistic": "1.976148728833017309746115588"
+            },
+            "rebalance_observations": 898,
+            "sharpe_like": "0.08026619424586583464155584613",
+            "turnover": 488,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.08486799162297169847849943599",
+            "volatility_targeted_gross_return": "163.9227112344040473605067096",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "143.0550243086197302325281875",
+              "moderate": "150.0109199505478359418543627",
+              "optimistic": "156.9668155924759416511805358"
+            },
+            "volatility_targeted_sharpe_like": "0.09324333056598528407132868409"
+          },
+          "policy": {
+            "candidate_inclusion_unchanged": true,
+            "diagnostic_only": true,
+            "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+            "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+            "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+            "high_low_threshold": "0.02008682497118115247268858279"
+          },
+          "volatility_contracting": {
+            "average_interval_return": "0.001746895667623318027217591657",
+            "average_normalized_return": "0.1414320399025375274072410028",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.1226118483071048956590926187",
+              "moderate": "0.1288852455055824395751420806",
+              "optimistic": "0.1351586427040599834911915413"
+            },
+            "cost_to_gross_ratio_moderate": "0.1290480766480272579948792033",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-17T16:00:00+00:00"
+            },
+            "direction_changes": 294,
+            "direction_counts": {
+              "flat": 0,
+              "long": 590,
+              "short": 448
+            },
+            "gross_return": "1.813277702993004112251860140",
+            "max_drawdown_like": "-1.101726844281723628536947387",
+            "post_cost_return": {
+              "conservative": "1.462277702993004112251860140",
+              "moderate": "1.579277702993004112251860144",
+              "optimistic": "1.696277702993004112251860136"
+            },
+            "rebalance_observations": 1038,
+            "sharpe_like": "0.04993038032367297720833420969",
+            "turnover": 585,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.08871253222113766139791097702",
+            "volatility_targeted_gross_return": "146.8064574188339534487161609",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "127.2710985427748816941381382",
+              "moderate": "133.7828848347945722789974797",
+              "optimistic": "140.2946711268142628638568199"
+            },
+            "volatility_targeted_sharpe_like": "0.08463338512715249074051350164"
+          },
+          "volatility_expanding": {
+            "average_interval_return": "-0.001177951095508729748338383850",
+            "average_normalized_return": "0.005133386719635527036311875693",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.01034290797906783218787041859",
+              "moderate": "-0.005184143079500045779809653813",
+              "optimistic": "-0.00002537817993225937174888903821"
+            },
+            "cost_to_gross_ratio_moderate": "0.1628517158141449333204917355",
+            "date_range": {
+              "first": "2023-12-28T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 182,
+            "direction_counts": {
+              "flat": 0,
+              "long": 364,
+              "short": 395
+            },
+            "gross_return": "-0.8940648814911258789888333422",
+            "max_drawdown_like": "-1.599972500523729257882016230",
+            "post_cost_return": {
+              "conservative": "-1.112464881491125878988833344",
+              "moderate": "-1.039664881491125878988833343",
+              "optimistic": "-0.9668648814911258789888333422"
+            },
+            "rebalance_observations": 759,
+            "sharpe_like": "-0.02922234446061942058830963218",
+            "turnover": 364,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "2.009887499741714855613314578",
+            "volatility_targeted_gross_return": "3.896240520203365020560713651",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-7.850267156112484630593647709",
+              "moderate": "-3.934764597340534746875527244",
+              "optimistic": "-0.019262038568584863157406780"
+            },
+            "volatility_targeted_sharpe_like": "0.002686630195442119412376210829"
+          }
+        },
+        "full": {
+          "high_vol": {
+            "average_interval_return": "-0.002337183984304221962643473195",
+            "average_normalized_return": "-0.06604372696763834193434165321",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.07830717794546913580404537017",
+              "moderate": "-0.07421936095285887118081079794",
+              "optimistic": "-0.07013154396024860655757622556"
+            },
+            "cost_to_gross_ratio_moderate": "0.08943851631560873502046347370",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-04-09T20:00:00+00:00"
+            },
+            "direction_changes": 336,
+            "direction_counts": {
+              "flat": 0,
+              "long": 588,
+              "short": 696
+            },
+            "gross_return": "-3.000944235846621000034219583",
+            "max_drawdown_like": "-3.136440255186655220306688868",
+            "post_cost_return": {
+              "conservative": "-3.403544235846621000034219581",
+              "moderate": "-3.269344235846621000034219585",
+              "optimistic": "-3.135144235846621000034219585"
+            },
+            "rebalance_observations": 1284,
+            "sharpe_like": "-0.05478778171661027745616560979",
+            "turnover": 671,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1237912268219905063869390006",
+            "volatility_targeted_gross_return": "-84.80014542644763104369468272",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-100.5464164819823703723942553",
+              "moderate": "-95.29765946347079059616106456",
+              "optimistic": "-90.04890244495921081992787362"
+            },
+            "volatility_targeted_sharpe_like": "-0.04170239841587001932639638202"
+          },
+          "low_vol": {
+            "average_interval_return": "0.001846557025242688666029359198",
+            "average_normalized_return": "0.1486689287046679532842245245",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.1241349939118851516220914990",
+              "moderate": "0.1323129721761460855094691748",
+              "optimistic": "0.1404909504404070193968468495"
+            },
+            "cost_to_gross_ratio_moderate": "0.1204565596953728699385274733",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 358,
+            "direction_counts": {
+              "flat": 0,
+              "long": 722,
+              "short": 562
+            },
+            "gross_return": "2.370979220411612247181697210",
+            "max_drawdown_like": "-0.841609861218495351680556644",
+            "post_cost_return": {
+              "conservative": "1.942579220411612247181697208",
+              "moderate": "2.085379220411612247181697210",
+              "optimistic": "2.228179220411612247181697210"
+            },
+            "rebalance_observations": 1284,
+            "sharpe_like": "0.06719491878345017089487656091",
+            "turnover": 714,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1100159708624329271988014740",
+            "volatility_targeted_gross_return": "190.8909044567936520169442895",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "159.3893321828605346827654847",
+              "moderate": "169.8898562741715737941584205",
+              "optimistic": "180.3903803654826129055513547"
+            },
+            "volatility_targeted_sharpe_like": "0.07803667772954329938535599314"
+          },
+          "policy": {
+            "candidate_inclusion_unchanged": true,
+            "diagnostic_only": true,
+            "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+            "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+            "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+            "high_low_threshold": "0.01942217345769070844599075886"
+          },
+          "volatility_contracting": {
+            "average_interval_return": "0.0004592553888371158542976805143",
+            "average_normalized_return": "0.06921712298446660954312692255",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.05004811147818913183208871719",
+              "moderate": "0.05643778198028162440243478575",
+              "optimistic": "0.06282745248237411697278085430"
+            },
+            "cost_to_gross_ratio_moderate": "0.4829464300368068981930614601",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-03T20:00:00+00:00"
+            },
+            "direction_changes": 406,
+            "direction_counts": {
+              "flat": 0,
+              "long": 792,
+              "short": 667
+            },
+            "gross_return": "0.6700536123133520314203158703",
+            "max_drawdown_like": "-1.276103123264027882983447680",
+            "post_cost_return": {
+              "conservative": "0.1846536123133520314203158734",
+              "moderate": "0.3464536123133520314203158765",
+              "optimistic": "0.5082536123133520314203158685"
+            },
+            "rebalance_observations": 1459,
+            "sharpe_like": "0.01360091112130162128716355292",
+            "turnover": 809,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1846268734262888455282136733",
+            "volatility_targeted_gross_return": "100.9877824343367833234221800",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "73.02019464667794334301743838",
+              "moderate": "82.34272390923089000315235241",
+              "optimistic": "91.66525317178383666328726643"
+            },
+            "volatility_targeted_sharpe_like": "0.04163353052436327844512870693"
+          },
+          "volatility_expanding": {
+            "average_interval_return": "-0.001172244028627917749569736925",
+            "average_normalized_return": "0.004601421637519601126985957695",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.01278384034788077460112372301",
+              "moderate": "-0.006988753019413982691753829441",
+              "optimistic": "-0.001193665690947190782383935829"
+            },
+            "cost_to_gross_ratio_moderate": "0.1772282297208725633212031410",
+            "date_range": {
+              "first": "2023-12-28T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 288,
+            "direction_counts": {
+              "flat": 0,
+              "long": 518,
+              "short": 591
+            },
+            "gross_return": "-1.300018627748360784272838250",
+            "max_drawdown_like": "-1.740126125121683861967678720",
+            "post_cost_return": {
+              "conservative": "-1.645618627748360784272838250",
+              "moderate": "-1.530418627748360784272838250",
+              "optimistic": "-1.415218627748360784272838250"
+            },
+            "rebalance_observations": 1109,
+            "sharpe_like": "-0.03036918958334843839453624773",
+            "turnover": 576,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "2.518824739386689602223546899",
+            "volatility_targeted_gross_return": "5.102976596009237649827427084",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-14.17727894579977903264620882",
+              "moderate": "-7.750527098530106805154996850",
+              "optimistic": "-1.323775251260434577663784834"
+            },
+            "volatility_targeted_sharpe_like": "0.002461626698474183888179324791"
+          }
+        },
+        "validation": {
+          "high_vol": {
+            "average_interval_return": "-0.004473039674859676353211974850",
+            "average_normalized_return": "-0.1700650456194960129953289378",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.1840282256564888866669591062",
+              "moderate": "-0.1793738323108245954430823835",
+              "optimistic": "-0.1747194389651603042192056607"
+            },
+            "cost_to_gross_ratio_moderate": "0.04865071542601680026971125613",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-04-19T20:00:00+00:00"
+            },
+            "direction_changes": 105,
+            "direction_counts": {
+              "flat": 0,
+              "long": 163,
+              "short": 223
+            },
+            "gross_return": "-1.726593314495835072339822292",
+            "max_drawdown_like": "-1.867634969105165811931058157",
+            "post_cost_return": {
+              "conservative": "-1.852593314495835072339822294",
+              "moderate": "-1.810593314495835072339822292",
+              "optimistic": "-1.768593314495835072339822292"
+            },
+            "rebalance_observations": 386,
+            "sharpe_like": "-0.1154373263264968678377969101",
+            "turnover": 210,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.05473662537424701980109117722",
+            "volatility_targeted_gross_return": "-65.64510760912546101619696999",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-71.03489510340471025344621498",
+              "moderate": "-69.23829927197829384102980002",
+              "optimistic": "-67.44170344055187742861338502"
+            },
+            "volatility_targeted_sharpe_like": "-0.1042924068638705176357988366"
+          },
+          "low_vol": {
+            "average_interval_return": "0.0004608194222310339901929171886",
+            "average_normalized_return": "0.05463160701411471044199922987",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.02716098550031292857213754379",
+              "moderate": "0.03631785933824685586209143919",
+              "optimistic": "0.04547473317618078315204533468"
+            },
+            "cost_to_gross_ratio_moderate": "0.5095384080566684830938532185",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 113,
+            "direction_counts": {
+              "flat": 0,
+              "long": 193,
+              "short": 192
+            },
+            "gross_return": "0.1774154775589480862242731176",
+            "max_drawdown_like": "-0.6751878740757947668892640121",
+            "post_cost_return": {
+              "conservative": "0.0418154775589480862242731176",
+              "moderate": "0.0870154775589480862242731176",
+              "optimistic": "0.1322154775589480862242731176"
+            },
+            "rebalance_observations": 385,
+            "sharpe_like": "0.01908151034171952039929257838",
+            "turnover": 226,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.3352225694392677315651642208",
+            "volatility_targeted_gross_return": "21.03316870043416352016970350",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "10.45697941762047750027295436",
+              "moderate": "13.98237584522503950690520409",
+              "optimistic": "17.50777227282960151353745385"
+            },
+            "volatility_targeted_sharpe_like": "0.03105551560646971808515120340"
+          },
+          "policy": {
+            "candidate_inclusion_unchanged": true,
+            "diagnostic_only": true,
+            "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+            "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+            "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+            "high_low_threshold": "0.01805778688841332191609844755"
+          },
+          "volatility_contracting": {
+            "average_interval_return": "-0.002715496652445729408150936508",
+            "average_normalized_return": "-0.1088329572078317580173253680",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.1288620045037932027342534431",
+              "moderate": "-0.1221856554051393878286107515",
+              "optimistic": "-0.1155093063064855729229680598"
+            },
+            "cost_to_gross_ratio_moderate": "0.07837483545919014004973558671",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-03T20:00:00+00:00"
+            },
+            "direction_changes": 112,
+            "direction_counts": {
+              "flat": 0,
+              "long": 202,
+              "short": 219
+            },
+            "gross_return": "-1.143224090679652080831544270",
+            "max_drawdown_like": "-1.276103123264027882983447681",
+            "post_cost_return": {
+              "conservative": "-1.277624090679652080831544270",
+              "moderate": "-1.232824090679652080831544270",
+              "optimistic": "-1.188024090679652080831544270"
+            },
+            "rebalance_observations": 421,
+            "sharpe_like": "-0.08945089588000497512699316378",
+            "turnover": 224,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1226898408338641804974347829",
+            "volatility_targeted_gross_return": "-45.81867498449717012529397992",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-54.25090389609693835112069956",
+              "moderate": "-51.44016092556368227584512639",
+              "optimistic": "-48.62941795503042620056955316"
+            },
+            "volatility_targeted_sharpe_like": "-0.06678876980551176210050086944"
+          },
+          "volatility_expanding": {
+            "average_interval_return": "-0.001159867846449242586525728304",
+            "average_normalized_return": "0.003447817359445350369333466923",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.01807717654196369829157874601",
+              "moderate": "-0.01090217857482734873794134173",
+              "optimistic": "-0.003727180607690999184303937297"
+            },
+            "cost_to_gross_ratio_moderate": "0.2088907930566700488911532552",
+            "date_range": {
+              "first": "2025-08-22T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 106,
+            "direction_counts": {
+              "flat": 0,
+              "long": 154,
+              "short": 196
+            },
+            "gross_return": "-0.4059537462572349052840049064",
+            "max_drawdown_like": "-1.467393388869096965497828646",
+            "post_cost_return": {
+              "conservative": "-0.5331537462572349052840049071",
+              "moderate": "-0.4907537462572349052840049071",
+              "optimistic": "-0.4483537462572349052840049068"
+            },
+            "rebalance_observations": 350,
+            "sharpe_like": "-0.03346696614259632455102124908",
+            "turnover": 212,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "4.162052231380719029799462507",
+            "volatility_targeted_gross_return": "1.206736075805872629266713423",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-6.327011789687294402052561105",
+              "moderate": "-3.815762501189572058279469606",
+              "optimistic": "-1.304513212691849714506378054"
+            },
+            "volatility_targeted_sharpe_like": "0.001938382035826745569342898988"
+          }
+        }
+      },
       "role": "sensitivity",
       "turnover_cost_diagnostics": {
         "BTCUSDT": {
@@ -705,6 +1406,178 @@
       }
     },
     "40": {
+      "direction_change_frequency": {
+        "discovery": {
+          "BTCUSDT": {
+            "direction_change_pct": "0.1619365609348914858096828047",
+            "direction_changes": 97,
+            "rebalance_observations": 599
+          },
+          "ETHUSDT": {
+            "direction_change_pct": "0.1702838063439065108514190317",
+            "direction_changes": 102,
+            "rebalance_observations": 599
+          },
+          "SOLUSDT": {
+            "direction_change_pct": "0.1969949916527545909849749583",
+            "direction_changes": 118,
+            "rebalance_observations": 599
+          },
+          "pooled": {
+            "direction_change_pct": "0.1764051196438508625486922649",
+            "direction_changes": 317,
+            "rebalance_observations": 1797
+          }
+        },
+        "full": {
+          "BTCUSDT": {
+            "direction_change_pct": "0.1682242990654205607476635514",
+            "direction_changes": 144,
+            "rebalance_observations": 856
+          },
+          "ETHUSDT": {
+            "direction_change_pct": "0.1764018691588785046728971963",
+            "direction_changes": 151,
+            "rebalance_observations": 856
+          },
+          "SOLUSDT": {
+            "direction_change_pct": "0.1997663551401869158878504673",
+            "direction_changes": 171,
+            "rebalance_observations": 856
+          },
+          "pooled": {
+            "direction_change_pct": "0.1814641744548286604361370717",
+            "direction_changes": 466,
+            "rebalance_observations": 2568
+          }
+        },
+        "validation": {
+          "BTCUSDT": {
+            "direction_change_pct": "0.1828793774319066147859922179",
+            "direction_changes": 47,
+            "rebalance_observations": 257
+          },
+          "ETHUSDT": {
+            "direction_change_pct": "0.1906614785992217898832684825",
+            "direction_changes": 49,
+            "rebalance_observations": 257
+          },
+          "SOLUSDT": {
+            "direction_change_pct": "0.2062256809338521400778210117",
+            "direction_changes": 53,
+            "rebalance_observations": 257
+          },
+          "pooled": {
+            "direction_change_pct": "0.1932555123216601815823605707",
+            "direction_changes": 149,
+            "rebalance_observations": 771
+          }
+        }
+      },
+      "funding_stress": {
+        "discovery": {
+          "favorable": {
+            "baseline_vt_post_cost_return": "82.98842914148100296328173085",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "87.26368217727412266823572847",
+            "funding_impact_on_vt_post_cost_return": "4.275253035793119704953997624",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "-0.0001"
+          },
+          "high_cost": {
+            "baseline_vt_post_cost_return": "82.98842914148100296328173085",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "70.16267003410164384841973794",
+            "funding_impact_on_vt_post_cost_return": "-12.82575910737935911486199291",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0003"
+          },
+          "mild_cost": {
+            "baseline_vt_post_cost_return": "82.98842914148100296328173085",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "78.71317610568788325832773323",
+            "funding_impact_on_vt_post_cost_return": "-4.275253035793119704953997624",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0001"
+          },
+          "neutral": {
+            "baseline_vt_post_cost_return": "82.98842914148100296328173085",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "82.98842914148100296328173085",
+            "funding_impact_on_vt_post_cost_return": "0",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0"
+          }
+        },
+        "full": {
+          "favorable": {
+            "baseline_vt_post_cost_return": "115.4348749671403992779286620",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "119.2437091494037178075188055",
+            "funding_impact_on_vt_post_cost_return": "3.808834182263318529590143497",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "-0.0001"
+          },
+          "high_cost": {
+            "baseline_vt_post_cost_return": "115.4348749671403992779286620",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "104.0083724203504436891582314",
+            "funding_impact_on_vt_post_cost_return": "-11.42650254678995558877043059",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0003"
+          },
+          "mild_cost": {
+            "baseline_vt_post_cost_return": "115.4348749671403992779286620",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "111.6260407848770807483385185",
+            "funding_impact_on_vt_post_cost_return": "-3.808834182263318529590143497",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0001"
+          },
+          "neutral": {
+            "baseline_vt_post_cost_return": "115.4348749671403992779286620",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "115.4348749671403992779286620",
+            "funding_impact_on_vt_post_cost_return": "0",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0"
+          }
+        },
+        "validation": {
+          "favorable": {
+            "baseline_vt_post_cost_return": "32.44644582565939631464693189",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "31.98002697212959513928307776",
+            "funding_impact_on_vt_post_cost_return": "-0.4664188535298011753638541250",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "-0.0001"
+          },
+          "high_cost": {
+            "baseline_vt_post_cost_return": "32.44644582565939631464693189",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "33.84570238624879984073849428",
+            "funding_impact_on_vt_post_cost_return": "1.399256560589403526091562388",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0003"
+          },
+          "mild_cost": {
+            "baseline_vt_post_cost_return": "32.44644582565939631464693189",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "32.91286467918919749001078602",
+            "funding_impact_on_vt_post_cost_return": "0.4664188535298011753638541250",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0001"
+          },
+          "neutral": {
+            "baseline_vt_post_cost_return": "32.44644582565939631464693189",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "32.44644582565939631464693189",
+            "funding_impact_on_vt_post_cost_return": "0",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0"
+          }
+        }
+      },
       "metrics": {
         "discovery": {
           "average_interval_return": "0.0004356485282247292336999844179",
@@ -1206,6 +2079,494 @@
           }
         }
       },
+      "regime_decomposition": {
+        "discovery": {
+          "high_vol": {
+            "average_interval_return": "-0.0004491454953060145865784059416",
+            "average_normalized_return": "0.008404545935445987450995144083",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.00005019352331743253872573563960",
+              "moderate": "0.002768052962937040791181224324",
+              "optimistic": "0.005586299449191514121088184177"
+            },
+            "cost_to_gross_ratio_moderate": "0.3278998704452575966202305186",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 166,
+            "direction_counts": {
+              "flat": 0,
+              "long": 421,
+              "short": 478
+            },
+            "gross_return": "-0.4037818002801071133339869415",
+            "max_drawdown_like": "-1.300059288203142231774884055",
+            "post_cost_return": {
+              "conservative": "-0.6023818002801071133339869415",
+              "moderate": "-0.5361818002801071133339869415",
+              "optimistic": "-0.4699818002801071133339869415"
+            },
+            "rebalance_observations": 899,
+            "sharpe_like": "-0.01015176993177005799140914725",
+            "turnover": 331,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.6706481249316708044217466652",
+            "volatility_targeted_gross_return": "7.555686795965942718444634531",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-0.045123977462371852314436340",
+              "moderate": "2.488479613680399671271920667",
+              "optimistic": "5.022083204823171194858277575"
+            },
+            "volatility_targeted_sharpe_like": "0.005349850755997087779153163910"
+          },
+          "low_vol": {
+            "average_interval_return": "0.001321427845768313525938595708",
+            "average_normalized_return": "0.09921506286420089794953615752",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.08485786310208764115665142641",
+              "moderate": "0.08964359635612539342094633677",
+              "optimistic": "0.09442932961016314568524124716"
+            },
+            "cost_to_gross_ratio_moderate": "0.1011256800439207929960700792",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 151,
+            "direction_counts": {
+              "flat": 0,
+              "long": 553,
+              "short": 345
+            },
+            "gross_return": "1.186642205499945546292858946",
+            "max_drawdown_like": "-0.7913973537162591301281692517",
+            "post_cost_return": {
+              "conservative": "1.006642205499945546292858943",
+              "moderate": "1.066642205499945546292858944",
+              "optimistic": "1.126642205499945546292858947"
+            },
+            "rebalance_observations": 898,
+            "sharpe_like": "0.04583069021060334257000557092",
+            "turnover": 300,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.09647190891947831684538777790",
+            "volatility_targeted_gross_return": "89.09512645205240635868346945",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "76.20236106567470175867298092",
+              "moderate": "80.49994952780060329200981042",
+              "optimistic": "84.79753798992650482534663995"
+            },
+            "volatility_targeted_sharpe_like": "0.05052484135734486522451175744"
+          },
+          "policy": {
+            "candidate_inclusion_unchanged": true,
+            "diagnostic_only": true,
+            "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+            "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+            "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+            "high_low_threshold": "0.02008682497118115247268858279"
+          },
+          "volatility_contracting": {
+            "average_interval_return": "0.0005224739654381423631688387380",
+            "average_normalized_return": "0.06888657955179740006084221426",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.05791721544063047316851454096",
+              "moderate": "0.06157367014435278213262376534",
+              "optimistic": "0.06523012484807509109673298987"
+            },
+            "cost_to_gross_ratio_moderate": "0.2618341783041729875013386983",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-17T16:00:00+00:00"
+            },
+            "direction_changes": 179,
+            "direction_counts": {
+              "flat": 0,
+              "long": 580,
+              "short": 458
+            },
+            "gross_return": "0.5423279761247917729692546100",
+            "max_drawdown_like": "-1.264996929106378377156920091",
+            "post_cost_return": {
+              "conservative": "0.3293279761247917729692546106",
+              "moderate": "0.4003279761247917729692546136",
+              "optimistic": "0.4713279761247917729692546100"
+            },
+            "rebalance_observations": 1038,
+            "sharpe_like": "0.01491659554149211926968398601",
+            "turnover": 355,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1061586952788949771982869921",
+            "volatility_targeted_gross_return": "71.50426957476570126315421840",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "60.11806962737443114891809352",
+              "moderate": "63.91346960983818785366346842",
+              "optimistic": "67.70886959230194455840884348"
+            },
+            "volatility_targeted_sharpe_like": "0.04110969190100439028464875104"
+          },
+          "volatility_expanding": {
+            "average_interval_return": "0.0003169070212055950724500887897",
+            "average_normalized_return": "0.03313115108465434494594714813",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.02113197293918036726935500814",
+              "moderate": "0.02513169898767169316155238810",
+              "optimistic": "0.02913142503616301905374976812"
+            },
+            "cost_to_gross_ratio_moderate": "0.4589817697985967446598227086",
+            "date_range": {
+              "first": "2023-12-28T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 138,
+            "direction_counts": {
+              "flat": 0,
+              "long": 394,
+              "short": 365
+            },
+            "gross_return": "0.2405324290950466599896173914",
+            "max_drawdown_like": "-1.100621489902841397885412777",
+            "post_cost_return": {
+              "conservative": "0.0749324290950466599896173914",
+              "moderate": "0.1301324290950466599896173914",
+              "optimistic": "0.1853324290950466599896173914"
+            },
+            "rebalance_observations": 759,
+            "sharpe_like": "0.007858641680656605994254486564",
+            "turnover": 276,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.2414480582501653677759677233",
+            "volatility_targeted_gross_return": "25.14654367325264781397388543",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "16.03916746083789875744045118",
+              "moderate": "19.07495953164281510961826257",
+              "optimistic": "22.11075160244773146179607400"
+            },
+            "volatility_targeted_sharpe_like": "0.01734220230318982139337225166"
+          }
+        },
+        "full": {
+          "high_vol": {
+            "average_interval_return": "-0.0005896686631856814289690391231",
+            "average_normalized_return": "-0.01033858496458848501238316007",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.01937011802647390021113996889",
+              "moderate": "-0.01635960700584542847822103259",
+              "optimistic": "-0.01334909598521695674530209632"
+            },
+            "cost_to_gross_ratio_moderate": "0.2572858371326679803515475523",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-04-09T20:00:00+00:00"
+            },
+            "direction_changes": 244,
+            "direction_counts": {
+              "flat": 0,
+              "long": 575,
+              "short": 709
+            },
+            "gross_return": "-0.7571345635304149547962462341",
+            "max_drawdown_like": "-1.515979891757828278750614284",
+            "post_cost_return": {
+              "conservative": "-1.049334563530414954796246233",
+              "moderate": "-0.9519345635304149547962462335",
+              "optimistic": "-0.8545345635304149547962462344"
+            },
+            "rebalance_observations": 1284,
+            "sharpe_like": "-0.01380349064536194049952941231",
+            "turnover": 487,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.5823835720149351245636205459",
+            "volatility_targeted_gross_return": "-13.27474309453161475589997753",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-24.87123154599248787110372005",
+              "moderate": "-21.00573539550553016603580585",
+              "optimistic": "-17.14023924501857246096789167"
+            },
+            "volatility_targeted_sharpe_like": "-0.006522621866204067810615881127"
+          },
+          "low_vol": {
+            "average_interval_return": "0.001591077850235485309378335639",
+            "average_normalized_return": "0.1163058163271144512919915339",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.1012403282414029723025608548",
+              "moderate": "0.1062621576033067986323710810",
+              "optimistic": "0.1112839869652106249621813076"
+            },
+            "cost_to_gross_ratio_moderate": "0.08654177671410919314630127258",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 222,
+            "direction_counts": {
+              "flat": 0,
+              "long": 743,
+              "short": 541
+            },
+            "gross_return": "2.042943959702363137241782960",
+            "max_drawdown_like": "-0.7645369870778354411799593377",
+            "post_cost_return": {
+              "conservative": "1.777743959702363137241782960",
+              "moderate": "1.866143959702363137241782962",
+              "optimistic": "1.954543959702363137241782962"
+            },
+            "rebalance_observations": 1284,
+            "sharpe_like": "0.05786454692423205309527016426",
+            "turnover": 442,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.08635560147361407504839903579",
+            "volatility_targeted_gross_return": "149.3366681640149554589171295",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "129.9925814619614164364881376",
+              "moderate": "136.4406103626459294439644680",
+              "optimistic": "142.8886392633304424514407989"
+            },
+            "volatility_targeted_sharpe_like": "0.06097715282974002471565170910"
+          },
+          "policy": {
+            "candidate_inclusion_unchanged": true,
+            "diagnostic_only": true,
+            "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+            "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+            "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+            "high_low_threshold": "0.01942217345769070844599075886"
+          },
+          "volatility_contracting": {
+            "average_interval_return": "0.0005058635337462132293772081103",
+            "average_normalized_return": "0.05847691946373196875985524459",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.04669075330188822314431783526",
+              "moderate": "0.05061947535583613834949697169",
+              "optimistic": "0.05454819740978405355467610820"
+            },
+            "cost_to_gross_ratio_moderate": "0.2801959599412355349084648742",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-03T20:00:00+00:00"
+            },
+            "direction_changes": 260,
+            "direction_counts": {
+              "flat": 0,
+              "long": 769,
+              "short": 690
+            },
+            "gross_return": "0.7380548957357251016613466329",
+            "max_drawdown_like": "-1.369557773584552999309158406",
+            "post_cost_return": {
+              "conservative": "0.4278548957357251016613466335",
+              "moderate": "0.5312548957357251016613466365",
+              "optimistic": "0.6346548957357251016613466329"
+            },
+            "rebalance_observations": 1459,
+            "sharpe_like": "0.01498151343588585128363441734",
+            "turnover": 517,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1343682974403106856476686234",
+            "volatility_targeted_gross_return": "85.31782549758494242062880186",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "68.12180906745491756755972164",
+              "moderate": "73.85381454416492585191608169",
+              "optimistic": "79.58582002087493413627244186"
+            },
+            "volatility_targeted_sharpe_like": "0.03516465742290369828847452064"
+          },
+          "volatility_expanding": {
+            "average_interval_return": "0.0004939174936304987202742922375",
+            "average_normalized_return": "0.04575662720640071982181095668",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.03336297641885844093582028529",
+              "moderate": "0.03749419334803920056448384239",
+              "optimistic": "0.04162541027721996019314739957"
+            },
+            "cost_to_gross_ratio_moderate": "0.3008647119626691673886686185",
+            "date_range": {
+              "first": "2023-12-28T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 206,
+            "direction_counts": {
+              "flat": 0,
+              "long": 549,
+              "short": 560
+            },
+            "gross_return": "0.5477545004362230807841900914",
+            "max_drawdown_like": "-1.100621489902841397885412777",
+            "post_cost_return": {
+              "conservative": "0.3005545004362230807841900922",
+              "moderate": "0.3829545004362230807841900912",
+              "optimistic": "0.4653545004362230807841900910"
+            },
+            "rebalance_observations": 1109,
+            "sharpe_like": "0.01279100821868414571341018046",
+            "turnover": 412,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1805734898486075245851939139",
+            "volatility_targeted_gross_return": "50.74409957189839828238835096",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "36.99954084851401099782469639",
+              "moderate": "41.58106042297547342601258121",
+              "optimistic": "46.16257999743693585420046612"
+            },
+            "volatility_targeted_sharpe_like": "0.02448573358709820185823914734"
+          }
+        },
+        "validation": {
+          "high_vol": {
+            "average_interval_return": "-0.0004040473675888243754213871710",
+            "average_normalized_return": "-0.02687392301564344521837989124",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.03730349523765279067876856653",
+              "moderate": "-0.03382697116364967552530567482",
+              "optimistic": "-0.03035044708964656037184278295"
+            },
+            "cost_to_gross_ratio_moderate": "0.4000967313629250641831091706",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-04-19T20:00:00+00:00"
+            },
+            "direction_changes": 78,
+            "direction_counts": {
+              "flat": 0,
+              "long": 147,
+              "short": 239
+            },
+            "gross_return": "-0.1559622838892862089126554480",
+            "max_drawdown_like": "-0.8089433315224453228182962629",
+            "post_cost_return": {
+              "conservative": "-0.2495622838892862089126554480",
+              "moderate": "-0.2183622838892862089126554480",
+              "optimistic": "-0.1871622838892862089126554480"
+            },
+            "rebalance_observations": 386,
+            "sharpe_like": "-0.01035898465425705892167096542",
+            "turnover": 156,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.2587284388646505442137968452",
+            "volatility_targeted_gross_return": "-10.37333428403836985429463802",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-14.39914916173397720200466668",
+              "moderate": "-13.05721086916877475276799048",
+              "optimistic": "-11.71527257660357230353131422"
+            },
+            "volatility_targeted_sharpe_like": "-0.01639351167341835908997908411"
+          },
+          "low_vol": {
+            "average_interval_return": "0.001711457856730898593244987459",
+            "average_normalized_return": "0.1293102496246840557926849012",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.112631849323352145093585818",
+              "moderate": "0.1181913160904627819932855125",
+              "optimistic": "0.1237507828575734188929852069"
+            },
+            "cost_to_gross_ratio_moderate": "0.08620280479139185049949129417",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 71,
+            "direction_counts": {
+              "flat": 0,
+              "long": 197,
+              "short": 188
+            },
+            "gross_return": "0.6589112748413959583993201716",
+            "max_drawdown_like": "-0.4305886034457350464499086423",
+            "post_cost_return": {
+              "conservative": "0.5737112748413959583993201716",
+              "moderate": "0.6021112748413959583993201716",
+              "optimistic": "0.6305112748413959583993201716"
+            },
+            "rebalance_observations": 385,
+            "sharpe_like": "0.07103374136496602206562178189",
+            "turnover": 142,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.08598648263763600889805451304",
+            "volatility_targeted_gross_return": "49.78444610550336148018368698",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "43.36326198949057586103053993",
+              "moderate": "45.50365669482817106741492231",
+              "optimistic": "47.64405140016576627379930464"
+            },
+            "volatility_targeted_sharpe_like": "0.07367094838348934077917374536"
+          },
+          "policy": {
+            "candidate_inclusion_unchanged": true,
+            "diagnostic_only": true,
+            "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+            "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+            "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+            "high_low_threshold": "0.01805778688841332191609844755"
+          },
+          "volatility_contracting": {
+            "average_interval_return": "0.0004649095477694378353731401969",
+            "average_normalized_return": "0.03281129672878679609851444998",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.01901125757738832878537203820",
+              "moderate": "0.02361127062785448455641950876",
+              "optimistic": "0.02821128367832064032746697941"
+            },
+            "cost_to_gross_ratio_moderate": "0.3310735188026750327382296637",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-03T20:00:00+00:00"
+            },
+            "direction_changes": 81,
+            "direction_counts": {
+              "flat": 0,
+              "long": 189,
+              "short": 232
+            },
+            "gross_return": "0.1957269196109333286920920229",
+            "max_drawdown_like": "-0.9478432483782423725886127375",
+            "post_cost_return": {
+              "conservative": "0.0985269196109333286920920229",
+              "moderate": "0.1309269196109333286920920229",
+              "optimistic": "0.1633269196109333286920920229"
+            },
+            "rebalance_observations": 421,
+            "sharpe_like": "0.01525526838339806104081532134",
+            "turnover": 162,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.2803920301284747256922040164",
+            "volatility_targeted_gross_return": "13.81355592281924115747458344",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "8.003739440080486418641628081",
+              "moderate": "9.940344934326737998252613189",
+              "optimistic": "11.87695042857298957786359833"
+            },
+            "volatility_targeted_sharpe_like": "0.02009488408025092782191833187"
+          },
+          "volatility_expanding": {
+            "average_interval_return": "0.0008777773466890754879844934291",
+            "average_normalized_return": "0.07313587399613071562404133",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.05988678110764603497252641483",
+              "moderate": "0.06430314540380759518969805329",
+              "optimistic": "0.06871950969996915540686969171"
+            },
+            "cost_to_gross_ratio_moderate": "0.1770706113741017082834430364",
+            "date_range": {
+              "first": "2025-08-22T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 68,
+            "direction_counts": {
+              "flat": 0,
+              "long": 155,
+              "short": 195
+            },
+            "gross_return": "0.3072220713411764207945727002",
+            "max_drawdown_like": "-1.025767197615177310979848095",
+            "post_cost_return": {
+              "conservative": "0.2256220713411764207945727002",
+              "moderate": "0.2528220713411764207945727002",
+              "optimistic": "0.2800220713411764207945727002"
+            },
+            "rebalance_observations": 350,
+            "sharpe_like": "0.02532141749429001248311125821",
+            "turnover": 136,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1207714916046592904580645162",
+            "volatility_targeted_gross_return": "25.59755589864575046841446550",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "20.96037338767611224038424519",
+              "moderate": "22.50610089133265831639431865",
+              "optimistic": "24.05182839498920439240439210"
+            },
+            "volatility_targeted_sharpe_like": "0.04115221753213316762629321944"
+          }
+        }
+      },
       "role": "primary",
       "turnover_cost_diagnostics": {
         "BTCUSDT": {
@@ -1319,6 +2680,178 @@
       }
     },
     "60": {
+      "direction_change_frequency": {
+        "discovery": {
+          "BTCUSDT": {
+            "direction_change_pct": "0.1636060100166944908180300501",
+            "direction_changes": 98,
+            "rebalance_observations": 599
+          },
+          "ETHUSDT": {
+            "direction_change_pct": "0.1535893155258764607679465776",
+            "direction_changes": 92,
+            "rebalance_observations": 599
+          },
+          "SOLUSDT": {
+            "direction_change_pct": "0.1268781302170283806343906511",
+            "direction_changes": 76,
+            "rebalance_observations": 599
+          },
+          "pooled": {
+            "direction_change_pct": "0.1480244852531997774067890929",
+            "direction_changes": 266,
+            "rebalance_observations": 1797
+          }
+        },
+        "full": {
+          "BTCUSDT": {
+            "direction_change_pct": "0.1553738317757009345794392523",
+            "direction_changes": 133,
+            "rebalance_observations": 856
+          },
+          "ETHUSDT": {
+            "direction_change_pct": "0.1623831775700934579439252336",
+            "direction_changes": 139,
+            "rebalance_observations": 856
+          },
+          "SOLUSDT": {
+            "direction_change_pct": "0.1401869158878504672897196262",
+            "direction_changes": 120,
+            "rebalance_observations": 856
+          },
+          "pooled": {
+            "direction_change_pct": "0.1526479750778816199376947040",
+            "direction_changes": 392,
+            "rebalance_observations": 2568
+          }
+        },
+        "validation": {
+          "BTCUSDT": {
+            "direction_change_pct": "0.1361867704280155642023346304",
+            "direction_changes": 35,
+            "rebalance_observations": 257
+          },
+          "ETHUSDT": {
+            "direction_change_pct": "0.1828793774319066147859922179",
+            "direction_changes": 47,
+            "rebalance_observations": 257
+          },
+          "SOLUSDT": {
+            "direction_change_pct": "0.1712062256809338521400778210",
+            "direction_changes": 44,
+            "rebalance_observations": 257
+          },
+          "pooled": {
+            "direction_change_pct": "0.1634241245136186770428015564",
+            "direction_changes": 126,
+            "rebalance_observations": 771
+          }
+        }
+      },
+      "funding_stress": {
+        "discovery": {
+          "favorable": {
+            "baseline_vt_post_cost_return": "50.48062460251017553950578953",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "54.76778126056316753224608028",
+            "funding_impact_on_vt_post_cost_return": "4.287156658052991992740290754",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "-0.0001"
+          },
+          "high_cost": {
+            "baseline_vt_post_cost_return": "50.48062460251017553950578953",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "37.61915462835119956128491724",
+            "funding_impact_on_vt_post_cost_return": "-12.86146997415897597822087229",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0003"
+          },
+          "mild_cost": {
+            "baseline_vt_post_cost_return": "50.48062460251017553950578953",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "46.19346794445718354676549878",
+            "funding_impact_on_vt_post_cost_return": "-4.287156658052991992740290754",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0001"
+          },
+          "neutral": {
+            "baseline_vt_post_cost_return": "50.48062460251017553950578953",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "50.48062460251017553950578953",
+            "funding_impact_on_vt_post_cost_return": "0",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0"
+          }
+        },
+        "full": {
+          "favorable": {
+            "baseline_vt_post_cost_return": "-28.33866001770011999710770701",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-24.10198633623461412801963444",
+            "funding_impact_on_vt_post_cost_return": "4.236673681465505869088072569",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "-0.0001"
+          },
+          "high_cost": {
+            "baseline_vt_post_cost_return": "-28.33866001770011999710770701",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-41.04868106209663760437192482",
+            "funding_impact_on_vt_post_cost_return": "-12.71002104439651760726421781",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0003"
+          },
+          "mild_cost": {
+            "baseline_vt_post_cost_return": "-28.33866001770011999710770701",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-32.57533369916562586619577958",
+            "funding_impact_on_vt_post_cost_return": "-4.236673681465505869088072569",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0001"
+          },
+          "neutral": {
+            "baseline_vt_post_cost_return": "-28.33866001770011999710770701",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-28.33866001770011999710770701",
+            "funding_impact_on_vt_post_cost_return": "0",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0"
+          }
+        },
+        "validation": {
+          "favorable": {
+            "baseline_vt_post_cost_return": "-78.81928462021029553661349647",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-78.86976759679778166026571464",
+            "funding_impact_on_vt_post_cost_return": "-0.05048297658748612365221817045",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "-0.0001"
+          },
+          "high_cost": {
+            "baseline_vt_post_cost_return": "-78.81928462021029553661349647",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-78.66783569044783716565684196",
+            "funding_impact_on_vt_post_cost_return": "0.1514489297624583709566545130",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0003"
+          },
+          "mild_cost": {
+            "baseline_vt_post_cost_return": "-78.81928462021029553661349647",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-78.76880164362280941296127830",
+            "funding_impact_on_vt_post_cost_return": "0.05048297658748612365221817045",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0.0001"
+          },
+          "neutral": {
+            "baseline_vt_post_cost_return": "-78.81928462021029553661349647",
+            "diagnostic_only": true,
+            "funding_adjusted_vt_post_cost_return": "-78.81928462021029553661349647",
+            "funding_impact_on_vt_post_cost_return": "0",
+            "funding_intervals_per_rebalance": "3",
+            "funding_rate_per_8h": "0"
+          }
+        }
+      },
       "metrics": {
         "discovery": {
           "average_interval_return": "0.0002689120211314862303897064282",
@@ -1817,6 +3350,494 @@
             "median": "-0.2837704964501612498791099588",
             "p75": "0.3756613143088427703753111312",
             "p90": "0.9100437362019627139107472151"
+          }
+        }
+      },
+      "regime_decomposition": {
+        "discovery": {
+          "high_vol": {
+            "average_interval_return": "-0.0003115926517743280257310856789",
+            "average_normalized_return": "0.004292844952650082311309959875",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.002136947322424965562778502523",
+              "moderate": "0.000006316769266717061917651579533",
+              "optimistic": "0.002149580860958399686613805736"
+            },
+            "cost_to_gross_ratio_moderate": "0.3469919231598331336524001830",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 122,
+            "direction_counts": {
+              "flat": 0,
+              "long": 406,
+              "short": 493
+            },
+            "gross_return": "-0.2801217939451208951322460253",
+            "max_drawdown_like": "-1.332866723927566203646213726",
+            "post_cost_return": {
+              "conservative": "-0.4259217939451208951322460251",
+              "moderate": "-0.3773217939451208951322460251",
+              "optimistic": "-0.3287217939451208951322460243"
+            },
+            "rebalance_observations": 899,
+            "sharpe_like": "-0.007042555932605565188847139370",
+            "turnover": 243,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.9985285354266481113695726339",
+            "volatility_targeted_gross_return": "3.859267612432423997867653928",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-1.921115642860044040937873768",
+              "moderate": "0.005678775570778638663968770",
+              "optimistic": "1.932473194001601318265811357"
+            },
+            "volatility_targeted_sharpe_like": "0.002732549362425350830391313221"
+          },
+          "low_vol": {
+            "average_interval_return": "0.0008500631357665942663057332700",
+            "average_normalized_return": "0.06504591224123804957278950182",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.05178931419164054687425417007",
+              "moderate": "0.05620818020817304777376594745",
+              "optimistic": "0.06062704622470554867327772463"
+            },
+            "cost_to_gross_ratio_moderate": "0.1498644088820944701810500674",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 144,
+            "direction_counts": {
+              "flat": 0,
+              "long": 558,
+              "short": 340
+            },
+            "gross_return": "0.7633566959184016511425484765",
+            "max_drawdown_like": "-1.090696786606633460419731117",
+            "post_cost_return": {
+              "conservative": "0.5917566959184016511425484765",
+              "moderate": "0.6489566959184016511425484765",
+              "optimistic": "0.7061566959184016511425484765"
+            },
+            "rebalance_observations": 898,
+            "sharpe_like": "0.02946433432890815529113585273",
+            "turnover": 286,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1358691380987662364844881012",
+            "volatility_targeted_gross_return": "58.41122919263176851636497263",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "46.50680414409321109308024472",
+              "moderate": "50.47494582693939690084182081",
+              "optimistic": "54.44308750978558270860339672"
+            },
+            "volatility_targeted_sharpe_like": "0.03310024189664255031818661343"
+          },
+          "policy": {
+            "candidate_inclusion_unchanged": true,
+            "diagnostic_only": true,
+            "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+            "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+            "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+            "high_low_threshold": "0.02008682497118115247268858279"
+          },
+          "volatility_contracting": {
+            "average_interval_return": "-0.0002645333477601578365704343401",
+            "average_normalized_return": "0.003563438487628285450987320025",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.005762790356873780961953939051",
+              "moderate": "-0.002654047408706425490973519357",
+              "optimistic": "0.0004546955394609299800069003738"
+            },
+            "cost_to_gross_ratio_moderate": "0.4093440947742861876901219708",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2025-08-17T16:00:00+00:00"
+            },
+            "direction_changes": 142,
+            "direction_counts": {
+              "flat": 0,
+              "long": 556,
+              "short": 482
+            },
+            "gross_return": "-0.2745856149750438343601108450",
+            "max_drawdown_like": "-1.468313733352407225968981209",
+            "post_cost_return": {
+              "conservative": "-0.4431856149750438343601108444",
+              "moderate": "-0.3869856149750438343601108450",
+              "optimistic": "-0.3307856149750438343601108450"
+            },
+            "rebalance_observations": 1038,
+            "sharpe_like": "-0.007551783406372819447659281467",
+            "turnover": 281,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "1.744799557483838436497368834",
+            "volatility_targeted_gross_return": "3.698849150158160298124838186",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-5.981776390434984638508188735",
+              "moderate": "-2.754901210237269659630513093",
+              "optimistic": "0.471973969960445319247162588"
+            },
+            "volatility_targeted_sharpe_like": "0.002124774397310006583849674774"
+          },
+          "volatility_expanding": {
+            "average_interval_return": "0.0009984460038844856263114799677",
+            "average_normalized_return": "0.07716949625152309909895624278",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.06662380091128873740533670582",
+              "moderate": "0.07013903269136685796987655140",
+              "optimistic": "0.07365426447144497853441639713"
+            },
+            "cost_to_gross_ratio_moderate": "0.1309017079657192751622757615",
+            "date_range": {
+              "first": "2023-12-28T16:00:00+00:00",
+              "last": "2025-08-19T16:00:00+00:00"
+            },
+            "direction_changes": 124,
+            "direction_counts": {
+              "flat": 0,
+              "long": 408,
+              "short": 351
+            },
+            "gross_return": "0.7578205169483245903704132955",
+            "max_drawdown_like": "-0.8655888058286279737807699630",
+            "post_cost_return": {
+              "conservative": "0.6090205169483245903704132964",
+              "moderate": "0.6586205169483245903704132959",
+              "optimistic": "0.7082205169483245903704132956"
+            },
+            "rebalance_observations": 759,
+            "sharpe_like": "0.02476624169616702294068664100",
+            "turnover": 248,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.09110417848577676100764822695",
+            "volatility_targeted_gross_return": "58.57164765490603221610778827",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "50.56746489166815169065055972",
+              "moderate": "53.23552581274744519913630251",
+              "optimistic": "55.90358673382673870762204542"
+            },
+            "volatility_targeted_sharpe_like": "0.04042061931054247463255182816"
+          }
+        },
+        "full": {
+          "high_vol": {
+            "average_interval_return": "-0.001124446630937145392303962667",
+            "average_normalized_return": "-0.03751862182507186613574407646",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.04449335901781869189388001401",
+              "moderate": "-0.04216844662023641664116803491",
+              "optimistic": "-0.03984353422265414138845605568"
+            },
+            "cost_to_gross_ratio_moderate": "0.1016768736931959250566839112",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-04-09T20:00:00+00:00"
+            },
+            "direction_changes": 184,
+            "direction_counts": {
+              "flat": 0,
+              "long": 556,
+              "short": 728
+            },
+            "gross_return": "-1.443789474123294683718288065",
+            "max_drawdown_like": "-2.377656330360704607449612469",
+            "post_cost_return": {
+              "conservative": "-1.663989474123294683718288065",
+              "moderate": "-1.590589474123294683718288065",
+              "optimistic": "-1.517189474123294683718288065"
+            },
+            "rebalance_observations": 1284,
+            "sharpe_like": "-0.02632866948998955725182719798",
+            "turnover": 367,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.1239337845842007780955518364",
+            "volatility_targeted_gross_return": "-48.17391042339227611829539418",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-57.12947297887920039174193799",
+              "moderate": "-54.14428546038355896725975682",
+              "optimistic": "-51.15909794188791754277757549"
+            },
+            "volatility_targeted_sharpe_like": "-0.02367666462382943131147499571"
+          },
+          "low_vol": {
+            "average_interval_return": "0.0003748153226229191007471149850",
+            "average_normalized_return": "0.02929608461097798777009096349",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.01549871638923464977167420247",
+              "moderate": "0.02009783912981576243781312283",
+              "optimistic": "0.02469696187039687510395204314"
+            },
+            "cost_to_gross_ratio_moderate": "0.3440946909915258865064335426",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 208,
+            "direction_counts": {
+              "flat": 0,
+              "long": 757,
+              "short": 527
+            },
+            "gross_return": "0.4812628742478281253592956407",
+            "max_drawdown_like": "-0.9901951515442789961812523876",
+            "post_cost_return": {
+              "conservative": "0.2328628742478281253592956407",
+              "moderate": "0.3156628742478281253592956407",
+              "optimistic": "0.3984628742478281253592956407"
+            },
+            "rebalance_observations": 1284,
+            "sharpe_like": "0.01360981705427735739344544974",
+            "turnover": 414,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.3139752497067614585221998232",
+            "volatility_targeted_gross_return": "37.61617264049573629679679712",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "19.90035184377729030682967597",
+              "moderate": "25.80562544268343897015204971",
+              "optimistic": "31.71089904158958763347442339"
+            },
+            "volatility_targeted_sharpe_like": "0.01533274256012914554742276840"
+          },
+          "policy": {
+            "candidate_inclusion_unchanged": true,
+            "diagnostic_only": true,
+            "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+            "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+            "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+            "high_low_threshold": "0.01942217345769070844599075886"
+          },
+          "volatility_contracting": {
+            "average_interval_return": "-0.001518119766265629031616950284",
+            "average_normalized_return": "-0.06969828218858227126051972454",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.07983024795040388149297211501",
+              "moderate": "-0.07645292602979667808215465154",
+              "optimistic": "-0.07307560410918947467133718787"
+            },
+            "cost_to_gross_ratio_moderate": "0.07494570706174129773206898971",
+            "date_range": {
+              "first": "2023-12-27T16:00:00+00:00",
+              "last": "2026-05-03T20:00:00+00:00"
+            },
+            "direction_changes": 209,
+            "direction_counts": {
+              "flat": 0,
+              "long": 728,
+              "short": 731
+            },
+            "gross_return": "-2.214936738981552757129130464",
+            "max_drawdown_like": "-2.791530533605554707183397394",
+            "post_cost_return": {
+              "conservative": "-2.463936738981552757129130462",
+              "moderate": "-2.380936738981552757129130462",
+              "optimistic": "-2.297936738981552757129130464"
+            },
+            "rebalance_observations": 1459,
+            "sharpe_like": "-0.04500069040431397315162943014",
+            "turnover": 415,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.09691263011243810745867038300",
+            "volatility_targeted_gross_return": "-101.6897937131415337690982781",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-116.4723317596392630982463158",
+              "moderate": "-111.5448190774733533218636366",
+              "optimistic": "-106.6173063953074435454809571"
+            },
+            "volatility_targeted_sharpe_like": "-0.04192345108524569321389496066"
+          },
+          "volatility_expanding": {
+            "average_interval_return": "0.001129314823359861315392369733",
+            "average_normalized_return": "0.08217498280454913791487798105",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.07145465340355036340246533269",
+              "moderate": "0.07502809653721662157326954876",
+              "optimistic": "0.07860153967088287974407376495"
+            },
+            "cost_to_gross_ratio_moderate": "0.1168946141752682622808468785",
+            "date_range": {
+              "first": "2023-12-28T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 183,
+            "direction_counts": {
+              "flat": 0,
+              "long": 585,
+              "short": 524
+            },
+            "gross_return": "1.252410139106086198770138034",
+            "max_drawdown_like": "-0.9287300659958899772504440571",
+            "post_cost_return": {
+              "conservative": "1.032810139106086198770138036",
+              "moderate": "1.106010139106086198770138036",
+              "optimistic": "1.179210139106086198770138036"
+            },
+            "rebalance_observations": 1109,
+            "sharpe_like": "0.02925605675747762156643044075",
+            "turnover": 366,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.08697155780769899632360405741",
+            "volatility_targeted_gross_return": "91.13205593024499394759968098",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "79.24321062453735301333405395",
+              "moderate": "83.20615905977323332475592957",
+              "optimistic": "87.16910749500911363617780533"
+            },
+            "volatility_targeted_sharpe_like": "0.04400367084940353295863802304"
+          }
+        },
+        "validation": {
+          "high_vol": {
+            "average_interval_return": "-0.003803045884771545192140565756",
+            "average_normalized_return": "-0.1759731161608303833194951447",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.1855562089238715391429379898",
+              "moderate": "-0.1823618446695244872017903746",
+              "optimistic": "-0.1791674804151774352606427597"
+            },
+            "cost_to_gross_ratio_moderate": "0.03814777013030147215953103914",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-04-19T20:00:00+00:00"
+            },
+            "direction_changes": 70,
+            "direction_counts": {
+              "flat": 0,
+              "long": 145,
+              "short": 241
+            },
+            "gross_return": "-1.467975711521816444166258382",
+            "max_drawdown_like": "-1.777325249622518058449770874",
+            "post_cost_return": {
+              "conservative": "-1.551975711521816444166258380",
+              "moderate": "-1.523975711521816444166258380",
+              "optimistic": "-1.495975711521816444166258380"
+            },
+            "rebalance_observations": 386,
+            "sharpe_like": "-0.09796536144640643561665685289",
+            "turnover": 140,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.03630513937626207857763513778",
+            "volatility_targeted_gross_return": "-67.92562283808052796132512585",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-71.62469664461441410917406406",
+              "moderate": "-70.39167204243645205989108460",
+              "optimistic": "-69.15864744025849001060810523"
+            },
+            "volatility_targeted_sharpe_like": "-0.1079571492980721919428830754"
+          },
+          "low_vol": {
+            "average_interval_return": "0.00005769924590407566181029481662",
+            "average_normalized_return": "-0.01273405649319533603741843579",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.02646782595252120266981965935",
+              "moderate": "-0.02188990279941258045901925165",
+              "optimistic": "-0.01731197964630395824821884366"
+            },
+            "cost_to_gross_ratio_moderate": "2.016727160647637957533995410",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 56,
+            "direction_counts": {
+              "flat": 0,
+              "long": 204,
+              "short": 181
+            },
+            "gross_return": "0.0222142096730691297969635044",
+            "max_drawdown_like": "-0.5543391548073479240519175520",
+            "post_cost_return": {
+              "conservative": "-0.0449857903269308702030364956",
+              "moderate": "-0.0225857903269308702030364956",
+              "optimistic": "-0.0001857903269308702030364956"
+            },
+            "rebalance_observations": 385,
+            "sharpe_like": "0.002388768678077049856747862163",
+            "turnover": 112,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.7190046872424219026989987539",
+            "volatility_targeted_gross_return": "-4.902611749880204374406097779",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-10.19011299172066302788056885",
+              "moderate": "-8.427612577773843476722411884",
+              "optimistic": "-6.665112163827023925564254811"
+            },
+            "volatility_targeted_sharpe_like": "-0.007235408693686982623811159509"
+          },
+          "policy": {
+            "candidate_inclusion_unchanged": true,
+            "diagnostic_only": true,
+            "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+            "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+            "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+            "high_low_threshold": "0.01805778688841332191609844755"
+          },
+          "volatility_contracting": {
+            "average_interval_return": "-0.004608910033269617393750640423",
+            "average_normalized_return": "-0.2503293179650824087107437439",
+            "average_post_cost_normalized_return": {
+              "conservative": "-0.2624478749862334405219432948",
+              "moderate": "-0.2584083559791830965848767779",
+              "optimistic": "-0.2543688369721327526478102606"
+            },
+            "cost_to_gross_ratio_moderate": "0.02762386628731645911513597396",
+            "date_range": {
+              "first": "2025-08-20T16:00:00+00:00",
+              "last": "2026-05-03T20:00:00+00:00"
+            },
+            "direction_changes": 67,
+            "direction_counts": {
+              "flat": 0,
+              "long": 172,
+              "short": 249
+            },
+            "gross_return": "-1.940351124006508922769019618",
+            "max_drawdown_like": "-1.997627558867290050009935475",
+            "post_cost_return": {
+              "conservative": "-2.020751124006508922769019618",
+              "moderate": "-1.993951124006508922769019618",
+              "optimistic": "-1.967151124006508922769019618"
+            },
+            "rebalance_observations": 421,
+            "sharpe_like": "-0.1529798023931339265584890030",
+            "turnover": 134,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.03227363890004927671580999687",
+            "volatility_targeted_gross_return": "-105.3886428632996940672231162",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "-110.4905553692042784597381271",
+              "moderate": "-108.7899178672360836622331235",
+              "optimistic": "-107.0892803652678888647281197"
+            },
+            "volatility_targeted_sharpe_like": "-0.1551176127891073502216417716"
+          },
+          "volatility_expanding": {
+            "average_interval_return": "0.001413113206165033166856356410",
+            "average_normalized_return": "0.09302973792953989066140540754",
+            "average_post_cost_normalized_return": {
+              "conservative": "0.08193070209391200377909569774",
+              "moderate": "0.08563038070578796607319893437",
+              "optimistic": "0.089330059317663928367302171"
+            },
+            "cost_to_gross_ratio_moderate": "0.09543265342705551371535696830",
+            "date_range": {
+              "first": "2025-08-22T16:00:00+00:00",
+              "last": "2026-05-04T20:00:00+00:00"
+            },
+            "direction_changes": 59,
+            "direction_counts": {
+              "flat": 0,
+              "long": 177,
+              "short": 173
+            },
+            "gross_return": "0.4945896221577616083997247434",
+            "max_drawdown_like": "-0.9287300659958899772504440548",
+            "post_cost_return": {
+              "conservative": "0.4237896221577616083997247434",
+              "moderate": "0.4473896221577616083997247434",
+              "optimistic": "0.4709896221577616083997247434"
+            },
+            "rebalance_observations": 350,
+            "sharpe_like": "0.04078523421716724203898591382",
+            "turnover": 118,
+            "volatility_targeted_cost_to_gross_ratio_moderate": "0.07953754776086920614525440205",
+            "volatility_targeted_gross_return": "32.56040827533896173149189264",
+            "volatility_targeted_post_cost_return": {
+              "conservative": "28.67574573286920132268349421",
+              "moderate": "29.97063324702578812561962703",
+              "optimistic": "31.26552076118237492855575985"
+            },
+            "volatility_targeted_sharpe_like": "0.05237362379576559032170335460"
           }
         }
       },

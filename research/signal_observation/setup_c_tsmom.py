@@ -30,6 +30,15 @@ COST_BPS = {
 COST_SCENARIOS = tuple(COST_BPS)
 PRIMARY_COST_SCENARIO = "moderate"
 PRIMARY_GATE_METRIC = "volatility_targeted_post_cost_return"
+FUNDING_RATES_PER_8H = {
+    "favorable": Decimal("-0.0001"),
+    "neutral": Decimal("0"),
+    "mild_cost": Decimal("0.0001"),
+    "high_cost": Decimal("0.0003"),
+}
+FUNDING_INTERVALS_PER_REBALANCE = (
+    Decimal(REBALANCE_BARS) * Decimal("4") / Decimal("8")
+)
 RESULT_PASS = "SETUP_C_TSMOM_PASS_CANDIDATE"
 RESULT_PARK = "SETUP_C_TSMOM_PARK"
 RESULT_FAIL = "SETUP_C_TSMOM_FAIL"
@@ -267,6 +276,9 @@ def analyze_tsmom(
                 intervals,
                 skipped,
             ),
+            "funding_stress": _funding_stress_diagnostics(intervals),
+            "regime_decomposition": _regime_decomposition(intervals),
+            "direction_change_frequency": _direction_change_frequency(intervals),
             "vol_proxy_skipped_intervals": skipped,
             "random_baseline": random_summary,
         }
@@ -286,9 +298,22 @@ def analyze_tsmom(
         "random_iterations": random_iterations,
         "cost_bps_per_turnover": _json_safe(COST_BPS),
         "funding_costs_excluded": True,
+        "funding_stress_assumptions": {
+            "diagnostic_only": True,
+            "rates_per_8h": _json_safe(FUNDING_RATES_PER_8H),
+            "funding_intervals_per_rebalance": FUNDING_INTERVALS_PER_REBALANCE,
+            "applied_to": PRIMARY_GATE_METRIC,
+        },
         "lookbacks": lookback_results,
         "autocorrelation_diagnostics": autocorrelation,
         "return_sign_autocorrelation_40": return_sign_autocorrelation_40,
+        "autocorrelation_interpretation": [
+            "high return-sign autocorrelation is expected for overlapping lookback windows",
+            "return-sign autocorrelation does not by itself prove edge",
+            "high autocorrelation indicates low independent information per bar",
+            "interpretation should focus on rebalance intervals and direction-change frequency",
+        ],
+        "c3_interpretation": _c3_interpretation(lookback_results, gate),
         "gate": gate,
         "known_limitations": [
             "funding costs excluded",
@@ -473,6 +498,7 @@ def evaluate_c1_gate(lookback_results: dict[str, object]) -> dict[str, object]:
     }
 
     sensitivity_better_than_primary = _sensitivity_better_than_primary(lookback_results)
+    sensitivity_robustness = _sensitivity_robustness_diagnostics(lookback_results)
     passes = (
         gate_results["discovery_volatility_targeted_post_cost_moderate_gt_0"]
         and gate_results["beats_random_p75"]
@@ -503,6 +529,7 @@ def evaluate_c1_gate(lookback_results: dict[str, object]) -> dict[str, object]:
             "gate_results": gate_results,
             "positive_symbol_count": positive_symbols,
             "sensitivity_better_than_primary": sensitivity_better_than_primary,
+            "sensitivity_robustness": sensitivity_robustness,
             "notes": [
                 "PASS is research-only and not paper-ready",
                 "funding costs excluded",
@@ -624,8 +651,34 @@ def format_tsmom_report(report: dict[str, object]) -> str:
                 f"raw_cost_to_gross={full_breakdown['raw_cost_to_gross_ratio_moderate']}; "
                 f"skipped={symbol_metrics['vol_proxy_skipped_intervals']}"
             )
+        lines.append("  funding_stress_full:")
+        for scenario, values in sorted(item["funding_stress"]["full"].items()):
+            lines.append(
+                f"    {scenario}: impact={values['funding_impact_on_vt_post_cost_return']}; "
+                f"adjusted={values['funding_adjusted_vt_post_cost_return']}"
+            )
+        lines.append("  regime_decomposition_full:")
+        for regime, values in sorted(item["regime_decomposition"]["full"].items()):
+            if regime == "policy":
+                continue
+            lines.append(
+                f"    {regime}: count={values['rebalance_observations']}; "
+                f"vt_gross={values['volatility_targeted_gross_return']}; "
+                f"vt_post_cost_moderate={values['volatility_targeted_post_cost_return']['moderate']}; "
+                f"turnover={values['turnover']}; "
+                f"vt_cost_to_gross={values['volatility_targeted_cost_to_gross_ratio_moderate']}"
+            )
+        direction_frequency = item["direction_change_frequency"]["full"]
+        lines.append(
+            "  direction_change_frequency_full_pooled: "
+            f"observations={direction_frequency['pooled']['rebalance_observations']}; "
+            f"changes={direction_frequency['pooled']['direction_changes']}; "
+            f"pct={direction_frequency['pooled']['direction_change_pct']}"
+        )
 
     lines.extend(["", "40-bar return sign autocorrelation"])
+    for note in report["autocorrelation_interpretation"]:  # type: ignore[index]
+        lines.append(f"  interpretation: {note}")
     autocorrelation_40 = report["return_sign_autocorrelation_40"]  # type: ignore[assignment]
     for symbol, values in sorted(autocorrelation_40.items()):
         lines.append(
@@ -637,6 +690,17 @@ def format_tsmom_report(report: dict[str, object]) -> str:
     gate = report["gate"]  # type: ignore[assignment]
     for key, value in gate["gate_results"].items():
         lines.append(f"  {key}: {value}")
+    lines.append("  sensitivity_robustness:")
+    for lookback, values in sorted(gate["sensitivity_robustness"].items()):
+        lines.append(
+            f"    {lookback}: discovery_better_than_primary={values['discovery_better_than_primary']}; "
+            f"validation_non_negative={values['validation_non_negative']}; "
+            f"robust_sensitivity_candidate={values['robust_sensitivity_candidate']}"
+        )
+
+    lines.extend(["", "C3 interpretation"])
+    for item in report["c3_interpretation"]:  # type: ignore[index]
+        lines.append(f"- {item}")
 
     lines.extend(["", "Known limitations"])
     for limitation in report["known_limitations"]:  # type: ignore[index]
@@ -732,6 +796,145 @@ def _turnover_cost_diagnostics(
         )
         output[symbol] = symbol_output
     return output
+
+
+def _funding_stress_diagnostics(
+    intervals: Sequence[TsmomInterval],
+) -> dict[str, object]:
+    return _json_safe({
+        split: _funding_stress_for_split(
+            intervals if split == "full" else [item for item in intervals if item.split == split]
+        )
+        for split in ("full", "discovery", "validation")
+    })  # type: ignore[return-value]
+
+
+def _funding_stress_for_split(
+    intervals: Sequence[TsmomInterval],
+) -> dict[str, object]:
+    baseline = _post_cost_normalized_total(intervals, PRIMARY_COST_SCENARIO)
+    output: dict[str, object] = {}
+    for scenario, funding_rate in FUNDING_RATES_PER_8H.items():
+        impact = sum(
+            (_funding_impact_normalized(item, funding_rate) for item in intervals),
+            Decimal("0"),
+        )
+        output[scenario] = {
+            "funding_rate_per_8h": funding_rate,
+            "funding_intervals_per_rebalance": FUNDING_INTERVALS_PER_REBALANCE,
+            "baseline_vt_post_cost_return": baseline,
+            "funding_impact_on_vt_post_cost_return": impact,
+            "funding_adjusted_vt_post_cost_return": baseline + impact,
+            "diagnostic_only": True,
+        }
+    return output
+
+
+def _funding_impact_normalized(
+    interval: TsmomInterval,
+    funding_rate: Decimal,
+) -> Decimal:
+    if interval.direction == 0:
+        return Decimal("0")
+    raw_impact = (
+        Decimal(-interval.direction)
+        * funding_rate
+        * FUNDING_INTERVALS_PER_REBALANCE
+    )
+    return raw_impact / interval.vol_proxy
+
+
+def _regime_decomposition(intervals: Sequence[TsmomInterval]) -> dict[str, object]:
+    return _json_safe({
+        split: _regime_decomposition_for_split(
+            intervals if split == "full" else [item for item in intervals if item.split == split]
+        )
+        for split in ("full", "discovery", "validation")
+    })  # type: ignore[return-value]
+
+
+def _regime_decomposition_for_split(
+    intervals: Sequence[TsmomInterval],
+) -> dict[str, object]:
+    scoped = sorted(intervals, key=lambda item: (item.timestamp, item.symbol))
+    threshold = _median([item.vol_proxy for item in scoped])
+    high_low_groups = {
+        "high_vol": [],
+        "low_vol": [],
+    }
+    expanding_groups = {
+        "volatility_expanding": [],
+        "volatility_contracting": [],
+    }
+
+    previous_vol_by_symbol: dict[str, Decimal] = {}
+    for item in scoped:
+        if threshold is not None and item.vol_proxy >= threshold:
+            high_low_groups["high_vol"].append(item)
+        else:
+            high_low_groups["low_vol"].append(item)
+
+        previous_vol = previous_vol_by_symbol.get(item.symbol)
+        if previous_vol is not None and item.vol_proxy > previous_vol:
+            expanding_groups["volatility_expanding"].append(item)
+        else:
+            expanding_groups["volatility_contracting"].append(item)
+        previous_vol_by_symbol[item.symbol] = item.vol_proxy
+
+    output = {
+        regime: summarize_intervals(values)
+        for regime, values in {**high_low_groups, **expanding_groups}.items()
+    }
+    output["policy"] = {
+        "diagnostic_only": True,
+        "candidate_inclusion_unchanged": True,
+        "high_low_threshold": threshold,
+        "high_low_rule": "high_vol if interval ATR/close proxy is greater than or equal to split median",
+        "expansion_rule": "volatility_expanding if current interval ATR/close proxy is greater than previous same-symbol rebalance proxy",
+        "first_interval_policy": "first interval per symbol is counted as volatility_contracting for deterministic coverage",
+    }
+    return output
+
+
+def _direction_change_frequency(
+    intervals: Sequence[TsmomInterval],
+) -> dict[str, object]:
+    return _json_safe({
+        split: _direction_change_frequency_for_split(
+            intervals if split == "full" else [item for item in intervals if item.split == split]
+        )
+        for split in ("full", "discovery", "validation")
+    })  # type: ignore[return-value]
+
+
+def _direction_change_frequency_for_split(
+    intervals: Sequence[TsmomInterval],
+) -> dict[str, object]:
+    groups: dict[str, list[TsmomInterval]] = defaultdict(list)
+    for item in intervals:
+        groups[item.symbol].append(item)
+    output: dict[str, object] = {
+        symbol: _direction_frequency_summary(groups[symbol])
+        for symbol in sorted(groups)
+    }
+    output["pooled"] = _direction_frequency_summary(list(intervals))
+    return output
+
+
+def _direction_frequency_summary(
+    intervals: Sequence[TsmomInterval],
+) -> dict[str, object]:
+    observations = len(intervals)
+    changes = sum(1 for item in intervals if item.turnover_units > 0)
+    return {
+        "rebalance_observations": observations,
+        "direction_changes": changes,
+        "direction_change_pct": (
+            Decimal(changes) / Decimal(observations)
+            if observations
+            else None
+        ),
+    }
 
 
 def _split_by_timestamp(timestamps: Sequence[str]) -> dict[str, str]:
@@ -939,6 +1142,58 @@ def _sensitivity_better_than_primary(lookback_results: dict[str, object]) -> boo
         if value > primary_value:
             return True
     return False
+
+
+def _sensitivity_robustness_diagnostics(
+    lookback_results: dict[str, object],
+) -> dict[str, object]:
+    primary = lookback_results[str(PRIMARY_LOOKBACK)]  # type: ignore[index]
+    primary_discovery = _primary_gate_metric_value(primary["metrics"]["discovery"])  # type: ignore[index]
+    output: dict[str, object] = {}
+    for lookback in ("20", "60"):
+        result = lookback_results[lookback]  # type: ignore[index]
+        discovery = _primary_gate_metric_value(result["metrics"]["discovery"])  # type: ignore[index]
+        validation = _primary_gate_metric_value(result["metrics"]["validation"])  # type: ignore[index]
+        discovery_better = discovery > primary_discovery
+        validation_non_negative = validation >= Decimal("0")
+        output[lookback] = {
+            "discovery_better_than_primary": discovery_better,
+            "validation_non_negative": validation_non_negative,
+            "robust_sensitivity_candidate": discovery_better and validation_non_negative,
+            "diagnostic_only": True,
+            "interpretation": "sensitivity strength is not robust unless validation is non-negative",
+        }
+    return output
+
+
+def _c3_interpretation(
+    lookback_results: dict[str, object],
+    gate: dict[str, object],
+) -> list[str]:
+    primary = lookback_results[str(PRIMARY_LOOKBACK)]  # type: ignore[index]
+    funding = primary["funding_stress"]["full"]  # type: ignore[index]
+    high_cost_adjusted = Decimal(
+        str(funding["high_cost"]["funding_adjusted_vt_post_cost_return"])
+    )
+    regime = primary["regime_decomposition"]["full"]  # type: ignore[index]
+    high_vol = _primary_gate_metric_value(regime["high_vol"])
+    low_vol = _primary_gate_metric_value(regime["low_vol"])
+    return [
+        (
+            "Funding stress does not invalidate the 40-bar primary candidate "
+            "under the tested scenarios."
+            if high_cost_adjusted > Decimal("0")
+            else "Funding stress would invalidate the 40-bar primary candidate under the tested scenarios."
+        ),
+        (
+            "Regime decomposition shows a material regime-dependence concern: "
+            f"high_vol is {high_vol} and low_vol is {low_vol}."
+        ),
+        f"Setup C remains {gate['decision']} research-only.",
+        "Escalation to paper, runtime, trading, or live remains HOLD / NO-GO.",
+        "No strategy filter is introduced by this diagnostic.",
+        "Regime decomposition is observational only.",
+    ]
 
 
 def _json_safe(value: object) -> object:

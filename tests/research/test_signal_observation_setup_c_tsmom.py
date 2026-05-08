@@ -174,6 +174,56 @@ def _lookback_result(
             "by_symbol": {"BTCUSDT": 0, "ETHUSDT": 0, "SOLUSDT": 0},
             "downstream_policy": "invalid volatility rows are skipped before interval creation",
         },
+        "funding_stress": {
+            "full": {
+                "neutral": {
+                    "funding_impact_on_vt_post_cost_return": "0",
+                    "funding_adjusted_vt_post_cost_return": vt_discovery,
+                }
+            }
+        },
+        "regime_decomposition": {
+            "full": {
+                "high_vol": {
+                    "rebalance_observations": 1,
+                    "volatility_targeted_gross_return": vt_discovery,
+                    "volatility_targeted_post_cost_return": {"moderate": vt_discovery},
+                    "turnover": 0,
+                    "volatility_targeted_cost_to_gross_ratio_moderate": vt_cost_ratio,
+                },
+                "low_vol": {
+                    "rebalance_observations": 0,
+                    "volatility_targeted_gross_return": "0",
+                    "volatility_targeted_post_cost_return": {"moderate": "0"},
+                    "turnover": 0,
+                    "volatility_targeted_cost_to_gross_ratio_moderate": None,
+                },
+                "volatility_expanding": {
+                    "rebalance_observations": 1,
+                    "volatility_targeted_gross_return": vt_discovery,
+                    "volatility_targeted_post_cost_return": {"moderate": vt_discovery},
+                    "turnover": 0,
+                    "volatility_targeted_cost_to_gross_ratio_moderate": vt_cost_ratio,
+                },
+                "volatility_contracting": {
+                    "rebalance_observations": 0,
+                    "volatility_targeted_gross_return": "0",
+                    "volatility_targeted_post_cost_return": {"moderate": "0"},
+                    "turnover": 0,
+                    "volatility_targeted_cost_to_gross_ratio_moderate": None,
+                },
+                "policy": {"candidate_inclusion_unchanged": True},
+            }
+        },
+        "direction_change_frequency": {
+            "full": {
+                "pooled": {
+                    "rebalance_observations": 1,
+                    "direction_changes": 0,
+                    "direction_change_pct": "0",
+                }
+            }
+        },
     }
 
 
@@ -496,6 +546,20 @@ def test_report_headline_fields_are_volatility_targeted() -> None:
                 "observations": 10,
             }
         },
+        "autocorrelation_interpretation": [
+            "high return-sign autocorrelation is expected for overlapping lookback windows",
+            "return-sign autocorrelation does not by itself prove edge",
+            "high autocorrelation indicates low independent information per bar",
+            "interpretation should focus on rebalance intervals and direction-change frequency",
+        ],
+        "c3_interpretation": [
+            "Funding stress does not invalidate the 40-bar primary candidate under the tested scenarios.",
+            "Regime decomposition shows a material regime-dependence concern: high_vol is -1 and low_vol is 1.",
+            "Setup C remains SETUP_C_TSMOM_PARK research-only.",
+            "Escalation to paper, runtime, trading, or live remains HOLD / NO-GO.",
+            "No strategy filter is introduced by this diagnostic.",
+            "Regime decomposition is observational only.",
+        ],
         "known_limitations": ["funding costs excluded"],
     }
 
@@ -506,6 +570,13 @@ def test_report_headline_fields_are_volatility_targeted() -> None:
     assert "discovery_volatility_targeted_post_cost_moderate: -0.01" in text
     assert "raw_discovery_post_cost_moderate: 0.50" in text
     assert "40-bar return sign autocorrelation" in text
+    assert "high return-sign autocorrelation is expected" in text
+    assert "funding_stress_full" in text
+    assert "regime_decomposition_full" in text
+    assert "direction_change_frequency_full_pooled" in text
+    assert "Funding stress does not invalidate the 40-bar primary candidate" in text
+    assert "Regime decomposition shows a material regime-dependence concern" in text
+    assert "Escalation to paper, runtime, trading, or live remains HOLD / NO-GO" in text
 
 
 def test_summary_contains_expected_cost_fields() -> None:
@@ -522,6 +593,87 @@ def test_summary_contains_expected_cost_fields() -> None:
     assert summary["volatility_targeted_post_cost_return"]["moderate"] == "0.44"
     assert summary["volatility_targeted_sharpe_like"] is not None
     assert summary["cost_to_gross_ratio_moderate"] == "0.12"
+
+
+def test_funding_stress_is_deterministic_and_diagnostic_only() -> None:
+    intervals = [
+        _interval(direction=1, interval_return="0.01", vol_proxy="0.02"),
+        _interval(direction=-1, interval_return="0.01", vol_proxy="0.03"),
+    ]
+
+    diagnostics = setup_c_tsmom._funding_stress_diagnostics(intervals)
+    full = diagnostics["full"]
+
+    assert set(full) == {"favorable", "neutral", "mild_cost", "high_cost"}
+    assert full["neutral"]["funding_impact_on_vt_post_cost_return"] == "0"
+    assert full["mild_cost"]["diagnostic_only"] is True
+    assert (
+        full["mild_cost"]["baseline_vt_post_cost_return"]
+        == summarize_intervals(intervals)["volatility_targeted_post_cost_return"]["moderate"]
+    )
+
+
+def test_regime_decomposition_is_observational_and_keeps_all_intervals() -> None:
+    intervals = [
+        _interval(symbol="BTCUSDT", timestamp="2026-01-01T00:00:00+00:00", vol_proxy="0.01"),
+        _interval(symbol="BTCUSDT", timestamp="2026-01-02T00:00:00+00:00", vol_proxy="0.03"),
+        _interval(symbol="ETHUSDT", timestamp="2026-01-01T00:00:00+00:00", vol_proxy="0.02"),
+    ]
+
+    diagnostics = setup_c_tsmom._regime_decomposition(intervals)
+    full = diagnostics["full"]
+    high_low_count = (
+        full["high_vol"]["rebalance_observations"]
+        + full["low_vol"]["rebalance_observations"]
+    )
+    expansion_count = (
+        full["volatility_expanding"]["rebalance_observations"]
+        + full["volatility_contracting"]["rebalance_observations"]
+    )
+
+    assert high_low_count == len(intervals)
+    assert expansion_count == len(intervals)
+    assert full["policy"]["candidate_inclusion_unchanged"] is True
+
+
+def test_sensitivity_robustness_marks_discovery_only_strength_not_robust() -> None:
+    primary = _lookback_result(
+        discovery="0.05",
+        validation="0.01",
+        random_median="0.00",
+        random_p75="0.02",
+        symbol_values=("0.03", "0.02", "0.01"),
+    )
+    payload = _gate_payload(primary)
+    payload["20"] = _lookback_result(
+        discovery="0.10",
+        validation="-0.02",
+        random_median="0.00",
+        random_p75="0.02",
+        symbol_values=("0.03", "0.02", "0.01"),
+    )
+
+    gate = evaluate_c1_gate(payload)
+
+    robustness = gate["sensitivity_robustness"]["20"]
+    assert robustness["discovery_better_than_primary"] is True
+    assert robustness["validation_non_negative"] is False
+    assert robustness["robust_sensitivity_candidate"] is False
+
+
+def test_direction_change_frequency_counts_rebalance_changes() -> None:
+    intervals = [
+        _interval(symbol="BTCUSDT", turnover=1),
+        _interval(symbol="BTCUSDT", turnover=0),
+        _interval(symbol="ETHUSDT", turnover=2),
+    ]
+
+    diagnostics = setup_c_tsmom._direction_change_frequency(intervals)
+    pooled = diagnostics["full"]["pooled"]
+
+    assert pooled["rebalance_observations"] == 3
+    assert pooled["direction_changes"] == 2
+    assert pooled["direction_change_pct"] == "0.6666666666666666666666666667"
 
 
 def test_no_http_network_imports() -> None:
