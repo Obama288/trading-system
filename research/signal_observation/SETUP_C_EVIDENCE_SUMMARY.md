@@ -131,3 +131,15 @@ decision.
   execution of any kind.
 - No sizing with capital.
 - Research-only scope is unchanged.
+
+---
+
+## 9. Post-C7 Future Fork Notes
+
+- If C7 fails or parks Setup C: run a Data Reconnaissance (DR1) design lock
+  before designing any new setup family. Do not design Setup D directly.
+- Future setup evaluation should use a compressed path: pre-filter, Stage 1
+  with all key metrics, at most one same-dataset diagnostic, then out-of-time
+  or FAIL/PARK. Avoid repeating the C1–C6 diagnostic chain length.
+- See `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md` §§ Future
+  Setup Evaluation Process Principles / Post-C7 Fork: Data Reconnaissance.

@@ -55,10 +55,9 @@ remote refs.
 
 ## Next Allowed Work
 
-- Owner decision on C6 fork:
-  - **Fork A (recommended)**: expand dataset / out-of-time validation.
-  - **Fork B**: define paper-trading prerequisites (no paper approval).
-  - **Fork C**: park Setup C.
+- C7 design lock written:
+  `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
+- Next step: independent review of C7 design lock before any implementation.
 - All work remains research-only unless the Human Owner explicitly authorizes
   a different lane.
 

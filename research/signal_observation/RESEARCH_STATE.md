@@ -74,9 +74,17 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Owner may choose Fork B (define paper prerequisites, no approval) or Fork C
   (park Setup C) instead.
 
+## C7 Design Lock
+
+- C7 expanded validation design lock written:
+  `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
+- Independent review verdict: PASS WITH NOTES. Reviewer fixes applied.
+- C7 design lock includes: future setup evaluation process principles and
+  post-C7 Data Reconnaissance fork guidance.
+
 ## Next Research Action
 
-- Owner decision on C6 fork (A / B / C).
+- C7 implementation (pending owner go-ahead after design-lock review).
 - No paper, runtime, trading, or live escalation from Setup C without explicit
   owner approval and additional gates.
 
