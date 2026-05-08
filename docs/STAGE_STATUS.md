@@ -78,7 +78,7 @@
 | Stage 53-B2 Testnet API Access Runbook | DOCUMENTED | pending | testnet URL/API Management URL, API Transaction / Транзакция API key type, read-only permissions, retCode 10003 troubleshooting, and safe restart path documented; no real retry authorized |
 | Stage 53-B2 Pit-stop Audit | RECORDED | 8153c61 | audit-only checkpoint; repo aligned at 8153c61; no-flag latches exited 3; targeted suites passed; full local regression 408 passed / 5 warnings; B2d remains blocked / NO-GO; no readiness promoted |
 | Stage 53-B2c.1 Auth Readiness Audit | BLOCKED | pending | B2c.1a/B2c.1b mocked/local readiness complete; private real testnet path blocked due unavailable usable Bybit testnet API access |
-| Stage 53-B Implementation | BLOCKED | pending | not started; no place/cancel/live execution/live reconcile |
+| Stage 53-B Implementation | BLOCKED | pending | no runtime/client/private-endpoint implementation authorized; B1 config and mocked read-only slices exist; no place/cancel/live execution/live reconcile |
 | Stage 53-C | BLOCKED | pending | Live execution path |
 | Stage 53-D | BLOCKED | pending | Live reconcile |
 | Stage 53-E | BLOCKED | pending | Tests + read-only smoke |
@@ -258,6 +258,9 @@ Legacy summarized list below: not the current authoritative blocker count.
 Repo: `Obama288/trading-system`
 Check branch/ref first.
 Read in source-of-truth order: `docs/PROGRESS.md`, `docs/AI_COMMANDS.md`, `docs/HOW_WE_WORK.md`, `docs/AI_HANDOFF.md`, `docs/CONTEXT.md`, then `docs/STAGE_STATUS.md`.
+Use GitHub docs, latest commits, code, tests, and relevant PR metadata as the primary project source of truth.
+Default GitHub mode is read-only audit; do not modify GitHub state without exact owner approval for that write action.
+Label important claims by source: current chat instruction, GitHub doc fact, commit fact, code fact, test/CI fact, runtime evidence, PR/review discussion, project memory, or inference.
 Then give me:
 1. current gate
 2. latest relevant commit and checked branch/ref

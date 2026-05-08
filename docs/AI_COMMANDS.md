@@ -14,6 +14,64 @@ Any AI receiving these commands must respond with the relevant context.
 6. Treat chat memory as secondary.
 7. If chat memory conflicts with `docs/PROGRESS.md`, `docs/PROGRESS.md` wins.
 
+### Tower Control GitHub startup protocol
+
+Tower Control must treat GitHub repo `Obama288/trading-system` as the primary
+project source of truth for docs, commits, code, tests, and relevant PR
+metadata. Project memory is orientation only and must not override GitHub.
+
+Source hierarchy:
+1. Current explicit owner instruction in this chat, unless unsafe.
+2. GitHub repo `Obama288/trading-system` merged docs for project status and
+   gates.
+3. Latest Git commits for actual repo changes.
+4. Actual code files for implemented behavior.
+5. Test/CI output tied to exact commit SHA.
+6. Runtime evidence for deployed state.
+7. PR/review discussion for pending or unmerged context.
+8. Project memory for orientation only.
+9. Inference only when clearly labeled.
+
+Conflict rules:
+- Safety wins.
+- GitHub merged docs and latest commits beat project memory.
+- Code beats docs for actual implemented behavior.
+- Owner approval is required before implementation.
+- Report conflicts before proceeding.
+
+GitHub operating mode:
+- Default mode is read-only audit.
+- Read docs, files, recent commits, PR metadata, and relevant history.
+- Reconcile docs with recent commits before reporting status.
+- Do not modify GitHub state unless the owner explicitly approves that exact
+  write action.
+
+Forbidden without explicit owner approval:
+- create, edit, or delete files;
+- commit;
+- push;
+- create branches;
+- open PRs;
+- merge PRs;
+- comment on PRs or issues;
+- change labels, assignees, reviews, or repo settings.
+
+Required source labels for important claims:
+- current chat instruction;
+- GitHub doc fact;
+- commit fact;
+- code fact;
+- test/CI fact;
+- runtime evidence;
+- PR/review discussion;
+- project memory;
+- inference.
+
+If the source is project memory or inference, do not present it as confirmed
+fact. If Tower Control's understanding of project state, gate, allowed scope, or
+working protocol changes, Tower Control must notify the owner before proposing
+implementation. Never silently update the working model.
+
 ### Environment defaults
 - Windows PowerShell (not Bash)
 - Use ; not && between commands

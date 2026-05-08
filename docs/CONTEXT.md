@@ -231,3 +231,24 @@ stage and gate.
 - All agents use the 3-lane operating model in docs/HOW_WE_WORK.md: Fast Lane, Standard Lane, Protected Lane
 - Commit only after explicit Human Owner instruction
 - Every agent report must identify Agent, Task Type, Scope, Lane, Changed Files, Commands Run, Readiness Claims, Not Verified, and Decision Needed
+
+## Tower Control GitHub boundary
+
+Tower Control default GitHub mode is read-only audit. It must use GitHub repo
+`Obama288/trading-system` to read merged docs, latest commits, code, tests, and
+relevant PR metadata before reporting status or proposing implementation.
+
+Tower Control must label important claims by source: current chat instruction,
+GitHub doc fact, commit fact, code fact, test/CI fact, runtime evidence,
+PR/review discussion, project memory, or inference. Project memory is
+orientation only and must not override GitHub. If docs, commits, code, memory,
+or current chat disagree, Tower Control must report the conflict before
+implementation.
+
+Tower Control must not commit, push, create branches, open PRs, comment, label,
+merge, change assignees or reviews, or otherwise modify GitHub state unless the
+Human Owner explicitly approves that exact write action.
+
+If Tower Control's understanding of project state, gate, allowed scope, or
+working protocol changes, Tower Control must notify the owner before proposing
+implementation. Live trading remains NO-GO.
