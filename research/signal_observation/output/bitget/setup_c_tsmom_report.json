@@ -107,6 +107,60 @@
     "primary_gate_unchanged": true,
     "strategy_filter_introduced": false
   },
+  "c5_regime_split": {
+    "bucket_source": "same high_vol/low_vol definitions as C3 regime_decomposition per split",
+    "candidate_inclusion_unchanged": true,
+    "diagnostic_only": true,
+    "discovery": {
+      "high_vol": {
+        "count": 899,
+        "raw_cost_to_gross_ratio_moderate": "0.3278998704452575966202305186",
+        "raw_gross_return": "-0.4037818002801071133339869415",
+        "raw_post_cost_moderate": "-0.5361818002801071133339869415",
+        "turnover": 331,
+        "volatility_targeted_cost_to_gross_ratio_moderate": "0.6706481249316708044217466652",
+        "volatility_targeted_gross_return": "7.555686795965942718444634531",
+        "volatility_targeted_post_cost_moderate": "2.488479613680399671271920667"
+      },
+      "low_vol": {
+        "count": 898,
+        "raw_cost_to_gross_ratio_moderate": "0.1011256800439207929960700792",
+        "raw_gross_return": "1.186642205499945546292858946",
+        "raw_post_cost_moderate": "1.066642205499945546292858944",
+        "turnover": 300,
+        "volatility_targeted_cost_to_gross_ratio_moderate": "0.09647190891947831684538777790",
+        "volatility_targeted_gross_return": "89.09512645205240635868346945",
+        "volatility_targeted_post_cost_moderate": "80.49994952780060329200981042"
+      }
+    },
+    "interpretation": "Regime pattern (high_vol negative, low_vol positive) appears in validation split only; pattern may not be structural.",
+    "interpretation_result": "validation_only_or_discovery_only",
+    "lookback": 40,
+    "primary_gate_unchanged": true,
+    "strategy_filter_introduced": false,
+    "validation": {
+      "high_vol": {
+        "count": 386,
+        "raw_cost_to_gross_ratio_moderate": "0.4000967313629250641831091706",
+        "raw_gross_return": "-0.1559622838892862089126554480",
+        "raw_post_cost_moderate": "-0.2183622838892862089126554480",
+        "turnover": 156,
+        "volatility_targeted_cost_to_gross_ratio_moderate": "0.2587284388646505442137968452",
+        "volatility_targeted_gross_return": "-10.37333428403836985429463802",
+        "volatility_targeted_post_cost_moderate": "-13.05721086916877475276799048"
+      },
+      "low_vol": {
+        "count": 385,
+        "raw_cost_to_gross_ratio_moderate": "0.08620280479139185049949129417",
+        "raw_gross_return": "0.6589112748413959583993201716",
+        "raw_post_cost_moderate": "0.6021112748413959583993201716",
+        "turnover": 142,
+        "volatility_targeted_cost_to_gross_ratio_moderate": "0.08598648263763600889805451304",
+        "volatility_targeted_gross_return": "49.78444610550336148018368698",
+        "volatility_targeted_post_cost_moderate": "45.50365669482817106741492231"
+      }
+    }
+  },
   "cost_bps_per_turnover": {
     "conservative": "6",
     "moderate": "4",

@@ -148,6 +148,15 @@ C4 regime normalization diagnostic
   interpretation_result: real_regime_dependence
   interpretation: Raw high_vol is also negative while raw low_vol is positive; regime dependence looks real.
 
+C5 regime split diagnostic
+  policy: observational_only; no_filter; no_gate_change
+  discovery_high_vol: count=899; raw_gross=-0.4037818002801071133339869415; raw_post_cost_moderate=-0.5361818002801071133339869415; vt_gross=7.555686795965942718444634531; vt_post_cost_moderate=2.488479613680399671271920667; turnover=331; raw_cost_to_gross=0.3278998704452575966202305186; vt_cost_to_gross=0.6706481249316708044217466652
+  discovery_low_vol: count=898; raw_gross=1.186642205499945546292858946; raw_post_cost_moderate=1.066642205499945546292858944; vt_gross=89.09512645205240635868346945; vt_post_cost_moderate=80.49994952780060329200981042; turnover=300; raw_cost_to_gross=0.1011256800439207929960700792; vt_cost_to_gross=0.09647190891947831684538777790
+  validation_high_vol: count=386; raw_gross=-0.1559622838892862089126554480; raw_post_cost_moderate=-0.2183622838892862089126554480; vt_gross=-10.37333428403836985429463802; vt_post_cost_moderate=-13.05721086916877475276799048; turnover=156; raw_cost_to_gross=0.4000967313629250641831091706; vt_cost_to_gross=0.2587284388646505442137968452
+  validation_low_vol: count=385; raw_gross=0.6589112748413959583993201716; raw_post_cost_moderate=0.6021112748413959583993201716; vt_gross=49.78444610550336148018368698; vt_post_cost_moderate=45.50365669482817106741492231; turnover=142; raw_cost_to_gross=0.08620280479139185049949129417; vt_cost_to_gross=0.08598648263763600889805451304
+  interpretation_result: validation_only_or_discovery_only
+  interpretation: Regime pattern (high_vol negative, low_vol positive) appears in validation split only; pattern may not be structural.
+
 Known limitations
 - funding costs excluded
 - research-only normalized return calculation

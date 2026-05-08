@@ -15,6 +15,7 @@ from research.signal_observation.setup_c_tsmom import (
     RESULT_PASS,
     TsmomInterval,
     build_tsmom_intervals,
+    c5_regime_split_diagnostic,
     close_to_close_return,
     count_vol_proxy_skipped_intervals,
     cost_return,
@@ -590,6 +591,58 @@ def test_report_headline_fields_are_volatility_targeted() -> None:
             "interpretation_result": "real_regime_dependence",
             "interpretation": "Raw high_vol is also negative while raw low_vol is positive; regime dependence looks real.",
         },
+        "c5_regime_split": {
+            "diagnostic_only": True,
+            "candidate_inclusion_unchanged": True,
+            "strategy_filter_introduced": False,
+            "primary_gate_unchanged": True,
+            "discovery": {
+                "high_vol": {
+                    "count": 5,
+                    "raw_gross_return": "-0.05",
+                    "raw_post_cost_moderate": "-0.06",
+                    "turnover": 2,
+                    "raw_cost_to_gross_ratio_moderate": "0.20",
+                    "volatility_targeted_gross_return": "-1.0",
+                    "volatility_targeted_post_cost_moderate": "-1.1",
+                    "volatility_targeted_cost_to_gross_ratio_moderate": "0.15",
+                },
+                "low_vol": {
+                    "count": 5,
+                    "raw_gross_return": "0.05",
+                    "raw_post_cost_moderate": "0.04",
+                    "turnover": 2,
+                    "raw_cost_to_gross_ratio_moderate": "0.20",
+                    "volatility_targeted_gross_return": "1.0",
+                    "volatility_targeted_post_cost_moderate": "0.9",
+                    "volatility_targeted_cost_to_gross_ratio_moderate": "0.15",
+                },
+            },
+            "validation": {
+                "high_vol": {
+                    "count": 5,
+                    "raw_gross_return": "-0.05",
+                    "raw_post_cost_moderate": "-0.06",
+                    "turnover": 2,
+                    "raw_cost_to_gross_ratio_moderate": "0.20",
+                    "volatility_targeted_gross_return": "-1.0",
+                    "volatility_targeted_post_cost_moderate": "-1.1",
+                    "volatility_targeted_cost_to_gross_ratio_moderate": "0.15",
+                },
+                "low_vol": {
+                    "count": 5,
+                    "raw_gross_return": "0.05",
+                    "raw_post_cost_moderate": "0.04",
+                    "turnover": 2,
+                    "raw_cost_to_gross_ratio_moderate": "0.20",
+                    "volatility_targeted_gross_return": "1.0",
+                    "volatility_targeted_post_cost_moderate": "0.9",
+                    "volatility_targeted_cost_to_gross_ratio_moderate": "0.15",
+                },
+            },
+            "interpretation_result": "structural_regime_dependence",
+            "interpretation": "High_vol negative and low_vol positive in both discovery and validation using raw and volatility-targeted post-cost moderate; pattern appears structural.",
+        },
         "c3_interpretation": [
             "Funding stress does not invalidate the 40-bar primary candidate under the tested scenarios.",
             "Regime decomposition shows a material regime-dependence concern: high_vol is -1 and low_vol is 1.",
@@ -617,6 +670,9 @@ def test_report_headline_fields_are_volatility_targeted() -> None:
     assert "Escalation to paper, runtime, trading, or live remains HOLD / NO-GO" in text
     assert "C4 regime normalization diagnostic" in text
     assert "interpretation_result: real_regime_dependence" in text
+    assert "C5 regime split diagnostic" in text
+    assert "discovery_high_vol:" in text
+    assert "validation_low_vol:" in text
 
 
 def test_summary_contains_expected_cost_fields() -> None:
@@ -762,6 +818,184 @@ def test_direction_change_frequency_counts_rebalance_changes() -> None:
     assert pooled["rebalance_observations"] == 3
     assert pooled["direction_changes"] == 2
     assert pooled["direction_change_pct"] == "0.6666666666666666666666666667"
+
+
+def _c5_regime_bucket(raw_post_cost: str, vt_post_cost: str) -> dict[str, object]:
+    """Build minimal summarize_intervals-shaped dict for _regime_normalization_bucket input."""
+    gross = "-0.05" if Decimal(raw_post_cost) < 0 else "0.05"
+    vt_gross = "-1.0" if Decimal(vt_post_cost) < 0 else "1.0"
+    return {
+        "rebalance_observations": 10,
+        "gross_return": gross,
+        "post_cost_return": {"moderate": raw_post_cost, "optimistic": raw_post_cost, "conservative": raw_post_cost},
+        "turnover": 5,
+        "cost_to_gross_ratio_moderate": "0.20",
+        "volatility_targeted_gross_return": vt_gross,
+        "volatility_targeted_post_cost_return": {"moderate": vt_post_cost, "optimistic": vt_post_cost, "conservative": vt_post_cost},
+        "volatility_targeted_cost_to_gross_ratio_moderate": "0.15",
+    }
+
+
+def _c5_lookback_results(
+    disc_high_raw: str,
+    disc_high_vt: str,
+    disc_low_raw: str,
+    disc_low_vt: str,
+    val_high_raw: str,
+    val_high_vt: str,
+    val_low_raw: str,
+    val_low_vt: str,
+) -> dict[str, object]:
+    """Build minimal lookback_results for c5_regime_split_diagnostic tests."""
+
+    def regime_split(
+        high_raw: str, high_vt: str, low_raw: str, low_vt: str
+    ) -> dict[str, object]:
+        return {
+            "high_vol": _c5_regime_bucket(high_raw, high_vt),
+            "low_vol": _c5_regime_bucket(low_raw, low_vt),
+            "volatility_expanding": _c5_regime_bucket(high_raw, high_vt),
+            "volatility_contracting": _c5_regime_bucket(low_raw, low_vt),
+            "policy": {"candidate_inclusion_unchanged": True},
+        }
+
+    return {
+        "40": {
+            "regime_decomposition": {
+                "full": regime_split(disc_high_raw, disc_high_vt, disc_low_raw, disc_low_vt),
+                "discovery": regime_split(disc_high_raw, disc_high_vt, disc_low_raw, disc_low_vt),
+                "validation": regime_split(val_high_raw, val_high_vt, val_low_raw, val_low_vt),
+            }
+        }
+    }
+
+
+def test_c5_structural_regime_dependence_when_both_splits_show_pattern() -> None:
+    lookback_results = _c5_lookback_results(
+        disc_high_raw="-0.05", disc_high_vt="-1.0",
+        disc_low_raw="0.05", disc_low_vt="1.0",
+        val_high_raw="-0.03", val_high_vt="-0.5",
+        val_low_raw="0.02", val_low_vt="0.4",
+    )
+
+    result = c5_regime_split_diagnostic(lookback_results)
+
+    assert result["interpretation_result"] == "structural_regime_dependence"
+    assert "both discovery and validation" in result["interpretation"]
+
+
+def test_c5_validation_only_when_pattern_in_validation_only() -> None:
+    lookback_results = _c5_lookback_results(
+        disc_high_raw="0.01", disc_high_vt="0.2",
+        disc_low_raw="0.02", disc_low_vt="0.4",
+        val_high_raw="-0.03", val_high_vt="-0.5",
+        val_low_raw="0.02", val_low_vt="0.4",
+    )
+
+    result = c5_regime_split_diagnostic(lookback_results)
+
+    assert result["interpretation_result"] == "validation_only_or_discovery_only"
+    assert "validation" in result["interpretation"]
+
+
+def test_c5_discovery_only_when_pattern_in_discovery_only() -> None:
+    lookback_results = _c5_lookback_results(
+        disc_high_raw="-0.05", disc_high_vt="-1.0",
+        disc_low_raw="0.05", disc_low_vt="1.0",
+        val_high_raw="0.01", val_high_vt="0.2",
+        val_low_raw="0.02", val_low_vt="0.4",
+    )
+
+    result = c5_regime_split_diagnostic(lookback_results)
+
+    assert result["interpretation_result"] == "validation_only_or_discovery_only"
+    assert "discovery" in result["interpretation"]
+
+
+def test_c5_inconclusive_when_no_split_shows_pattern() -> None:
+    lookback_results = _c5_lookback_results(
+        disc_high_raw="0.01", disc_high_vt="0.2",
+        disc_low_raw="0.02", disc_low_vt="0.4",
+        val_high_raw="0.01", val_high_vt="0.2",
+        val_low_raw="0.02", val_low_vt="0.4",
+    )
+
+    result = c5_regime_split_diagnostic(lookback_results)
+
+    assert result["interpretation_result"] == "inconclusive"
+
+
+def test_c5_inconclusive_when_only_raw_matches_not_vt() -> None:
+    lookback_results = _c5_lookback_results(
+        disc_high_raw="-0.05", disc_high_vt="0.2",   # raw negative but VT positive
+        disc_low_raw="0.05", disc_low_vt="0.4",
+        val_high_raw="-0.03", val_high_vt="0.1",
+        val_low_raw="0.02", val_low_vt="0.4",
+    )
+
+    result = c5_regime_split_diagnostic(lookback_results)
+
+    assert result["interpretation_result"] == "inconclusive"
+
+
+def test_c5_diagnostic_flags_observational_and_no_filter() -> None:
+    lookback_results = _c5_lookback_results(
+        disc_high_raw="-0.05", disc_high_vt="-1.0",
+        disc_low_raw="0.05", disc_low_vt="1.0",
+        val_high_raw="-0.03", val_high_vt="-0.5",
+        val_low_raw="0.02", val_low_vt="0.4",
+    )
+
+    result = c5_regime_split_diagnostic(lookback_results)
+
+    assert result["diagnostic_only"] is True
+    assert result["candidate_inclusion_unchanged"] is True
+    assert result["strategy_filter_introduced"] is False
+    assert result["primary_gate_unchanged"] is True
+
+
+def test_c5_regime_split_expected_bucket_keys_present() -> None:
+    lookback_results = _c5_lookback_results(
+        disc_high_raw="-0.05", disc_high_vt="-1.0",
+        disc_low_raw="0.05", disc_low_vt="1.0",
+        val_high_raw="-0.03", val_high_vt="-0.5",
+        val_low_raw="0.02", val_low_vt="0.4",
+    )
+
+    result = c5_regime_split_diagnostic(lookback_results)
+
+    for split in ("discovery", "validation"):
+        for bucket in ("high_vol", "low_vol"):
+            b = result[split][bucket]
+            assert "count" in b
+            assert "raw_gross_return" in b
+            assert "raw_post_cost_moderate" in b
+            assert "volatility_targeted_gross_return" in b
+            assert "volatility_targeted_post_cost_moderate" in b
+            assert "turnover" in b
+            assert "raw_cost_to_gross_ratio_moderate" in b
+            assert "volatility_targeted_cost_to_gross_ratio_moderate" in b
+
+
+def test_c5_primary_gate_not_modified_by_c5() -> None:
+    primary = _lookback_result(
+        discovery="0.05",
+        validation="0.01",
+        random_median="0.00",
+        random_p75="0.02",
+        symbol_values=("0.03", "0.02", "0.01"),
+        vt_discovery="0.05",
+        vt_validation="0.01",
+        vt_random_median="0.00",
+        vt_random_p75="0.02",
+        vt_symbol_values=("0.03", "0.02", "0.01"),
+    )
+    payload = _gate_payload(primary)
+
+    gate = evaluate_c1_gate(payload)
+
+    assert gate["decision"] == RESULT_PASS
+    assert "c5" not in str(gate["gate_results"])
 
 
 def test_no_http_network_imports() -> None:

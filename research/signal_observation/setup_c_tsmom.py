@@ -314,6 +314,7 @@ def analyze_tsmom(
             "interpretation should focus on rebalance intervals and direction-change frequency",
         ],
         "c4_regime_normalization": _primary_regime_normalization(lookback_results),
+        "c5_regime_split": c5_regime_split_diagnostic(lookback_results),
         "c3_interpretation": _c3_interpretation(lookback_results, gate),
         "gate": gate,
         "known_limitations": [
@@ -540,6 +541,38 @@ def evaluate_c1_gate(lookback_results: dict[str, object]) -> dict[str, object]:
     )
 
 
+def c5_regime_split_diagnostic(lookback_results: dict[str, object]) -> dict[str, object]:
+    """C5: report high_vol/low_vol regime metrics by discovery and validation split."""
+
+    primary = lookback_results[str(PRIMARY_LOOKBACK)]  # type: ignore[index]
+    regime = primary["regime_decomposition"]  # type: ignore[index]
+    disc_high = _regime_normalization_bucket(regime["discovery"]["high_vol"])  # type: ignore[index]
+    disc_low = _regime_normalization_bucket(regime["discovery"]["low_vol"])  # type: ignore[index]
+    val_high = _regime_normalization_bucket(regime["validation"]["high_vol"])  # type: ignore[index]
+    val_low = _regime_normalization_bucket(regime["validation"]["low_vol"])  # type: ignore[index]
+    interpretation_result, interpretation = _c5_interpretation(disc_high, disc_low, val_high, val_low)
+    return _json_safe(
+        {
+            "lookback": PRIMARY_LOOKBACK,
+            "diagnostic_only": True,
+            "candidate_inclusion_unchanged": True,
+            "strategy_filter_introduced": False,
+            "primary_gate_unchanged": True,
+            "bucket_source": "same high_vol/low_vol definitions as C3 regime_decomposition per split",
+            "discovery": {
+                "high_vol": disc_high,
+                "low_vol": disc_low,
+            },
+            "validation": {
+                "high_vol": val_high,
+                "low_vol": val_low,
+            },
+            "interpretation_result": interpretation_result,
+            "interpretation": interpretation,
+        }
+    )  # type: ignore[return-value]
+
+
 def load_bitget_4h_candles(data_dir: str | Path) -> dict[str, list[Candle]]:
     """Load fixed local Bitget 4H CSVs for Setup C."""
 
@@ -718,6 +751,25 @@ def format_tsmom_report(report: dict[str, object]) -> str:
         )
     lines.append(f"  interpretation_result: {c4['interpretation_result']}")
     lines.append(f"  interpretation: {c4['interpretation']}")
+
+    c5 = report["c5_regime_split"]  # type: ignore[index]
+    lines.extend(["", "C5 regime split diagnostic"])
+    lines.append("  policy: observational_only; no_filter; no_gate_change")
+    for split in ("discovery", "validation"):
+        for bucket in ("high_vol", "low_vol"):
+            values = c5[split][bucket]  # type: ignore[index]
+            lines.append(
+                f"  {split}_{bucket}: count={values['count']}; "  # type: ignore[index]
+                f"raw_gross={values['raw_gross_return']}; "  # type: ignore[index]
+                f"raw_post_cost_moderate={values['raw_post_cost_moderate']}; "  # type: ignore[index]
+                f"vt_gross={values['volatility_targeted_gross_return']}; "  # type: ignore[index]
+                f"vt_post_cost_moderate={values['volatility_targeted_post_cost_moderate']}; "  # type: ignore[index]
+                f"turnover={values['turnover']}; "  # type: ignore[index]
+                f"raw_cost_to_gross={values['raw_cost_to_gross_ratio_moderate']}; "  # type: ignore[index]
+                f"vt_cost_to_gross={values['volatility_targeted_cost_to_gross_ratio_moderate']}"  # type: ignore[index]
+            )
+    lines.append(f"  interpretation_result: {c5['interpretation_result']}")  # type: ignore[index]
+    lines.append(f"  interpretation: {c5['interpretation']}")  # type: ignore[index]
 
     lines.extend(["", "Known limitations"])
     for limitation in report["known_limitations"]:  # type: ignore[index]
@@ -1257,6 +1309,47 @@ def _regime_normalization_interpretation(
     return (
         "inconclusive",
         "Raw and volatility-targeted regime buckets are mixed or ambiguous; normalization impact is inconclusive.",
+    )
+
+
+def _c5_split_has_pattern(high_vol: dict[str, object], low_vol: dict[str, object]) -> bool:
+    raw_high = Decimal(str(high_vol["raw_post_cost_moderate"]))
+    raw_low = Decimal(str(low_vol["raw_post_cost_moderate"]))
+    vt_high = Decimal(str(high_vol["volatility_targeted_post_cost_moderate"]))
+    vt_low = Decimal(str(low_vol["volatility_targeted_post_cost_moderate"]))
+    return (
+        raw_high < Decimal("0")
+        and raw_low > Decimal("0")
+        and vt_high < Decimal("0")
+        and vt_low > Decimal("0")
+    )
+
+
+def _c5_interpretation(
+    disc_high: dict[str, object],
+    disc_low: dict[str, object],
+    val_high: dict[str, object],
+    val_low: dict[str, object],
+) -> tuple[str, str]:
+    disc_pattern = _c5_split_has_pattern(disc_high, disc_low)
+    val_pattern = _c5_split_has_pattern(val_high, val_low)
+    if disc_pattern and val_pattern:
+        return (
+            "structural_regime_dependence",
+            "High_vol negative and low_vol positive in both discovery and validation "
+            "using raw and volatility-targeted post-cost moderate; pattern appears structural.",
+        )
+    if disc_pattern or val_pattern:
+        which = "discovery" if disc_pattern else "validation"
+        return (
+            "validation_only_or_discovery_only",
+            f"Regime pattern (high_vol negative, low_vol positive) appears in {which} split only; "
+            "pattern may not be structural.",
+        )
+    return (
+        "inconclusive",
+        "Regime dependence pattern is not consistently negative high_vol and positive low_vol "
+        "in both splits; evidence is inconclusive.",
     )
 
 
