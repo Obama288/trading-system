@@ -1,0 +1,251 @@
+{
+  "atr_period": 20,
+  "combined_retention_denominator": "115.4348749671403992779286625",
+  "combined_retention_numerator": "286.8737614883866123479462861",
+  "combined_retention_passes": true,
+  "combined_retention_ratio": "2.485156774068910038457628322",
+  "combined_retention_threshold": "0.50",
+  "data_source_attribution": {
+    "download_metadata": {
+      "commit": "16ae508",
+      "rows_per_symbol": 4272,
+      "sha256": {
+        "BTCUSDT": "71a6863cd47734fd0ad473d8391bb0e58cd5c1f41b5d366c82f9c954c925af46",
+        "ETHUSDT": "78027034f23e3b6e0dfb466e4b7f949ee2f20c012c10d24db839fcc9f11922de",
+        "SOLUSDT": "445fcd7d6c498ccf147bac900681fa9ff67f60a137cef0a884e1df8def3e0373"
+      }
+    },
+    "single_download_policy": "one approved public download before analysis; no re-download after seeing results",
+    "source": "public_bitget_4h_ohlcv"
+  },
+  "decision": "C7_PASS",
+  "design_lock": "docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md",
+  "dev_window_end": "2026-05-06T08:00:00+00:00",
+  "dev_window_start": "2023-12-17T16:00:00+00:00",
+  "expanded_regime_split": {
+    "high_vol": {
+      "average_interval_return": "0.002799715319898794310816413058",
+      "average_normalized_return": "0.09954321728028587306444840228",
+      "average_post_cost_normalized_return": {
+        "conservative": "0.09278836738681905592586507645",
+        "moderate": "0.09503998401797466163872618503",
+        "optimistic": "0.09729160064913026735158729363"
+      },
+      "cost_to_gross_ratio_moderate": "0.04522458718635937418947884680",
+      "date_range": {
+        "first": "2022-01-11T00:00:00+00:00",
+        "last": "2023-12-15T12:00:00+00:00"
+      },
+      "direction_changes": 168,
+      "direction_counts": {
+        "flat": 0,
+        "long": 473,
+        "short": 579
+      },
+      "gross_return": "2.945300516533531614978866537",
+      "max_drawdown_like": "-1.812493751203878228015560056",
+      "post_cost_return": {
+        "conservative": "2.745500516533531614978866535",
+        "moderate": "2.812100516533531614978866537",
+        "optimistic": "2.878700516533531614978866537"
+      },
+      "rebalance_observations": 1052,
+      "sharpe_like": "0.05102897350386321402861043774",
+      "turnover": 333,
+      "volatility_targeted_cost_to_gross_ratio_moderate": "0.04523897645011176818668236749",
+      "volatility_targeted_gross_return": "104.7194645788607384637997192",
+      "volatility_targeted_post_cost_return": {
+        "conservative": "97.61336249093364683401006043",
+        "moderate": "99.98206318690934404393994665",
+        "optimistic": "102.3507638828850412538698329"
+      },
+      "volatility_targeted_sharpe_like": "0.06075853935883514127893458387"
+    },
+    "low_vol": {
+      "average_interval_return": "0.0007062249051387775968748202992",
+      "average_normalized_return": "0.08178133724864462303047040492",
+      "average_post_cost_normalized_return": {
+        "conservative": "0.06107158219546733061431476807",
+        "moderate": "0.06797483387985976141969998029",
+        "optimistic": "0.07487808556425219222508519258"
+      },
+      "cost_to_gross_ratio_moderate": "0.2392749402484772942264763290",
+      "date_range": {
+        "first": "2022-01-13T00:00:00+00:00",
+        "last": "2023-12-15T12:00:00+00:00"
+      },
+      "direction_changes": 222,
+      "direction_counts": {
+        "flat": 0,
+        "long": 545,
+        "short": 506
+      },
+      "gross_return": "0.7422423753008552543154361345",
+      "max_drawdown_like": "-1.052509486002649167118073884",
+      "post_cost_return": {
+        "conservative": "0.4758423753008552543154361340",
+        "moderate": "0.5646423753008552543154361337",
+        "optimistic": "0.6534423753008552543154361344"
+      },
+      "rebalance_observations": 1051,
+      "sharpe_like": "0.02611900672566529520456689861",
+      "turnover": 444,
+      "volatility_targeted_cost_to_gross_ratio_moderate": "0.1688221767126176369906761588",
+      "volatility_targeted_gross_return": "85.95218544832549880502439557",
+      "volatility_targeted_post_cost_return": {
+        "conservative": "64.18623288743616447564482124",
+        "moderate": "71.44155040773260925210467928",
+        "optimistic": "78.69686792802905402856453740"
+      },
+      "volatility_targeted_sharpe_like": "0.03956143035122507892208664824"
+    },
+    "policy": {
+      "candidate_inclusion_unchanged": true,
+      "diagnostic_only": true,
+      "high_low_threshold_source": "expanded_window_only",
+      "primary_gate_unchanged": true,
+      "strategy_filter_introduced": false
+    }
+  },
+  "expanded_summary": {
+    "average_interval_return": "0.001753467851561762657771898564",
+    "average_normalized_return": "0.09066650025068294687057732515",
+    "average_post_cost_normalized_return": {
+      "conservative": "0.07693751563403224503549923096",
+      "moderate": "0.08151384383958247898052526220",
+      "optimistic": "0.08609017204513271292555129363"
+    },
+    "cost_to_gross_ratio_moderate": "0.08428376540059469449437851271",
+    "date_range": {
+      "first": "2022-01-11T00:00:00+00:00",
+      "last": "2023-12-15T12:00:00+00:00"
+    },
+    "direction_changes": 390,
+    "direction_counts": {
+      "flat": 0,
+      "long": 1018,
+      "short": 1085
+    },
+    "gross_return": "3.687542891834386869294302681",
+    "max_drawdown_like": "-2.138625290466785475077809307",
+    "post_cost_return": {
+      "conservative": "3.221342891834386869294302675",
+      "moderate": "3.376742891834386869294302677",
+      "optimistic": "3.532142891834386869294302677"
+    },
+    "rebalance_observations": 2103,
+    "sharpe_like": "0.04053363822235950338663088093",
+    "turnover": 777,
+    "volatility_targeted_cost_to_gross_ratio_moderate": "0.1009486015870732294920473033",
+    "volatility_targeted_gross_return": "190.6716500271862372688241148",
+    "volatility_targeted_post_cost_return": {
+      "conservative": "161.7995953783698113096548827",
+      "moderate": "171.4236135946419532960446264",
+      "optimistic": "181.0476318109140952824343705"
+    },
+    "volatility_targeted_sharpe_like": "0.04862483236502588376407489915"
+  },
+  "expanded_vol_thresholds": {
+    "derived_from": "expanded_window_only",
+    "policy": "no development-window threshold leakage",
+    "rule": "high_vol if interval ATR/close proxy is greater than or equal to expanded-window median",
+    "threshold": "0.01978496760786884287605349107"
+  },
+  "expanded_window_end": "2023-12-17T12:00:00+00:00",
+  "expanded_window_start": "2022-01-01T00:00:00+00:00",
+  "expansion_direction": "backward",
+  "funding_adjusted_expanded_vt_post_cost_moderate_high_cost": "171.1400182649070725337164539",
+  "funding_impact_on_expanded_vt_post_cost_moderate": "-0.2835953297348807623281725208",
+  "funding_intervals_per_rebalance": "3",
+  "funding_rate_per_8h": "0.0003",
+  "funding_scenario": "high_cost",
+  "gate_conditions": {
+    "combined_retention_ratio_gte_50pct": {
+      "passes": true,
+      "threshold": "0.50",
+      "value": "2.485156774068910038457628322"
+    },
+    "expanded_beats_random_p75": {
+      "passes": true,
+      "threshold": "5.376324198177362262957877152",
+      "value": "171.4236135946419532960446264"
+    },
+    "expanded_vt_post_cost_moderate_gt_0": {
+      "passes": true,
+      "threshold": "0",
+      "value": "171.4236135946419532960446264"
+    },
+    "funding_adjusted_high_cost_gt_0": {
+      "passes": true,
+      "threshold": "0",
+      "value": "171.1400182649070725337164539"
+    },
+    "two_of_three_symbols_non_negative": {
+      "passes": true,
+      "threshold": 2,
+      "value": 3
+    }
+  },
+  "known_limitations": [
+    "expanded window evidence is a single-block holdout",
+    "no parameter optimization is allowed in C7",
+    "regime diagnostics are observational only",
+    "funding stress is in-gate only at high_cost = 0.0003 per 8H"
+  ],
+  "no_readiness_disclaimer": "C7 is research-only. No paper, runtime, trading, or live readiness is claimed by this report. See design lock section 'What C7 Does Not Authorize'.",
+  "per_symbol_counts": {
+    "BTCUSDT": {
+      "dev_bars": 5200,
+      "dev_intervals": 856,
+      "expanded_bars": 4272,
+      "expanded_intervals": 701
+    },
+    "ETHUSDT": {
+      "dev_bars": 5200,
+      "dev_intervals": 856,
+      "expanded_bars": 4272,
+      "expanded_intervals": 701
+    },
+    "SOLUSDT": {
+      "dev_bars": 5200,
+      "dev_intervals": 856,
+      "expanded_bars": 4272,
+      "expanded_intervals": 701
+    }
+  },
+  "per_symbol_expanded_vt_post_cost_moderate": {
+    "BTCUSDT": "43.79765961998166486476816608",
+    "ETHUSDT": "36.01501941214533143120250978",
+    "SOLUSDT": "91.61093456251495700007395005"
+  },
+  "primary_cost_scenario": "moderate",
+  "primary_gate_metric": "volatility_targeted_post_cost_return",
+  "primary_lookback": 40,
+  "random_iterations": 1000,
+  "random_p75_expanded": "5.376324198177362262957877152",
+  "random_seed": 5443,
+  "rebalance_bars": 6,
+  "schema": "setup_c_c7_expanded_validation_report_v1",
+  "scope": "research_only_local_4h_ohlcv_expanded_holdout",
+  "symbols_evaluated": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+  ],
+  "symbols_missing": [],
+  "symbols_non_negative_count": 3,
+  "symbols_usable": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+  ],
+  "vol_proxy_skipped_intervals_expanded": {
+    "by_symbol": {
+      "BTCUSDT": 0,
+      "ETHUSDT": 0,
+      "SOLUSDT": 0
+    },
+    "downstream_policy": "invalid volatility rows are skipped before interval creation",
+    "total": 0
+  }
+}
