@@ -13,10 +13,12 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Current status: **PASS_CANDIDATE research-only**. C1–C5 diagnostics complete.
   C6 evidence summary and decision record written (see
   `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`). C7 expanded
-  validation analyzer implemented (independent review verdict: PASS; C7 23
-  tests, setup_c_tsmom regression 35, full research suite 308 — all pass).
-- All C1–C7 artifacts (design lock plus analyzer) are pushed and remote-visible
-  on `origin/main` as of HEAD `61ad028`.
+  validation analyzer implemented and evidence run completed; decision:
+  **C7_PASS** on the locked backward expanded window
+  (2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z).
+- All C1–C7 artifacts (design lock, analyzer, helpers, expanded data, and
+  evidence report) are pushed and remote-visible on `origin/main` as of
+  HEAD `c108197`.
 
 ## Retired Family
 
@@ -77,7 +79,7 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Owner may choose Fork B (define paper prerequisites, no approval) or Fork C
   (park Setup C) instead.
 
-## C7 Design Lock and Analyzer
+## C7 Design Lock, Analyzer, and Evidence
 
 - C7 expanded validation design lock written:
   `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
@@ -89,18 +91,26 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `research/signal_observation/setup_c_c7_expanded_validation.py` and
   `tests/research/test_signal_observation_setup_c_c7_expanded_validation.py`.
 - C7 analyzer independent review verdict: PASS.
-- Tests reported: C7 23 passed; setup_c_tsmom regression 35 passed; full
-  research suite 308 passed.
-- No runner, no download, no evidence run, no paper/runtime/trading/live
-  readiness.
+- C7 expanded Bitget holdout data committed at `16ae508`
+  (BTCUSDT/ETHUSDT/SOLUSDT 4H, 4272 rows per symbol, locked backward window
+  2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z, public Bitget 4H OHLCV only).
+- C7 evidence artifact helpers (`format_c7_report`, `write_c7_artifacts`)
+  added at `37e28ec`.
+- C7 evidence run completed and persisted at `c108197`:
+  `research/signal_observation/output/bitget/setup_c_c7_expanded_report.{txt,json}`.
+- C7 decision: **C7_PASS**. All five gate conditions pass: expanded
+  vt-post-cost-moderate > 0, expanded beats random p75, funding-adjusted
+  high_cost > 0, ≥ 2 of 3 symbols non-negative, combined-retention
+  ratio ≥ 50%.
+- Per design lock §"What C7 Does Not Authorize", the C7 PASS verdict
+  does not promote paper, runtime, trading, probe, or live readiness.
 
 ## Next Research Action
 
-- C7 evidence/download planning: separate owner-approved one-time public
-  Bitget 4H download for the locked expanded window, followed by a separate
-  owner-approved evidence run. Not paper, runtime, trading, or live readiness.
-- No paper, runtime, trading, or live escalation from Setup C without explicit
-  owner approval and additional gates.
+- Owner decision on next research gate / post-C7 decision record. Not
+  runtime, paper, trading, probe, or live readiness.
+- No paper, runtime, trading, probe, or live escalation from Setup C without
+  explicit owner approval and additional gates.
 
 Deferred useful work is tracked only in the compact Deferred / Watchlist section
 of `docs/CURRENT_STATE.md`; those items are not authorization to implement.
