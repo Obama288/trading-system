@@ -17,13 +17,16 @@ docs as needed.
 
 ## Recent Commits
 
-All commits below are pushed and remote-visible on `origin/main` at `d7c9106`.
+All commits below are pushed and remote-visible on `origin/main` at `21131fa`.
 
-- `d7c9106 research: add Setup C validation regime split diagnostic` - C5.
-- `84765ab docs: update compact state after Setup C C4` - pushed.
-- `3ca2f76 research: add Setup C regime normalization diagnostic` - C4, pushed.
-- `866f201 research: add Setup C funding and regime diagnostics` - C3, pushed.
-- `a804e13 docs: add compact agent startup state` - pushed.
+- `21131fa` Update AGENT_PROMPTS.md by removing specific rules.
+- `c63b64a` Enhance documentation with labeling and confidence rules.
+- `afdc0ff` Refine language in AGENT_PROMPTS.md.
+- `7529a84` Revise Tower Control and Codex guidelines.
+- `479462a` docs: add Setup C expanded validation design lock.
+
+Recent HEAD updates include agent prompt and Tower Control wording refinements
+only; they do not alter the current paper-only / live NO-GO safety state.
 
 Do not claim remote visibility for local commits unless verified by GitHub or
 remote refs.
@@ -71,6 +74,7 @@ These backlog items are not authorization to implement.
 - signal_observation README expansion.
 - config/exchange.yaml venue check/change.
 - lightweight post-push consistency-check routine.
+- Codex local workflow smoke: verified on Windows VS Code with .venv activation and targeted config/exchange tests.
 
 ## Startup Rule
 

@@ -13,7 +13,7 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Current status: **PASS_CANDIDATE research-only**. C1–C5 diagnostics complete.
   C6 evidence summary and decision record written (see
   `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`).
-- All C1–C5 commits are pushed and remote-visible on `origin/main` at `d7c9106`.
+- All C1–C7 artifacts are pushed and remote-visible on `origin/main` as of HEAD `21131fa`.
 
 ## Retired Family
 
