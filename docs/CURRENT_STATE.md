@@ -17,15 +17,15 @@ docs as needed.
 
 ## Recent Commits
 
-All commits below are pushed and remote-visible on `origin/main` at `c108197`.
+All commits below are pushed and remote-visible on `origin/main` at `eaa9a9d`.
 
+- `eaa9a9d` docs: record Setup C C7 evidence pass.
 - `c108197` research: add C7 expanded validation evidence report.
 - `37e28ec` research: add C7 evidence artifact helpers.
 - `16ae508` research: add C7 expanded Bitget holdout data.
 - `c3d15d0` research: fix Bitget bounded history pagination.
-- `febd471` docs: update compact state after C7 analyzer.
 
-Recent HEAD records the C7 expanded validation evidence run
+Recent HEAD records the compact-state docs update for the C7 evidence pass
 (decision `C7_PASS`, research-only); it does not alter the current
 paper-only / live NO-GO safety state.
 
@@ -68,9 +68,16 @@ remote refs.
   vt-post-cost-moderate > 0, expanded beats random p75, funding-adjusted
   high_cost > 0, ≥ 2 of 3 symbols non-negative, combined-retention
   ratio ≥ 50%.
-- Setup C remains research-only. Per design lock §"What C7 Does Not
-  Authorize", C7 PASS does not promote paper readiness, runtime readiness,
-  trading readiness, probe readiness, or live readiness.
+- C7 post-review decision record written:
+  `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`.
+  Independent post-C7 review verdict: PASS. Caveats recorded: SOL ≈ 53%
+  of expanded headline; expanded backward window stronger than recent
+  dev/validation period; expanded high_vol and low_vol both positive
+  (differs from C5 dev-validation finding); single-venue, 3-symbol
+  universe.
+- Setup C remains research-only PASS_CANDIDATE. Per design lock §"What C7
+  Does Not Authorize", C7 PASS does not promote paper readiness, runtime
+  readiness, trading readiness, probe readiness, or live readiness.
 - Escalation: **HOLD**.
 
 ## Next Allowed Work
@@ -78,9 +85,15 @@ remote refs.
 - C7 design lock written:
   `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
 - C7 analyzer, expanded data, helpers, and evidence report are all
-  remote-visible at `c108197`. C7 decision: **C7_PASS**.
-- Next step: owner decision on next research gate / post-C7 decision
-  record. Not runtime, paper, trading, probe, or live readiness.
+  remote-visible (analyzer `61ad028`; data `16ae508`; helpers `37e28ec`;
+  evidence report `c108197`). C7 decision: **C7_PASS**.
+- C7 post-review decision record:
+  `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`.
+- Next step: cross-venue validation of Setup C (separate design lock and
+  explicit owner approval required; public-source-only; no credentials,
+  no private endpoints, no paper / runtime / live readiness). Wider symbol
+  universe and execution realism are deferred until cross-venue validation
+  is completed and reviewed.
 - All work remains research-only unless the Human Owner explicitly authorizes
   a different lane.
 

@@ -15,10 +15,11 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`). C7 expanded
   validation analyzer implemented and evidence run completed; decision:
   **C7_PASS** on the locked backward expanded window
-  (2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z).
-- All C1–C7 artifacts (design lock, analyzer, helpers, expanded data, and
-  evidence report) are pushed and remote-visible on `origin/main` as of
-  HEAD `c108197`.
+  (2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z). Post-C7 review verdict:
+  PASS (see `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`).
+- All C1–C7 artifacts (design lock, analyzer, helpers, expanded data,
+  evidence report, and post-C7 review decision record) are pushed and
+  remote-visible on `origin/main` as of HEAD `eaa9a9d`.
 
 ## Retired Family
 
@@ -102,13 +103,25 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   vt-post-cost-moderate > 0, expanded beats random p75, funding-adjusted
   high_cost > 0, ≥ 2 of 3 symbols non-negative, combined-retention
   ratio ≥ 50%.
+- C7 post-review decision record written:
+  `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`.
+  Independent post-C7 review verdict: PASS. Caveats recorded:
+  SOL ≈ 53% of expanded headline; expanded backward window stronger
+  than recent dev/validation period; expanded high_vol and low_vol both
+  positive (differs from C5 dev/validation high_vol weakness); single-venue,
+  3-symbol universe.
 - Per design lock §"What C7 Does Not Authorize", the C7 PASS verdict
   does not promote paper, runtime, trading, probe, or live readiness.
 
 ## Next Research Action
 
-- Owner decision on next research gate / post-C7 decision record. Not
-  runtime, paper, trading, probe, or live readiness.
+- **Cross-venue validation** of Setup C (recommended next research gate).
+  Public-source-only; same frozen detector and symbol set; separate design
+  lock and explicit owner approval required before any code, data, or
+  analysis. Not runtime, paper, trading, probe, or live readiness.
+- Wider symbol universe and execution realism (slippage, latency, liquidity,
+  partial fills, fee tiers) are deferred until cross-venue validation is
+  completed and independently reviewed.
 - No paper, runtime, trading, probe, or live escalation from Setup C without
   explicit owner approval and additional gates.
 
