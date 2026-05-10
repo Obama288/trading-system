@@ -28,6 +28,8 @@ from research.signal_observation.setup_c_c7_expanded_validation import (
     analyze_c7_expanded_validation,
     combined_window_vt_post_cost_moderate,
     evaluate_c7_expanded_intervals,
+    format_c7_report,
+    write_c7_artifacts,
 )
 from research.signal_observation.setup_c_tsmom import (
     COST_BPS,
@@ -915,3 +917,75 @@ def test_dev_denominator_parity_with_published_setup_c_tsmom_artifact() -> None:
     # at the 25th significant digit. Compare quantized to 18 decimal places.
     quantum = Decimal("1E-18")
     assert recomputed.quantize(quantum) == published_value.quantize(quantum)
+
+
+# --- artifact formatting / writing helpers ---
+
+
+def _baseline_report() -> dict[str, object]:
+    return evaluate_c7_expanded_intervals(
+        dev_intervals_by_symbol=_baseline_dev_intervals(),
+        expanded_intervals_by_symbol=_baseline_expanded_intervals(),
+        expanded_window_start="2026-05-07T00:00:00+00:00",
+        expanded_window_end="2026-09-01T00:00:00+00:00",
+        expansion_direction="forward",
+    )
+
+
+def test_format_c7_report_includes_required_sections() -> None:
+    text = format_c7_report(_baseline_report())
+
+    assert "Setup C C7 expanded validation report" in text
+    assert "decision:" in text
+    assert "Gate conditions" in text
+    for cond_name in (
+        "expanded_vt_post_cost_moderate_gt_0",
+        "expanded_beats_random_p75",
+        "funding_adjusted_high_cost_gt_0",
+        "two_of_three_symbols_non_negative",
+        "combined_retention_ratio_gte_50pct",
+    ):
+        assert cond_name in text
+    assert "Combined retention" in text
+    assert "numerator:" in text
+    assert "denominator:" in text
+    assert "ratio:" in text
+    assert "Funding (high_cost)" in text
+    assert "rate_per_8h:" in text
+    assert "funding_adjusted_expanded_vt_post_cost_moderate_high_cost:" in text
+    assert "Random baseline" in text
+    assert "p75_expanded:" in text
+    assert "Symbols" in text
+    assert "usable:" in text
+    assert "missing:" in text
+    assert "No-readiness disclaimer" in text
+    assert "No paper, runtime, trading, or live readiness" in text
+
+
+def test_format_c7_report_is_deterministic() -> None:
+    report = _baseline_report()
+
+    first = format_c7_report(report)
+    second = format_c7_report(report)
+
+    assert first == second
+    # Trailing newline contract (mirrors format_tsmom_report).
+    assert first.endswith("\n")
+
+
+def test_write_c7_artifacts_writes_both_files(tmp_path: Path) -> None:
+    report = _baseline_report()
+    text_path = tmp_path / "subdir" / "setup_c_c7_expanded_report.txt"
+    json_path = tmp_path / "subdir" / "setup_c_c7_expanded_report.json"
+
+    write_c7_artifacts(report, text_path=text_path, json_path=json_path)
+
+    assert text_path.is_file()
+    assert json_path.is_file()
+    assert text_path.read_text(encoding="utf-8") == format_c7_report(report)
+    loaded = json.loads(json_path.read_text(encoding="utf-8"))
+    assert loaded == report
+    # JSON formatting contract: indent=2 + sort_keys=True + trailing newline.
+    raw = json_path.read_text(encoding="utf-8")
+    assert raw.endswith("\n")
+    assert raw == json.dumps(report, indent=2, sort_keys=True) + "\n"

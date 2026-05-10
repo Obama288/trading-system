@@ -10,9 +10,11 @@ components in ``setup_c_tsmom`` are not modified.
 
 from __future__ import annotations
 
+import json
 from collections import defaultdict
 from datetime import datetime
 from decimal import Decimal
+from pathlib import Path
 from typing import Sequence
 
 from .candles import Candle, normalize_utc, parse_iso_utc
@@ -357,6 +359,98 @@ def evaluate_c7_expanded_intervals(
         ],
     }
     return _json_safe(report)  # type: ignore[return-value]
+
+
+def format_c7_report(report: dict[str, object]) -> str:
+    """Format a deterministic Setup C C7 expanded validation text report."""
+
+    lines: list[str] = [
+        "Setup C C7 expanded validation report",
+        "",
+        "Scope: research-only expanded-holdout 4H OHLCV evaluation.",
+        "No paper/runtime/trading/live readiness claim.",
+        "",
+        f"decision: {report['decision']}",
+        f"schema: {report['schema']}",
+        f"expansion_direction: {report['expansion_direction']}",
+        f"expanded_window_start: {report['expanded_window_start']}",
+        f"expanded_window_end: {report['expanded_window_end']}",
+        f"dev_window_start: {report['dev_window_start']}",
+        f"dev_window_end: {report['dev_window_end']}",
+        f"primary_lookback: {report['primary_lookback']}",
+        "",
+        "Gate conditions",
+    ]
+    gate_conditions: dict[str, object] = report["gate_conditions"]  # type: ignore[assignment]
+    for name, cond in gate_conditions.items():
+        lines.append(
+            f"  {name}: value={cond['value']}, "  # type: ignore[index]
+            f"threshold={cond['threshold']}, "  # type: ignore[index]
+            f"passes={cond['passes']}"  # type: ignore[index]
+        )
+    lines.extend(
+        [
+            "",
+            "Combined retention",
+            f"  numerator: {report['combined_retention_numerator']}",
+            f"  denominator: {report['combined_retention_denominator']}",
+            f"  ratio: {report['combined_retention_ratio']}",
+            f"  threshold: {report['combined_retention_threshold']}",
+            f"  passes: {report['combined_retention_passes']}",
+            "",
+            "Funding (high_cost)",
+            f"  scenario: {report['funding_scenario']}",
+            f"  rate_per_8h: {report['funding_rate_per_8h']}",
+            f"  intervals_per_rebalance: {report['funding_intervals_per_rebalance']}",
+            "  funding_impact_on_expanded_vt_post_cost_moderate: "
+            f"{report['funding_impact_on_expanded_vt_post_cost_moderate']}",
+            "  funding_adjusted_expanded_vt_post_cost_moderate_high_cost: "
+            f"{report['funding_adjusted_expanded_vt_post_cost_moderate_high_cost']}",
+            "",
+            "Random baseline",
+            f"  seed: {report['random_seed']}",
+            f"  iterations: {report['random_iterations']}",
+            f"  p75_expanded: {report['random_p75_expanded']}",
+            "",
+            "Symbols",
+            f"  evaluated: {report['symbols_evaluated']}",
+            f"  usable: {report['symbols_usable']}",
+            f"  missing: {report['symbols_missing']}",
+            f"  non_negative_count: {report['symbols_non_negative_count']}",
+            "",
+            "Per-symbol expanded vt-post-cost-moderate",
+        ]
+    )
+    per_symbol_vt: dict[str, object] = report["per_symbol_expanded_vt_post_cost_moderate"]  # type: ignore[assignment]
+    for sym, value in per_symbol_vt.items():
+        lines.append(f"  {sym}: {value}")
+    lines.extend(
+        [
+            "",
+            "No-readiness disclaimer",
+            f"  {report['no_readiness_disclaimer']}",
+        ]
+    )
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def write_c7_artifacts(
+    report: dict[str, object],
+    *,
+    text_path: str | Path,
+    json_path: str | Path,
+) -> None:
+    """Write deterministic text and JSON C7 evidence artifacts."""
+
+    text_output = Path(text_path)
+    json_output = Path(json_path)
+    text_output.parent.mkdir(parents=True, exist_ok=True)
+    json_output.parent.mkdir(parents=True, exist_ok=True)
+    text_output.write_text(format_c7_report(report), encoding="utf-8")
+    json_output.write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
 
 
 def combined_window_vt_post_cost_moderate(
