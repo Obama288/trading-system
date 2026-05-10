@@ -20,6 +20,10 @@ BITGET_HISTORY_CANDLES_URL = (
 SUPPORTED_GRANULARITIES = ("1H", "4H")
 SUPPORTED_PRODUCT_TYPES = ("USDT-FUTURES", "COIN-FUTURES", "USDC-FUTURES")
 CSV_HEADER = ("timestamp", "open", "high", "low", "close", "volume")
+GRANULARITY_TO_MS: dict[str, int] = {
+    "1H": 3_600_000,
+    "4H": 14_400_000,
+}
 
 
 @dataclass(frozen=True)
@@ -39,7 +43,12 @@ def download_bitget_history_candles(
     end_time: str | None = None,
     max_pages: int = 1,
 ) -> Path:
-    """Download Bitget public historical candles and write local OHLCV CSV."""
+    """Download Bitget public historical candles and write local OHLCV CSV.
+
+    When both ``start_time`` and ``end_time`` are provided, each page asks
+    Bitget for a ``limit * granularity_ms``-wide chunk so no single page
+    spans a startTime/endTime range larger than the per-page maximum.
+    """
 
     if not symbol:
         raise ValueError("symbol must not be empty")
@@ -53,33 +62,78 @@ def download_bitget_history_candles(
         raise ValueError("max_pages must be positive")
     current_start_time = _optional_timestamp_ms("start_time", start_time)
     current_end_time = _optional_timestamp_ms("end_time", end_time)
+    if (
+        current_start_time is not None
+        and current_end_time is not None
+        and current_start_time > current_end_time
+    ):
+        raise ValueError("start_time must be less than or equal to end_time")
 
     candles_by_timestamp: dict[int, tuple[str, str, str, str, str, str]] = {}
     page_mode = "forward" if current_start_time is not None else "backward"
+    bounded_forward = (
+        page_mode == "forward"
+        and current_start_time is not None
+        and current_end_time is not None
+    )
+    granularity_ms = GRANULARITY_TO_MS[granularity]
+    locked_end_time = current_end_time if bounded_forward else None
 
     for _page_number in range(max_pages):
+        if bounded_forward:
+            page_start_time = current_start_time
+            page_end_time = min(
+                page_start_time + (limit * granularity_ms) - 1,
+                locked_end_time,
+            )
+        elif page_mode == "forward":
+            page_start_time = current_start_time
+            page_end_time = current_end_time
+        else:
+            page_start_time = None
+            page_end_time = current_end_time
+
         payload = _fetch_page(
             symbol=symbol,
             product_type=product_type,
             granularity=granularity,
             limit=limit,
-            start_time=current_start_time,
-            end_time=current_end_time,
+            start_time=page_start_time,
+            end_time=page_end_time,
         )
         parsed_page = [_parse_bitget_row(row) for row in payload.get("data", [])]
-        if not parsed_page:
-            break
 
-        for candle in parsed_page:
+        if bounded_forward:
+            in_range_candles = [
+                candle
+                for candle in parsed_page
+                if page_start_time <= candle.timestamp_ms <= locked_end_time
+            ]
+        else:
+            in_range_candles = parsed_page
+
+        for candle in in_range_candles:
             candles_by_timestamp[candle.timestamp_ms] = candle.csv_row
 
+        if not parsed_page:
+            if bounded_forward and page_end_time < locked_end_time:
+                current_start_time = page_end_time + 1
+                continue
+            break
+
+        if bounded_forward:
+            next_start_time = page_end_time + 1
+            if next_start_time > locked_end_time:
+                break
+            current_start_time = next_start_time
+            continue
+
         timestamps = [candle.timestamp_ms for candle in parsed_page]
-        oldest = min(timestamps)
-        newest = max(timestamps)
         if len(parsed_page) < limit:
             break
 
         if page_mode == "forward":
+            newest = max(timestamps)
             next_start_time = newest + 1
             if current_end_time is not None and next_start_time > current_end_time:
                 break
@@ -87,6 +141,7 @@ def download_bitget_history_candles(
                 break
             current_start_time = next_start_time
         else:
+            oldest = min(timestamps)
             next_end_time = oldest - 1
             if current_end_time is not None and next_end_time >= current_end_time:
                 break
