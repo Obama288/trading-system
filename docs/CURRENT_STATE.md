@@ -17,16 +17,17 @@ docs as needed.
 
 ## Recent Commits
 
-All commits below are pushed and remote-visible on `origin/main` at `21131fa`.
+All commits below are pushed and remote-visible on `origin/main` at `61ad028`.
 
+- `61ad028` research: add Setup C C7 expanded validation analyzer.
+- `b509458` docs: sync compact state to current head.
 - `21131fa` Update AGENT_PROMPTS.md by removing specific rules.
 - `c63b64a` Enhance documentation with labeling and confidence rules.
 - `afdc0ff` Refine language in AGENT_PROMPTS.md.
-- `7529a84` Revise Tower Control and Codex guidelines.
-- `479462a` docs: add Setup C expanded validation design lock.
 
-Recent HEAD updates include agent prompt and Tower Control wording refinements
-only; they do not alter the current paper-only / live NO-GO safety state.
+Recent HEAD adds the Stage 54-SQ C7 expanded validation analyzer
+(research-only, no runner, no evidence run); it does not alter the current
+paper-only / live NO-GO safety state.
 
 Do not claim remote visibility for local commits unless verified by GitHub or
 remote refs.
@@ -52,6 +53,12 @@ remote refs.
   the validation window; discovery had positive high_vol and low_vol.
 - C6 evidence summary and decision record written:
   `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`.
+- C7 expanded validation analyzer implemented at `61ad028`
+  (`research/signal_observation/setup_c_c7_expanded_validation.py` plus
+  `tests/research/test_signal_observation_setup_c_c7_expanded_validation.py`).
+  Independent review verdict: PASS. Tests reported: C7 23 passed,
+  setup_c_tsmom regression 35 passed, full research suite 308 passed. No
+  runner, no download, no evidence run.
 - Setup C remains research-only. No paper readiness, runtime readiness, trading
   readiness, or live readiness is claimed.
 - Escalation: **HOLD**.
@@ -60,7 +67,11 @@ remote refs.
 
 - C7 design lock written:
   `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
-- Next step: independent review of C7 design lock before any implementation.
+- C7 analyzer implemented and remote-visible at `61ad028`.
+- Next step: C7 evidence/download planning — separate owner-approved
+  one-time public Bitget 4H download for the locked expanded window, followed
+  by a separate owner-approved evidence run. Not paper, runtime, trading, or
+  live readiness.
 - All work remains research-only unless the Human Owner explicitly authorizes
   a different lane.
 

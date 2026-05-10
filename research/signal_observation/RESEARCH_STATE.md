@@ -12,8 +12,11 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Active family: Setup C / TSMOM volatility-targeted.
 - Current status: **PASS_CANDIDATE research-only**. C1–C5 diagnostics complete.
   C6 evidence summary and decision record written (see
-  `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`).
-- All C1–C7 artifacts are pushed and remote-visible on `origin/main` as of HEAD `21131fa`.
+  `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`). C7 expanded
+  validation analyzer implemented (independent review verdict: PASS; C7 23
+  tests, setup_c_tsmom regression 35, full research suite 308 — all pass).
+- All C1–C7 artifacts (design lock plus analyzer) are pushed and remote-visible
+  on `origin/main` as of HEAD `61ad028`.
 
 ## Retired Family
 
@@ -74,17 +77,28 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Owner may choose Fork B (define paper prerequisites, no approval) or Fork C
   (park Setup C) instead.
 
-## C7 Design Lock
+## C7 Design Lock and Analyzer
 
 - C7 expanded validation design lock written:
   `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
-- Independent review verdict: PASS WITH NOTES. Reviewer fixes applied.
+- Design lock independent review verdict: PASS WITH NOTES. Reviewer fixes
+  applied.
 - C7 design lock includes: future setup evaluation process principles and
   post-C7 Data Reconnaissance fork guidance.
+- C7 analyzer added at `61ad028`:
+  `research/signal_observation/setup_c_c7_expanded_validation.py` and
+  `tests/research/test_signal_observation_setup_c_c7_expanded_validation.py`.
+- C7 analyzer independent review verdict: PASS.
+- Tests reported: C7 23 passed; setup_c_tsmom regression 35 passed; full
+  research suite 308 passed.
+- No runner, no download, no evidence run, no paper/runtime/trading/live
+  readiness.
 
 ## Next Research Action
 
-- C7 implementation (pending owner go-ahead after design-lock review).
+- C7 evidence/download planning: separate owner-approved one-time public
+  Bitget 4H download for the locked expanded window, followed by a separate
+  owner-approved evidence run. Not paper, runtime, trading, or live readiness.
 - No paper, runtime, trading, or live escalation from Setup C without explicit
   owner approval and additional gates.
 
