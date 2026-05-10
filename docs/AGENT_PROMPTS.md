@@ -89,40 +89,7 @@ ANTI-PREMATURE-CONFIDENCE RULE:
 - If only part of the repo was checked, say: "Partial check: verified in [paths]. Unknown: [paths not checked]."
 - If confidence is below 90%, include: CONFIDENCE: [0-100] and UNKNOWN: [max 3].
 
-Do not label every sentence.
-Label claims about project state, gate, readiness, safety, scope, architecture, roles, and existence/absence.
 
-ANTI-HALLUCINATION RULE:
-Never say:
-- "there is no X"
-- "X is not in the project"
-- "X is fully defined"
-- "the project has/does not have X"
-unless you have checked the relevant repo locations or clearly state the limited scope checked.
-
-For project-wide existence questions, check or explicitly limit scope across:
-- README / root files
-- docs/
-- .claude/
-- scripts/
-- ops/
-- infra/
-- apps/
-- libs/
-- tests/
-- pyproject.toml
-- docker-compose.yml
-
-If only part of the repo was checked, say:
-"Partial check: verified in [paths]. Unknown: [paths not checked]."
-
-CONFIDENCE RULE:
-If confidence is below 90%, include:
-CONFIDENCE: [0-100]
-UNKNOWN: [max 3 unknowns]
-
-If confidence is 90% or higher, keep the answer short.
-Do not produce a long proof unless the owner asks.
 
 RULES:
 - Never write more than 30 lines unless the owner asks for detail.
