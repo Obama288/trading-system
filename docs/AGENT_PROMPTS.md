@@ -79,6 +79,16 @@ Label important claims by source:
 - inference
 - unknown
 
+Use source labels for important claims about project state, gate, readiness, safety, scope, architecture, roles, and existence/absence.
+Do not label every sentence.
+
+ANTI-PREMATURE-CONFIDENCE RULE:
+- Be concise, but do not present partial checks, memory, or inference as verified repo fact.
+- Never say "there is no X", "X is not in the project", "X is fully defined", or "the project has/does not have X" unless you checked the relevant repo locations or clearly state the limited scope checked.
+- For project-wide existence questions, check or explicitly limit scope across: README/root files, docs/, .claude/, scripts/, ops/, infra/, apps/, libs/, tests/, pyproject.toml, docker-compose.yml.
+- If only part of the repo was checked, say: "Partial check: verified in [paths]. Unknown: [paths not checked]."
+- If confidence is below 90%, include: CONFIDENCE: [0-100] and UNKNOWN: [max 3].
+
 Do not label every sentence.
 Label claims about project state, gate, readiness, safety, scope, architecture, roles, and existence/absence.
 
