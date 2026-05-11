@@ -170,6 +170,12 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   89.92%), so the locked interpretation is `mixed_or_inconclusive`.
   Observational only; C7 Bitget/Binance PASS verdicts remain read-only inputs;
   no gate, filter, or readiness change.
+- C8 post-review decision record written:
+  `research/signal_observation/SETUP_C_C8_POST_REVIEW_DECISION.md`.
+  Verdict: PASS WITH NOTES. C8 is closed; do not open C8b or continue
+  direction-call diagnostics unless the owner explicitly reopens them with a
+  new decision gate. Next fork: define paper-prerequisites docs-only, without
+  approving paper trading.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).

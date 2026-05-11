@@ -123,9 +123,12 @@ remote refs.
   Result: `mixed_or_inconclusive` because missing alignment coverage is
   material, despite high agreement on aligned rows; observational-only and no
   readiness promotion.
-- Next step: independent review of the C8 direction-call agreement
-  implementation/report before any follow-up research decision. Not runtime,
-  paper, trading, probe, or live readiness.
+- C8 post-review decision record:
+  `research/signal_observation/SETUP_C_C8_POST_REVIEW_DECISION.md`.
+  Verdict: PASS WITH NOTES; C8 closed; do not open C8b unless owner explicitly
+  reopens it with a new decision gate.
+- Next fork: define paper-prerequisites docs-only, without approving paper
+  trading. Not runtime, paper, trading, probe, or live readiness.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
