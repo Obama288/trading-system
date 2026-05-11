@@ -114,6 +114,10 @@ remote refs.
   `775d739`, decision `C7_PASS`.
 - C7 cross-venue decision record:
   `research/signal_observation/SETUP_C_C7_CROSS_VENUE_DECISION.md`.
+- C8 direction-call agreement design lock:
+  `docs/STAGE_54_SQ_C8_DIRECTION_CALL_AGREEMENT_DESIGN_LOCK.md`.
+  Next step is independent review before any implementation, data processing,
+  or analysis.
 - Next step: **direction-call agreement diagnostic planning** between
   Bitget and Binance over the dev window. Purpose: determine whether the
   Binance dev-magnitude divergence is driven by direction-call flips or

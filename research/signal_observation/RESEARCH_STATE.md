@@ -159,6 +159,12 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   diagnostic design lock and explicit owner approval required before any
   code, data, or analysis. Not runtime, paper, trading, probe, or live
   readiness.
+- C8 direction-call agreement design lock written:
+  `docs/STAGE_54_SQ_C8_DIRECTION_CALL_AGREEMENT_DESIGN_LOCK.md`. It locks
+  Bitget/Binance only, BTCUSDT/ETHUSDT/SOLUSDT only, 4H only, the same C7
+  development and expanded windows, frozen Setup C detector, primary 40-bar
+  comparison, no new downloads/API calls/data mutation, and no gate/filter/
+  readiness change. Independent review is the next step before implementation.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
