@@ -1,0 +1,351 @@
+{
+  "alignment_policy": {
+    "combined_window": "development + expanded windows together",
+    "key": "symbol + normalized UTC ISO-8601 rebalance timestamp",
+    "mismatched_timestamp_formats": "normalized before alignment; unresolved mismatches count as missing rows, not opposite direction calls",
+    "missing_row_policy": "Rows present in one venue but absent in the other are counted as missing, excluded from agreement numerator and denominator, and reported as separate coverage counts.",
+    "timestamp_normalization": "UTC ISO-8601"
+  },
+  "c7_inputs": {
+    "binance": "C7_PASS",
+    "bitget": "C7_PASS",
+    "read_only": true
+  },
+  "design_lock": "docs/STAGE_54_SQ_C8_DIRECTION_CALL_AGREEMENT_DESIGN_LOCK.md",
+  "flags": {
+    "c7_verdicts_read_only": true,
+    "no_filter_introduced": true,
+    "no_gate_change": true,
+    "no_new_downloads": true,
+    "no_readiness_promotion": true,
+    "observational_only": true
+  },
+  "headline": {
+    "combined": {
+      "agreement_pct": "98.83449883449883449883449883",
+      "aligned_row_count": 858,
+      "binance_only_missing_count": 3837,
+      "bitget_only_missing_count": 3813,
+      "insufficient_minimum_aligned_rows": false,
+      "interpretation_label": "mixed_or_inconclusive",
+      "matching_direction_count": 848,
+      "material_missing_coverage": true,
+      "missing_coverage_pct": "89.91537376586741889985895628",
+      "opposite_direction_count": 10,
+      "symbol": "all_symbols",
+      "total_coverage_denominator": 8508,
+      "window": "combined"
+    },
+    "development": {
+      "agreement_pct": "99.16666666666666666666666667",
+      "aligned_row_count": 480,
+      "binance_only_missing_count": 2100,
+      "bitget_only_missing_count": 2088,
+      "insufficient_minimum_aligned_rows": false,
+      "interpretation_label": "mixed_or_inconclusive",
+      "matching_direction_count": 476,
+      "material_missing_coverage": true,
+      "missing_coverage_pct": "89.71722365038560411311053985",
+      "opposite_direction_count": 4,
+      "symbol": "all_symbols",
+      "total_coverage_denominator": 4668,
+      "window": "development"
+    },
+    "expanded": {
+      "agreement_pct": "98.41269841269841269841269841",
+      "aligned_row_count": 378,
+      "binance_only_missing_count": 1737,
+      "bitget_only_missing_count": 1725,
+      "insufficient_minimum_aligned_rows": false,
+      "interpretation_label": "mixed_or_inconclusive",
+      "matching_direction_count": 372,
+      "material_missing_coverage": true,
+      "missing_coverage_pct": "90.1562500",
+      "opposite_direction_count": 6,
+      "symbol": "all_symbols",
+      "total_coverage_denominator": 3840,
+      "window": "expanded"
+    },
+    "per_symbol_combined": {
+      "BTCUSDT": {
+        "agreement_pct": "98.25174825174825174825174825",
+        "aligned_row_count": 286,
+        "binance_only_missing_count": 1279,
+        "bitget_only_missing_count": 1271,
+        "insufficient_minimum_aligned_rows": false,
+        "interpretation_label": "mixed_or_inconclusive",
+        "matching_direction_count": 281,
+        "material_missing_coverage": true,
+        "missing_coverage_pct": "89.91537376586741889985895628",
+        "opposite_direction_count": 5,
+        "symbol": "BTCUSDT",
+        "total_coverage_denominator": 2836,
+        "window": "combined"
+      },
+      "ETHUSDT": {
+        "agreement_pct": "98.95104895104895104895104895",
+        "aligned_row_count": 286,
+        "binance_only_missing_count": 1279,
+        "bitget_only_missing_count": 1271,
+        "insufficient_minimum_aligned_rows": false,
+        "interpretation_label": "mixed_or_inconclusive",
+        "matching_direction_count": 283,
+        "material_missing_coverage": true,
+        "missing_coverage_pct": "89.91537376586741889985895628",
+        "opposite_direction_count": 3,
+        "symbol": "ETHUSDT",
+        "total_coverage_denominator": 2836,
+        "window": "combined"
+      },
+      "SOLUSDT": {
+        "agreement_pct": "99.30069930069930069930069930",
+        "aligned_row_count": 286,
+        "binance_only_missing_count": 1279,
+        "bitget_only_missing_count": 1271,
+        "insufficient_minimum_aligned_rows": false,
+        "interpretation_label": "mixed_or_inconclusive",
+        "matching_direction_count": 284,
+        "material_missing_coverage": true,
+        "missing_coverage_pct": "89.91537376586741889985895628",
+        "opposite_direction_count": 2,
+        "symbol": "SOLUSDT",
+        "total_coverage_denominator": 2836,
+        "window": "combined"
+      }
+    }
+  },
+  "interpretation_labels": [
+    "high_direction_agreement_magnitude_divergence",
+    "low_direction_agreement_signal_divergence",
+    "mixed_or_inconclusive"
+  ],
+  "notes": [
+    "Direction calls are re-derived from committed CSVs using the frozen Setup C detector.",
+    "Headline report aggregates are not used as a direction-call source.",
+    "C8 is observational only and does not alter C7 PASS verdicts."
+  ],
+  "primary_lookback": 40,
+  "rebalance_bars": 6,
+  "schema": "setup_c_c8_direction_agreement_report_v1",
+  "scope": "research_only_direction_call_agreement_diagnostic",
+  "sensitivity_lookbacks_reported": [],
+  "sensitivity_policy": "40-bar primary only; 20/60 not reported because the C8 primary comparison is 40-bar and no paired sensitivity direction artifact is required for this diagnostic",
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+  ],
+  "thresholds": {
+    "high_agreement": "0.80",
+    "low_agreement": "0.60",
+    "material_missing_coverage": "0.10",
+    "minimum_aligned_rows_per_symbol_window": 50
+  },
+  "timeframe": "4H",
+  "venues": [
+    "bitget",
+    "binance"
+  ],
+  "window_bounds": {
+    "development_end": "2026-05-06T08:00:00+00:00",
+    "development_start": "2023-12-17T16:00:00+00:00",
+    "expanded_source": "committed C7 expanded CSVs"
+  },
+  "windows": {
+    "combined": {
+      "all_symbols": {
+        "agreement_pct": "98.83449883449883449883449883",
+        "aligned_row_count": 858,
+        "binance_only_missing_count": 3837,
+        "bitget_only_missing_count": 3813,
+        "insufficient_minimum_aligned_rows": false,
+        "interpretation_label": "mixed_or_inconclusive",
+        "matching_direction_count": 848,
+        "material_missing_coverage": true,
+        "missing_coverage_pct": "89.91537376586741889985895628",
+        "opposite_direction_count": 10,
+        "symbol": "all_symbols",
+        "total_coverage_denominator": 8508,
+        "window": "combined"
+      },
+      "symbols": {
+        "BTCUSDT": {
+          "agreement_pct": "98.25174825174825174825174825",
+          "aligned_row_count": 286,
+          "binance_only_missing_count": 1279,
+          "bitget_only_missing_count": 1271,
+          "insufficient_minimum_aligned_rows": false,
+          "interpretation_label": "mixed_or_inconclusive",
+          "matching_direction_count": 281,
+          "material_missing_coverage": true,
+          "missing_coverage_pct": "89.91537376586741889985895628",
+          "opposite_direction_count": 5,
+          "symbol": "BTCUSDT",
+          "total_coverage_denominator": 2836,
+          "window": "combined"
+        },
+        "ETHUSDT": {
+          "agreement_pct": "98.95104895104895104895104895",
+          "aligned_row_count": 286,
+          "binance_only_missing_count": 1279,
+          "bitget_only_missing_count": 1271,
+          "insufficient_minimum_aligned_rows": false,
+          "interpretation_label": "mixed_or_inconclusive",
+          "matching_direction_count": 283,
+          "material_missing_coverage": true,
+          "missing_coverage_pct": "89.91537376586741889985895628",
+          "opposite_direction_count": 3,
+          "symbol": "ETHUSDT",
+          "total_coverage_denominator": 2836,
+          "window": "combined"
+        },
+        "SOLUSDT": {
+          "agreement_pct": "99.30069930069930069930069930",
+          "aligned_row_count": 286,
+          "binance_only_missing_count": 1279,
+          "bitget_only_missing_count": 1271,
+          "insufficient_minimum_aligned_rows": false,
+          "interpretation_label": "mixed_or_inconclusive",
+          "matching_direction_count": 284,
+          "material_missing_coverage": true,
+          "missing_coverage_pct": "89.91537376586741889985895628",
+          "opposite_direction_count": 2,
+          "symbol": "SOLUSDT",
+          "total_coverage_denominator": 2836,
+          "window": "combined"
+        }
+      },
+      "window": "combined"
+    },
+    "development": {
+      "all_symbols": {
+        "agreement_pct": "99.16666666666666666666666667",
+        "aligned_row_count": 480,
+        "binance_only_missing_count": 2100,
+        "bitget_only_missing_count": 2088,
+        "insufficient_minimum_aligned_rows": false,
+        "interpretation_label": "mixed_or_inconclusive",
+        "matching_direction_count": 476,
+        "material_missing_coverage": true,
+        "missing_coverage_pct": "89.71722365038560411311053985",
+        "opposite_direction_count": 4,
+        "symbol": "all_symbols",
+        "total_coverage_denominator": 4668,
+        "window": "development"
+      },
+      "symbols": {
+        "BTCUSDT": {
+          "agreement_pct": "98.7500",
+          "aligned_row_count": 160,
+          "binance_only_missing_count": 700,
+          "bitget_only_missing_count": 696,
+          "insufficient_minimum_aligned_rows": false,
+          "interpretation_label": "mixed_or_inconclusive",
+          "matching_direction_count": 158,
+          "material_missing_coverage": true,
+          "missing_coverage_pct": "89.71722365038560411311053985",
+          "opposite_direction_count": 2,
+          "symbol": "BTCUSDT",
+          "total_coverage_denominator": 1556,
+          "window": "development"
+        },
+        "ETHUSDT": {
+          "agreement_pct": "99.37500",
+          "aligned_row_count": 160,
+          "binance_only_missing_count": 700,
+          "bitget_only_missing_count": 696,
+          "insufficient_minimum_aligned_rows": false,
+          "interpretation_label": "mixed_or_inconclusive",
+          "matching_direction_count": 159,
+          "material_missing_coverage": true,
+          "missing_coverage_pct": "89.71722365038560411311053985",
+          "opposite_direction_count": 1,
+          "symbol": "ETHUSDT",
+          "total_coverage_denominator": 1556,
+          "window": "development"
+        },
+        "SOLUSDT": {
+          "agreement_pct": "99.37500",
+          "aligned_row_count": 160,
+          "binance_only_missing_count": 700,
+          "bitget_only_missing_count": 696,
+          "insufficient_minimum_aligned_rows": false,
+          "interpretation_label": "mixed_or_inconclusive",
+          "matching_direction_count": 159,
+          "material_missing_coverage": true,
+          "missing_coverage_pct": "89.71722365038560411311053985",
+          "opposite_direction_count": 1,
+          "symbol": "SOLUSDT",
+          "total_coverage_denominator": 1556,
+          "window": "development"
+        }
+      },
+      "window": "development"
+    },
+    "expanded": {
+      "all_symbols": {
+        "agreement_pct": "98.41269841269841269841269841",
+        "aligned_row_count": 378,
+        "binance_only_missing_count": 1737,
+        "bitget_only_missing_count": 1725,
+        "insufficient_minimum_aligned_rows": false,
+        "interpretation_label": "mixed_or_inconclusive",
+        "matching_direction_count": 372,
+        "material_missing_coverage": true,
+        "missing_coverage_pct": "90.1562500",
+        "opposite_direction_count": 6,
+        "symbol": "all_symbols",
+        "total_coverage_denominator": 3840,
+        "window": "expanded"
+      },
+      "symbols": {
+        "BTCUSDT": {
+          "agreement_pct": "97.61904761904761904761904762",
+          "aligned_row_count": 126,
+          "binance_only_missing_count": 579,
+          "bitget_only_missing_count": 575,
+          "insufficient_minimum_aligned_rows": false,
+          "interpretation_label": "mixed_or_inconclusive",
+          "matching_direction_count": 123,
+          "material_missing_coverage": true,
+          "missing_coverage_pct": "90.1562500",
+          "opposite_direction_count": 3,
+          "symbol": "BTCUSDT",
+          "total_coverage_denominator": 1280,
+          "window": "expanded"
+        },
+        "ETHUSDT": {
+          "agreement_pct": "98.41269841269841269841269841",
+          "aligned_row_count": 126,
+          "binance_only_missing_count": 579,
+          "bitget_only_missing_count": 575,
+          "insufficient_minimum_aligned_rows": false,
+          "interpretation_label": "mixed_or_inconclusive",
+          "matching_direction_count": 124,
+          "material_missing_coverage": true,
+          "missing_coverage_pct": "90.1562500",
+          "opposite_direction_count": 2,
+          "symbol": "ETHUSDT",
+          "total_coverage_denominator": 1280,
+          "window": "expanded"
+        },
+        "SOLUSDT": {
+          "agreement_pct": "99.20634920634920634920634921",
+          "aligned_row_count": 126,
+          "binance_only_missing_count": 579,
+          "bitget_only_missing_count": 575,
+          "insufficient_minimum_aligned_rows": false,
+          "interpretation_label": "mixed_or_inconclusive",
+          "matching_direction_count": 125,
+          "material_missing_coverage": true,
+          "missing_coverage_pct": "90.1562500",
+          "opposite_direction_count": 1,
+          "symbol": "SOLUSDT",
+          "total_coverage_denominator": 1280,
+          "window": "expanded"
+        }
+      },
+      "window": "expanded"
+    }
+  }
+}

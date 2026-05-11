@@ -118,13 +118,14 @@ remote refs.
   `docs/STAGE_54_SQ_C8_DIRECTION_CALL_AGREEMENT_DESIGN_LOCK.md`.
   Next step is independent review before any implementation, data processing,
   or analysis.
-- Next step: **direction-call agreement diagnostic planning** between
-  Bitget and Binance over the dev window. Purpose: determine whether the
-  Binance dev-magnitude divergence is driven by direction-call flips or
-  by volatility / micro-pricing differences. Observational only; public-
-  source-only; same frozen detector and symbol set; separate diagnostic
-  design lock and explicit owner approval required before any code, data,
-  or analysis. Not runtime, paper, trading, probe, or live readiness.
+- C8 direction-call agreement implementation/report exists:
+  `research/signal_observation/output/cross_venue/setup_c_c8_direction_agreement_report.{txt,json}`.
+  Result: `mixed_or_inconclusive` because missing alignment coverage is
+  material, despite high agreement on aligned rows; observational-only and no
+  readiness promotion.
+- Next step: independent review of the C8 direction-call agreement
+  implementation/report before any follow-up research decision. Not runtime,
+  paper, trading, probe, or live readiness.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

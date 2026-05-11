@@ -151,20 +151,25 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 
 ## Next Research Action
 
-- **Direction-call agreement diagnostic** between Bitget and Binance over
-  the dev window. Purpose: determine whether the Binance dev-magnitude
-  divergence is driven by direction-call flips between venues or by
-  volatility / micro-pricing differences. Observational only;
-  public-source-only; same frozen detector and symbol set; separate
-  diagnostic design lock and explicit owner approval required before any
-  code, data, or analysis. Not runtime, paper, trading, probe, or live
-  readiness.
+- **C8 direction-call agreement diagnostic review**. The Bitget/Binance
+  diagnostic has been implemented and reported; next step is independent
+  review before any follow-up research decision. Not runtime, paper, trading,
+  probe, or live readiness.
 - C8 direction-call agreement design lock written:
   `docs/STAGE_54_SQ_C8_DIRECTION_CALL_AGREEMENT_DESIGN_LOCK.md`. It locks
   Bitget/Binance only, BTCUSDT/ETHUSDT/SOLUSDT only, 4H only, the same C7
   development and expanded windows, frozen Setup C detector, primary 40-bar
   comparison, no new downloads/API calls/data mutation, and no gate/filter/
   readiness change. Independent review is the next step before implementation.
+- C8 direction-call agreement implementation and report written:
+  `research/signal_observation/setup_c_c8_direction_agreement.py`,
+  `research/signal_observation/run_setup_c_c8_direction_agreement.py`, and
+  `research/signal_observation/output/cross_venue/setup_c_c8_direction_agreement_report.{txt,json}`.
+  Headline result: aligned direction agreement is high (combined all-symbol
+  98.83%), but missing alignment coverage is material (combined all-symbol
+  89.92%), so the locked interpretation is `mixed_or_inconclusive`.
+  Observational only; C7 Bitget/Binance PASS verdicts remain read-only inputs;
+  no gate, filter, or readiness change.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).

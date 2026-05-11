@@ -1,0 +1,27 @@
+Setup C C8 direction-call agreement report
+
+Scope: research-only Bitget/Binance direction-call agreement diagnostic.
+No gate change, no filter introduced, no paper/runtime/trading/live readiness claim.
+
+schema: setup_c_c8_direction_agreement_report_v1
+primary_lookback: 40
+venues: ['bitget', 'binance']
+symbols: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
+
+Headline all-symbol agreement
+  development: agreement_pct=99.16666666666666666666666667, missing_coverage_pct=89.71722365038560411311053985, aligned=480, interpretation=mixed_or_inconclusive
+  expanded: agreement_pct=98.41269841269841269841269841, missing_coverage_pct=90.1562500, aligned=378, interpretation=mixed_or_inconclusive
+  combined: agreement_pct=98.83449883449883449883449883, missing_coverage_pct=89.91537376586741889985895628, aligned=858, interpretation=mixed_or_inconclusive
+
+Per-symbol combined agreement
+  BTCUSDT: agreement_pct=98.25174825174825174825174825, missing_coverage_pct=89.91537376586741889985895628, aligned=286, interpretation=mixed_or_inconclusive
+  ETHUSDT: agreement_pct=98.95104895104895104895104895, missing_coverage_pct=89.91537376586741889985895628, aligned=286, interpretation=mixed_or_inconclusive
+  SOLUSDT: agreement_pct=99.30069930069930069930069930, missing_coverage_pct=89.91537376586741889985895628, aligned=286, interpretation=mixed_or_inconclusive
+
+Safety flags
+  c7_verdicts_read_only: True
+  no_filter_introduced: True
+  no_gate_change: True
+  no_new_downloads: True
+  no_readiness_promotion: True
+  observational_only: True
