@@ -26,8 +26,25 @@ def download_okx_history_candles(
     limit: int = 300,
     before: str | None = None,
     after: str | None = None,
+    start_time: str | int | None = None,
+    end_time: str | int | None = None,
+    max_pages: int = 1,
 ) -> Path:
-    """Download OKX public historical candles and write local OHLCV CSV."""
+    """Download OKX public historical candles and write local OHLCV CSV.
+
+    Two modes:
+
+    Single-page (legacy): supply ``before`` and/or ``after`` as raw OKX
+    cursor strings (millisecond-epoch). Fetches exactly one page and writes
+    its confirmed rows. ``start_time`` and ``end_time`` must be ``None``.
+
+    Bounded pagination: supply both ``start_time`` and ``end_time`` as
+    millisecond-epoch strings or ints. Pages backward using OKX's ``after``
+    cursor (``after`` is exclusive) until the start bound is reached,
+    ``max_pages`` is hit, or OKX returns no more data. Confirmed rows are
+    filtered to ``start_time <= ts <= end_time`` and de-duplicated.
+    ``before`` and ``after`` must be ``None`` in this mode.
+    """
 
     if not inst_id:
         raise ValueError("inst_id must not be empty")
@@ -35,7 +52,177 @@ def download_okx_history_candles(
         raise ValueError("bar must be one of: 1H, 4H")
     if not 1 <= limit <= 300:
         raise ValueError("limit must be between 1 and 300")
+    if max_pages <= 0:
+        raise ValueError("max_pages must be positive")
 
+    bounded_args = (start_time is not None) or (end_time is not None)
+    legacy_args = (before is not None) or (after is not None)
+    if bounded_args and legacy_args:
+        raise ValueError(
+            "supply either start_time/end_time (bounded) or before/after "
+            "(single-page cursor), not both"
+        )
+    if bounded_args and not (start_time is not None and end_time is not None):
+        raise ValueError(
+            "bounded pagination requires both start_time and end_time"
+        )
+
+    if start_time is not None and end_time is not None:
+        return _download_bounded(
+            inst_id=inst_id,
+            bar=bar,
+            output_csv=output_csv,
+            limit=limit,
+            start_time=start_time,
+            end_time=end_time,
+            max_pages=max_pages,
+        )
+
+    return _download_single_page(
+        inst_id=inst_id,
+        bar=bar,
+        output_csv=output_csv,
+        limit=limit,
+        before=before,
+        after=after,
+    )
+
+
+def main(argv: Sequence[str] | None = None) -> None:
+    """CLI entrypoint for OKX public candle CSV downloads."""
+
+    parser = argparse.ArgumentParser(
+        description="Download OKX public historical candles to local CSV."
+    )
+    parser.add_argument("--inst-id", required=True)
+    parser.add_argument("--bar", required=True, choices=SUPPORTED_BARS)
+    parser.add_argument("--output", required=True)
+    parser.add_argument("--limit", type=int, default=300)
+    parser.add_argument("--before")
+    parser.add_argument("--after")
+    parser.add_argument("--start-time")
+    parser.add_argument("--end-time")
+    parser.add_argument("--max-pages", type=int, default=1)
+    args = parser.parse_args(argv)
+
+    output_path = download_okx_history_candles(
+        inst_id=args.inst_id,
+        bar=args.bar,
+        output_csv=args.output,
+        limit=args.limit,
+        before=args.before,
+        after=args.after,
+        start_time=args.start_time,
+        end_time=args.end_time,
+        max_pages=args.max_pages,
+    )
+    print(f"wrote: {output_path}")
+
+
+def _download_single_page(
+    *,
+    inst_id: str,
+    bar: str,
+    output_csv: str | Path,
+    limit: int,
+    before: str | None,
+    after: str | None,
+) -> Path:
+    """Original single-page download (preserves existing behavior)."""
+
+    raw_rows = _fetch_page_raw(
+        inst_id=inst_id,
+        bar=bar,
+        limit=limit,
+        before=before,
+        after=after,
+    )
+    parsed = [_parse_okx_row(row) for row in raw_rows]
+    confirmed_rows = [row for row in parsed if row[-1] == "1"]
+    confirmed_rows.sort(key=lambda row: row[0])
+
+    output_path = Path(output_csv)
+    with output_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(CSV_HEADER)
+        for timestamp, open_, high, low, close, volume, _confirm in confirmed_rows:
+            writer.writerow([timestamp, open_, high, low, close, volume])
+
+    return output_path
+
+
+def _download_bounded(
+    *,
+    inst_id: str,
+    bar: str,
+    output_csv: str | Path,
+    limit: int,
+    start_time: str | int,
+    end_time: str | int,
+    max_pages: int,
+) -> Path:
+    """Multi-page bounded download using OKX backward ``after`` cursor."""
+
+    start_ms = _timestamp_ms("start_time", start_time)
+    end_ms = _timestamp_ms("end_time", end_time)
+    if start_ms >= end_ms:
+        raise ValueError("start_time must be strictly before end_time")
+
+    confirmed: dict[int, tuple[str, str, str, str, str, str]] = {}
+    current_after: str = str(end_ms)
+
+    for _page in range(max_pages):
+        raw_rows = _fetch_page_raw(
+            inst_id=inst_id,
+            bar=bar,
+            limit=limit,
+            before=None,
+            after=current_after,
+        )
+        if not raw_rows:
+            break
+
+        page_oldest_ms: int | None = None
+        for raw in raw_rows:
+            ts_ms = _timestamp_ms("response timestamp", raw[0])
+            page_oldest_ms = (
+                ts_ms if page_oldest_ms is None else min(page_oldest_ms, ts_ms)
+            )
+            parsed = _parse_okx_row(raw)
+            confirm = parsed[6]
+            if confirm != "1":
+                continue
+            if not (start_ms <= ts_ms <= end_ms):
+                continue
+            confirmed[ts_ms] = parsed[:6]
+
+        if page_oldest_ms is None:
+            break
+        if page_oldest_ms <= start_ms:
+            break
+        if len(raw_rows) < limit:
+            break
+        current_after = str(page_oldest_ms)
+
+    output_rows = [confirmed[ts] for ts in sorted(confirmed)]
+
+    output_path = Path(output_csv)
+    with output_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(CSV_HEADER)
+        writer.writerows(output_rows)
+
+    return output_path
+
+
+def _fetch_page_raw(
+    *,
+    inst_id: str,
+    bar: str,
+    limit: int,
+    before: str | None,
+    after: str | None,
+) -> list[Sequence[str]]:
     params = {
         "instId": inst_id,
         "bar": bar,
@@ -55,43 +242,7 @@ def download_okx_history_candles(
         message = payload.get("msg") or "OKX public candle response failed"
         raise ValueError(message)
 
-    rows = [_parse_okx_row(row) for row in payload.get("data", [])]
-    confirmed_rows = [row for row in rows if row[-1] == "1"]
-    confirmed_rows.sort(key=lambda row: row[0])
-
-    output_path = Path(output_csv)
-    with output_path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.writer(handle)
-        writer.writerow(CSV_HEADER)
-        for timestamp, open_, high, low, close, volume, _confirm in confirmed_rows:
-            writer.writerow([timestamp, open_, high, low, close, volume])
-
-    return output_path
-
-
-def main(argv: Sequence[str] | None = None) -> None:
-    """CLI entrypoint for OKX public candle CSV downloads."""
-
-    parser = argparse.ArgumentParser(
-        description="Download OKX public historical candles to local CSV."
-    )
-    parser.add_argument("--inst-id", required=True)
-    parser.add_argument("--bar", required=True, choices=SUPPORTED_BARS)
-    parser.add_argument("--output", required=True)
-    parser.add_argument("--limit", type=int, default=300)
-    parser.add_argument("--before")
-    parser.add_argument("--after")
-    args = parser.parse_args(argv)
-
-    output_path = download_okx_history_candles(
-        inst_id=args.inst_id,
-        bar=args.bar,
-        output_csv=args.output,
-        limit=args.limit,
-        before=args.before,
-        after=args.after,
-    )
-    print(f"wrote: {output_path}")
+    return list(payload.get("data", []))
 
 
 def _parse_okx_row(row: Sequence[str]) -> tuple[str, str, str, str, str, str, str]:
@@ -118,6 +269,15 @@ def _timestamp_ms_to_iso(value: str) -> str:
     if milliseconds:
         timestamp = timestamp.replace(microsecond=milliseconds * 1000)
     return timestamp.isoformat().replace("+00:00", "Z")
+
+
+def _timestamp_ms(name: str, value: str | int) -> int:
+    if isinstance(value, int):
+        return value
+    try:
+        return int(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"invalid {name}: {value!r}") from exc
 
 
 def _decimal_text(name: str, value: str) -> str:
