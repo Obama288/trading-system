@@ -137,6 +137,10 @@ remote refs.
   `research/signal_observation/SETUP_C_PAPER_PREREQUISITES_PROPOSAL.md`.
   Next step is independent review; it does not approve paper trading or any
   readiness promotion.
+- Pre-DR1 Decision Gate:
+  `docs/PRE_DR1_DECISION_GATE.md`. Next step is
+  independent review / owner decision before any Data Reconnaissance design
+  lock or implementation.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

@@ -184,6 +184,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `research/signal_observation/SETUP_C_PAPER_PREREQUISITES_PROPOSAL.md`.
   Review is pending. It defines prerequisites only and does not approve paper,
   runtime, trading, probe, or live readiness.
+- Pre-DR1 Decision Gate created:
+  `docs/PRE_DR1_DECISION_GATE.md`. Review / owner
+  decision is pending before any Data Recency / Predictability Reconnaissance
+  design lock or implementation.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
