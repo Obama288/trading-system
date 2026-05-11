@@ -129,6 +129,10 @@ remote refs.
   reopens it with a new decision gate.
 - Next fork: define paper-prerequisites docs-only, without approving paper
   trading. Not runtime, paper, trading, probe, or live readiness.
+- Setup C paper-prerequisites design lock:
+  `docs/STAGE_54_SQ_SETUP_C_PAPER_PREREQUISITES_DESIGN_LOCK.md`.
+  Next step is independent review; it defines prerequisites only and does not
+  approve paper trading.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

@@ -176,6 +176,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   direction-call diagnostics unless the owner explicitly reopens them with a
   new decision gate. Next fork: define paper-prerequisites docs-only, without
   approving paper trading.
+- Setup C paper-prerequisites design lock created:
+  `docs/STAGE_54_SQ_SETUP_C_PAPER_PREREQUISITES_DESIGN_LOCK.md`.
+  C8 remains closed; no C8b. Review is pending. The lock defines prerequisites
+  only and does not approve paper, runtime, trading, probe, or live readiness.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
