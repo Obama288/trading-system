@@ -17,15 +17,15 @@ docs as needed.
 
 ## Recent Commits
 
-All commits below are pushed and remote-visible on `origin/main` at `eaa9a9d`.
+All commits below are pushed and remote-visible on `origin/main` at `775d739`.
 
-- `eaa9a9d` docs: record Setup C C7 evidence pass.
-- `c108197` research: add C7 expanded validation evidence report.
-- `37e28ec` research: add C7 evidence artifact helpers.
-- `16ae508` research: add C7 expanded Bitget holdout data.
-- `c3d15d0` research: fix Bitget bounded history pagination.
+- `775d739` research: add Binance C7 evidence report.
+- `583e724` research: add Binance cross-venue holdout data.
+- `d770a05` research: add Binance public kline downloader.
+- `bb6ab90` research: fix OKX bounded history pagination.
+- `d41799d` docs: add concise AI handoff.
 
-Recent HEAD records the compact-state docs update for the C7 evidence pass
+Recent HEAD records the Binance cross-venue C7 evidence run
 (decision `C7_PASS`, research-only); it does not alter the current
 paper-only / live NO-GO safety state.
 
@@ -75,25 +75,52 @@ remote refs.
   dev/validation period; expanded high_vol and low_vol both positive
   (differs from C5 dev-validation finding); single-venue, 3-symbol
   universe.
+- C7 cross-venue replication on Binance USDT-M Futures completed at
+  `775d739`: decision **C7_PASS**, all five gate conditions independently
+  satisfied. Artifacts:
+  `research/signal_observation/output/binance/setup_c_c7_expanded_report.{txt,json}`.
+  Observational deltas vs Bitget (not gate violations): Binance dev-only
+  vt-post-cost-moderate ≈ 25% of Bitget's; SOL ≈ 70% concentration on
+  Binance vs ~53% on Bitget.
+- Cross-venue both-PASS **math** is supported by the C7 gate replication
+  on Bitget and Binance independently. The **cross-venue decision record**
+  is pending governance reconciliation: the Binance evidence was produced
+  before a cross-venue design lock existed, while the post-C7 review
+  record had stated that cross-venue validation required a separate design
+  lock.
+- C7 cross-venue design lock written to reconcile governance:
+  `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`. It does not alter
+  data, code, gates, or evidence; it records the locked envelope the
+  Binance run is retroactively measured against and locks the same
+  envelope for any future cross-venue work. OKX is authorized but
+  deferred (Cloudflare 1010 ASN block on current host).
 - Setup C remains research-only PASS_CANDIDATE. Per design lock §"What C7
-  Does Not Authorize", C7 PASS does not promote paper readiness, runtime
-  readiness, trading readiness, probe readiness, or live readiness.
+  Does Not Authorize", neither single-venue nor cross-venue C7 PASS
+  promotes paper readiness, runtime readiness, trading readiness, probe
+  readiness, or live readiness.
 - Escalation: **HOLD**.
 
 ## Next Allowed Work
 
-- C7 design lock written:
+- Single-venue C7 design lock:
   `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
-- C7 analyzer, expanded data, helpers, and evidence report are all
-  remote-visible (analyzer `61ad028`; data `16ae508`; helpers `37e28ec`;
-  evidence report `c108197`). C7 decision: **C7_PASS**.
-- C7 post-review decision record:
+- Cross-venue C7 design lock:
+  `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`.
+- C7 single-venue (Bitget) evidence: data `16ae508`, evidence report
+  `c108197`, decision `C7_PASS`. C7 post-review decision record:
   `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`.
-- Next step: cross-venue validation of Setup C (separate design lock and
-  explicit owner approval required; public-source-only; no credentials,
-  no private endpoints, no paper / runtime / live readiness). Wider symbol
-  universe and execution realism are deferred until cross-venue validation
-  is completed and reviewed.
+- C7 cross-venue (Binance) evidence: data `583e724`, evidence report
+  `775d739`, decision `C7_PASS`.
+- Next step: **cross-venue decision record** after this governance
+  reconciliation, parallel to `SETUP_C_C7_POST_REVIEW_DECISION.md`,
+  covering Bitget + Binance both-PASS, the Binance dev-magnitude
+  divergence, the SOL concentration delta, and OKX-deferred status.
+  Owner-only research decision.
+- Recommended next research gate after the decision record: OKX C7
+  evidence if reachability is restored (currently blocked by Cloudflare
+  1010 ASN from this host), or a direction-call agreement diagnostic
+  comparing per-rebalance direction sign across Bitget and Binance —
+  observational only, no gate or readiness change.
 - All work remains research-only unless the Human Owner explicitly authorizes
   a different lane.
 

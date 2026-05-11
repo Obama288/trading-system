@@ -63,31 +63,46 @@ in each prompt that depends on them.
 ## 6. Current C7 status
 
 - Setup C **C7_PASS** accepted on the locked backward expanded window
-  `2022-01-01T00:00:00Z → 2023-12-17T12:00:00Z`, public Bitget 4H OHLCV
-  only, frozen 3-symbol set BTCUSDT / ETHUSDT / SOLUSDT.
-- All five C7 gate conditions pass.
-- Independent post-C7 review verdict: PASS (see
+  `2022-01-01T00:00:00Z → 2023-12-17T12:00:00Z`, frozen 3-symbol set
+  BTCUSDT / ETHUSDT / SOLUSDT, 4H timeframe.
+- Single-venue (Bitget) evidence: all five C7 gate conditions pass.
+  Independent post-C7 review verdict: PASS (see
   `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`).
+- Cross-venue replication on Binance USDT-M Futures: completed at
+  `775d739` with decision **C7_PASS**, all five gate conditions
+  independently satisfied. Cross-venue design lock written to reconcile
+  governance:
+  `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`.
+- Cross-venue both-PASS math is supported (Bitget and Binance each
+  independently pass the locked gate). Observational deltas: Binance
+  dev-only vt-post-cost-moderate ≈ 25% of Bitget's; SOL concentration
+  ~70% on Binance vs ~53% on Bitget. Not gate violations.
 - Setup C remains research-only **PASS_CANDIDATE**. Escalation **HOLD**.
 - Mode: paper trading only. **LIVE NO-GO**.
 
 ## 7. Next likely research gate
 
-OKX cross-venue validation planning. Same frozen detector, same symbol set,
-same locked dev and expanded windows reused from C7. Public OKX
-history-candles endpoint only; no credentials; no private endpoints.
+**Cross-venue decision record** (parallel to
+`SETUP_C_C7_POST_REVIEW_DECISION.md`) covering Bitget + Binance
+both-PASS, the Binance dev-magnitude divergence, the SOL concentration
+delta, and the OKX-deferred status. Owner-only research decision; not
+runtime, paper, trading, probe, or live readiness.
 
-Active blockers:
+Recommended next research gate after the decision record:
 
-1. The existing `research/signal_observation/okx_public_downloader.py` is
-   single-page only and needs a bounded-pagination fix analogous to
-   `c3d15d0` (Bitget bounded-pagination fix) before any cross-venue
-   download.
-2. SOL-USDT-SWAP earliest-available date on OKX is not yet empirically
-   probed; verify before locking the download bounds.
+- OKX C7 evidence if reachability is restored. OKX is authorized by the
+  cross-venue design lock but currently **deferred / blocked**: every
+  reachability probe from this host returned HTTP 403 Cloudflare error
+  1010 (ASN-level block). The OKX bounded-pagination downloader exists at
+  `research/signal_observation/okx_public_downloader.py` and tests pass,
+  but no data can be fetched from this host. Lifting the block is a host
+  / network change, not an in-repo code task.
+- Otherwise: a **direction-call agreement diagnostic** comparing
+  per-rebalance direction sign across Bitget and Binance over the locked
+  expanded window. Observational only; no gate or readiness change.
 
-No paper, runtime, trading, probe, or live readiness is authorized by the
-cross-venue plan.
+No paper, runtime, trading, probe, or live readiness is authorized by
+either branch of the next gate.
 
 ## 8. Explicit no-readiness rule
 

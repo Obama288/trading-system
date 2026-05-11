@@ -13,13 +13,22 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Current status: **PASS_CANDIDATE research-only**. C1–C5 diagnostics complete.
   C6 evidence summary and decision record written (see
   `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`). C7 expanded
-  validation analyzer implemented and evidence run completed; decision:
-  **C7_PASS** on the locked backward expanded window
+  validation analyzer implemented and single-venue (Bitget) evidence run
+  completed; decision: **C7_PASS** on the locked backward expanded window
   (2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z). Post-C7 review verdict:
   PASS (see `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`).
-- All C1–C7 artifacts (design lock, analyzer, helpers, expanded data,
-  evidence report, and post-C7 review decision record) are pushed and
-  remote-visible on `origin/main` as of HEAD `eaa9a9d`.
+  Cross-venue replication on Binance USDT-M Futures also completed:
+  decision **C7_PASS**.
+- Cross-venue both-PASS math is supported (Bitget and Binance each
+  independently satisfy the locked C7 gate). The cross-venue decision
+  record is **pending governance reconciliation**; that reconciliation is
+  the new cross-venue design lock at
+  `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`, which governs
+  cross-venue C7 evidence without altering data, code, gates, or evidence.
+- All C1–C7 artifacts (single-venue and cross-venue design locks,
+  analyzer, helpers, Bitget data + evidence, Binance data + evidence,
+  post-C7 review decision record) are pushed and remote-visible on
+  `origin/main` as of HEAD `775d739`.
 
 ## Retired Family
 
@@ -97,12 +106,12 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z, public Bitget 4H OHLCV only).
 - C7 evidence artifact helpers (`format_c7_report`, `write_c7_artifacts`)
   added at `37e28ec`.
-- C7 evidence run completed and persisted at `c108197`:
+- C7 single-venue (Bitget) evidence run completed and persisted at `c108197`:
   `research/signal_observation/output/bitget/setup_c_c7_expanded_report.{txt,json}`.
-- C7 decision: **C7_PASS**. All five gate conditions pass: expanded
-  vt-post-cost-moderate > 0, expanded beats random p75, funding-adjusted
-  high_cost > 0, ≥ 2 of 3 symbols non-negative, combined-retention
-  ratio ≥ 50%.
+- C7 single-venue decision: **C7_PASS**. All five gate conditions pass:
+  expanded vt-post-cost-moderate > 0, expanded beats random p75,
+  funding-adjusted high_cost > 0, ≥ 2 of 3 symbols non-negative,
+  combined-retention ratio ≥ 50%.
 - C7 post-review decision record written:
   `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`.
   Independent post-C7 review verdict: PASS. Caveats recorded:
@@ -110,18 +119,42 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   than recent dev/validation period; expanded high_vol and low_vol both
   positive (differs from C5 dev/validation high_vol weakness); single-venue,
   3-symbol universe.
-- Per design lock §"What C7 Does Not Authorize", the C7 PASS verdict
-  does not promote paper, runtime, trading, probe, or live readiness.
+
+## C7 Cross-Venue Replication
+
+- Cross-venue C7 design lock written to govern cross-venue evidence
+  without altering data, code, gates, or evidence:
+  `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`.
+- Authorized venues: Bitget (done), Binance USDT-M Futures (done), OKX
+  (authorized but deferred — Cloudflare 1010 ASN block on current host).
+- Binance public kline downloader added at `d770a05`; Binance dev +
+  expanded holdout data committed at `583e724`; Binance C7 evidence run
+  persisted at `775d739`:
+  `research/signal_observation/output/binance/setup_c_c7_expanded_report.{txt,json}`.
+- Binance C7 decision: **C7_PASS**. All five gate conditions
+  independently satisfied on the same locked windows.
+- Cross-venue observational deltas (not gate violations): Binance dev-only
+  vt-post-cost-moderate ≈ 25% of Bitget's; SOL concentration ≈ 70% on
+  Binance vs ~53% on Bitget. Both venues' headline magnitudes pass.
+- Cross-venue decision record is **pending** — it follows the governance
+  reconciliation in `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`.
+- Per design lock §"What C7 Does Not Authorize" (single-venue and
+  cross-venue), no C7 PASS — single-venue or cross-venue — promotes
+  paper, runtime, trading, probe, or live readiness.
 
 ## Next Research Action
 
-- **Cross-venue validation** of Setup C (recommended next research gate).
-  Public-source-only; same frozen detector and symbol set; separate design
-  lock and explicit owner approval required before any code, data, or
-  analysis. Not runtime, paper, trading, probe, or live readiness.
-- Wider symbol universe and execution realism (slippage, latency, liquidity,
-  partial fills, fee tiers) are deferred until cross-venue validation is
-  completed and independently reviewed.
+- **Cross-venue decision record** (parallel to
+  `SETUP_C_C7_POST_REVIEW_DECISION.md`) covering Bitget + Binance
+  both-PASS, the Binance dev-magnitude divergence, the SOL concentration
+  delta, and the OKX-deferred status. Owner-only research decision.
+- Recommended next research gate after the decision record: OKX C7
+  evidence if reachability is restored, or a direction-call agreement
+  diagnostic comparing per-rebalance direction sign across Bitget and
+  Binance over the locked expanded window — observational only, no gate
+  or readiness change.
+- Wider symbol universe and execution realism (slippage, latency,
+  liquidity, partial fills, fee tiers) remain deferred.
 - No paper, runtime, trading, probe, or live escalation from Setup C without
   explicit owner approval and additional gates.
 
