@@ -1,0 +1,53 @@
+Setup C C7 expanded validation report
+
+Scope: research-only expanded-holdout 4H OHLCV evaluation.
+No paper/runtime/trading/live readiness claim.
+
+decision: C7_PASS
+schema: setup_c_c7_expanded_validation_report_v1
+expansion_direction: backward
+expanded_window_start: 2022-01-01T00:00:00+00:00
+expanded_window_end: 2023-12-17T12:00:00+00:00
+dev_window_start: 2023-12-17T16:00:00+00:00
+dev_window_end: 2026-05-06T08:00:00+00:00
+primary_lookback: 40
+
+Gate conditions
+  expanded_vt_post_cost_moderate_gt_0: value=113.8858019102613492841488414, threshold=0, passes=True
+  expanded_beats_random_p75: value=113.8858019102613492841488414, threshold=5.981627391340851660447952503, passes=True
+  funding_adjusted_high_cost_gt_0: value=112.2725820778962719290017243, threshold=0, passes=True
+  two_of_three_symbols_non_negative: value=3, threshold=2, passes=True
+  combined_retention_ratio_gte_50pct: value=4.980391955517045569676847531, threshold=0.50, passes=True
+
+Combined retention
+  numerator: 142.4971861796629884453326570
+  denominator: 28.61164090143773960779747294
+  ratio: 4.980391955517045569676847531
+  threshold: 0.50
+  passes: True
+
+Funding (high_cost)
+  scenario: high_cost
+  rate_per_8h: 0.0003
+  intervals_per_rebalance: 3
+  funding_impact_on_expanded_vt_post_cost_moderate: -1.613219832365077355147117078
+  funding_adjusted_expanded_vt_post_cost_moderate_high_cost: 112.2725820778962719290017243
+
+Random baseline
+  seed: 5443
+  iterations: 1000
+  p75_expanded: 5.981627391340851660447952503
+
+Symbols
+  evaluated: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
+  usable: ['BTCUSDT', 'ETHUSDT', 'SOLUSDT']
+  missing: []
+  non_negative_count: 3
+
+Per-symbol expanded vt-post-cost-moderate
+  BTCUSDT: 17.66228033122360040607265469
+  ETHUSDT: 17.00923020433574243191396280
+  SOLUSDT: 79.21429137470200644616222395
+
+No-readiness disclaimer
+  C7 is research-only. No paper, runtime, trading, or live readiness is claimed by this report. See design lock section 'What C7 Does Not Authorize'.

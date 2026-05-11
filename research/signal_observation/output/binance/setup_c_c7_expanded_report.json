@@ -1,0 +1,261 @@
+{
+  "atr_period": 20,
+  "combined_retention_denominator": "28.61164090143773960779747294",
+  "combined_retention_numerator": "142.4971861796629884453326570",
+  "combined_retention_passes": true,
+  "combined_retention_ratio": "4.980391955517045569676847531",
+  "combined_retention_threshold": "0.50",
+  "data_source_attribution": {
+    "download_metadata": {
+      "commit": "583e724",
+      "rows_per_symbol": {
+        "dev": 5225,
+        "expanded": 4294
+      },
+      "sha256": {
+        "dev": {
+          "BTCUSDT": "6cebe81af340aa1dfd3162fde42915cd63c57519d8accc867abdb2dbe074d14c",
+          "ETHUSDT": "93713e38303185fa14c0f1ed471daeeaf3eeee5f754a4fc9481bb9ec9ab0c133",
+          "SOLUSDT": "358c29f9e766136d515df9f4c4457448df1ee7e0d68f75061165e822e163f35d"
+        },
+        "expanded": {
+          "BTCUSDT": "abe2eca6575903a7f7b6a447097ca0ff4d159316d60946f7314327e325397fd3",
+          "ETHUSDT": "55632af4daa23e8f90fa0f11375a1c8fe492107ecf316438c81dbc1beb0d0d3a",
+          "SOLUSDT": "f5e889e8c361b9dac87f50f66a86f521de2ed0c18bd84fee693eafce90e42b8f"
+        }
+      }
+    },
+    "single_download_policy": "one approved public download before analysis; no re-download after seeing results",
+    "source": "public_binance_usdt_m_futures_4h_klines"
+  },
+  "decision": "C7_PASS",
+  "design_lock": "docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md",
+  "dev_window_end": "2026-05-06T08:00:00+00:00",
+  "dev_window_start": "2023-12-17T16:00:00+00:00",
+  "expanded_regime_split": {
+    "high_vol": {
+      "average_interval_return": "0.003568585264007915010862447417",
+      "average_normalized_return": "0.1205934099230096303075242895",
+      "average_post_cost_normalized_return": {
+        "conservative": "0.1138020152903758265299908768",
+        "moderate": "0.1160658135012537611225020144",
+        "optimistic": "0.1183296117121316957150131522"
+      },
+      "cost_to_gross_ratio_moderate": "0.03655083820589535222955564604",
+      "date_range": {
+        "first": "2022-01-11T00:00:00+00:00",
+        "last": "2023-12-16T00:00:00+00:00"
+      },
+      "direction_changes": 174,
+      "direction_counts": {
+        "flat": 0,
+        "long": 484,
+        "short": 574
+      },
+      "gross_return": "3.775563209320374081492469367",
+      "max_drawdown_like": "-1.406198908274000292845510858",
+      "post_cost_return": {
+        "conservative": "3.568563209320374081492469367",
+        "moderate": "3.637563209320374081492469367",
+        "optimistic": "3.706563209320374081492469367"
+      },
+      "rebalance_observations": 1058,
+      "sharpe_like": "0.06593871729780221215714161800",
+      "turnover": 345,
+      "volatility_targeted_cost_to_gross_ratio_moderate": "0.03754431046146235957088654882",
+      "volatility_targeted_gross_return": "127.5878276985441888653606983",
+      "volatility_targeted_post_cost_return": {
+        "conservative": "120.4025321772176244687303477",
+        "moderate": "122.7976306843264792676071312",
+        "optimistic": "125.1927291914353340664839150"
+      },
+      "volatility_targeted_sharpe_like": "0.07465715047561281693599232866"
+    },
+    "low_vol": {
+      "average_interval_return": "-0.0001478581715781625078506965383",
+      "average_normalized_return": "0.004817107395383139709117732308",
+      "average_post_cost_normalized_return": {
+        "conservative": "-0.01505542518406592650090459443",
+        "moderate": "-0.008431247657582904430897152114",
+        "optimistic": "-0.001807070131099882360889709871"
+      },
+      "cost_to_gross_ratio_moderate": "1.141496361036986406929446323",
+      "date_range": {
+        "first": "2022-01-13T00:00:00+00:00",
+        "last": "2023-12-16T00:00:00+00:00"
+      },
+      "direction_changes": 223,
+      "direction_counts": {
+        "flat": 0,
+        "long": 558,
+        "short": 499
+      },
+      "gross_return": "-0.1562860873581177707981862410",
+      "max_drawdown_like": "-1.684870080050721123398576707",
+      "post_cost_return": {
+        "conservative": "-0.4238860873581177707981862414",
+        "moderate": "-0.3346860873581177707981862409",
+        "optimistic": "-0.2454860873581177707981862410"
+      },
+      "rebalance_observations": 1057,
+      "sharpe_like": "-0.005558297951540213876822071235",
+      "turnover": 446,
+      "volatility_targeted_cost_to_gross_ratio_moderate": "2.750271888408314336262674629",
+      "volatility_targeted_gross_return": "5.091682516919978672537443050",
+      "volatility_targeted_post_cost_return": {
+        "conservative": "-15.91358441955768431145615631",
+        "moderate": "-8.911828774065129983458289784",
+        "optimistic": "-1.910073128572575655460423334"
+      },
+      "volatility_targeted_sharpe_like": "0.002471178038438895812884168710"
+    },
+    "policy": {
+      "candidate_inclusion_unchanged": true,
+      "diagnostic_only": true,
+      "high_low_threshold_source": "expanded_window_only",
+      "primary_gate_unchanged": true,
+      "strategy_filter_introduced": false
+    }
+  },
+  "expanded_summary": {
+    "average_interval_return": "0.001711242138043620005056398636",
+    "average_normalized_return": "0.06273262894348187590444356558",
+    "average_post_cost_normalized_return": {
+      "conservative": "0.04940375780504016083086250194",
+      "moderate": "0.05384671485118739918872285645",
+      "optimistic": "0.05828967189733463754658321121"
+    },
+    "cost_to_gross_ratio_moderate": "0.08742077197682448767634300670",
+    "date_range": {
+      "first": "2022-01-11T00:00:00+00:00",
+      "last": "2023-12-16T00:00:00+00:00"
+    },
+    "direction_changes": 397,
+    "direction_counts": {
+      "flat": 0,
+      "long": 1042,
+      "short": 1073
+    },
+    "gross_return": "3.619277121962256310694283115",
+    "max_drawdown_like": "-1.769689607965625897416139590",
+    "post_cost_return": {
+      "conservative": "3.144677121962256310694283115",
+      "moderate": "3.302877121962256310694283115",
+      "optimistic": "3.461077121962256310694283115"
+    },
+    "rebalance_observations": 2115,
+    "sharpe_like": "0.04009662914511297335247940637",
+    "turnover": 791,
+    "volatility_targeted_cost_to_gross_ratio_moderate": "0.1416474048983364354709001003",
+    "volatility_targeted_gross_return": "132.6795102154641675378981412",
+    "volatility_targeted_post_cost_return": {
+      "conservative": "104.4889477576599401572741916",
+      "moderate": "113.8858019102613492841488414",
+      "optimistic": "123.2826560628627584110234917"
+    },
+    "volatility_targeted_sharpe_like": "0.03503543151450837318401403061"
+  },
+  "expanded_vol_thresholds": {
+    "derived_from": "expanded_window_only",
+    "policy": "no development-window threshold leakage",
+    "rule": "high_vol if interval ATR/close proxy is greater than or equal to expanded-window median",
+    "threshold": "0.02059597510614851253700573274"
+  },
+  "expanded_window_end": "2023-12-17T12:00:00+00:00",
+  "expanded_window_start": "2022-01-01T00:00:00+00:00",
+  "expansion_direction": "backward",
+  "funding_adjusted_expanded_vt_post_cost_moderate_high_cost": "112.2725820778962719290017243",
+  "funding_impact_on_expanded_vt_post_cost_moderate": "-1.613219832365077355147117078",
+  "funding_intervals_per_rebalance": "3",
+  "funding_rate_per_8h": "0.0003",
+  "funding_scenario": "high_cost",
+  "gate_conditions": {
+    "combined_retention_ratio_gte_50pct": {
+      "passes": true,
+      "threshold": "0.50",
+      "value": "4.980391955517045569676847531"
+    },
+    "expanded_beats_random_p75": {
+      "passes": true,
+      "threshold": "5.981627391340851660447952503",
+      "value": "113.8858019102613492841488414"
+    },
+    "expanded_vt_post_cost_moderate_gt_0": {
+      "passes": true,
+      "threshold": "0",
+      "value": "113.8858019102613492841488414"
+    },
+    "funding_adjusted_high_cost_gt_0": {
+      "passes": true,
+      "threshold": "0",
+      "value": "112.2725820778962719290017243"
+    },
+    "two_of_three_symbols_non_negative": {
+      "passes": true,
+      "threshold": 2,
+      "value": 3
+    }
+  },
+  "known_limitations": [
+    "expanded window evidence is a single-block holdout",
+    "no parameter optimization is allowed in C7",
+    "regime diagnostics are observational only",
+    "funding stress is in-gate only at high_cost = 0.0003 per 8H"
+  ],
+  "no_readiness_disclaimer": "C7 is research-only. No paper, runtime, trading, or live readiness is claimed by this report. See design lock section 'What C7 Does Not Authorize'.",
+  "per_symbol_counts": {
+    "BTCUSDT": {
+      "dev_bars": 5225,
+      "dev_intervals": 860,
+      "expanded_bars": 4294,
+      "expanded_intervals": 705
+    },
+    "ETHUSDT": {
+      "dev_bars": 5225,
+      "dev_intervals": 860,
+      "expanded_bars": 4294,
+      "expanded_intervals": 705
+    },
+    "SOLUSDT": {
+      "dev_bars": 5225,
+      "dev_intervals": 860,
+      "expanded_bars": 4294,
+      "expanded_intervals": 705
+    }
+  },
+  "per_symbol_expanded_vt_post_cost_moderate": {
+    "BTCUSDT": "17.66228033122360040607265469",
+    "ETHUSDT": "17.00923020433574243191396280",
+    "SOLUSDT": "79.21429137470200644616222395"
+  },
+  "primary_cost_scenario": "moderate",
+  "primary_gate_metric": "volatility_targeted_post_cost_return",
+  "primary_lookback": 40,
+  "random_iterations": 1000,
+  "random_p75_expanded": "5.981627391340851660447952503",
+  "random_seed": 5443,
+  "rebalance_bars": 6,
+  "schema": "setup_c_c7_expanded_validation_report_v1",
+  "scope": "research_only_local_4h_ohlcv_expanded_holdout",
+  "symbols_evaluated": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+  ],
+  "symbols_missing": [],
+  "symbols_non_negative_count": 3,
+  "symbols_usable": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+  ],
+  "vol_proxy_skipped_intervals_expanded": {
+    "by_symbol": {
+      "BTCUSDT": 0,
+      "ETHUSDT": 0,
+      "SOLUSDT": 0
+    },
+    "downstream_policy": "invalid volatility rows are skipped before interval creation",
+    "total": 0
+  }
+}
