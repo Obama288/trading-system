@@ -23,6 +23,9 @@
   comparison is 40-bar. 20/60 sensitivities may be reported only if they are
   already present in committed C7 artifacts or can be re-derived from the same
   committed CSVs without new downloads, parameter changes, or additional data.
+  If 20/60 sensitivity direction calls are available for one venue but not the
+  other, do not report that sensitivity; report 40-bar primary only for that
+  affected sensitivity/window/symbol.
 - No OKX work in this stage.
 
 ## Inputs
@@ -37,6 +40,9 @@
 - Rebalance timestamps and direction signs must be re-derived by running the
   frozen Setup C detector on the committed Bitget and Binance C7 CSVs. Do not
   read or infer direction calls from headline report aggregates.
+- Timestamps must be normalized to UTC ISO-8601 before alignment. Mismatched
+  timestamp formats count as missing alignment rows, not as opposite direction
+  calls.
 - Bitget and Binance C7_PASS verdicts are read-only inputs. C8 must not revise,
   relabel, or weaken those C7 verdicts.
 
@@ -103,6 +109,9 @@
 - Material missing coverage: > 10% missing aligned rows for any symbol/window.
   The >10% material missing coverage threshold applies to every reported slice:
   per-symbol, per-window, and combined.
+- Minimum aligned rows per symbol per window: 50. If fewer than 50 aligned rows
+  exist for any symbol/window slice, report that slice as insufficient coverage
+  / inconclusive regardless of agreement rate.
 
 ## Anti-cherry-picking
 
