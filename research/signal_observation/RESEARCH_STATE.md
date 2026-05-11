@@ -20,15 +20,16 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   Cross-venue replication on Binance USDT-M Futures also completed:
   decision **C7_PASS**.
 - Cross-venue both-PASS math is supported (Bitget and Binance each
-  independently satisfy the locked C7 gate). The cross-venue decision
-  record is **pending governance reconciliation**; that reconciliation is
-  the new cross-venue design lock at
-  `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`, which governs
-  cross-venue C7 evidence without altering data, code, gates, or evidence.
+  independently satisfy the locked C7 gate). The cross-venue design lock
+  at `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md` reconciled the prior
+  governance gap; the cross-venue decision record at
+  `research/signal_observation/SETUP_C_C7_CROSS_VENUE_DECISION.md`
+  accepts cross-venue both-PASS as research evidence with caveats
+  recorded.
 - All C1–C7 artifacts (single-venue and cross-venue design locks,
   analyzer, helpers, Bitget data + evidence, Binance data + evidence,
-  post-C7 review decision record) are pushed and remote-visible on
-  `origin/main` as of HEAD `775d739`.
+  post-C7 single-venue decision record, cross-venue decision record)
+  are pushed and remote-visible on `origin/main` as of HEAD `e355aff`.
 
 ## Retired Family
 
@@ -136,23 +137,31 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Cross-venue observational deltas (not gate violations): Binance dev-only
   vt-post-cost-moderate ≈ 25% of Bitget's; SOL concentration ≈ 70% on
   Binance vs ~53% on Bitget. Both venues' headline magnitudes pass.
-- Cross-venue decision record is **pending** — it follows the governance
-  reconciliation in `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`.
+- Cross-venue decision record written:
+  `research/signal_observation/SETUP_C_C7_CROSS_VENUE_DECISION.md`.
+  Verdict: **cross-venue both-PASS accepted as research evidence**.
+  Decision: keep Setup C active as research-only PASS_CANDIDATE; do not
+  promote readiness. Caveats recorded: Binance dev magnitude ≈ 25% of
+  Bitget dev; Binance combined-retention ratio (`4.98×`) is inflated by
+  small denominator, not a stronger venue edge; SOL concentration ~70%
+  on Binance vs ~53% on Bitget; 3-symbol universe; OKX deferred.
 - Per design lock §"What C7 Does Not Authorize" (single-venue and
   cross-venue), no C7 PASS — single-venue or cross-venue — promotes
   paper, runtime, trading, probe, or live readiness.
 
 ## Next Research Action
 
-- **Cross-venue decision record** (parallel to
-  `SETUP_C_C7_POST_REVIEW_DECISION.md`) covering Bitget + Binance
-  both-PASS, the Binance dev-magnitude divergence, the SOL concentration
-  delta, and the OKX-deferred status. Owner-only research decision.
-- Recommended next research gate after the decision record: OKX C7
-  evidence if reachability is restored, or a direction-call agreement
-  diagnostic comparing per-rebalance direction sign across Bitget and
-  Binance over the locked expanded window — observational only, no gate
-  or readiness change.
+- **Direction-call agreement diagnostic** between Bitget and Binance over
+  the dev window. Purpose: determine whether the Binance dev-magnitude
+  divergence is driven by direction-call flips between venues or by
+  volatility / micro-pricing differences. Observational only;
+  public-source-only; same frozen detector and symbol set; separate
+  diagnostic design lock and explicit owner approval required before any
+  code, data, or analysis. Not runtime, paper, trading, probe, or live
+  readiness.
+- Secondary next option: OKX C7 evidence if reachability is restored
+  (currently blocked by Cloudflare 1010 ASN-level block on the current
+  host).
 - Wider symbol universe and execution realism (slippage, latency,
   liquidity, partial fills, fee tiers) remain deferred.
 - No paper, runtime, trading, probe, or live escalation from Setup C without
