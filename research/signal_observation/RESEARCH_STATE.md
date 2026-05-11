@@ -180,6 +180,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `docs/STAGE_54_SQ_SETUP_C_PAPER_PREREQUISITES_DESIGN_LOCK.md`.
   C8 remains closed; no C8b. Review is pending. The lock defines prerequisites
   only and does not approve paper, runtime, trading, probe, or live readiness.
+- Setup C paper-prerequisites proposal created:
+  `research/signal_observation/SETUP_C_PAPER_PREREQUISITES_PROPOSAL.md`.
+  Review is pending. It defines prerequisites only and does not approve paper,
+  runtime, trading, probe, or live readiness.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
