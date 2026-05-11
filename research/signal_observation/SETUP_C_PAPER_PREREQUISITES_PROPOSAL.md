@@ -60,8 +60,10 @@ Before any paper-candidate implementation, specify:
 - Expected turnover/trade frequency.
 - Max adverse excursion / drawdown constraints.
 - Position sizing policy.
-- Stop-loss source must remain market-structure based if applicable; capital
-  affects sizing/approval, not stop placement.
+- Stop-loss / exit-risk policy must be defined explicitly in the
+  paper-candidate design lock. For volatility-targeted strategies, position
+  sizing and exposure controls are primary risk controls unless a separate
+  stop policy is explicitly approved.
 - Rejection criteria if expected edge is below cost/slippage/funding floor.
 
 ### D. Runtime Architecture Prerequisites
