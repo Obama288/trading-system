@@ -1,0 +1,28 @@
+Setup C DR1 data recency / predictability reconnaissance report
+
+Scope: research-only committed Bitget/Binance 4H CSV artifacts.
+No downloads, no gate change, no filter, no paper/runtime/trading/live readiness.
+
+schema: setup_c_dr1_data_recency_predictability_report_v1
+decision: INCONCLUSIVE
+freshness_eligible: False
+implementation_date: 2026-05-12T00:00:00+00:00
+
+Analysis outcomes
+  non_overlapping_return_autocorrelation: inconclusive
+    pooled_same_sign_rate: 0.4871794871794871794871794872
+  variance_ratio_predictability: weak
+    variance_ratio: 0.6508479740564777549499668427
+  btc_to_eth_sol_lead_lag: inconclusive
+    directional_agreement: 0.5
+  setup_c_recent_out_of_window_persistence: weak
+
+missing_data_requirement: Committed Bitget and Binance BTCUSDT/ETHUSDT/SOLUSDT 4H CSV artifacts must each contain at least 6 contiguous months of candles ending no earlier than 2026-04-12T00:00:00+00:00 before DR1 can support a paper-candidate design-lock discussion.
+
+Safety flags
+  no_filter_introduced: True
+  no_gate_change: True
+  no_new_downloads: True
+  no_readiness_promotion: True
+  observational_only: True
+  research_only: True

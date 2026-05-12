@@ -143,7 +143,11 @@ remote refs.
   lock or implementation.
 - DR1 data recency / predictability design lock:
   `docs/STAGE_54_SQ_DR1_DATA_RECENCY_PREDICTABILITY_DESIGN_LOCK.md`.
-  Planning only; independent review required before implementation.
+  DR1 implementation/report exists:
+  `research/signal_observation/output/recon/setup_c_dr1_data_recency_predictability_report.{txt,json}`.
+  Result: `INCONCLUSIVE`; committed recent data fails the locked freshness
+  eligibility because Bitget recent 4H candles are not contiguous in the
+  required six-month window. Observational-only; no readiness promotion.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

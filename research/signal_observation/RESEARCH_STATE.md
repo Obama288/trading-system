@@ -190,8 +190,15 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   design lock or implementation.
 - DR1 data recency / predictability design lock created:
   `docs/STAGE_54_SQ_DR1_DATA_RECENCY_PREDICTABILITY_DESIGN_LOCK.md`.
-  Planning only; independent review required before any implementation,
-  downloads, data processing, or report artifacts.
+  DR1 implementation/report written:
+  `research/signal_observation/setup_c_dr1_data_recency_predictability.py`,
+  `research/signal_observation/run_setup_c_dr1_data_recency_predictability.py`,
+  and
+  `research/signal_observation/output/recon/setup_c_dr1_data_recency_predictability_report.{txt,json}`.
+  Headline result: `INCONCLUSIVE`; freshness eligibility fails because Bitget
+  recent six-month 4H data is not contiguous (max gap 8h), while lead-lag is
+  inconclusive and variance-ratio / recent Setup C persistence are weak.
+  Observational only; no paper, runtime, trading, probe, or live readiness.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
