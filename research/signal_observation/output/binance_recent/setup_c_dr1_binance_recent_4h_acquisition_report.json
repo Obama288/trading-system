@@ -1,0 +1,88 @@
+{
+  "csv_paths": {
+    "BTCUSDT": "research\\signal_observation\\data\\binance_recent\\BTCUSDT_USDT-FUTURES_4H_recent.csv",
+    "ETHUSDT": "research\\signal_observation\\data\\binance_recent\\ETHUSDT_USDT-FUTURES_4H_recent.csv",
+    "SOLUSDT": "research\\signal_observation\\data\\binance_recent\\SOLUSDT_USDT-FUTURES_4H_recent.csv"
+  },
+  "decision_implication": "A later DR1 rerun design lock may be considered.",
+  "design_lock": "docs/STAGE_54_SQ_DR1_BINANCE_RECENT_DATA_ACQUISITION_DESIGN_LOCK.md",
+  "errors": {},
+  "flags": {
+    "approved_public_binance_source_only": true,
+    "no_auth_keys": true,
+    "no_dr1_rerun": true,
+    "no_filter_introduced": true,
+    "no_gate_change": true,
+    "no_private_api": true,
+    "no_readiness_promotion": true,
+    "research_only": true
+  },
+  "locked_window": {
+    "acquisition_task_started_utc": "2026-05-12T18:11:06.484354+00:00",
+    "locked_window_end_utc": "2026-05-12T12:00:00+00:00",
+    "locked_window_start_utc": "2025-11-12T12:00:00+00:00"
+  },
+  "per_symbol": {
+    "BTCUSDT": {
+      "contiguity_pass": true,
+      "csv_path": "research\\signal_observation\\data\\binance_recent\\BTCUSDT_USDT-FUTURES_4H_recent.csv",
+      "duplicate_timestamp_count": 0,
+      "expected_locked_end": "2026-05-12T12:00:00+00:00",
+      "expected_locked_start": "2025-11-12T12:00:00+00:00",
+      "first_timestamp": "2025-11-12T12:00:00+00:00",
+      "gap_count_above_expected_4h_step": 0,
+      "last_timestamp": "2026-05-12T12:00:00+00:00",
+      "max_gap": "4:00:00",
+      "max_gap_hours": "4",
+      "recent_window_requirement_pass": true,
+      "row_count": 1087,
+      "symbol": "BTCUSDT",
+      "timestamps_monotonic": true
+    },
+    "ETHUSDT": {
+      "contiguity_pass": true,
+      "csv_path": "research\\signal_observation\\data\\binance_recent\\ETHUSDT_USDT-FUTURES_4H_recent.csv",
+      "duplicate_timestamp_count": 0,
+      "expected_locked_end": "2026-05-12T12:00:00+00:00",
+      "expected_locked_start": "2025-11-12T12:00:00+00:00",
+      "first_timestamp": "2025-11-12T12:00:00+00:00",
+      "gap_count_above_expected_4h_step": 0,
+      "last_timestamp": "2026-05-12T12:00:00+00:00",
+      "max_gap": "4:00:00",
+      "max_gap_hours": "4",
+      "recent_window_requirement_pass": true,
+      "row_count": 1087,
+      "symbol": "ETHUSDT",
+      "timestamps_monotonic": true
+    },
+    "SOLUSDT": {
+      "contiguity_pass": true,
+      "csv_path": "research\\signal_observation\\data\\binance_recent\\SOLUSDT_USDT-FUTURES_4H_recent.csv",
+      "duplicate_timestamp_count": 0,
+      "expected_locked_end": "2026-05-12T12:00:00+00:00",
+      "expected_locked_start": "2025-11-12T12:00:00+00:00",
+      "first_timestamp": "2025-11-12T12:00:00+00:00",
+      "gap_count_above_expected_4h_step": 0,
+      "last_timestamp": "2026-05-12T12:00:00+00:00",
+      "max_gap": "4:00:00",
+      "max_gap_hours": "4",
+      "recent_window_requirement_pass": true,
+      "row_count": 1087,
+      "symbol": "SOLUSDT",
+      "timestamps_monotonic": true
+    }
+  },
+  "result": "DATA_REQUIREMENT_PASS",
+  "schema": "setup_c_dr1_binance_recent_4h_acquisition_v1",
+  "source": {
+    "interval": "4h",
+    "public_endpoint": "https://fapi.binance.com/fapi/v1/klines",
+    "symbols": [
+      "BTCUSDT",
+      "ETHUSDT",
+      "SOLUSDT"
+    ],
+    "timeframe": "4H",
+    "venue": "binance_usdt_m_futures"
+  }
+}

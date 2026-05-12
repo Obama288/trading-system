@@ -1,0 +1,41 @@
+Setup C DR1 Binance Recent 4H Acquisition Validation
+
+Result: DATA_REQUIREMENT_PASS
+Task started UTC: 2026-05-12T18:11:06.484354+00:00
+Locked window start UTC: 2025-11-12T12:00:00+00:00
+Locked window end UTC: 2026-05-12T12:00:00+00:00
+
+Per-symbol validation:
+- BTCUSDT:
+  rows: 1087
+  first/last: 2025-11-12T12:00:00+00:00 / 2026-05-12T12:00:00+00:00
+  max gap: 4:00:00
+  gap count > 4H: 0
+  contiguity: PASS
+  requirement: PASS
+- ETHUSDT:
+  rows: 1087
+  first/last: 2025-11-12T12:00:00+00:00 / 2026-05-12T12:00:00+00:00
+  max gap: 4:00:00
+  gap count > 4H: 0
+  contiguity: PASS
+  requirement: PASS
+- SOLUSDT:
+  rows: 1087
+  first/last: 2025-11-12T12:00:00+00:00 / 2026-05-12T12:00:00+00:00
+  max gap: 4:00:00
+  gap count > 4H: 0
+  contiguity: PASS
+  requirement: PASS
+
+Decision implication: A later DR1 rerun design lock may be considered.
+
+Safety flags:
+- approved_public_binance_source_only: true
+- no_auth_keys: true
+- no_dr1_rerun: true
+- no_filter_introduced: true
+- no_gate_change: true
+- no_private_api: true
+- no_readiness_promotion: true
+- research_only: true

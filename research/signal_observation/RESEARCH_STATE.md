@@ -234,6 +234,11 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_DATA_ACQUISITION_DESIGN_LOCK.md`.
   Planning only; independent review is next before any bounded acquisition
   implementation task.
+- DR1 Binance recent-data acquisition/validation completed:
+  `research/signal_observation/output/binance_recent/setup_c_dr1_binance_recent_4h_acquisition_report.{txt,json}`.
+  Result: `DATA_REQUIREMENT_PASS` for BTCUSDT/ETHUSDT/SOLUSDT 4H on the
+  locked 2025-11-12T12:00:00+00:00 to 2026-05-12T12:00:00+00:00 window.
+  No DR1 rerun, gate change, or readiness promotion.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
