@@ -199,6 +199,11 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   recent six-month 4H data is not contiguous (max gap 8h), while lead-lag is
   inconclusive and variance-ratio / recent Setup C persistence are weak.
   Observational only; no paper, runtime, trading, probe, or live readiness.
+- DR1 post-result decision record written:
+  `research/signal_observation/SETUP_C_DR1_POST_RESULT_DECISION.md`.
+  DR1 is closed as `INCONCLUSIVE`; do not open a paper-candidate design lock
+  and do not park Setup C yet. Next fork: define the missing recent-data
+  requirement before any attempt to resolve DR1 freshness eligibility.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).

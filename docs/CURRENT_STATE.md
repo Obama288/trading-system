@@ -148,6 +148,10 @@ remote refs.
   Result: `INCONCLUSIVE`; committed recent data fails the locked freshness
   eligibility because Bitget recent 4H candles are not contiguous in the
   required six-month window. Observational-only; no readiness promotion.
+- DR1 post-result decision record:
+  `research/signal_observation/SETUP_C_DR1_POST_RESULT_DECISION.md`.
+  DR1 is closed as `INCONCLUSIVE`; do not open a paper-candidate design lock.
+  Next allowed work is defining the missing recent-data requirement.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
