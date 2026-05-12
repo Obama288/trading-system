@@ -48,7 +48,9 @@ D should:
 - HOLD_REFINE_HYPOTHESIS:
   The D1 question is still too broad, or carry and stress remain insufficiently
   separated for a useful cheap falsification. Refine the hypothesis before
-  opening D1.
+  opening D1. If HOLD, update
+  `research/signal_observation/SETUP_D_HYPOTHESIS.md` to further separate the
+  carry and stress branches, then return to this gate before any D1 design lock.
 - PARK_OR_REJECT_BEFORE_D1:
   The proposed cheap falsification would not unlock a meaningful next decision,
   or the mechanism is too incoherent to justify further Setup D work now.
