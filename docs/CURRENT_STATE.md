@@ -168,6 +168,10 @@ remote refs.
   `research/signal_observation/SETUP_C_DR1_RECENT_DATA_SOURCE_WINDOW_CLARIFICATION.md`.
   Preferred candidate for next planning step: Binance public recent 4H
   feasibility clarification; no download or acquisition design is authorized.
+- DR1 Binance recent 4H feasibility design lock:
+  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_4H_FEASIBILITY_DESIGN_LOCK.md`.
+  Planning only; review is next before any feasibility check, network call,
+  download, or DR1 rerun.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

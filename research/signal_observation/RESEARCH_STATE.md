@@ -221,6 +221,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   Preferred next planning candidate is Binance public recent 4H feasibility
   clarification. No data download, API probing, acquisition implementation,
   DR1 rerun, paper-candidate design lock, or readiness promotion is authorized.
+- DR1 Binance recent 4H feasibility design lock created:
+  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_4H_FEASIBILITY_DESIGN_LOCK.md`.
+  Planning only; review is next before any feasibility check, network call,
+  download, data mutation, DR1 rerun, or readiness promotion.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
