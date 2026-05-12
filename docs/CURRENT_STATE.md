@@ -205,9 +205,13 @@ remote refs.
   discussion.
 - Research candidate backlog:
   `research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md`. Funding Carry /
-  Funding Stress is triaged as `advanced-to-hypothesis`; next allowed research
-  step is a mechanism-first `SETUP_D_HYPOTHESIS.md` note only, subject to
-  normal owner/Tower Control scope approval.
+  Funding Stress is triaged as `advanced-to-hypothesis`.
+- Setup D hypothesis note:
+  `research/signal_observation/SETUP_D_HYPOTHESIS.md`.
+- Pre-D1 decision gate:
+  `docs/PRE_D1_DECISION_GATE.md`. Next step is independent review / owner
+  decision on the gate; do not open D1 design lock, data acquisition,
+  implementation, or backtest before that review/decision.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
