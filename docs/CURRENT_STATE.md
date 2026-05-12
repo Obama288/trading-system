@@ -141,6 +141,9 @@ remote refs.
   `docs/PRE_DR1_DECISION_GATE.md`. Next step is
   independent review / owner decision before any Data Reconnaissance design
   lock or implementation.
+- DR1 data recency / predictability design lock:
+  `docs/STAGE_54_SQ_DR1_DATA_RECENCY_PREDICTABILITY_DESIGN_LOCK.md`.
+  Planning only; independent review required before implementation.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

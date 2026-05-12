@@ -188,6 +188,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `docs/PRE_DR1_DECISION_GATE.md`. Review / owner
   decision is pending before any Data Recency / Predictability Reconnaissance
   design lock or implementation.
+- DR1 data recency / predictability design lock created:
+  `docs/STAGE_54_SQ_DR1_DATA_RECENCY_PREDICTABILITY_DESIGN_LOCK.md`.
+  Planning only; independent review required before any implementation,
+  downloads, data processing, or report artifacts.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
