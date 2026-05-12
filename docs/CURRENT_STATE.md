@@ -152,6 +152,10 @@ remote refs.
   `research/signal_observation/SETUP_C_DR1_POST_RESULT_DECISION.md`.
   DR1 is closed as `INCONCLUSIVE`; do not open a paper-candidate design lock.
   Next allowed work is defining the missing recent-data requirement.
+- DR1 missing recent-data requirement design lock:
+  `docs/STAGE_54_SQ_DR1_MISSING_RECENT_DATA_REQUIREMENT_DESIGN_LOCK.md`.
+  Governance only; next step is independent review before any acquisition
+  decision gate, download, or DR1 rerun.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

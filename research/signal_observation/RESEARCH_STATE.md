@@ -204,6 +204,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   DR1 is closed as `INCONCLUSIVE`; do not open a paper-candidate design lock
   and do not park Setup C yet. Next fork: define the missing recent-data
   requirement before any attempt to resolve DR1 freshness eligibility.
+- DR1 missing recent-data requirement design lock created:
+  `docs/STAGE_54_SQ_DR1_MISSING_RECENT_DATA_REQUIREMENT_DESIGN_LOCK.md`.
+  Review is next; it does not authorize downloads, data substitution, DR1
+  rerun, paper-candidate design lock, or readiness promotion.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
