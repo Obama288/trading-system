@@ -203,6 +203,11 @@ remote refs.
   Setup C is parked from active progression; do not open paper-candidate design
   lock, DR1b, or rescue rerun. Next lane is hypothesis-first future setup
   discussion.
+- Research candidate backlog:
+  `research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md`. Funding Carry /
+  Funding Stress is triaged as `advanced-to-hypothesis`; next allowed research
+  step is a mechanism-first `SETUP_D_HYPOTHESIS.md` note only, subject to
+  normal owner/Tower Control scope approval.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
