@@ -25,6 +25,11 @@ commits/code, or insufficient for the owner's question.
   context; implementers get the governing design lock, target scope, and
   verification; auditors get an explicit audit scope. Do not load full history
   docs unless compact state is stale, conflicting, or insufficient.
+- For review-before-commit of local staged files, use
+  `.\scripts\review-dump.ps1 -Staged | clip`. For custom payloads, pass an
+  explicit file list. Reviewers cannot see local-only staged or untracked files
+  unless their contents are provided; send only task-relevant files, not broad
+  unrelated project context.
 - Implementation without an approved design lock is scope drift for any
   non-trivial research, runtime, or governance change. Small pointer edits and
   trivial post-review wording fixes do not require a new design lock.
