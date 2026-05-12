@@ -225,6 +225,11 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_4H_FEASIBILITY_DESIGN_LOCK.md`.
   Planning only; review is next before any feasibility check, network call,
   download, data mutation, DR1 rerun, or readiness promotion.
+- DR1 Binance recent 4H feasibility note created:
+  `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_4H_FEASIBILITY_NOTE.md`.
+  Outcome: `FEASIBLE` in principle for acquisition-design planning; no API
+  calls, endpoint probing, downloads, DR1 rerun, paper-candidate design lock,
+  or readiness promotion are authorized.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).

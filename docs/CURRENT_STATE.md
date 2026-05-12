@@ -172,6 +172,10 @@ remote refs.
   `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_4H_FEASIBILITY_DESIGN_LOCK.md`.
   Planning only; review is next before any feasibility check, network call,
   download, or DR1 rerun.
+- DR1 Binance recent 4H feasibility note:
+  `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_4H_FEASIBILITY_NOTE.md`.
+  Outcome: `FEASIBLE` in principle for acquisition-design planning; no API
+  call, download, DR1 rerun, or readiness promotion is authorized.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
