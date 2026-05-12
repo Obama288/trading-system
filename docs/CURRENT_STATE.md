@@ -160,6 +160,10 @@ remote refs.
   `docs/PRE_DR1_RECENT_DATA_AVAILABILITY_DECISION_GATE.md`.
   Review / owner decision is next; it does not authorize downloads or DR1
   rerun.
+- DR1 recent-data availability decision:
+  `research/signal_observation/SETUP_C_DR1_RECENT_DATA_AVAILABILITY_DECISION.md`.
+  Outcome: `INCONCLUSIVE`; do not open acquisition design yet. Next work is
+  source/window clarification.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

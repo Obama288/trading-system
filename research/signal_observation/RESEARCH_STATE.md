@@ -212,6 +212,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `docs/PRE_DR1_RECENT_DATA_AVAILABILITY_DECISION_GATE.md`.
   Review / owner decision is next; no download, DR1 rerun, paper-candidate
   design lock, or readiness promotion is authorized.
+- DR1 recent-data availability decision record written:
+  `research/signal_observation/SETUP_C_DR1_RECENT_DATA_AVAILABILITY_DECISION.md`.
+  Outcome: `INCONCLUSIVE`; source/window clarification is next before any
+  acquisition design lock, download, or DR1 rerun.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
