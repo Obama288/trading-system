@@ -185,6 +185,10 @@ remote refs.
   Result: `DATA_REQUIREMENT_PASS` for BTCUSDT/ETHUSDT/SOLUSDT 4H on the
   locked 2025-11-12T12:00:00+00:00 to 2026-05-12T12:00:00+00:00 window.
   No DR1 rerun, gate change, or readiness promotion.
+- DR1 Binance recent rerun design lock:
+  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_RERUN_DESIGN_LOCK.md`.
+  Planning only; independent review is next before any bounded DR1 rerun
+  implementation task.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
