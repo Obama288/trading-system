@@ -243,6 +243,11 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_RERUN_DESIGN_LOCK.md`.
   Planning only; independent review is next before any bounded DR1 rerun
   implementation task.
+- DR1 Binance recent rerun completed:
+  `research/signal_observation/output/recon/setup_c_dr1_binance_recent_rerun_report.{txt,json}`.
+  Result: `LOW`; freshness is eligible, but autocorrelation, variance-ratio,
+  and Setup C recent persistence are weak. No paper-candidate design lock,
+  gate change, or readiness promotion.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).

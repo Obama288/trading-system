@@ -1,0 +1,188 @@
+{
+  "analyses": {
+    "btc_to_eth_sol_lead_lag": {
+      "directional_agreement": "0.3846153846153846153846153846",
+      "matching_direction_count": 20,
+      "method": "BTC non-overlapping 40-bar return sign leads ETH/SOL by one block",
+      "observations": 52,
+      "outcome": "inconclusive",
+      "per_target": {
+        "ETHUSDT": {
+          "directional_agreement": "0.3076923076923076923076923077",
+          "matching_direction_count": 8,
+          "observations": 26,
+          "outcome": "inconclusive"
+        },
+        "SOLUSDT": {
+          "directional_agreement": "0.4615384615384615384615384615",
+          "matching_direction_count": 12,
+          "observations": 26,
+          "outcome": "inconclusive"
+        }
+      },
+      "policy": "below or equal to 60%, or underpowered coverage, is inconclusive",
+      "thresholds": {
+        "minimum_observations": 20,
+        "supportive_gt": "0.60"
+      }
+    },
+    "non_overlapping_return_autocorrelation": {
+      "method": "adjacent same-sign rate over non-overlapping 40-bar returns",
+      "outcome": "weak",
+      "per_symbol": {
+        "BTCUSDT": {
+          "observations": 26,
+          "outcome": "weak",
+          "same_sign_count": 11,
+          "same_sign_rate": "0.4230769230769230769230769231"
+        },
+        "ETHUSDT": {
+          "observations": 26,
+          "outcome": "weak",
+          "same_sign_count": 8,
+          "same_sign_rate": "0.3076923076923076923076923077"
+        },
+        "SOLUSDT": {
+          "observations": 26,
+          "outcome": "inconclusive",
+          "same_sign_count": 13,
+          "same_sign_rate": "0.5"
+        }
+      },
+      "pooled_observations": 78,
+      "pooled_same_sign_count": 32,
+      "pooled_same_sign_rate": "0.4102564102564102564102564103",
+      "thresholds": {
+        "minimum_observations": 20,
+        "supportive_gt": "0.52",
+        "weak_lt": "0.48"
+      }
+    },
+    "setup_c_recent_out_of_window_persistence": {
+      "intervals": 513,
+      "method": "frozen Setup C 40-bar volatility-targeted post-cost moderate on committed Binance recent six-month segment",
+      "non_negative_symbols": 0,
+      "outcome": "weak",
+      "per_symbol": {
+        "BTCUSDT": {
+          "intervals": 171,
+          "vt_post_cost_moderate": "-17.55927257833347852919611760"
+        },
+        "ETHUSDT": {
+          "intervals": 171,
+          "vt_post_cost_moderate": "-36.42336637423121471050964612"
+        },
+        "SOLUSDT": {
+          "intervals": 171,
+          "vt_post_cost_moderate": "-3.202029443251065278994123700"
+        }
+      },
+      "vt_post_cost_moderate": "-57.18466839581575851869988738"
+    },
+    "variance_ratio_predictability": {
+      "long_return_observations": 81,
+      "method": "variance of non-overlapping 40-bar returns divided by 40 times one-bar return variance",
+      "outcome": "weak",
+      "short_return_observations": 3258,
+      "thresholds": {
+        "minimum_long_observations": 20,
+        "supportive_gt": "1.05",
+        "weak_lt": "0.95"
+      },
+      "variance_ratio": "0.5531873689296085266368268911"
+    }
+  },
+  "decision_implication": "Do not open a paper-candidate design lock; return to owner decision on parking or structural review.",
+  "design_lock": "docs/STAGE_54_SQ_DR1_BINANCE_RECENT_RERUN_DESIGN_LOCK.md",
+  "dr1_rerun_decision": "LOW",
+  "flags": {
+    "committed_binance_recent_data_only": true,
+    "no_dr1_scope_expansion": true,
+    "no_network_calls": true,
+    "no_new_downloads": true,
+    "no_readiness_promotion": true,
+    "no_threshold_change": true,
+    "research_only": true
+  },
+  "freshness_eligibility": {
+    "eligible": true,
+    "implementation_date": "2026-05-12T18:11:06.484354+00:00",
+    "locked_window_end": "2026-05-12T12:00:00+00:00",
+    "locked_window_start": "2025-11-12T12:00:00+00:00",
+    "minimum_contiguous_months": 6,
+    "minimum_latest_candle": "2026-04-12T18:11:06.484354+00:00",
+    "per_symbol": {
+      "BTCUSDT": {
+        "contiguous_month_start": "2025-11-12T12:00:00+00:00",
+        "duplicate_timestamp_count": 0,
+        "expected_end": "2026-05-12T12:00:00+00:00",
+        "expected_start": "2025-11-12T12:00:00+00:00",
+        "first_candle": "2025-11-12T12:00:00+00:00",
+        "gap_count_above_expected_4h_step": 0,
+        "latest_candle": "2026-05-12T12:00:00+00:00",
+        "latest_required_no_earlier_than": "2026-04-12T18:11:06.484354+00:00",
+        "max_gap_hours": "4.0",
+        "sufficient": true,
+        "symbol": "BTCUSDT",
+        "timestamps_monotonic": true,
+        "window_candle_count": 1087
+      },
+      "ETHUSDT": {
+        "contiguous_month_start": "2025-11-12T12:00:00+00:00",
+        "duplicate_timestamp_count": 0,
+        "expected_end": "2026-05-12T12:00:00+00:00",
+        "expected_start": "2025-11-12T12:00:00+00:00",
+        "first_candle": "2025-11-12T12:00:00+00:00",
+        "gap_count_above_expected_4h_step": 0,
+        "latest_candle": "2026-05-12T12:00:00+00:00",
+        "latest_required_no_earlier_than": "2026-04-12T18:11:06.484354+00:00",
+        "max_gap_hours": "4.0",
+        "sufficient": true,
+        "symbol": "ETHUSDT",
+        "timestamps_monotonic": true,
+        "window_candle_count": 1087
+      },
+      "SOLUSDT": {
+        "contiguous_month_start": "2025-11-12T12:00:00+00:00",
+        "duplicate_timestamp_count": 0,
+        "expected_end": "2026-05-12T12:00:00+00:00",
+        "expected_start": "2025-11-12T12:00:00+00:00",
+        "first_candle": "2025-11-12T12:00:00+00:00",
+        "gap_count_above_expected_4h_step": 0,
+        "latest_candle": "2026-05-12T12:00:00+00:00",
+        "latest_required_no_earlier_than": "2026-04-12T18:11:06.484354+00:00",
+        "max_gap_hours": "4.0",
+        "sufficient": true,
+        "symbol": "SOLUSDT",
+        "timestamps_monotonic": true,
+        "window_candle_count": 1087
+      }
+    }
+  },
+  "implementation_date": "2026-05-12T18:11:06.484354+00:00",
+  "primary_lookback": 40,
+  "rebalance_bars": 6,
+  "rerun_input_window": {
+    "end_utc": "2026-05-12T12:00:00+00:00",
+    "expected_rows_per_symbol": 1087,
+    "source": "Binance public USDT-M Futures",
+    "source_validation_result": "DATA_REQUIREMENT_PASS",
+    "start_utc": "2025-11-12T12:00:00+00:00",
+    "symbols": [
+      "BTCUSDT",
+      "ETHUSDT",
+      "SOLUSDT"
+    ],
+    "timeframe": "4H"
+  },
+  "schema": "setup_c_dr1_binance_recent_rerun_report_v1",
+  "scope": "research_only_binance_recent_dr1_rerun",
+  "source_validation_report": "research/signal_observation/output/binance_recent/setup_c_dr1_binance_recent_4h_acquisition_report.json",
+  "symbols": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT"
+  ],
+  "timeframe": "4H",
+  "venue": "binance"
+}

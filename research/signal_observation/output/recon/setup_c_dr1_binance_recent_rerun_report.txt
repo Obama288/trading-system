@@ -1,0 +1,30 @@
+Setup C DR1 Binance recent rerun report
+
+Scope: research-only committed Binance recent 4H CSV artifacts.
+No downloads, no network calls, no threshold changes, no readiness promotion.
+
+schema: setup_c_dr1_binance_recent_rerun_report_v1
+decision: LOW
+freshness_eligible: True
+window: 2025-11-12T12:00:00+00:00 to 2026-05-12T12:00:00+00:00
+
+Analysis outcomes
+  non_overlapping_return_autocorrelation: weak
+    pooled_same_sign_rate: 0.4102564102564102564102564103
+  variance_ratio_predictability: weak
+    variance_ratio: 0.5531873689296085266368268911
+  btc_to_eth_sol_lead_lag: inconclusive
+    directional_agreement: 0.3846153846153846153846153846
+  setup_c_recent_out_of_window_persistence: weak
+    vt_post_cost_moderate: -57.18466839581575851869988738
+
+decision_implication: Do not open a paper-candidate design lock; return to owner decision on parking or structural review.
+
+Safety flags
+  committed_binance_recent_data_only: True
+  no_dr1_scope_expansion: True
+  no_network_calls: True
+  no_new_downloads: True
+  no_readiness_promotion: True
+  no_threshold_change: True
+  research_only: True
