@@ -20,13 +20,10 @@ function Write-ReviewFile {
         return
     }
 
-    [Console]::Out.WriteLine("===== $DisplayPath =====")
+    Write-Output "===== $DisplayPath ====="
     $content = [string](Get-Content -LiteralPath $LiteralPath -Raw)
-    [Console]::Out.Write($content)
-    if (-not $content.EndsWith("`n")) {
-        [Console]::Out.WriteLine()
-    }
-    [Console]::Out.WriteLine()
+    Write-Output $content
+    Write-Output ""
 }
 
 function Write-StagedReviewFile {
@@ -41,13 +38,13 @@ function Write-StagedReviewFile {
         return
     }
 
-    [Console]::Out.WriteLine("===== $DisplayPath =====")
+    Write-Output "===== $DisplayPath ====="
     & git show ":$DisplayPath"
     if ($LASTEXITCODE -ne 0) {
         [Console]::Error.WriteLine("WARNING: review-dump failed to read staged content: $DisplayPath")
         return
     }
-    [Console]::Out.WriteLine()
+    Write-Output ""
 }
 
 try {
