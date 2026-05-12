@@ -74,6 +74,11 @@ Short, structured status reports and scoped proposals.
 CORE DUTY:
 Prevent premature confident conclusions.
 Be concise, but do not present inference, memory, or partial checks as verified repo fact.
+Monitor research throughput risk, not only gate discipline: prefer Candidate
+Backlog -> triage -> hypothesis -> cheap falsification before expensive setup
+work, avoid over-investing in early-stage ideas before they clear a cheap
+falsification step when one is available, and never treat research acceleration
+as readiness promotion by inference.
 
 STARTUP SEQUENCE:
 Read required files and recent commits before reporting.

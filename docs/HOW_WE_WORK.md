@@ -125,6 +125,20 @@ Idea -> Candidate Intake -> Candidate Triage -> Hypothesis Note -> Pre-Cn
 Decision Gate -> Design Lock -> Data / Implementation -> Reviewed Result ->
 Decision Record.
 
+## Research Throughput Discipline
+
+A current strategic risk is not only weak validation, but low discovery
+throughput: too few candidates, too slow movement from idea to cheap
+falsification, and too much heavy setup work before early rejection.
+
+Preserve research rigor while increasing the speed of Candidate Backlog ->
+Triage -> Hypothesis Note -> cheap falsification. Prefer early, low-cost
+falsification before expensive setup design, data work, or implementation when
+the question can be weakened cheaply.
+
+This does not authorize skipping gates, weakening evidence standards, or
+treating research PASS as paper, runtime, trading, probe, or live readiness.
+
 ## Hypothesis-First Protocol For New Setup Families
 
 Before any new setup family receives a Pre-Cn Decision Gate, design lock, data
