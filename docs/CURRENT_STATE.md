@@ -11,7 +11,8 @@ docs as needed.
 - Live: NO-GO.
 - Runtime readiness: no new readiness promoted by this file.
 - Primary exchange planning lane: Stage 54-BG / Bitget Demo planning.
-- Primary research lane: Stage 54-SQ / Setup C TSMOM volatility-targeted.
+- Primary research lane: hypothesis-first future setup discussion; Setup C is
+  parked from active progression after DR1 Binance recent rerun LOW.
 - Source protocol: GitHub docs, commits, code, tests, and relevant PR metadata
   are primary; project memory is orientation only.
 
@@ -46,8 +47,11 @@ remote refs.
 - Stage 54-SQ is research-only signal-quality observation.
 - Price-action continuation family is retired after Setup A, Setup B, and SR1
   family review.
-- Active research family: Setup C / TSMOM volatility-targeted.
-- Setup C is **PASS_CANDIDATE research-only**. C1–C5 diagnostics complete.
+- Active research family: none. Setup C / TSMOM volatility-targeted is parked
+  from active progression.
+- Setup C was **PASS_CANDIDATE research-only** through C7 evidence; after DR1
+  Binance recent rerun LOW it remains historical research evidence only and is
+  not a paper-candidate progression lane. C1–C5 diagnostics complete.
 - C5 (discovery/validation regime split): interpretation
   `validation_only_or_discovery_only`. High_vol weakness is concentrated in
   the validation window; discovery had positive high_vol and low_vol.
@@ -194,6 +198,11 @@ remote refs.
   Result: `LOW`; freshness is eligible, but autocorrelation, variance-ratio,
   and Setup C recent persistence are weak. No paper-candidate design lock,
   gate change, or readiness promotion.
+- DR1 Binance recent rerun post-result decision:
+  `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_RERUN_POST_RESULT_DECISION.md`.
+  Setup C is parked from active progression; do not open paper-candidate design
+  lock, DR1b, or rescue rerun. Next lane is hypothesis-first future setup
+  discussion.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

@@ -9,8 +9,11 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Stage 54-SQ is research-only signal-quality observation.
 - Data source: local/public OHLCV artifacts only unless a future owner-approved
   task explicitly authorizes download.
-- Active family: Setup C / TSMOM volatility-targeted.
-- Current status: **PASS_CANDIDATE research-only**. C1–C5 diagnostics complete.
+- Active family: none. Setup C / TSMOM volatility-targeted is parked from active
+  progression.
+- Current status: Setup C was **PASS_CANDIDATE research-only** through C7
+  evidence; after DR1 Binance recent rerun LOW it remains historical research
+  evidence only and is not a paper-candidate progression lane. C1–C5 diagnostics complete.
   C6 evidence summary and decision record written (see
   `research/signal_observation/SETUP_C_EVIDENCE_SUMMARY.md`). C7 expanded
   validation analyzer implemented and single-venue (Bitget) evidence run
@@ -248,6 +251,11 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   Result: `LOW`; freshness is eligible, but autocorrelation, variance-ratio,
   and Setup C recent persistence are weak. No paper-candidate design lock,
   gate change, or readiness promotion.
+- DR1 Binance recent rerun post-result decision written:
+  `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_RERUN_POST_RESULT_DECISION.md`.
+  Setup C is parked from active progression; do not open paper-candidate design
+  lock, DR1b, or rescue rerun. Next lane is hypothesis-first future setup
+  discussion.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
