@@ -230,6 +230,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   Outcome: `FEASIBLE` in principle for acquisition-design planning; no API
   calls, endpoint probing, downloads, DR1 rerun, paper-candidate design lock,
   or readiness promotion are authorized.
+- DR1 Binance recent-data acquisition design lock created:
+  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_DATA_ACQUISITION_DESIGN_LOCK.md`.
+  Planning only; independent review is next before any bounded acquisition
+  implementation task.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
