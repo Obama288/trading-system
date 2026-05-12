@@ -66,6 +66,65 @@ If docs conflict, `docs/PROGRESS.md` wins.
   the task, Codex or Tower Control should explain why it is still one logical
   change. Treat this as a scope-smell heuristic, not a rigid numeric blocker.
 
+## Candidate Intake And Triage Before Hypothesis Notes
+
+### Candidate Intake
+
+- Raw research ideas should first enter a lightweight candidate backlog before
+  becoming formal setup work.
+- Intake does not create an active project stage or obligation to execute.
+- Suggested backlog entry fields:
+  - Candidate
+  - Signal family
+  - One-line mechanism
+  - Potential payer / counterparty
+  - Likely data
+  - Why it may matter
+  - Status: watchlist / triage-ready / rejected / advanced-to-hypothesis
+
+### Signal Family Tag
+
+- Every candidate must declare a signal family.
+- Family tags distinguish genuinely new research directions from repeated
+  attempts in an exhausted family.
+- This supports the project rule that repeated failures within one family
+  trigger structural review before another same-family setup attempt.
+- Brief examples: Trend / continuation, Carry / funding, Forced deleveraging /
+  liquidation, Calendar / seasonality, Cross-asset, Microstructure, Regime
+  meta-layer.
+
+### Candidate Triage
+
+Before creating a full mechanism-first hypothesis note, Tower Control should
+triage a candidate using six questions:
+
+1. Mechanism clarity:
+   Can we explain who creates the imbalance and why?
+2. Counterparty clarity:
+   Can we name who may plausibly be paying the edge?
+3. Data feasibility:
+   Does a plausible data path appear to exist?
+4. Cheap falsifiability:
+   Is there a simple pre-backtest statistic or observation that can
+   weaken/support the idea?
+5. Distinctness:
+   Is this genuinely a new signal family or just another variation of an
+   exhausted one?
+6. Expected edge above cost floor:
+   Is there a plausible reason the effect could survive realistic costs?
+
+### Triage Result
+
+- Triage result should be exactly one of: Advance to hypothesis note, Keep on
+  watchlist, Reject for now.
+- If a candidate cannot clear triage, it should not move into a full hypothesis
+  note yet.
+
+Preferred sequence for new setup-family work:
+Idea -> Candidate Intake -> Candidate Triage -> Hypothesis Note -> Pre-Cn
+Decision Gate -> Design Lock -> Data / Implementation -> Reviewed Result ->
+Decision Record.
+
 ## Hypothesis-First Protocol For New Setup Families
 
 Before any new setup family receives a Pre-Cn Decision Gate, design lock, data
@@ -86,10 +145,9 @@ The hypothesis note must define:
    weaken or support the hypothesis.
 8. Decision unlocked: what first test would allow or disallow next.
 
-Preferred sequence for a new setup family:
-mechanism-first hypothesis note -> Pre-Cn Decision Gate if a concrete first
-test is justified -> design lock -> data / implementation -> reviewed result
--> decision record.
+Within that sequence, a hypothesis note precedes a Pre-Cn Decision Gate if a
+concrete first test is justified, then design lock, data / implementation,
+reviewed result, and decision record.
 
 "Indicator first, explanation later" is discouraged. A known strategy family
 may still be considered, but it must be translated into an explicit market

@@ -33,6 +33,12 @@ commits/code, or insufficient for the owner's question.
 - Implementation without an approved design lock is scope drift for any
   non-trivial research, runtime, or governance change. Small pointer edits and
   trivial post-review wording fixes do not require a new design lock.
+- For future new setup-family work, Tower Control should not jump directly from
+  an idea to a hypothesis note. First classify the idea in a candidate backlog
+  and triage it by mechanism clarity, counterparty clarity, data feasibility,
+  cheap falsifiability, distinctness, and plausible edge above cost floor.
+  Every candidate must carry a signal-family tag. Only candidates that advance
+  through triage should receive a full hypothesis note.
 - For any future new setup family, Tower Control should require a
   mechanism-first hypothesis note before proposing a setup design lock or
   implementation. The note must cover mechanism, counterparty, data, prior
