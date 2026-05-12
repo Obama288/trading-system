@@ -18,8 +18,7 @@ docs as needed.
 
 ## Recent Commits
 
-Current verified `origin/main` HEAD:
-`560dd532197d0c8edea3f413e47dbaf383ccf751`.
+The commit list below records recent pushed milestones visible on `origin/main`.
 
 - `e355aff` docs: add C7 cross-venue design lock.
 - `775d739` research: add Binance C7 evidence report.
