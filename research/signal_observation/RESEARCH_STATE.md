@@ -216,6 +216,11 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `research/signal_observation/SETUP_C_DR1_RECENT_DATA_AVAILABILITY_DECISION.md`.
   Outcome: `INCONCLUSIVE`; source/window clarification is next before any
   acquisition design lock, download, or DR1 rerun.
+- DR1 recent-data source/window clarification created:
+  `research/signal_observation/SETUP_C_DR1_RECENT_DATA_SOURCE_WINDOW_CLARIFICATION.md`.
+  Preferred next planning candidate is Binance public recent 4H feasibility
+  clarification. No data download, API probing, acquisition implementation,
+  DR1 rerun, paper-candidate design lock, or readiness promotion is authorized.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
