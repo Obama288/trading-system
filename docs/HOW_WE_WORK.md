@@ -66,6 +66,37 @@ If docs conflict, `docs/PROGRESS.md` wins.
   the task, Codex or Tower Control should explain why it is still one logical
   change. Treat this as a scope-smell heuristic, not a rigid numeric blocker.
 
+## Hypothesis-First Protocol For New Setup Families
+
+Before any new setup family receives a Pre-Cn Decision Gate, design lock, data
+acquisition work, or implementation code, it must first have a short
+mechanism-first hypothesis note.
+
+The hypothesis note must define:
+1. Mechanism: who creates the imbalance and why.
+2. Forced or predictable behavior: what market participants are structurally or
+   behaviorally pushed to do.
+3. Counterparty: who may be paying for the edge.
+4. Data: what evidence would be needed and whether the data path is plausibly
+   available.
+5. Prior support: literature, known market microstructure, or explicit
+   statement that support is weak/absent.
+6. Failure mode: why the idea may not work or may be untradeable.
+7. First cheap falsification: the simplest pre-backtest statistic that can
+   weaken or support the hypothesis.
+8. Decision unlocked: what first test would allow or disallow next.
+
+Preferred sequence for a new setup family:
+mechanism-first hypothesis note -> Pre-Cn Decision Gate if a concrete first
+test is justified -> design lock -> data / implementation -> reviewed result
+-> decision record.
+
+"Indicator first, explanation later" is discouraged. A known strategy family
+may still be considered, but it must be translated into an explicit market
+mechanism before coding. If the hypothesis note cannot state who plausibly pays
+the edge or why the mechanism should persist, the idea should not move to
+design lock yet.
+
 ## Evidence Before Status
 
 - No evidence -> no status promotion.

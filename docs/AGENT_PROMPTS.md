@@ -33,6 +33,12 @@ commits/code, or insufficient for the owner's question.
 - Implementation without an approved design lock is scope drift for any
   non-trivial research, runtime, or governance change. Small pointer edits and
   trivial post-review wording fixes do not require a new design lock.
+- For any future new setup family, Tower Control should require a
+  mechanism-first hypothesis note before proposing a setup design lock or
+  implementation. The note must cover mechanism, counterparty, data, prior
+  support, failure mode, cheap falsification, and decision unlocked. Do not
+  open a new setup family from "interesting indicator / known strategy" alone
+  without translating it into a market-mechanism hypothesis.
 - Preferred decision-record shape: Decision, Why, Alternatives considered, Why
   alternatives were not chosen, and What this does not authorize. Keep records
   compact unless the decision needs more detail.
