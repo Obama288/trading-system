@@ -18,6 +18,23 @@ docs/PROGRESS.md and docs/STAGE_STATUS.md are historical/deeper context. Use
 them only when docs/CURRENT_STATE.md is missing, stale, conflicting with
 commits/code, or insufficient for the owner's question.
 
+## Agent process rules
+
+- One session = one role = one task. Load only the context required for the
+  current task. Reviewers get the reviewed file/diff plus minimal known
+  context; implementers get the governing design lock, target scope, and
+  verification; auditors get an explicit audit scope. Do not load full history
+  docs unless compact state is stale, conflicting, or insufficient.
+- Implementation without an approved design lock is scope drift for any
+  non-trivial research, runtime, or governance change. Small pointer edits and
+  trivial post-review wording fixes do not require a new design lock.
+- Preferred decision-record shape: Decision, Why, Alternatives considered, Why
+  alternatives were not chosen, and What this does not authorize. Keep records
+  compact unless the decision needs more detail.
+- Large diffs are a scope smell. If a diff is unusually large for the task,
+  Codex or Tower Control should explain why it is still one logical change.
+  This is a heuristic, not a rigid numeric blocker.
+
 ---
 
 ## 1. TOWER CONTROL ARCHITECT

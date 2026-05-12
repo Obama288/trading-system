@@ -42,6 +42,30 @@ source-of-truth docs and stage map:
 Do not infer the current stage from memory alone.
 If docs conflict, `docs/PROGRESS.md` wins.
 
+## Task-Specific Context Discipline
+
+- One session = one role = one task.
+- Load only context required for the current task.
+- Reviewer context should be the reviewed file/diff plus minimal known context.
+- Implementer context should be the governing design lock, target scope, and
+  verification expectation.
+- Auditor context should include the explicit audit scope.
+- Do not load full history docs unless compact state is stale, conflicting, or
+  insufficient.
+
+## Design Locks, Decisions, And Scope Smells
+
+- Implementation without an approved design lock is scope drift for any
+  non-trivial research, runtime, or governance change.
+- Small pointer edits and trivial post-review wording fixes do not require a
+  new design lock.
+- Preferred decision-record pattern: Decision, Why, Alternatives considered,
+  Why alternatives were not chosen, and What this does not authorize. This is a
+  compact preferred pattern, not a mandatory long template.
+- Large diffs should trigger a scope check. If a diff is unusually large for
+  the task, Codex or Tower Control should explain why it is still one logical
+  change. Treat this as a scope-smell heuristic, not a rigid numeric blocker.
+
 ## Evidence Before Status
 
 - No evidence -> no status promotion.
