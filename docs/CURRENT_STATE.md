@@ -18,7 +18,8 @@ docs as needed.
 
 ## Recent Commits
 
-All commits below are pushed and remote-visible on `origin/main` at `e355aff`.
+Current verified `origin/main` HEAD:
+`560dd532197d0c8edea3f413e47dbaf383ccf751`.
 
 - `e355aff` docs: add C7 cross-venue design lock.
 - `775d739` research: add Binance C7 evidence report.

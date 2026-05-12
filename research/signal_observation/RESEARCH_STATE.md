@@ -32,7 +32,8 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - All C1–C7 artifacts (single-venue and cross-venue design locks,
   analyzer, helpers, Bitget data + evidence, Binance data + evidence,
   post-C7 single-venue decision record, cross-venue decision record)
-  are pushed and remote-visible on `origin/main` as of HEAD `e355aff`.
+  are pushed and remote-visible on `origin/main`; current verified remote HEAD
+  is `560dd532197d0c8edea3f413e47dbaf383ccf751`.
 
 ## Retired Family
 
