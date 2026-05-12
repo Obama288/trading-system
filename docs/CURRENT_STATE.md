@@ -156,6 +156,10 @@ remote refs.
   `docs/STAGE_54_SQ_DR1_MISSING_RECENT_DATA_REQUIREMENT_DESIGN_LOCK.md`.
   Governance only; next step is independent review before any acquisition
   decision gate, download, or DR1 rerun.
+- Pre-DR1 recent-data availability decision gate:
+  `docs/PRE_DR1_RECENT_DATA_AVAILABILITY_DECISION_GATE.md`.
+  Review / owner decision is next; it does not authorize downloads or DR1
+  rerun.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

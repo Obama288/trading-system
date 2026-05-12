@@ -208,6 +208,10 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   `docs/STAGE_54_SQ_DR1_MISSING_RECENT_DATA_REQUIREMENT_DESIGN_LOCK.md`.
   Review is next; it does not authorize downloads, data substitution, DR1
   rerun, paper-candidate design lock, or readiness promotion.
+- Pre-DR1 recent-data availability decision gate created:
+  `docs/PRE_DR1_RECENT_DATA_AVAILABILITY_DECISION_GATE.md`.
+  Review / owner decision is next; no download, DR1 rerun, paper-candidate
+  design lock, or readiness promotion is authorized.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
