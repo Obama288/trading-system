@@ -15,7 +15,13 @@ from libs.schemas.common import (
     SignalStatus,
     TradeDirection,
 )
-from ops.paper_pipeline_runner import PipelineAccountState, _stale_threshold_seconds_for_timeframe, run_cycle
+from ops import paper_pipeline_runner
+from ops.paper_pipeline_runner import (
+    PaperHarnessAccountState,
+    PaperHarnessRiskRequest,
+    _stale_threshold_seconds_for_timeframe,
+    run_cycle,
+)
 
 
 class DummyKillSwitchClient:
@@ -173,7 +179,7 @@ async def test_run_cycle_skips_when_kill_switch_active():
         kill_switch_client=DummyKillSwitchClient(active=True),
         market_fetcher=DummyMarketFetcher(make_candles()),
         evaluate_client=evaluate_client,
-        account_state=PipelineAccountState(
+        account_state=PaperHarnessAccountState(
             equity_usdt=1000.0,
             daily_pnl_usdt=0.0,
             portfolio_exposure_pct=0.0,
@@ -196,7 +202,7 @@ async def test_run_cycle_skips_stale_snapshot():
         kill_switch_client=DummyKillSwitchClient(active=False),
         market_fetcher=DummyMarketFetcher(make_candles_with_age(age_seconds=1200, timeframe_minutes=15)),
         evaluate_client=evaluate_client,
-        account_state=PipelineAccountState(
+        account_state=PaperHarnessAccountState(
             equity_usdt=1000.0,
             daily_pnl_usdt=0.0,
             portfolio_exposure_pct=0.0,
@@ -219,7 +225,7 @@ async def test_run_cycle_1m_keeps_strict_stale_threshold():
         kill_switch_client=DummyKillSwitchClient(active=False),
         market_fetcher=DummyMarketFetcher(make_candles_with_age(age_seconds=180, timeframe_minutes=1)),
         evaluate_client=evaluate_client,
-        account_state=PipelineAccountState(
+        account_state=PaperHarnessAccountState(
             equity_usdt=1000.0,
             daily_pnl_usdt=0.0,
             portfolio_exposure_pct=0.0,
@@ -242,7 +248,7 @@ async def test_run_cycle_5m_uses_expanded_freshness_threshold():
         kill_switch_client=DummyKillSwitchClient(active=False),
         market_fetcher=DummyMarketFetcher(make_candles_with_age(age_seconds=300, timeframe_minutes=5)),
         evaluate_client=evaluate_client,
-        account_state=PipelineAccountState(
+        account_state=PaperHarnessAccountState(
             equity_usdt=1000.0,
             daily_pnl_usdt=0.0,
             portfolio_exposure_pct=0.0,
@@ -268,7 +274,7 @@ async def test_run_cycle_15m_uses_expanded_freshness_threshold():
         kill_switch_client=DummyKillSwitchClient(active=False),
         market_fetcher=DummyMarketFetcher(make_candles_with_age(age_seconds=900, timeframe_minutes=15)),
         evaluate_client=evaluate_client,
-        account_state=PipelineAccountState(
+        account_state=PaperHarnessAccountState(
             equity_usdt=1000.0,
             daily_pnl_usdt=0.0,
             portfolio_exposure_pct=0.0,
@@ -303,7 +309,7 @@ async def test_run_cycle_calls_orchestrator_for_valid_candidate():
         kill_switch_client=DummyKillSwitchClient(active=False),
         market_fetcher=DummyMarketFetcher(make_candles()),
         evaluate_client=evaluate_client,
-        account_state=PipelineAccountState(
+        account_state=PaperHarnessAccountState(
             equity_usdt=1000.0,
             daily_pnl_usdt=0.0,
             portfolio_exposure_pct=0.0,
@@ -318,3 +324,46 @@ async def test_run_cycle_calls_orchestrator_for_valid_candidate():
     assert result["reason"] is None
     assert evaluate_client.calls == 1
     assert evaluate_client.payloads[0].signal.signal_id == "sig_001"
+
+
+@pytest.mark.asyncio
+async def test_run_cycle_uses_paper_harness_risk_request_shape():
+    captured = {}
+
+    def capture_risk(req):
+        captured["request"] = req
+        return make_risk().model_dump(mode="python", exclude={"risk_id", "signal_id", "symbol"})
+
+    result = await run_cycle(
+        symbol="BTC-USDT",
+        timeframe="15m",
+        candle_limit=60,
+        kill_switch_client=DummyKillSwitchClient(active=False),
+        market_fetcher=DummyMarketFetcher(make_candles()),
+        evaluate_client=DummyEvaluateClient(),
+        account_state=PaperHarnessAccountState(
+            equity_usdt=1234.0,
+            daily_pnl_usdt=-12.0,
+            portfolio_exposure_pct=4.5,
+            open_positions=2,
+        ),
+        signal_evaluator=lambda snapshot: make_signal(),
+        risk_evaluator=capture_risk,
+        review_evaluator=lambda signal, risk, snapshot, stale_threshold_seconds: make_review(),
+    )
+
+    assert result["candidate_created"] is True
+    risk_request = captured["request"]
+    assert isinstance(risk_request, PaperHarnessRiskRequest)
+    assert isinstance(risk_request.account_state, PaperHarnessAccountState)
+    assert risk_request.signal_id == "sig_001"
+    assert risk_request.symbol == "BTC-USDT"
+    assert risk_request.account_state.equity_usdt == 1234.0
+    assert risk_request.account_state.daily_pnl_usdt == -12.0
+    assert risk_request.account_state.portfolio_exposure_pct == 4.5
+    assert risk_request.account_state.open_positions == 2
+
+
+def test_paper_runner_does_not_export_protected_risk_route_models():
+    assert not hasattr(paper_pipeline_runner, "AccountState")
+    assert not hasattr(paper_pipeline_runner, "RiskRequest")

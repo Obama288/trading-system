@@ -14,15 +14,14 @@ from apps.market_data.domain.freshness import is_stale
 from apps.market_data.domain.snapshot_builder import build_market_snapshot
 from apps.review_gateway.application.review_candidate import review_candidate_use_case
 from apps.risk_engine.application.evaluate_risk import evaluate_risk_use_case
-from apps.risk_engine.main import AccountState, RiskRequest
 from apps.position_manager.infrastructure.position_repo import PositionRepository
 from apps.signal_engine.application.evaluate_signal import evaluate_signal_use_case
 from apps.orchestrator.schemas.pipeline_requests import EvaluatePipelineRequest
 from libs.clients.kill_switch_client import HttpKillSwitchClient, KillSwitchClient, KillSwitchError
 from libs.config.settings import load_all_configs
-from libs.db.session import get_session_factory
-from libs.schemas.common import RiskDecision, SignalStatus
 from libs.clients.okx_market_data_fetcher import OkxMarketDataFetcher
+from libs.db.session import get_session_factory
+from libs.schemas.common import EntryZone, RiskDecision, SignalStatus, TradeDirection
 
 
 class EvaluateClient(Protocol):
@@ -51,11 +50,28 @@ class OrchestratorEvaluateClient:
             return response.json()
 
 
-class PipelineAccountState(BaseModel):
+class PaperHarnessAccountState(BaseModel):
+    """Paper-harness-only caller state; not authoritative protected risk state.
+
+    This containment split does not close P0-A. Option A authoritative
+    reconstruction remains required before higher readiness claims.
+    """
+
     equity_usdt: float
     daily_pnl_usdt: float
     portfolio_exposure_pct: float
     open_positions: int
+
+
+class PaperHarnessRiskRequest(BaseModel):
+    signal_id: str
+    symbol: str
+    side: TradeDirection
+    confidence: float | None = None
+    entry_zone: EntryZone
+    stop_loss: float
+    account_state: PaperHarnessAccountState
+    correlation_id: str
 
 
 def _strategy_config() -> dict[str, Any]:
@@ -118,12 +134,17 @@ def _build_snapshot_from_candles(symbol: str, timeframe: str, candles: list[dict
     return snapshot.model_copy(update={"timestamp": candles[-1]["timestamp"]})
 
 
-def _load_account_state(*, equity_usdt: float, daily_pnl_usdt: float, portfolio_exposure_pct: float) -> PipelineAccountState:
+def _load_paper_harness_account_state(
+    *,
+    equity_usdt: float,
+    daily_pnl_usdt: float,
+    portfolio_exposure_pct: float,
+) -> PaperHarnessAccountState:
     session_factory = get_session_factory()
     with session_factory() as db:
         repo = PositionRepository(db)
         open_positions = len(repo.list_open_positions())
-    return PipelineAccountState(
+    return PaperHarnessAccountState(
         equity_usdt=equity_usdt,
         daily_pnl_usdt=daily_pnl_usdt,
         portfolio_exposure_pct=portfolio_exposure_pct,
@@ -139,7 +160,7 @@ async def run_cycle(
     kill_switch_client: KillSwitchClient,
     market_fetcher,
     evaluate_client: EvaluateClient,
-    account_state: PipelineAccountState,
+    account_state: PaperHarnessAccountState,
     signal_evaluator=evaluate_signal_use_case,
     risk_evaluator=evaluate_risk_use_case,
     review_evaluator=review_candidate_use_case,
@@ -195,14 +216,14 @@ async def run_cycle(
             "reason": "no_signal_candidate",
         }
 
-    risk_request = RiskRequest(
+    risk_request = PaperHarnessRiskRequest(
         signal_id=signal.signal_id,
         symbol=signal.symbol,
         side=signal.side,
         confidence=signal.confidence,
         entry_zone=signal.entry_zone,
         stop_loss=signal.stop_loss,
-        account_state=AccountState(
+        account_state=PaperHarnessAccountState(
             equity_usdt=account_state.equity_usdt,
             daily_pnl_usdt=account_state.daily_pnl_usdt,
             open_positions=account_state.open_positions,
@@ -272,7 +293,7 @@ async def run_loop(
     evaluate_client = OrchestratorEvaluateClient(orchestrator_base_url)
 
     while True:
-        account_state = _load_account_state(
+        account_state = _load_paper_harness_account_state(
             equity_usdt=equity_usdt,
             daily_pnl_usdt=daily_pnl_usdt,
             portfolio_exposure_pct=portfolio_exposure_pct,
