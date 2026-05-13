@@ -9,6 +9,7 @@ from uuid import uuid4
 
 import httpx
 
+from libs.config.settings import load_all_configs
 from libs.db.session import get_session_factory
 
 
@@ -33,12 +34,28 @@ def _candidate_to_log_row(candidate, correlation_id: str, result: dict) -> dict:
     }
 
 
+def _require_operator_token() -> str:
+    operator_token = os.getenv("OPERATOR_TOKEN")
+    if operator_token is None or not operator_token.strip():
+        raise RuntimeError("OPERATOR_TOKEN must be set for paper auto-approve automation.")
+    return operator_token.strip()
+
+
+def _require_paper_mode() -> None:
+    configs = load_all_configs()
+    paper_mode = configs.get("system", {}).get("paper_mode")
+    if paper_mode is not True:
+        raise RuntimeError("paper auto-approve automation requires config/system.yaml paper_mode: true.")
+
+
 def run_loop(*, interval_seconds: float, operator_user_id: int, orchestrator_base_url: str, once: bool) -> None:
+    operator_token = _require_operator_token()
+    _require_paper_mode()
+
     from libs.db.models.trade_candidate import TradeCandidateModel
 
     session_factory = get_session_factory()
     base_url = orchestrator_base_url.rstrip("/")
-    operator_token = os.getenv("OPERATOR_TOKEN")
 
     while True:
         with session_factory() as db:
@@ -70,9 +87,7 @@ def run_loop(*, interval_seconds: float, operator_user_id: int, orchestrator_bas
                     "telegram_user_id": operator_user_id,
                     "correlation_id": correlation_id,
                 }
-                headers = {}
-                if operator_token:
-                    headers["X-Operator-Token"] = operator_token
+                headers = {"X-Operator-Token": operator_token}
                 try:
                     response = httpx.post(f"{base_url}/v1/pipeline/approve", json=payload, headers=headers, timeout=10.0)
                     result = {
