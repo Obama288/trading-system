@@ -12,6 +12,7 @@ from libs.db.models import (  # noqa: F401
     IncidentModel,
     JournalEventModel,
     OperatorActionModel,
+    PaperAccountAuthorityModel,
     PositionEventModel,
     PositionModel,
     SystemStateModel,
