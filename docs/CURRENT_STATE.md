@@ -204,8 +204,12 @@ remote refs.
   lock, DR1b, or rescue rerun. Next lane is hypothesis-first future setup
   discussion.
 - Research candidate backlog:
-  `research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md`. Funding Carry /
-  Funding Stress is triaged as `advanced-to-hypothesis`.
+  `research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md`. Current entries:
+  Funding Carry / Funding Stress = `advanced-to-hypothesis`; Liquidation
+  Cascades, Basis / Cash-and-Carry Dislocation, and Options Expiry / Dealer
+  Hedging Pressure = `triage-ready`.
+- Signal idea generator:
+  `research/signal_observation/SIGNAL_IDEA_GENERATOR.md`.
 - Setup D hypothesis note:
   `research/signal_observation/SETUP_D_HYPOTHESIS.md`.
 - Pre-D1 decision gate:
@@ -218,12 +222,20 @@ remote refs.
   Gate recommendation: `PROCEED_TO_D1_PUBLIC_DATA_ACQUISITION_DESIGN` because
   repo inspection found no committed reusable D1-ready funding-rate history
   aligned with OHLCV. No owner decision on this gate has been made yet.
-- Exploratory Discovery Lane now exists as a general project process rule; no
-  Setup D EXPLORE run has been authorized or performed.
-- Next Setup D decision fork: use EXPLORE for a non-evidence funding scan
-  before advancing the formal data-path gate, or continue the formal
-  gate/review path. No D1 acquisition, download, implementation, processing,
-  backtest, or readiness promotion is authorized by these state notes.
+- Off-repo Setup D funding EXPLORE completed as non-evidence /
+  non-validation; orientation label: `EXPLORE_MIXED`. No formal Setup D status
+  promotion occurred, and the formal D1 data-path gate still has no owner
+  decision to advance.
+- Liquidation Cascades triage:
+  `research/signal_observation/LIQUIDATION_CASCADES_TRIAGE.md`.
+  Triage result: `Advance to hypothesis note`.
+- Setup E hypothesis note:
+  `research/signal_observation/SETUP_E_HYPOTHESIS.md`.
+  Setup E remains hypothesis-note only; no Pre-E1 gate, EXPLORE run, data work,
+  implementation, or readiness promotion is authorized.
+- Next research decision: authorize a bounded non-evidence Setup E EXPLORE pass
+  for Liquidation Cascades, or continue another explicitly owner-chosen
+  research path.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
