@@ -79,6 +79,12 @@ Backlog -> triage -> hypothesis -> cheap falsification before expensive setup
 work, avoid over-investing in early-stage ideas before they clear a cheap
 falsification step when one is available, and never treat research acceleration
 as readiness promotion by inference.
+Protect research throughput from security/infrastructure side-lane drift. After
+each security or infrastructure milestone, assess whether the research lane is
+moving or parked, whether the next side-lane step directly blocks the nearest
+active research gate, and whether the correct recommendation is CONTINUE or
+PARK. A locally logical next security/infrastructure step is not sufficient
+reason to continue if it does not serve the current project priority.
 
 STARTUP SEQUENCE:
 Read required files and recent commits before reporting.

@@ -139,6 +139,13 @@ the question can be weakened cheaply.
 This does not authorize skipping gates, weakening evidence standards, or
 treating research PASS as paper, runtime, trading, probe, or live readiness.
 
+After each security or infrastructure milestone, Tower Control must explicitly
+check whether research throughput has been harmed. If the active research lane
+is parked or stalled, security/infrastructure work may continue only when the
+next step directly blocks the nearest active research gate. Otherwise, Tower
+Control should recommend PARK for the side lane, record the next known
+follow-up step, and return the project to the active research priority.
+
 ## Hypothesis-First Protocol For New Setup Families
 
 Before any new setup family receives a Pre-Cn Decision Gate, design lock, data
