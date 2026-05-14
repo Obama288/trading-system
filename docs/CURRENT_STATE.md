@@ -209,9 +209,13 @@ remote refs.
 - Setup D hypothesis note:
   `research/signal_observation/SETUP_D_HYPOTHESIS.md`.
 - Pre-D1 decision gate:
-  `docs/PRE_D1_DECISION_GATE.md`. Next step is independent review / owner
-  decision on the gate; do not open D1 design lock, data acquisition,
-  implementation, or backtest before that review/decision.
+  `docs/PRE_D1_DECISION_GATE.md`.
+- D1 funding cheap-falsification design lock:
+  `docs/STAGE_54_SQ_D1_FUNDING_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
+  Next step is independent review of the D1 design lock. No D1 data-path step,
+  acquisition, implementation, processing, artifact generation, backtest, or
+  readiness promotion is authorized before that review and later owner
+  approval.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes

@@ -262,9 +262,12 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Setup D hypothesis note created:
   `research/signal_observation/SETUP_D_HYPOTHESIS.md`.
 - Pre-D1 decision gate created:
-  `docs/PRE_D1_DECISION_GATE.md`. Next step is independent review / owner
-  decision on the gate. No D1 design lock, data download, implementation,
-  backtest, or readiness promotion is authorized before that.
+  `docs/PRE_D1_DECISION_GATE.md`.
+- D1 funding cheap-falsification design lock created:
+  `docs/STAGE_54_SQ_D1_FUNDING_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
+  Next step is independent review of the D1 design lock. No D1 data path,
+  download, implementation, processing, backtest, or readiness promotion is
+  authorized before that review and later owner approval.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
