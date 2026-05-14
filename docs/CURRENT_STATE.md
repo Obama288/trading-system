@@ -212,10 +212,18 @@ remote refs.
   `docs/PRE_D1_DECISION_GATE.md`.
 - D1 funding cheap-falsification design lock:
   `docs/STAGE_54_SQ_D1_FUNDING_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
-  Next step is independent review of the D1 design lock. No D1 data-path step,
-  acquisition, implementation, processing, artifact generation, backtest, or
-  readiness promotion is authorized before that review and later owner
-  approval.
+  Independent review verdict: PASS.
+- Pre-D1 funding data path availability decision gate:
+  `docs/PRE_D1_FUNDING_DATA_PATH_AVAILABILITY_DECISION_GATE.md`.
+  Gate recommendation: `PROCEED_TO_D1_PUBLIC_DATA_ACQUISITION_DESIGN` because
+  repo inspection found no committed reusable D1-ready funding-rate history
+  aligned with OHLCV. No owner decision on this gate has been made yet.
+- Exploratory Discovery Lane now exists as a general project process rule; no
+  Setup D EXPLORE run has been authorized or performed.
+- Next Setup D decision fork: use EXPLORE for a non-evidence funding scan
+  before advancing the formal data-path gate, or continue the formal
+  gate/review path. No D1 acquisition, download, implementation, processing,
+  backtest, or readiness promotion is authorized by these state notes.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
