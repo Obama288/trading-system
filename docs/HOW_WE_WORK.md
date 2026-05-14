@@ -146,6 +146,24 @@ next step directly blocks the nearest active research gate. Otherwise, Tower
 Control should recommend PARK for the side lane, record the next known
 follow-up step, and return the project to the active research priority.
 
+## Exploratory Discovery Lane
+
+EXPLORE exists to quickly inspect whether a candidate area may contain
+something worth formal research.
+
+EXPLORE is not validation, not evidence, not a PASS/FAIL research verdict, and
+not a readiness claim. EXPLORE may use quick one-off local notebooks/scripts
+and public data only unless a future explicit owner-approved task authorizes
+otherwise.
+
+EXPLORE outputs do not become formal evidence by themselves. If an EXPLORE
+result appears interesting, any later formal research must use a separately
+specified validation path on data not used in exploration. A discovered effect
+must not be "validated" on the same data used to find it.
+
+EXPLORE should reduce wasted formal process on empty ideas, not replace the
+formal process when an idea advances.
+
 ## Hypothesis-First Protocol For New Setup Families
 
 Before any new setup family receives a Pre-Cn Decision Gate, design lock, data

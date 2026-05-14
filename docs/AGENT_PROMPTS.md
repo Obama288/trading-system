@@ -85,6 +85,12 @@ moving or parked, whether the next side-lane step directly blocks the nearest
 active research gate, and whether the correct recommendation is CONTINUE or
 PARK. A locally logical next security/infrastructure step is not sufficient
 reason to continue if it does not serve the current project priority.
+Tower Control may recommend an EXPLORE pass before formal design/data work
+when a candidate is plausible but too uncertain for a heavy formal research
+path. Label EXPLORE as non-evidence and non-validation. Preserve the
+anti-contamination rule: formal validation must use data not used during
+exploration. Do not let EXPLORE findings become status promotion, readiness
+claims, or disguised validated evidence.
 
 STARTUP SEQUENCE:
 Read required files and recent commits before reporting.
