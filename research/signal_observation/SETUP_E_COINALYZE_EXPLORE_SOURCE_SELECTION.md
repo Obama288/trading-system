@@ -38,16 +38,27 @@ handling is opened in this task.
 
 ## Proposed Explore Universe
 
-Initial bounded universe:
+Initial bounded universe rule:
 
-- BTC
-- ETH
-- SOL
+- use up to 20 supported Coinalyze perpetual/futures symbols if available;
+- prefer the most liquid broadly relevant perpetual markets supported by
+  Coinalyze;
+- include BTC, ETH, and SOL if supported, but do not make them the whole
+  universe;
+- do not silently substitute unrelated or illiquid instruments merely to fill a
+  quota.
 
-Exact Coinalyze supported symbol identifiers must be verified during the later
-retrieval task.
+Reason for revision:
 
-No symbol expansion beyond this initial trio is authorized by this note.
+- the project learned that 3-symbol research is too narrow for family-level
+  assessment;
+- Coinalyze was selected partly because it offers a broader multi-asset path;
+- a richer Setup E EXPLORE should use that advantage rather than repeating the
+  earlier narrow-universe limitation.
+
+The exact final asset list is not locked by this note. The later retrieval task
+must resolve the actual supported Coinalyze symbol identifiers and report the
+final selected universe.
 
 ## Proposed Interval Decision
 
@@ -83,8 +94,9 @@ Locked window rule:
 
 At a coarse pre-validation level, the later EXPLORE should ask:
 
-After unusually large long- or short-liquidation 4h intervals across BTC, ETH,
-and SOL, do forward returns over fixed short horizons show:
+After unusually large long- or short-liquidation 4h intervals across the
+bounded supported liquid-perpetual universe, do forward returns over fixed
+short horizons show:
 
 - continuation-like behavior;
 - reversal-like behavior;
