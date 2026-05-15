@@ -231,11 +231,18 @@ remote refs.
   Triage result: `Advance to hypothesis note`.
 - Setup E hypothesis note:
   `research/signal_observation/SETUP_E_HYPOTHESIS.md`.
-  Setup E remains hypothesis-note only; no Pre-E1 gate, EXPLORE run, data work,
-  implementation, or readiness promotion is authorized.
-- Next research decision: authorize a bounded non-evidence Setup E EXPLORE pass
-  for Liquidation Cascades, or continue another explicitly owner-chosen
-  research path.
+  Setup E remains hypothesis-note only; no Pre-E1 gate, formal validation,
+  implementation, backtest, data acquisition, or readiness promotion is
+  authorized.
+- Off-repo Setup E BTC daily coarse EXPLORE completed as non-evidence /
+  non-validation using the verified free GitHub BTC daily liquidation JSON path
+  plus public BTC daily OHLCV. Result label: `EXPLORE_WEAK`. Interpretation:
+  weak coarse BTC daily forward-return structure; no formal Setup E status
+  promotion; does not disprove the short-horizon liquidation-cascade hypothesis
+  because the dataset is BTC-only and daily aggregate.
+- Next Setup E decision: run a bounded richer-source survey for free /
+  low-friction multi-asset, finer-granularity liquidation data, or park Setup E
+  if no acceptable richer source path exists.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
