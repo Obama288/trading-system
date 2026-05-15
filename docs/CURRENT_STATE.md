@@ -240,9 +240,28 @@ remote refs.
   weak coarse BTC daily forward-return structure; no formal Setup E status
   promotion; does not disprove the short-horizon liquidation-cascade hypothesis
   because the dataset is BTC-only and daily aggregate.
-- Next Setup E decision: run a bounded richer-source survey for free /
-  low-friction multi-asset, finer-granularity liquidation data, or park Setup E
-  if no acceptable richer source path exists.
+- Off-repo Setup E Coinalyze liquidation EXPLORE completed as non-evidence /
+  non-validation using Coinalyze liquidation-history API, 20 selected liquid
+  perpetual/futures symbols, 4h interval, combined comparable window
+  2025-09-06T00:00:00Z to 2026-05-15T12:00:00Z. Orientation label:
+  `EXPLORE_MIXED`.
+- Setup E Coinalyze interpretation: generic all-elevated liquidation bucket was
+  not compelling. Directional split was more interpretable and reversal-like:
+  long-dominant liquidation intervals showed weaker recovery-like tendency;
+  short-dominant liquidation intervals showed clearer negative follow-through /
+  exhaustion-reversal-like structure at +12h and +24h. Exploratory only; not
+  evidence and not a formal Setup E verdict.
+- Independent interpretation recommendation:
+  `GO_TO_PRE_E1_DECISION_GATE_WITH_REVERSAL_FOCUS`. Next Setup E framing should
+  narrow from generic liquidation cascades to `post-liquidation exhaustion
+  reversal`. Do not do further exploratory tuning on the same Coinalyze dataset
+  before Pre-E1 is written, to avoid branch-selection bias.
+- Any future Pre-E1 gate should address long-dominant and short-dominant as
+  separate sub-hypotheses; volatility/regime confound control; gap-handling
+  pre-specification; and held-out / out-of-window validation before any evidence
+  claim.
+- This state sync authorizes no formal Setup E gate, implementation, backtest,
+  evidence label, readiness promotion, or further Coinalyze EXPLORE.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
 - All work remains research-only unless the Human Owner explicitly authorizes
