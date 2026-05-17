@@ -9,7 +9,8 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Stage 54-SQ is research-only signal-quality observation.
 - Data source: local/public OHLCV artifacts only unless a future owner-approved
   task explicitly authorizes download.
-- Active family: none. Setup C / TSMOM volatility-targeted is parked from active
+- Active family: Setup E / Post-Liquidation Exhaustion Reversal source-access
+  decision. Setup C / TSMOM volatility-targeted is parked from active
   progression.
 - Current status: Setup C was **PASS_CANDIDATE research-only** through C7
   evidence; after DR1 Binance recent rerun LOW it remains historical research
@@ -282,11 +283,9 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 - Liquidation Cascades triage created:
   `research/signal_observation/LIQUIDATION_CASCADES_TRIAGE.md`.
   Triage result: `Advance to hypothesis note`.
+- Setup E branch is now `Post-Liquidation Exhaustion Reversal`.
 - Setup E hypothesis note created:
   `research/signal_observation/SETUP_E_HYPOTHESIS.md`.
-  Setup E remains hypothesis-note only; no Pre-E1 gate, formal validation,
-  implementation, backtest, data acquisition, or readiness promotion is
-  authorized.
 - Off-repo Setup E BTC daily coarse EXPLORE completed as non-evidence /
   non-validation using the verified free GitHub BTC daily liquidation JSON path
   plus public BTC daily OHLCV. Result label: `EXPLORE_WEAK`. Interpretation:
@@ -304,17 +303,43 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   short-dominant liquidation intervals showed clearer negative follow-through /
   exhaustion-reversal-like structure at +12h and +24h. Exploratory only; not
   evidence and not a formal Setup E verdict.
-- Independent interpretation recommendation:
-  `GO_TO_PRE_E1_DECISION_GATE_WITH_REVERSAL_FOCUS`. Next Setup E framing should
-  narrow from generic liquidation cascades to `post-liquidation exhaustion
-  reversal`. Do not do further exploratory tuning on the same Coinalyze dataset
-  before Pre-E1 is written, to avoid branch-selection bias.
-- Any future Pre-E1 gate should address long-dominant and short-dominant as
-  separate sub-hypotheses; volatility/regime confound control; gap-handling
-  pre-specification; and held-out / out-of-window validation before any evidence
-  claim.
-- This state sync authorizes no formal Setup E gate, implementation, backtest,
-  evidence label, readiness promotion, or further Coinalyze EXPLORE.
+- Pre-E1 decision gate exists:
+  `docs/PRE_E1_DECISION_GATE.md`.
+- E1 reversal cheap-falsification design lock exists:
+  `docs/STAGE_54_SQ_E1_REVERSAL_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
+  Independent review verdict: `PASS WITH NOTES`. The reviewed design lock is
+  accepted as the current formal research specification, but E1 implementation
+  is blocked by held-out-window availability.
+- E1 held-out-window availability decision:
+  `docs/STAGE_54_SQ_E1_HELD_OUT_WINDOW_AVAILABILITY_DECISION.md`.
+  The Coinalyze 20-symbol 4h EXPLORE used the full available contiguous window
+  (`2025-09-06T00:00:00Z` to `2026-05-15T12:00:00Z`), so the selected
+  Coinalyze 4h path currently lacks an immediately usable non-overlapping
+  formal held-out historical window. Post-hoc internal splitting of the already
+  inspected window is rejected.
+- E1 alternative held-out source/window decision:
+  `docs/STAGE_54_SQ_E1_ALTERNATIVE_HELD_OUT_SOURCE_WINDOW_DECISION.md`.
+  Outcome: `PROCEED_TO_NARROW_ALTERNATIVE_SOURCE_ACCESS_DEPTH_CHECK`.
+  Preferred candidate: `The Graph / Hyperliquid liquidation event path`.
+- E1 Hyperliquid / The Graph access-depth verification:
+  `docs/STAGE_54_SQ_E1_HYPERLIQUID_THEGRAPH_ACCESS_DEPTH_VERIFICATION.md`.
+  Outcome: `ACCESS_DEPTH_PATH_PLAUSIBLE_REQUIRES_TOKEN_LEVEL_CHECK`.
+  Unresolved: bearer-token access is required; historical depth is not yet
+  confirmed; BTC is plausible but ETH/SOL or equivalent core-perp coverage is
+  not fully confirmed; a non-overlapping held-out window is not yet proven.
+- Independent process assessment recommended:
+  `AUTHORIZE_TOKEN_LEVEL_ACCESS_DEPTH_CHECK_NOW`. Independent governance
+  assessment recommended:
+  `ALLOW_PRE_AUTHORIZED_EXECUTION_BLOCKS_AFTER_APPROVED_REVIEWED_DESIGN`.
+  These are process recommendations, not readiness or research-result changes.
+- Process docs now include the Held-Out Window Preservation Requirement and
+  Pre-Authorized Execution Blocks rule.
+- Next owner-level action: decide / authorize the bounded The Graph /
+  Hyperliquid token-level access-depth check and provide the token if
+  proceeding. The check would verify access, historical depth, coin coverage,
+  and whether a clean non-overlapping held-out path exists. It does not
+  authorize E1 implementation, source pivot, design-lock revision, formal
+  validation, evidence claims, or readiness promotion.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).
