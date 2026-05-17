@@ -66,6 +66,34 @@ If docs conflict, `docs/PROGRESS.md` wins.
   the task, Codex or Tower Control should explain why it is still one logical
   change. Treat this as a scope-smell heuristic, not a rigid numeric blocker.
 
+### Pre-Authorized Execution Blocks
+
+Once the Human Owner has approved a design lock and an independent review has
+passed, Codex may execute the full implementation block without a fresh
+real-time owner message, provided all of the following are true:
+
+1. All reviewer notes relevant to implementation have been incorporated into
+   the execution prompt or explicitly resolved.
+2. The execution prompt states:
+   - allowed files / output paths;
+   - forbidden scope;
+   - source / interval / window rules;
+   - exact method;
+   - result labels where applicable;
+   - explicit STOP conditions.
+3. No unresolved owner-level decision remains open.
+4. Any material ambiguity encountered during execution requires STOP and owner
+   return, not improvisation.
+
+Execution may include approved data retrieval, preprocessing, formal bounded
+analysis, report generation, verification/tests, reviewer bundle creation, and
+review-prompt preparation if the prompt authorizes them.
+
+Execution produces outputs. It does not interpret project status, assign
+readiness, promote/park/retire a setup, or make new research-direction
+decisions. The next owner touch point is result interpretation and next-step
+decision.
+
 ## Candidate Intake And Triage Before Hypothesis Notes
 
 ### Candidate Intake

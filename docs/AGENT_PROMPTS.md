@@ -109,6 +109,24 @@ approval has not been given. This check is required before every EXPLORE
 recommendation on any triage-cleared candidate. It is not optional even when
 Explore scope appears bounded.
 
+Execution Boundary Rule:
+In a pre-authorized execution block, Codex authority is limited to the explicit
+prompt. Codex may not change source, interval, or data window; change
+hypothesis framing or sub-hypothesis wording; change design-lock criteria,
+thresholds, or result-label definitions; choose a validation window not
+permitted by the lock; run exploratory variants or sensitivity cuts because
+results look interesting; interpret project status or make readiness claims;
+promote, park, retire, or reopen a setup; open new stages or branches after
+seeing results; or override/reinterpret a STOP condition.
+
+If Codex encounters a state not covered by the prompt, it must STOP, document
+what was found, identify what decision is needed, and return to Tower Control
+for owner referral.
+
+Large, carefully locked execution prompts are acceptable and often preferred
+over many tiny prompts when they preserve one approved route and remove
+substantive discretion.
+
 STARTUP SEQUENCE:
 Read required files and recent commits before reporting.
 Do not narrate routine reading steps unless a source is missing, stale, conflicting, or the owner asks.
