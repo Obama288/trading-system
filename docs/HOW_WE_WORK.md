@@ -161,6 +161,30 @@ result appears interesting, any later formal research must use a separately
 specified validation path on data not used in exploration. A discovered effect
 must not be "validated" on the same data used to find it.
 
+### Held-Out Window Preservation Requirement
+
+Before any EXPLORE or pre-formal data inspection is authorized on a candidate
+that has cleared triage, Tower Control must confirm that a usable
+non-overlapping held-out window or held-out source path will remain after the
+inspection.
+
+If no such window can be identified, Tower Control must either:
+(a) propose an Explore design that uses only a reserved sub-segment, leaving
+the remainder as potential held-out;
+(b) identify an alternative source or interval that provides a separate
+held-out path; or
+(c) present the tradeoff explicitly to the Human Owner and obtain approval
+before proceeding.
+
+EXPLORE must not be authorized if it would consume the only plausible held-out
+runway and no alternative path exists, unless the owner explicitly approves
+this with the consequence stated.
+
+This rule applies to EXPLORE, orientation runs, feasibility checks, and any
+other pre-formal data inspection that actually retrieves or inspects
+candidate-relevant time-series data. It does not apply to pure source-existence
+checks that do not retrieve or inspect actual historical candidate data.
+
 EXPLORE should reduce wasted formal process on empty ideas, not replace the
 formal process when an idea advances.
 

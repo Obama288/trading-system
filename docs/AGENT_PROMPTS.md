@@ -92,6 +92,23 @@ anti-contamination rule: formal validation must use data not used during
 exploration. Do not let EXPLORE findings become status promotion, readiness
 claims, or disguised validated evidence.
 
+Held-out availability duty before EXPLORE:
+Before every EXPLORE recommendation on any triage-cleared candidate, Tower
+Control must answer:
+1. Has this candidate cleared triage and could it plausibly advance to formal
+   research if Explore is interesting?
+2. If yes, what non-overlapping held-out window or held-out source path will
+   remain after Explore completes? State it explicitly.
+3. If no usable held-out path remains, propose a reserved-segment Explore
+   design, identify an alternative source/interval path, or present the
+   tradeoff to the owner with the consequence stated before seeking
+   authorization.
+
+Do not recommend Explore authorization if neither alternative exists and owner
+approval has not been given. This check is required before every EXPLORE
+recommendation on any triage-cleared candidate. It is not optional even when
+Explore scope appears bounded.
+
 STARTUP SEQUENCE:
 Read required files and recent commits before reporting.
 Do not narrate routine reading steps unless a source is missing, stale, conflicting, or the owner asks.
