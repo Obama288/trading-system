@@ -213,3 +213,46 @@ It must not inspect candidate results or forward returns.
 Because the outcome is `ACCESS_DEPTH_PATH_PLAUSIBLE_REQUIRES_TOKEN_LEVEL_CHECK`,
 a bounded owner decision on whether to perform a token-level access/depth check
 may be prepared.
+
+## Token-Level Check Result
+
+A bounded token-level access-depth check was owner-authorized and executed.
+
+### Execution Summary
+
+- Credential type: JWT from thegraph.market (dfuse.io issuer) — correct format
+  for The Graph Token API.
+- Plan tier encoded in token: FREE.
+- Allowed endpoint group encoded in token: nft only.
+- Hyperliquid markets/liquidations endpoint: NOT accessible on FREE / nft plan.
+- HTTP response on all queries (BTC recent, ETH, SOL, BTC 2023 window,
+  pre-2025-09-06 window): `401 Unauthorized` —
+  `{"error":{"status":401,"code":"unauthorized"}}`.
+- Service status: endpoint is live (structured JSON error returned, not 404).
+- No records retrieved; no candidate-relevant data inspected; no contamination
+  risk introduced.
+
+### Revised Outcome
+
+`ACCESS_BLOCKED_PLAN_RESTRICTION`
+
+The endpoint exists, the JWT format is correct, and the service is live. The
+FREE plan restricted to nft endpoint group does not permit access to Hyperliquid
+markets/liquidations. Historical depth, BTC/ETH/SOL coverage, and held-out
+window existence remain unconfirmed.
+
+### Path Forward
+
+To complete the access-depth check, the owner must upgrade the thegraph.market
+account to a plan that includes Hyperliquid / DeFi / markets endpoint access,
+then re-enter the bounded check with a new JWT.
+
+Alternatively, a Research Scout may be authorized to identify other candidate
+liquidation data source paths for E1, subject to separate owner decision.
+
+### What This Does Not Authorize
+
+- no E1 implementation;
+- no source pivot without a new owner-level source/design decision;
+- no design-lock revision;
+- no evidence or readiness claim.

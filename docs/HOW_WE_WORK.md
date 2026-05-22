@@ -216,6 +216,28 @@ checks that do not retrieve or inspect actual historical candidate data.
 EXPLORE should reduce wasted formal process on empty ideas, not replace the
 formal process when an idea advances.
 
+### Research Integrity Rules
+
+These rules are hard constraints that apply across all EXPLORE, pre-formal, and
+formal research work.
+
+- **Post-hoc splitting:** Splitting an EXPLORE-consumed window post-hoc into a
+  discovery segment and a validation segment is not permitted. Inspection
+  contamination cannot be removed by relabelling.
+- **Public statistics and third-party results:** Published statistics, external
+  research, or third-party signals may support a hypothesis. They do not confirm
+  edge for this project's formal research and must not be cited as internal
+  evidence.
+- **Manual visual review:** Manual review of charts, outputs, or signals is
+  qualitative pre-triage only. It is non-evidence and non-validation. If a
+  visual review may influence candidate specification, threshold choices, or
+  signal framing, explicit Owner authorization is required before it proceeds.
+- **Goalpost movement:** After results are observed, changing timeframe, source,
+  coin universe, or segmentation criteria is goalpost movement. Any post-result
+  specification change requires a new design lock, independent review, and Owner
+  approval. Results from the new specification must not be combined with or
+  compared to results from the original to manufacture a passing finding.
+
 ## Hypothesis-First Protocol For New Setup Families
 
 Before any new setup family receives a Pre-Cn Decision Gate, design lock, data
@@ -334,6 +356,14 @@ Does not self-approve readiness or expand scope.
 Independent reviewer / architecture guardian.
 Challenges assumptions, finds stale docs vs code reality, reviews transaction/source-of-truth boundaries, finds adjacent same-class bugs.
 Does not make final owner decision.
+
+**Research Scout / Data Source Investigator:**
+Searches and evaluates external data-source paths for liquidation, forced-flow,
+funding, open interest, basis, and microstructure data.
+Produces source-quality reports only.
+Does not write code, run validation or backtests, download broad datasets,
+call private exchange endpoints, or approve readiness.
+Outputs are inputs to Tower Control and Human Owner only.
 
 ## No Self-Approval Rule
 

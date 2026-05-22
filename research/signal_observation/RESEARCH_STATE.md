@@ -323,23 +323,16 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   Preferred candidate: `The Graph / Hyperliquid liquidation event path`.
 - E1 Hyperliquid / The Graph access-depth verification:
   `docs/STAGE_54_SQ_E1_HYPERLIQUID_THEGRAPH_ACCESS_DEPTH_VERIFICATION.md`.
-  Outcome: `ACCESS_DEPTH_PATH_PLAUSIBLE_REQUIRES_TOKEN_LEVEL_CHECK`.
-  Unresolved: bearer-token access is required; historical depth is not yet
-  confirmed; BTC is plausible but ETH/SOL or equivalent core-perp coverage is
-  not fully confirmed; a non-overlapping held-out window is not yet proven.
-- Independent process assessment recommended:
-  `AUTHORIZE_TOKEN_LEVEL_ACCESS_DEPTH_CHECK_NOW`. Independent governance
-  assessment recommended:
-  `ALLOW_PRE_AUTHORIZED_EXECUTION_BLOCKS_AFTER_APPROVED_REVIEWED_DESIGN`.
-  These are process recommendations, not readiness or research-result changes.
-- Process docs now include the Held-Out Window Preservation Requirement and
-  Pre-Authorized Execution Blocks rule.
-- Next owner-level action: decide / authorize the bounded The Graph /
-  Hyperliquid token-level access-depth check and provide the token if
-  proceeding. The check would verify access, historical depth, coin coverage,
-  and whether a clean non-overlapping held-out path exists. It does not
-  authorize E1 implementation, source pivot, design-lock revision, formal
-  validation, evidence claims, or readiness promotion.
+  Token-level check performed. JWT format confirmed correct; The Graph Token
+  API endpoint is live. Blocker: FREE plan / nft-only endpoint group does not
+  permit Hyperliquid markets/liquidations endpoint. Outcome:
+  `ACCESS_BLOCKED_PLAN_RESTRICTION`. Historical depth, BTC/ETH/SOL coverage,
+  and held-out window remain unconfirmed. No records retrieved; no
+  contamination risk. No source pivot, design-lock revision, or readiness
+  promotion authorized.
+- Next owner-level action: upgrade thegraph.market account to include
+  Hyperliquid/markets endpoint access and re-enter bounded check, or authorize
+  Research Scout to identify alternative liquidation data source paths.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN-level block on the current
   host).

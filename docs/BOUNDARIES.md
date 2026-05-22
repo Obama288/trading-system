@@ -75,3 +75,30 @@ Before proposing work, classify it as:
 Default: propose only Required or Quality-critical actions. Do not propose
 Useful/Optional work unless it prevents a real near-term risk. Never propose
 Noise.
+
+## Hard Research Boundaries
+
+These rules are hard constraints and apply to all agents and lanes.
+
+- No EXPLORE may begin on a triage-cleared candidate unless a non-overlapping
+  held-out source or path has been confirmed upfront before any data inspection
+  begins. Stating that a held-out path "should exist" or "is plausible" is not
+  sufficient; it must be identified and named.
+- EXPLORE must not consume the only available contiguous window needed for later
+  formal validation. If consuming the full window is unavoidable, Tower Control
+  must present this tradeoff explicitly to the Human Owner and obtain approval
+  before authorizing the EXPLORE.
+- Post-hoc splitting of an EXPLORE-consumed window into discovery and validation
+  segments is rejected.
+- Existing public statistics, published signals, or third-party benchmark results
+  may support or inform a hypothesis; they do not confirm edge for this project.
+- Manual visual review of charts, signals, or output data is qualitative
+  pre-triage only. It is non-evidence and non-validation. If manual review may
+  influence candidate specification, threshold selection, or signal framing,
+  explicit Owner authorization is required before it proceeds.
+- After results are observed, changing the timeframe, source, coin universe, or
+  segmentation criteria is goalpost movement and is not authorized. Any such
+  change after observing results requires a new design lock, independent review,
+  and explicit Owner approval before the new specification may be analyzed.
+  Results from a changed specification must not be compared to or merged with
+  results from the original specification to claim a combined finding.
