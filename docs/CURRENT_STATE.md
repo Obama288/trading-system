@@ -223,14 +223,24 @@ remote refs.
   Gate recommendation: `PROCEED_TO_D1_PUBLIC_DATA_ACQUISITION_DESIGN` because
   repo inspection found no committed reusable D1-ready funding-rate history
   aligned with OHLCV. Owner has accepted this gate outcome.
-- D1 public funding data acquisition design lock created:
+- D1 public funding data acquisition design lock:
   `docs/STAGE_54_SQ_D1_FUNDING_DATA_ACQUISITION_DESIGN_LOCK.md`.
-  Planning only; independent review is next before any acquisition
-  implementation task. Selected candidate: Binance USDT-M public funding REST
-  API, BTCUSDT/ETHUSDT/SOLUSDT, 8h interval, locked window
+  Accepted and committed (`10617b7`). Selected candidate: Binance USDT-M public
+  funding REST API, BTCUSDT/ETHUSDT/SOLUSDT, 8h interval, locked window
   2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z. Reserved future formal
-  validation window: 2024-01-01 onwards. No download, API call, or D1
-  analysis is authorized by this lock.
+  validation window: 2024-01-01 onwards.
+- D1 funding data acquisition completed (`93f4d0f`):
+  `research/signal_observation/setup_d_d1_funding_acquisition/`.
+  Result: `FUNDING_DATA_ACQUIRED`. BTCUSDT and ETHUSDT: quality PASS (2,147 rows
+  each, all 8h intervals, no gaps, window-bounded). SOLUSDT: RETAINED /
+  FLAGGED — `NON_STANDARD_INTERVALS_FOUND` (2,222 rows; 101 sub-8h gaps, 98×2h
+  and 3×4h, clustered 2022-11-09 to 2022-11-18 / FTX collapse period). SOLUSDT
+  variable intervals are a genuine funding-stress marker, not a data defect.
+  SOLUSDT must not be silently normalized, discarded, or mixed into clean 8h
+  carry analysis without an explicit analysis/harness design decision. Full
+  `FUNDING_DATA_PASS` label and D1 analysis design lock remain HOLD pending
+  SOLUSDT interval policy and harness design. Reusable cheap-falsification
+  harness proposal is the next planning topic after this state update.
 - Off-repo Setup D funding EXPLORE completed as non-evidence /
   non-validation; orientation label: `EXPLORE_MIXED`. No formal Setup D status
   promotion occurred.

@@ -276,10 +276,21 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   Gate recommendation: `PROCEED_TO_D1_PUBLIC_DATA_ACQUISITION_DESIGN` because
   repo inspection found no committed reusable D1-ready funding-rate history
   aligned with OHLCV. Owner has accepted this gate outcome.
-- D1 public funding data acquisition design lock created:
+- D1 public funding data acquisition design lock:
   `docs/STAGE_54_SQ_D1_FUNDING_DATA_ACQUISITION_DESIGN_LOCK.md`.
-  Planning only; independent review is next before any bounded acquisition
-  implementation task. No download, API call, or D1 analysis authorized.
+  Accepted and committed (`10617b7`). No download, API call, or D1 analysis
+  authorized by design lock alone.
+- D1 funding data acquisition completed (`93f4d0f`):
+  `research/signal_observation/setup_d_d1_funding_acquisition/`.
+  Result: `FUNDING_DATA_ACQUIRED`. BTCUSDT/ETHUSDT: quality PASS (2,147 rows
+  each, 8h intervals, no gaps). SOLUSDT: RETAINED / FLAGGED —
+  `NON_STANDARD_INTERVALS_FOUND` (2,222 rows; 101 sub-8h gaps, 98×2h and 3×4h,
+  2022-11-09 to 2022-11-18 / FTX collapse period). SOLUSDT variable intervals
+  are a genuine funding-stress marker, not a data defect. Must not be silently
+  normalized, discarded, or mixed into clean 8h carry analysis without an
+  explicit harness design decision. Full `FUNDING_DATA_PASS` and D1 analysis
+  design lock remain HOLD pending SOLUSDT interval policy and harness design.
+  Next planning topic: reusable cheap-falsification harness proposal.
 - Off-repo Setup D funding EXPLORE completed as non-evidence /
   non-validation; orientation label: `EXPLORE_MIXED`. No formal Setup D status
   promotion occurred.
