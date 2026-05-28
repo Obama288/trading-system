@@ -343,3 +343,113 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 
 Deferred useful work is tracked only in the compact Deferred / Watchlist section
 of `docs/CURRENT_STATE.md`; those items are not authorization to implement.
+
+---
+
+## Setup E — Source-Candidate Parking / Status Register
+
+This section parks investigated and partially investigated liquidation data-source
+paths so they do not reappear as active work items. Parked paths must not be
+reopened without new evidence or explicit Owner decision.
+
+Governance note: Research Scout and reviewer reports are inputs only. Tower
+Control must independently verify load-bearing external claims before converting
+them into operational commands. No source pivot, EXPLORE, validation,
+design-lock, readiness, or implementation is authorized by this section.
+
+### 1. The Graph / Hyperliquid
+**Status: HOLD / ACCESS_BLOCKED_PLAN_RESTRICTION**
+Endpoint is live; JWT credential type confirmed correct. FREE / NFT-only plan
+blocks Hyperliquid markets/liquidations endpoint access. No records retrieved;
+no contamination introduced. Reopen only if Owner authorizes paid-plan
+investigation.
+
+### 2. Hydromancer Reservoir
+**Status: PROMISING / BLOCKED ON DATE-RANGE VERIFICATION**
+Schema documentation confirms event-level fills with explicit liquidation fields
+(`is_liquidation`, `liquidation_mark_px`, `liquidation_method`), BTC/ETH/SOL
+perp coverage, and no subscription or private-endpoint requirement. No data
+contents opened. S3 filename listing was not completed: AWS credentials were not
+configured and the AWS path was paused by Owner instruction.
+AWS requester-pays path has now been attempted twice and is parked. Do not retry
+AWS setup or listing without explicit Owner re-authorization.
+Preferred non-invasive path: direct Hydromancer contact (data@hydromancer.xyz)
+to obtain earliest/latest dates and filename/date convention before any
+further access attempt.
+Next possible Owner choices: authorize direct Hydromancer contact, or hold.
+Do not open parquet contents or inspect rows before design-lock.
+
+### 3. Tardis.dev
+**Status: NOT SUITABLE AS PRIMARY TRIGGER / MARKET-DATA CONTEXT ONLY**
+Hyperliquid historical data confirmed from 2024-10-29 (trades, L2 book,
+funding). Event-level liquidation fields or explicit liquidation trigger support
+are not confirmed for Hyperliquid. Without a confirmed liquidation marker,
+Tardis cannot be the primary trigger source for Setup E. It may be useful only
+as secondary market-data context if another source supplies liquidation triggers.
+Requires paid API key for full access.
+
+### 4. Allium
+**Status: UNCLEAR / POSSIBLY PAID**
+Structured on-chain liquidation fields documented (`liquidated_user`,
+`liquidation_mark_px`, `liquidation_method`). Historical depth remains unclear;
+prior references to December 2023 may reflect broader Hyperliquid/bridge history
+rather than confirmed usable liquidation-fill coverage. Access model is unclear
+and likely paid (Snowflake/Databricks datashare). Usable depth requires further
+verification. Not investigated as primary path.
+
+### 5. CoinGlass
+**Status: UNCLEAR / AGGREGATED**
+Hyperliquid listed as supported exchange; liquidation history API endpoints
+exist. Data is interval-aggregated (1m–1w), not event-level. Paid API required
+($29–$699/month). Not primary for event-level Setup E unless Owner explicitly
+relaxes granularity requirement.
+
+### 6. Coinalyze
+**Status: NOT SUITABLE**
+Hyperliquid coverage limited to HYPE token contract (HYPE/USD, HYPE/USDT).
+Does not cover BTC, ETH, or SOL perpetuals on Hyperliquid. Intraday retention
+limited to ~1500–2000 datapoints.
+
+### 7. Amberdata
+**Status: NOT SUITABLE / NOT PRIMARY**
+Hyperliquid futures support confirmed (instruments, OI, trades, OHLCV, order
+book, funding). Liquidation event-level dataset was not listed as available for
+Hyperliquid and was not confirmed. Not investigated further.
+
+### 8. Hyperliquid Native API
+**Status: NOT YET VERIFIED / FREE PRIMARY-CANDIDATE CHECK NEEDED**
+Potentially attractive as a first-party free source. Official docs confirm
+user-level fills endpoints and rate limits, but a confirmed global historical
+liquidation feed for BTC/ETH/SOL perpetuals has not been established. Must
+verify whether any official public endpoint provides: event-level liquidation
+records or liquidation flags, historical depth sufficient for a non-overlapping
+held-out window, BTC/ETH/SOL coverage, and practical backfill without
+credentials or private endpoints. No API call, data download, or depth
+verification has been performed; no contamination introduced. Requires a bounded
+metadata-only access-depth check before any operational or EXPLORE
+authorization.
+
+### 9. Dwellir Hyperliquid Index
+**Status: NEW CANDIDATE / THIRD-PARTY INDEX / VERIFY FREE + DEPTH**
+`liquidationFillsByTime` appears to expose bounded liquidation fills by time via
+a Dwellir-hosted Hyperliquid index. This is not the native Hyperliquid API.
+Requires source-quality verification for: free access and rate limits, data
+depth and earliest available date, BTC/ETH/SOL perpetual coverage, and whether
+a contamination-safe metadata-only check is feasible without retrieving
+historical candidate data. No API call, data download, or depth verification has
+been performed; no contamination introduced.
+
+---
+
+### Register Notes
+
+**Free-path constraint:** Current source search should prioritize free /
+no-paid-subscription paths unless the Owner explicitly relaxes this constraint.
+Requester-pays infrastructure costs, paid API keys, and hosted paid plans must
+be explicitly labeled as paid in this register.
+
+**Governance:** External reviewer and trader review outputs are inputs only.
+Tower Control must independently verify load-bearing source claims against
+primary docs before any operational commands or API calls. No source pivot,
+EXPLORE, validation, design-lock, readiness, or implementation is authorized by
+this register.
