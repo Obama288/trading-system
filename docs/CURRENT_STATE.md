@@ -222,11 +222,18 @@ remote refs.
   `docs/PRE_D1_FUNDING_DATA_PATH_AVAILABILITY_DECISION_GATE.md`.
   Gate recommendation: `PROCEED_TO_D1_PUBLIC_DATA_ACQUISITION_DESIGN` because
   repo inspection found no committed reusable D1-ready funding-rate history
-  aligned with OHLCV. No owner decision on this gate has been made yet.
+  aligned with OHLCV. Owner has accepted this gate outcome.
+- D1 public funding data acquisition design lock created:
+  `docs/STAGE_54_SQ_D1_FUNDING_DATA_ACQUISITION_DESIGN_LOCK.md`.
+  Planning only; independent review is next before any acquisition
+  implementation task. Selected candidate: Binance USDT-M public funding REST
+  API, BTCUSDT/ETHUSDT/SOLUSDT, 8h interval, locked window
+  2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z. Reserved future formal
+  validation window: 2024-01-01 onwards. No download, API call, or D1
+  analysis is authorized by this lock.
 - Off-repo Setup D funding EXPLORE completed as non-evidence /
   non-validation; orientation label: `EXPLORE_MIXED`. No formal Setup D status
-  promotion occurred, and the formal D1 data-path gate still has no owner
-  decision to advance.
+  promotion occurred.
 - Liquidation Cascades triage:
   `research/signal_observation/LIQUIDATION_CASCADES_TRIAGE.md`.
   Triage result: `Advance to hypothesis note`.
