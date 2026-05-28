@@ -290,7 +290,15 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   normalized, discarded, or mixed into clean 8h carry analysis without an
   explicit harness design decision. Full `FUNDING_DATA_PASS` and D1 analysis
   design lock remain HOLD pending SOLUSDT interval policy and harness design.
-  Next planning topic: reusable cheap-falsification harness proposal.
+- Reusable cheap-falsification harness proposal created (PROPOSED; requires
+  independent review and Owner authorization):
+  `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
+  Defines Event-Triggered, Continuous-State, and Cross-Venue Dislocation
+  template families; pre-registration; held-out discipline; multiple-comparisons
+  policy; STRONG_ANOMALY_CANDIDATE escalation; grail/anomaly philosophy; and
+  batch candidate table. D1 funding carry/stress is prototype candidate. D1
+  analysis design lock remains HOLD until SOL interval policy, harness review,
+  and a separate D1 analysis design lock are all authorized.
 - Off-repo Setup D funding EXPLORE completed as non-evidence /
   non-validation; orientation label: `EXPLORE_MIXED`. No formal Setup D status
   promotion occurred.

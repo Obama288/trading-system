@@ -239,8 +239,17 @@ remote refs.
   SOLUSDT must not be silently normalized, discarded, or mixed into clean 8h
   carry analysis without an explicit analysis/harness design decision. Full
   `FUNDING_DATA_PASS` label and D1 analysis design lock remain HOLD pending
-  SOLUSDT interval policy and harness design. Reusable cheap-falsification
-  harness proposal is the next planning topic after this state update.
+  SOLUSDT interval policy and harness design.
+- Reusable cheap-falsification harness proposal created (PROPOSED; requires
+  independent review and Owner authorization before any screening task):
+  `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
+  Defines three template families (Event-Triggered, Continuous-State,
+  Cross-Venue Dislocation), pre-registration and held-out discipline,
+  multiple-comparisons policy, STRONG_ANOMALY_CANDIDATE escalation label,
+  grail/anomaly philosophy, and batch screening model for current backlog
+  candidates. D1 funding carry / stress is the prototype candidate. D1 analysis
+  design lock remains HOLD until SOL interval policy, harness review, and a
+  separate D1 analysis design lock are all authorized.
 - Off-repo Setup D funding EXPLORE completed as non-evidence /
   non-validation; orientation label: `EXPLORE_MIXED`. No formal Setup D status
   promotion occurred.
