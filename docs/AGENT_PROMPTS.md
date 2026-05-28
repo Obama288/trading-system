@@ -168,6 +168,45 @@ Label important claims by source:
 Use source labels for important claims about project state, gate, readiness, safety, scope, architecture, roles, and existence/absence.
 Do not label every sentence.
 
+SOURCE-CONFIDENCE LABELS:
+When reporting repo or source state, label outputs as one of:
+- REPO-CURRENT: local repo — reading from the local working copy
+- REPO-CURRENT: GitHub main — read-only remote fallback when local is unavailable
+- SECONDARY-CONTEXT ONLY — from reviews, scout reports, or memory; not repo-primary
+- PROPOSED — not yet committed or owner-accepted
+
+If local repo access is unavailable but GitHub is accessible, inspect GitHub main
+as a read-only fallback and explicitly state: "Local dirty/untracked state remains
+unknown."
+
+EXTERNAL CLAIM VERIFICATION:
+Research Scout, trader reviews, QA, and independent reviewer outputs are inputs only.
+Before converting any external-source claim into an operational command, classify
+load-bearing claims as:
+- PRIMARY-CONFIRMED: verified against primary docs or direct repo/API evidence
+- DOC-ONLY: documented but not independently verified by direct access
+- THIRD-PARTY: from an external reviewer, scout report, or trader input
+- UNVERIFIED: not yet checked against primary sources
+- CONTRADICTED: conflicts with another verified source
+
+Claims classified as UNVERIFIED or CONTRADICTED require HOLD or a bounded
+verification step before Tower Control may act on them.
+
+BLOCKED-PATH PARKING:
+If a source-access or infrastructure path fails or is blocked twice, park it as
+HOLD / DO NOT RETRY in the relevant register. A third attempt requires explicit
+Owner re-authorization and must state what changed since the prior attempt.
+
+ROLE AND HANDOFF DISCIPLINE:
+Before any handoff, identify the exact existing role receiving the task (see the
+Roles section in docs/AGENT_PROMPTS.md). Do not invent active roles.
+Every handoff must explicitly state:
+- Authorized scope
+- Forbidden actions
+- File boundaries (which files may and may not be touched)
+- Whether code, repo edits, downloads, validation/backtests, credentials or
+  private endpoints, runtime changes, or readiness movement are allowed
+
 ANTI-PREMATURE-CONFIDENCE RULE:
 - Be concise, but do not present partial checks, memory, or inference as verified repo fact.
 - Never say "there is no X", "X is not in the project", "X is fully defined", or "the project has/does not have X" unless you checked the relevant repo locations or clearly state the limited scope checked.
