@@ -1,0 +1,47 @@
+D1 Funding Data Acquisition Report
+===================================
+Result: FUNDING_DATA_ACQUIRED
+Design-lock label: PENDING Tower Control / Owner review of SOLUSDT interval flag
+
+Endpoint: https://fapi.binance.com/fapi/v1/fundingRate
+Window: 2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z
+Symbols: BTCUSDT, ETHUSDT, SOLUSDT
+Private endpoint: No | Credentials: No | Reserved window touched: No
+
+BTCUSDT: PASS
+  rows=2147  dups=0  out_of_window=0
+  first=2022-01-01T00:00:00.006000+00:00
+  last=2023-12-17T08:00:00+00:00
+  interval_flag=OK  (all 8h ± ms jitter)
+  max_gap_h=8.000008  missing_8h=0  monotonic=True
+
+ETHUSDT: PASS
+  rows=2147  dups=0  out_of_window=0
+  first=2022-01-01T00:00:00.006000+00:00
+  last=2023-12-17T08:00:00+00:00
+  interval_flag=OK  (all 8h ± ms jitter)
+  max_gap_h=8.000008  missing_8h=0  monotonic=True
+
+SOLUSDT: FLAGGED — NON_STANDARD_INTERVALS_FOUND
+  rows=2222  dups=0  out_of_window=0  (expected ~2147 at 8h cadence)
+  first=2022-01-01T00:00:00.006000+00:00
+  last=2023-12-17T08:00:00+00:00
+  interval_distribution: 2h=98  4h=3  8h=2120
+  min_gap_h=1.999993  max_gap_h=8.000008  missing_8h=0  monotonic=True
+  non_standard_interval_period: 2022-11-09T16:00:00Z to 2022-11-18T08:00:00Z
+  cluster_note: 101 non-8h gaps concentrated during FTX collapse period;
+    Binance temporarily ran enhanced-frequency (2h/4h) SOL funding.
+    coverage_pass=False (non-standard intervals; data is present but
+    cadence differs from locked expectation; no missing coverage gaps).
+
+INTERVAL FLAG NOTICE (design-lock Assumption 4):
+  SOLUSDT non-standard intervals must be resolved by Tower Control / Owner
+  before D1 analysis proceeds. Options include: accept sub-8h intervals as
+  informative, resample to 8h for D1 alignment, or exclude the flagged period.
+  No D1 analysis may begin until this flag is resolved.
+
+NEXT GATE:
+  Tower Control independent review of this report.
+  Owner decision: FUNDING_DATA_PASS or FUNDING_DATA_FAIL for SOLUSDT flag.
+  If PASS: a separate D1 analysis design lock must be authorized before
+  acquired data is opened for analysis.
