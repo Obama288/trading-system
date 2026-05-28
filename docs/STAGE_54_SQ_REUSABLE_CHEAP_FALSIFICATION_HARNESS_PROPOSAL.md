@@ -60,16 +60,36 @@ response is elevated skepticism and forensic review, not promotion.
 
 ### 2.1 STRONG_ANOMALY_CANDIDATE Label
 
-A screening result that is materially stronger than the null distribution across
-multiple result dimensions — e.g., effect size, consistency across instruments,
-consistency across sub-periods — may be tagged:
+**`STRONG_ANOMALY_CANDIDATE`** is a **protected escalation trigger**, not proof
+of edge. It may be assigned only when **all five** of the following mechanical
+conditions are satisfied. Each condition must be pre-registered before data
+inspection; no condition may be relaxed or reinterpreted after results are seen.
 
-**`STRONG_ANOMALY_CANDIDATE`**
+1. **Effect-size condition:** the observed response is at or above the 95th
+   percentile of the pre-registered null distribution in the favorable direction.
+2. **Consistency condition:** the favorable direction appears in at least 2 of 3
+   pre-registered sub-periods; or, for rare-event candidates, in at least 60% of
+   eligible event buckets.
+3. **Breadth condition:** the favorable direction appears in at least 2 eligible
+   instruments or venues, unless the candidate is explicitly pre-registered as
+   single-instrument only.
+4. **Economic floor condition:** the gross effect exceeds the pre-registered cost
+   floor estimate (see §2.2).
+5. **Forensic sanity condition:** no known leakage, lookahead bias, timestamp
+   misalignment, duplicate-event inflation, reserved-window contamination, or
+   post-hoc threshold/window selection is present.
 
-This label is a **protected escalation trigger**, not proof of edge.
+If the event set is too sparse to satisfy the consistency or breadth conditions,
+`STRONG_ANOMALY_CANDIDATE` cannot be assigned. The candidate may instead receive:
 
-It means: do not proceed to the next stage without a mandatory forensic review
-pass covering at least:
+**`RARE_EVENT_PROMISING / NEEDS_MORE_EVENTS`** — directional skew is present and
+passes the effect-size and economic floor conditions, but event count is
+insufficient to satisfy consistency or breadth. Not proof of edge; requires
+Owner decision on whether additional data or a longer window is justified before
+any escalation.
+
+When all five conditions are met, `STRONG_ANOMALY_CANDIDATE` triggers a mandatory
+forensic review pass covering at least:
 
 - Data leakage (future data accessible at signal time)
 - Lookahead bias in timestamp alignment
@@ -83,6 +103,29 @@ pass covering at least:
 An anomaly that survives forensic review may justify deeper formal investigation.
 An anomaly that does not survive it protects the project from false confidence.
 Either outcome has value.
+
+### 2.2 Cost Floor Definition
+
+Every candidate screening task must pre-register a cost floor estimate before
+data inspection. The cost floor is a rough screening reproducibility floor, not
+a formal execution model.
+
+**Pre-registered cost floor = estimated fees + spread + slippage buffer (in bps)**
+
+- **Fees:** exchange taker fee for the relevant instrument and venue tier.
+- **Spread:** half-spread estimate for the instrument at typical size, based on
+  publicly available order-book context or prior research notes.
+- **Slippage buffer:** a conservative additional allowance for market impact and
+  partial fills; typically 1–3× the spread estimate for liquid perps.
+
+The cost floor figure must be a single scalar in bps committed before screening
+begins. It may not be revised downward after results are seen. Upward revision
+is permitted if a known error in the original estimate is documented.
+
+A result whose gross effect is below the pre-registered cost floor cannot
+receive `EVENT_SCREEN_POSITIVE`, `CARRY_SCREEN_POSITIVE`,
+`STRESS_SCREEN_POSITIVE`, `DISLOCATION_SCREEN_POSITIVE`, or
+`STRONG_ANOMALY_CANDIDATE`, regardless of statistical properties.
 
 ---
 
@@ -127,11 +170,15 @@ trigger = (event_magnitude >= threshold) AND (prior_N_period_cooldown satisfied)
 
 #### Null / Baseline Concept
 
-- Rolling matched-percentile null: randomly drawn timestamps from the same
-  instrument and calendar period, matched to the trigger's percentile rank in
-  the event series, but not classified as triggers.
-- Preserves instrument-specific autocorrelation structure.
-- Alternative: shuffle trigger labels within a rolling window.
+Two options are available. The exact null must be selected in candidate
+pre-registration before data inspection and cannot be changed mid-task (see §4).
+
+- **Option 1 — Rolling matched-percentile null:** randomly drawn timestamps from
+  the same instrument and calendar period, matched to the trigger's percentile
+  rank in the event series, but not classified as triggers. Preserves
+  instrument-specific autocorrelation structure.
+- **Option 2 — Shuffled-label null:** shuffle trigger labels within a rolling
+  window of the same instrument and calendar period.
 
 #### Result Labels
 
@@ -284,6 +331,11 @@ Pre-registration must be committed before the screening task begins. No
 post-hoc threshold or window selection. No post-hoc splitting of an inspected
 window into "exploration" and "validation" sub-segments.
 
+Where a template offers multiple null/baseline options, the exact null
+construction method must be selected and committed in the candidate
+pre-registration record before data inspection begins. The null selection
+cannot be changed mid-task.
+
 ---
 
 ## 5. Discovery / Held-Out Split
@@ -413,8 +465,16 @@ Options:
 - **Exclude the flagged period** — drop 2022-11-09 to 2022-11-18 from SOLUSDT
   analysis entirely; acknowledge the exclusion in the result record.
 
+**Branch asymmetry note:** exclusion of the flagged period is more defensible
+for Branch A (carry / compensation) screening, where the interest is in stable
+8h-cadence carry structure. For Branch B (funding stress / unwind), exclusion
+is likely harmful: the 2022-11-09 to 2022-11-18 period is itself a concentrated
+funding-stress episode and its removal would reduce the event count for the
+precise hypothesis being tested. Branch B pre-registration must explicitly
+address this asymmetry and state a justified choice.
+
 No option may be selected after D1 analysis begins. The choice must be
-pre-registered.
+pre-registered separately for Branch A and Branch B if they differ.
 
 ### 8.3 D1 Analysis Gate
 
