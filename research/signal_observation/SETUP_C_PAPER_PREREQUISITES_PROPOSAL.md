@@ -1,5 +1,7 @@
 # Setup C Paper-Prerequisites Proposal
 
+> **Status: SUPERSEDED** — Setup C paper path superseded by later Setup C parking / DR1 LOW decision state. Not active next work.
+
 Governed by: docs/STAGE_54_SQ_SETUP_C_PAPER_PREREQUISITES_DESIGN_LOCK.md
 
 ## Purpose

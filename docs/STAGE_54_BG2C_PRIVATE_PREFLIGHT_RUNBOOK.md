@@ -1,5 +1,7 @@
 # Stage 54-BG2-C Private Read-Only Preflight Runbook
 
+> **Status: PARKED** — Bitget demo planning not active. Reopen only by explicit Owner decision.
+
 Purpose:
 - Stage 54-BG2-C is docs-only.
 - It designs a future Bitget Demo private read-only preflight.

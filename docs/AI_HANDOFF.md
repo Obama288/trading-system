@@ -1,6 +1,8 @@
-This file is the canonical startup handoff. Do not use docs/AI_HANDOFF_LEGACY.md for current state; it is archive-only.
+This file is ARCHIVED — not the current startup handoff. Current state entry point: docs/CURRENT_STATE.md. Do not use docs/AI_HANDOFF_LEGACY.md; it is also archive-only.
 
 # AI Handoff — Hephaestus
+
+> **Status: ARCHIVED** — Retained for historical context only. Not authoritative for current state, gates, readiness, or next actions. Current state entry point: `docs/CURRENT_STATE.md`.
 
 ## 1. Startup order
 

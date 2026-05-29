@@ -1,5 +1,7 @@
 # Security P0-A Option B Design Lock - Paper Harness / Protected Risk Admission Split
 
+> **Status: PARKED** — Deferred during research throughput focus. Reopen only by explicit Owner decision when paper account authority/security work becomes active.
+
 ## Purpose
 
 This design lock defines the near-term containment direction for P0-A.

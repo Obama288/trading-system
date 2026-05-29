@@ -1,5 +1,7 @@
 # Stage Status
 
+> **Status: ARCHIVED** — Retained for historical context only. Not authoritative for current state, gates, readiness, or next actions. Current state entry point: `docs/CURRENT_STATE.md`.
+
 ## Current summary
 
 - Current stage: Stage 54-BG planning - Bitget Demo primary candidate; Bybit Stage 53 private real testnet path remains blocked

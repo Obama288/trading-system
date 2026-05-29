@@ -28,19 +28,22 @@ Rules:
 
 ## Context Restore Before New Work
 
-Before starting any new stage or new chat continuation, restore context from the
-source-of-truth docs and stage map:
-1. `docs/PROGRESS.md`
-2. `docs/AI_COMMANDS.md`
-3. `docs/HOW_WE_WORK.md`
-4. `docs/AI_HANDOFF.md`
-5. `docs/STAGE_MAP.md`
-6. `docs/PROJECT_ORIGIN.md`
-7. `docs/CONTEXT.md`
-8. Current-stage docs as needed
+Before starting any new stage or new chat continuation, restore context from:
+1. `docs/CURRENT_STATE.md` — current state entry point
+2. `docs/BOUNDARIES.md` — hard constraints
+3. Current-stage design locks and role-specific docs as needed
 
 Do not infer the current stage from memory alone.
-If docs conflict, `docs/PROGRESS.md` wins.
+If docs conflict, `docs/CURRENT_STATE.md` wins for current state;
+`docs/BOUNDARIES.md` wins for hard constraints. Report conflicts to Owner before acting.
+
+The following v1 docs are ARCHIVED historical references only — not active startup requirements:
+- `docs/PROGRESS.md`
+- `docs/AI_COMMANDS.md`
+- `docs/AI_HANDOFF.md`
+- `docs/STAGE_MAP.md`
+- `docs/PROJECT_ORIGIN.md`
+- `docs/CONTEXT.md`
 
 ## Task-Specific Context Discipline
 
@@ -272,7 +275,7 @@ design lock yet.
 
 - No evidence -> no status promotion.
 - Uncommitted code is not project reality until accepted by the Human Owner and recorded in source-of-truth docs.
-- Avoid duplicating `docs/PROGRESS.md` current status across multiple docs; summarize only what the target doc needs.
+- Avoid duplicating `docs/CURRENT_STATE.md` current state across multiple docs; summarize only what the target doc needs.
 
 ## 3-Lane Operating Model
 
@@ -338,7 +341,7 @@ Owns final GO/NO-GO, START/HOLD, stage transitions, risk acceptance, accepting/r
 
 **Tower Control Architect:**
 GPT-based project-control architect.
-Restores context from `docs/PROGRESS.md` first.
+Restores context from `docs/CURRENT_STATE.md` first.
 Keeps stage order and gate discipline.
 Preserves architecture boundaries and source-of-truth rules.
 Prepares scoped prompts for Codex and review prompts for Claude.
@@ -372,7 +375,7 @@ Default flow by lane:
 1. Fast Lane: agent scopes, edits or inspects, verifies scope, reports; Human Owner accepts/rejects if a decision is needed.
 2. Standard Lane: agent plans or proceeds within accepted scope, implements, runs compact QA, reports; Human Owner accepts/rejects or asks for review.
 3. Protected Lane: Human Owner authorizes, agent implements only inside that authorization, mandatory QA and independent review occur where required, Tower Control Architect may structure decision options, Human Owner decides.
-4. PROGRESS.md checkpoint records confirmed project reality when the Human Owner requests a checkpoint or accepts a status change.
+4. Owner decision records and `docs/CURRENT_STATE.md` reflect confirmed project reality when the Human Owner accepts a status change.
 
 ## Readiness Levels
 

@@ -106,7 +106,28 @@ remote refs.
   readiness, or live readiness.
 - Escalation: **HOLD**.
 
-## Next Allowed Work
+## Currently Allowed Next Work
+
+1. **Harness proposal review** (PROPOSED — independent review and Owner authorization required):
+   `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
+   No screening, implementation, or analysis until review passes and Owner authorizes.
+
+2. **Setup D D1 analysis** (HOLD — three conditions unmet):
+   - SOL interval policy decision (variable 2h/4h intervals during FTX stress period).
+   - Harness independent review and Owner authorization.
+   - Separate D1 analysis design lock.
+   Do not run D1 analysis, DR1b, or new data downloads until all three conditions are resolved.
+
+3. **Setup E E1 source decision** (HOLD — Hyperliquid / The Graph access blocked):
+   Free plan does not permit Hyperliquid liquidations endpoint.
+   Owner decision required: upgrade account plan or authorize Research Scout
+   to identify an alternative liquidation data source path.
+
+4. **OKX C7 evidence** (deferred — Cloudflare 1010 blocked from this host):
+   Authorized by cross-venue design lock. Do not retry without Owner confirmation
+   that reachability has changed.
+
+## Research Artifact Index
 
 - Single-venue C7 design lock:
   `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
@@ -132,16 +153,6 @@ remote refs.
   `research/signal_observation/SETUP_C_C8_POST_REVIEW_DECISION.md`.
   Verdict: PASS WITH NOTES; C8 closed; do not open C8b unless owner explicitly
   reopens it with a new decision gate.
-- Next fork: define paper-prerequisites docs-only, without approving paper
-  trading. Not runtime, paper, trading, probe, or live readiness.
-- Setup C paper-prerequisites design lock:
-  `docs/STAGE_54_SQ_SETUP_C_PAPER_PREREQUISITES_DESIGN_LOCK.md`.
-  Next step is independent review; it defines prerequisites only and does not
-  approve paper trading.
-- Setup C paper-prerequisites proposal:
-  `research/signal_observation/SETUP_C_PAPER_PREREQUISITES_PROPOSAL.md`.
-  Next step is independent review; it does not approve paper trading or any
-  readiness promotion.
 - Pre-DR1 Decision Gate:
   `docs/PRE_DR1_DECISION_GATE.md`. Next step is
   independent review / owner decision before any Data Reconnaissance design
@@ -330,8 +341,8 @@ These backlog items are not authorization to implement.
 ## Startup Rule
 
 Routine startup should not require reading full historical docs unless this file
-is missing, stale, or conflicting. If this file conflicts with `docs/PROGRESS.md`
-or latest commits/code, report the conflict before proposing work.
+is missing, stale, or conflicting. If this file conflicts with latest commits/code,
+report the conflict before proposing work.
 
 `docs/PROGRESS.md` and `docs/STAGE_STATUS.md` are historical/deeper context. Use
 them only when `docs/CURRENT_STATE.md` is missing, stale, conflicting with

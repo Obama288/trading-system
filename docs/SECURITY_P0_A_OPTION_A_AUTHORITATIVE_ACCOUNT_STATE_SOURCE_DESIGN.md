@@ -1,5 +1,7 @@
 # Security P0-A Option A Design - Authoritative Account-State Source
 
+> **Status: PARKED** — Deferred during research throughput focus. Reopen only by explicit Owner decision when paper account authority/security work becomes active.
+
 ## Purpose
 
 This document defines the authoritative account-state source model needed to

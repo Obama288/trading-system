@@ -1,5 +1,7 @@
 # Security P0-A Option A Design Lock - A1 + A3 Paper Account Authority Model
 
+> **Status: PARKED** — Deferred during research throughput focus. Reopen only by explicit Owner decision when paper account authority/security work becomes active.
+
 ## Purpose
 
 This design lock records the owner-approved A1 + A3 paper account authority

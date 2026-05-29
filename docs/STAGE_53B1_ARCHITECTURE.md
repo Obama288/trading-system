@@ -1,5 +1,7 @@
 # Stage 53-B1 Architecture Plan
 
+> **Status: HISTORICAL** — Superseded by later Stage 54 research/governance state. Not active next work.
+
 ## 1. Objective
 
 Define the architecture plan for a future Stage 53-B1 implementation slice.

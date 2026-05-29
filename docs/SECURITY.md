@@ -1,5 +1,7 @@
 # Security Runbook
 
+> **Status: PARKED** — Deferred during research throughput focus. Reopen only by explicit Owner decision when paper account authority/security work becomes active.
+
 ## S-6: Network Boundary
 
 ### Principle

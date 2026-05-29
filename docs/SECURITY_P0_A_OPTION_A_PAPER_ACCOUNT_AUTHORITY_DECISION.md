@@ -1,5 +1,7 @@
 # Security P0-A Option A Decision - Paper Account Authority
 
+> **Status: PARKED** — Deferred during research throughput focus. Reopen only by explicit Owner decision when paper account authority/security work becomes active.
+
 ## Purpose
 
 This document frames the owner decision on the paper-lane authority model for

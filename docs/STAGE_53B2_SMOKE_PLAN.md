@@ -1,5 +1,7 @@
 # Stage 53-B2 Real Bybit Read-Only Connectivity Smoke Plan
 
+> **Status: HISTORICAL** — Superseded by later Stage 54 research/governance state. Not active next work.
+
 ## 1. Current State
 
 Stage 53-B1 mocked authenticated read-only foundation is complete and accepted.

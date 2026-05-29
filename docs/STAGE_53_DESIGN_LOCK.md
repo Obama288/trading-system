@@ -1,5 +1,7 @@
 # Stage 53-0 Design Lock
 
+> **Status: HISTORICAL** — Superseded by later Stage 54 research/governance state. Not active next work.
+
 System: Hephaestus trading system
 Date: 2026-04-25
 Status: DRAFT — Sasha review applied 2026-04-25; pending owner input on marked items

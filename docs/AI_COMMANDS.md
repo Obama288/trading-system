@@ -1,5 +1,7 @@
 # AI Hot Commands - Trading System
 
+> **Status: ARCHIVED** — Retained for historical context only. Not authoritative for current state, gates, readiness, or next actions. Current state entry point: `docs/CURRENT_STATE.md`.
+
 These commands work across all AI agents (Claude, Tower Control Architect, Codex).
 Any AI receiving these commands must respond with the relevant context.
 

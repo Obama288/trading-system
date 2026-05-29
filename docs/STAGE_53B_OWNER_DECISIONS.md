@@ -1,5 +1,7 @@
 # Stage 53-B Owner Decisions
 
+> **Status: HISTORICAL** — Superseded by later Stage 54 research/governance state. Not active next work.
+
 ## Status
 
 - Status: ANSWERED / APPROVED

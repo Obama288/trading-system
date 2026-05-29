@@ -1,5 +1,7 @@
 # Stage 54-BG2 Design Lock
 
+> **Status: PARKED** — Bitget demo planning not active. Reopen only by explicit Owner decision.
+
 Purpose:
 - Stage 54-BG2 is a Bitget Demo API design lock only.
 - No implementation is authorized by this document.

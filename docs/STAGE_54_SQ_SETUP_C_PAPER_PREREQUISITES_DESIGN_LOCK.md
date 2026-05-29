@@ -1,5 +1,7 @@
 # Stage 54-SQ Setup C Paper-Prerequisites Design Lock
 
+> **Status: SUPERSEDED** — Setup C paper path superseded by later Setup C parking / DR1 LOW decision state. Not active next work.
+
 ## Purpose
 
 - Define what must be true before Setup C can be considered for a future

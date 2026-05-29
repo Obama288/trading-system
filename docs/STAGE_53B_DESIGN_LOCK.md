@@ -1,6 +1,8 @@
 # Stage 53-B Design Lock
 # Authenticated Bybit Exchange Client Foundation
 
+> **Status: HISTORICAL** — Superseded by later Stage 54 research/governance state. Not active next work.
+
 ## Status
 
 - Stage 53-B design lock: CLOSED

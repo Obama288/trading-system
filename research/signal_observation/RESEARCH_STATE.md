@@ -153,7 +153,23 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
   cross-venue), no C7 PASS — single-venue or cross-venue — promotes
   paper, runtime, trading, probe, or live readiness.
 
-## Next Research Action
+## Current Research Gate
+
+All items below require Owner decision or are on HOLD. No research action is
+currently authorized without Owner approval.
+
+- **Harness proposal** (PROPOSED): independent review and Owner authorization
+  required before any screening or D1 analysis.
+  `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`
+- **Setup D D1 analysis** (HOLD): SOL interval policy decision + harness review
+  + separate D1 analysis design lock all required before any D1 analysis.
+- **Setup E E1 source** (HOLD): Hyperliquid/The Graph free plan blocked.
+  Owner decision: upgrade plan or authorize Research Scout for alternative source.
+  Preferred contact: data@hydromancer.xyz (Hydromancer Reservoir).
+- **OKX C7** (deferred): Cloudflare 1010 block on current host. Do not retry
+  without Owner confirmation of reachability change.
+
+## Research Progression Log
 
 - **C8 direction-call agreement diagnostic review**. The Bitget/Binance
   diagnostic has been implemented and reported; next step is independent

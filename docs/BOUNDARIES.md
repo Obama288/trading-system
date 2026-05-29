@@ -1,7 +1,8 @@
 # Hephaestus - Boundaries
 
-Purpose: compact safety boundary entry point. This file does not replace
-`docs/PROGRESS.md`; it summarizes current hard limits for routine agent startup.
+Purpose: compact safety boundary entry point. Canonical for hard constraints.
+`docs/CURRENT_STATE.md` is the current state entry point.
+`docs/PROGRESS.md` is ARCHIVED historical context; it does not override current state.
 
 ## Source Rules
 
@@ -9,8 +10,25 @@ Purpose: compact safety boundary entry point. This file does not replace
   metadata are primary project sources.
 - Project memory is orientation only.
 - Code beats docs for actual implemented behavior.
-- `docs/PROGRESS.md` wins if status docs conflict.
+- `docs/CURRENT_STATE.md` is the current state entry point for all agents.
+  `docs/BOUNDARIES.md` is canonical for hard constraints.
+  If they conflict, report to Owner before acting.
+- `docs/PROGRESS.md` is ARCHIVED and does not override `docs/CURRENT_STATE.md`.
 - Report conflicts before implementation.
+
+## Document Lifecycle Taxonomy
+
+Every project document carries one of the following statuses. Documents without
+an explicit status must not be assumed current if contradicted by
+`docs/CURRENT_STATE.md`.
+
+- **ACTIVE** — current, authoritative, and in use for the gate it governs.
+- **PARKED** — deliberately deferred; may be reopened by explicit Owner decision.
+- **RETIRED** — approach abandoned; do not reopen without a new design lock.
+- **SUPERSEDED** — replaced by a later decision or track; historical record only.
+- **HISTORICAL** — part of a completed or closed stage; not active next work.
+- **ARCHIVED** — retained for orientation only; not authoritative for current
+  state, gates, readiness, or next actions.
 
 ## Current Safety State
 

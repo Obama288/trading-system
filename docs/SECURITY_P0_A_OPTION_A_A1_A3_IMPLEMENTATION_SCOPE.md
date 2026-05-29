@@ -1,5 +1,7 @@
 # Security P0-A Option A A1+A3 Implementation Scope
 
+> **Status: PARKED** — Deferred during research throughput focus. Reopen only by explicit Owner decision when paper account authority/security work becomes active.
+
 ## Purpose
 
 This document defines the next bounded implementation scope for the accepted

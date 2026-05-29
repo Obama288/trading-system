@@ -1,5 +1,7 @@
 # Hephaestus Context
 
+> **Status: ARCHIVED** — Retained for historical context only. Not authoritative for current state, gates, readiness, or next actions. Current state entry point: `docs/CURRENT_STATE.md`.
+
 ## Compact startup entry points
 
 Routine agent startup should use:

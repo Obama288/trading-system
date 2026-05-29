@@ -1,5 +1,7 @@
 # Security P0-A Decision - Risk Account State Authority
 
+> **Status: PARKED** — Deferred during research throughput focus. Reopen only by explicit Owner decision when paper account authority/security work becomes active.
+
 ## Purpose
 
 This document frames the owner decision for the unresolved P0-A security
