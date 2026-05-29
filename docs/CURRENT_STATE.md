@@ -108,20 +108,23 @@ remote refs.
 
 ## Currently Allowed Next Work
 
-1. **Harness proposal review** (PROPOSED — independent review and Owner authorization required):
+1. **Harness methodology** (AUTHORIZED METHODOLOGY / NO SCREENING AUTHORIZED):
    `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
-   No screening, implementation, or analysis until review passes and Owner authorizes.
+   Authorized for candidate pre-registration and bounded screening task design.
+   No candidate screening task is authorized. Each candidate requires its own
+   pre-registration, data availability confirmation, held-out split, and separate
+   Owner authorization before any screening begins.
 
    Sideways family candidate-map note (PROPOSED / CANDIDATE MAP ONLY):
-   `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`. Sideways family is GO
-   to map; sideways screening remains HOLD until harness methodology is
-   authorized; sideways acquisition/analysis is NO-GO.
+   `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`. Sideways screening
+   remains HOLD — candidate pre-registration design may begin, screening
+   execution is not authorized. Sideways acquisition/analysis is NO-GO.
 
-2. **Setup D D1 analysis** (HOLD — three conditions unmet):
+2. **Setup D D1 analysis** (HOLD — two conditions unmet):
    - SOL interval policy decision (variable 2h/4h intervals during FTX stress period).
-   - Harness independent review and Owner authorization.
+   - Harness methodology authorization: MET (Owner-authorized).
    - Separate D1 analysis design lock.
-   Do not run D1 analysis, DR1b, or new data downloads until all three conditions are resolved.
+   Do not run D1 analysis, DR1b, or new data downloads until all conditions are resolved.
 
 3. **Setup E E1 source decision** (HOLD — Hyperliquid / The Graph access blocked):
    Free plan does not permit Hyperliquid liquidations endpoint.

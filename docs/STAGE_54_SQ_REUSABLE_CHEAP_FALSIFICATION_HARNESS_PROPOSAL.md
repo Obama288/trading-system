@@ -2,12 +2,21 @@
 
 ## Status
 
-PROPOSED. Requires independent review and Owner authorization before reuse in
-any candidate screening task.
+AUTHORIZED METHODOLOGY / NO SCREENING AUTHORIZED.
 
-This document is a planning proposal only. It does not authorize data
-acquisition, EXPLORE, validation, backtesting, implementation, readiness
-promotion, paper/probe/live use, or capital deployment.
+The harness methodology is Owner-authorized for candidate pre-registration and
+future bounded screening task design. No candidate screening task is authorized
+by this status change.
+
+Each candidate still requires:
+- a. Candidate pre-registration record committed before data inspection.
+- b. Source/data availability confirmed and held-out path preserved.
+- c. Discovery/held-out split stated and protected.
+- d. Separate Owner authorization for the bounded screening task.
+
+This document does not authorize data acquisition, EXPLORE, validation,
+backtesting, implementation, readiness promotion, paper/probe/live use,
+or capital deployment.
 
 ---
 

@@ -155,18 +155,22 @@ here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 
 ## Current Research Gate
 
-All items below require Owner decision or are on HOLD. No research action is
-currently authorized without Owner approval.
+Harness methodology is Owner-authorized for candidate pre-registration and
+bounded screening task design. No candidate screening is authorized without
+its own pre-registration and separate Owner authorization.
 
-- **Harness proposal** (PROPOSED): independent review and Owner authorization
-  required before any screening or D1 analysis.
+- **Harness methodology** (AUTHORIZED METHODOLOGY / NO SCREENING AUTHORIZED):
+  authorized for pre-registration and screening task design; no candidate
+  screening authorized. Each candidate requires pre-registration, data
+  confirmation, held-out split, and separate Owner authorization.
   `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`
-- **Sideways family note** (PROPOSED / CANDIDATE MAP ONLY): sideways family is
-  GO to map; sideways screening remains HOLD until harness methodology is
-  authorized; sideways acquisition/analysis is NO-GO.
+- **Sideways family note** (PROPOSED / CANDIDATE MAP ONLY): sideways screening
+  remains HOLD — candidate pre-registration design may begin, screening
+  execution is not authorized. Sideways acquisition/analysis is NO-GO.
   `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`
-- **Setup D D1 analysis** (HOLD): SOL interval policy decision + harness review
-  + separate D1 analysis design lock all required before any D1 analysis.
+- **Setup D D1 analysis** (HOLD — two conditions unmet): SOL interval policy
+  decision + separate D1 analysis design lock required. Harness authorization:
+  MET. Do not run D1 analysis until all conditions resolved.
 - **Setup E E1 source** (HOLD): Hyperliquid/The Graph free plan blocked.
   Owner decision: upgrade plan or authorize Research Scout for alternative source.
   Preferred contact: data@hydromancer.xyz (Hydromancer Reservoir).
