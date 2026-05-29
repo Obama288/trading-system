@@ -161,6 +161,10 @@ currently authorized without Owner approval.
 - **Harness proposal** (PROPOSED): independent review and Owner authorization
   required before any screening or D1 analysis.
   `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`
+- **Sideways family note** (PROPOSED / CANDIDATE MAP ONLY): sideways family is
+  GO to map; sideways screening remains HOLD until harness methodology is
+  authorized; sideways acquisition/analysis is NO-GO.
+  `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`
 - **Setup D D1 analysis** (HOLD): SOL interval policy decision + harness review
   + separate D1 analysis design lock all required before any D1 analysis.
 - **Setup E E1 source** (HOLD): Hyperliquid/The Graph free plan blocked.
@@ -315,6 +319,13 @@ currently authorized without Owner approval.
   batch candidate table. D1 funding carry/stress is prototype candidate. D1
   analysis design lock remains HOLD until SOL interval policy, harness review,
   and a separate D1 analysis design lock are all authorized.
+- Sideways family candidate-map note created:
+  `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`. Status: PROPOSED /
+  CANDIDATE MAP ONLY. It maps funding normalization, basis/cash-and-carry,
+  cross-asset spread mean reversion, volatility carry, OI divergence, false
+  breakout re-entry, and microstructure mean reversion to existing proposed
+  harness families. It authorizes no screening, acquisition, analysis, EXPLORE,
+  validation, implementation, readiness, or new stage.
 - Off-repo Setup D funding EXPLORE completed as non-evidence /
   non-validation; orientation label: `EXPLORE_MIXED`. No formal Setup D status
   promotion occurred.

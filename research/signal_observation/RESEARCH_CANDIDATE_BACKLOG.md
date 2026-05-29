@@ -148,6 +148,69 @@ A mechanism-first hypothesis note may be created for this candidate:
 - Status:
   triage-ready
 
+## Sideways Candidate Map Addendum
+
+These entries are triage-ready / candidate-map only. They do not authorize
+screening, acquisition, analysis, EXPLORE, validation, implementation, or
+readiness. See `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`.
+
+### Funding Normalization
+
+- Branch:
+  Sideways Carry / Normalization
+- Mechanism:
+  In statistically sideways regimes, displaced perpetual funding may normalize
+  as crowded leverage pressure decays; this is funding/positioning
+  normalization, not naive range trading.
+- Counterparty:
+  Leveraged directional traders paying funding and crowded participants holding
+  exposure through funding resets.
+- Data/source feasibility:
+  Already-acquired D1 funding data is a possible future input, but D1 analysis
+  remains HOLD; SOLUSDT variable intervals remain retained/flagged.
+- Harness template:
+  Continuous-State.
+- Status:
+  triage-ready / candidate-map only
+
+### Basis / Cash-and-Carry
+
+- Branch:
+  Sideways Carry / Normalization or Cross-Venue Dislocation
+- Mechanism:
+  Spot-perpetual or spot-futures dislocations may normalize when financing
+  demand, leverage pressure, or arbitrage imbalance mean-reverts in sideways
+  regimes.
+- Counterparty:
+  Leveraged directional traders paying for synthetic exposure and/or
+  participants slow to arbitrage spot-versus-derivative dislocations.
+- Data/source feasibility:
+  Requires spot prices, derivative prices, derived basis or spread series, and
+  OHLCV regime context; source feasibility is not authorized by this entry.
+- Harness template:
+  Continuous-State or Cross-Venue Dislocation.
+- Status:
+  triage-ready / candidate-map only
+
+### Cross-Asset Spread Mean Reversion BTC/ETH/SOL
+
+- Branch:
+  Sideways Relative-Value / Range Behavior
+- Mechanism:
+  Relative-value spreads among BTC, ETH, and SOL may normalize during sideways
+  regimes when idiosyncratic displacement is not supported by broader market
+  direction.
+- Counterparty:
+  Crowded single-asset allocators, relative-value laggards, or hedgers paying to
+  rebalance under flat index conditions.
+- Data/source feasibility:
+  BTC/ETH/SOL OHLCV and derived spread or ratio series may be plausible future
+  inputs, but no spread construction or analysis is authorized.
+- Harness template:
+  Continuous-State.
+- Status:
+  triage-ready / candidate-map only
+
 ## Candidate: Options Expiry / Dealer Hedging Pressure
 
 - Candidate:

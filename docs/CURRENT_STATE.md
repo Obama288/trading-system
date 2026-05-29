@@ -112,6 +112,11 @@ remote refs.
    `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
    No screening, implementation, or analysis until review passes and Owner authorizes.
 
+   Sideways family candidate-map note (PROPOSED / CANDIDATE MAP ONLY):
+   `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`. Sideways family is GO
+   to map; sideways screening remains HOLD until harness methodology is
+   authorized; sideways acquisition/analysis is NO-GO.
+
 2. **Setup D D1 analysis** (HOLD — three conditions unmet):
    - SOL interval policy decision (variable 2h/4h intervals during FTX stress period).
    - Harness independent review and Owner authorization.
@@ -220,6 +225,10 @@ remote refs.
   Funding Carry / Funding Stress = `advanced-to-hypothesis`; Liquidation
   Cascades, Basis / Cash-and-Carry Dislocation, and Options Expiry / Dealer
   Hedging Pressure = `triage-ready`.
+- Sideways family candidate-map note:
+  `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`. PROPOSED /
+  CANDIDATE MAP ONLY; no screening, acquisition, analysis, EXPLORE,
+  validation, implementation, readiness, or new stage authorized.
 - Signal idea generator:
   `research/signal_observation/SIGNAL_IDEA_GENERATOR.md`.
 - Setup D hypothesis note:

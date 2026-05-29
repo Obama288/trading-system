@@ -14,6 +14,10 @@ validation.
 - Who pays for leverage or convenience?
 - Where is there predictable forced behavior?
 - Where is there structural information asymmetry?
+- In statistically sideways regimes, what cashflow, positioning, microstructure,
+  or relative-value pressure could normalize without relying on naive
+  "buy bottom / sell top" range trading?
+- What regime-break risk would invalidate the sideways state?
 
 ## When To Use
 
@@ -66,3 +70,17 @@ Entry shape:
 - Distinctness: options / hedging-flow family distinct from TSMOM, funding, and liquidation flow.
 - Explore question: do expiry windows show crude underlying response or pinning behavior worth formalizing?
 - Status: promoted
+
+### Sideways Candidate Prompt
+
+- Mechanism: require a cashflow, positioning, microstructure, or relative-value
+  normalization pressure; naive range trading is not enough.
+- Potential payer: identify who pays, gets crowded, must rebalance, or is forced
+  to unwind inside a statistically sideways regime.
+- Data: describe regime confirmation, flow/positioning confirmation, and
+  regime-break risk before naming any source.
+- Distinctness: map to Sideways Carry / Normalization or Sideways
+  Relative-Value / Range Behavior.
+- Explore question: candidate-map question only; do not generate or execute a
+  screening, EXPLORE, acquisition, validation, or analysis task from this prompt.
+- Status: prompt / candidate-map only
