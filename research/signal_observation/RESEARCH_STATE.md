@@ -168,6 +168,11 @@ its own pre-registration and separate Owner authorization.
   remains HOLD — candidate pre-registration design may begin, screening
   execution is not authorized. Sideways acquisition/analysis is NO-GO.
   `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`
+- **Funding Normalization pre-registration** (PRE-REGISTRATION DESIGN / NO
+  SCREENING AUTHORIZED): `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
+  Continuous-State harness; BTC/ETH core (PASS); SOL flagged (handling option
+  required). State definition thresholds not locked. Cost floor: 9 bps.
+  Next gate: Owner selects A/B/C/D.
 - **Setup D D1 analysis** (HOLD — two conditions unmet): SOL interval policy
   decision + separate D1 analysis design lock required. Harness authorization:
   MET. Do not run D1 analysis until all conditions resolved.
