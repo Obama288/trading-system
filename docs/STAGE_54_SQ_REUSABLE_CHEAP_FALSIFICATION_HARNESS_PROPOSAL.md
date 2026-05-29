@@ -100,6 +100,12 @@ forensic review pass covering at least:
 - Regime one-offs (does the result concentrate in one or two episodes?)
 - Survivorship, listing, and delisting effects
 
+Forensic review for a `STRONG_ANOMALY_CANDIDATE` must be performed by an
+agent/reviewer who did not run the screening and did not choose the candidate
+pre-registration. The screener may provide artifacts, but cannot self-clear the
+forensic review. Forensic review output is input only; Owner decision is
+required for escalation.
+
 An anomaly that survives forensic review may justify deeper formal investigation.
 An anomaly that does not survive it protects the project from false confidence.
 Either outcome has value.
@@ -112,15 +118,29 @@ a formal execution model.
 
 **Pre-registered cost floor = estimated fees + spread + slippage buffer (in bps)**
 
+The cost floor formula is locked at the harness family level and referenced by
+each candidate pre-registration. It is a conservative screening reproducibility
+floor, not a formal execution model.
+
 - **Fees:** exchange taker fee for the relevant instrument and venue tier.
 - **Spread:** half-spread estimate for the instrument at typical size, based on
   publicly available order-book context or prior research notes.
 - **Slippage buffer:** a conservative additional allowance for market impact and
   partial fills; typically 1–3× the spread estimate for liquid perps.
 
+Default family-level floors are: Event-Triggered, 14 bps round-trip, equal to
+estimated fees plus spread plus slippage buffer, unless a more conservative
+value is pre-registered; Continuous-State, 9 bps round-trip, equal to estimated
+fees plus spread plus slippage buffer, unless a more conservative value is
+pre-registered; Cross-Venue Dislocation, venue A fees plus venue B fees plus
+two spreads plus transfer/borrow/slippage buffer where applicable, with no
+fixed default if venue mechanics are unresolved.
+
 The cost floor figure must be a single scalar in bps committed before screening
 begins. It may not be revised downward after results are seen. Upward revision
 is permitted if a known error in the original estimate is documented.
+Candidate-level floors may be more conservative than the family-level floor,
+but cannot be revised downward after data inspection.
 
 A result whose gross effect is below the pre-registered cost floor cannot
 receive `EVENT_SCREEN_POSITIVE`, `CARRY_SCREEN_POSITIVE`,
@@ -315,6 +335,7 @@ inspection. The record must lock:
 | Field | Content |
 |---|---|
 | Hypothesis | Mechanism statement; why the effect might exist |
+| Hypothesis prior sources | Internal repo docs or reviews that motivated the hypothesis; external publications, dashboards, vendor docs, community claims, or trader priors; whether any prior came from data already inspected by the project |
 | Signal family | Event-Triggered / Continuous-State / Cross-Venue |
 | Harness template | Which Family A / B / C template is being applied |
 | Trigger / state definition | Exact threshold, percentile, or logic |
@@ -326,6 +347,11 @@ inspection. The record must lock:
 | Null / baseline | Exact null construction method |
 | Result labels | Exact labels and their definitions |
 | What is forbidden | Specific forbidden actions for this candidate |
+
+Undeclared borrowed priors cannot be treated as blind discovery. If a hypothesis
+was motivated by internal prior work, external publications, dashboards, vendor
+docs, community claims, trader priors, or data already inspected by the project,
+that influence must be declared before discovery-slice inspection.
 
 Pre-registration must be committed before the screening task begins. No
 post-hoc threshold or window selection. No post-hoc splitting of an inspected
