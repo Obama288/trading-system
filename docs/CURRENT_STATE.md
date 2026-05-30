@@ -120,13 +120,17 @@ remote refs.
    remains HOLD — candidate pre-registration design may begin, screening
    execution is not authorized. Sideways acquisition/analysis is NO-GO.
 
-   **Funding Normalization pre-registration design** (PRE-REGISTRATION DESIGN /
-   NO SCREENING AUTHORIZED):
-   `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
-   Continuous-State harness; BTC/ETH core pairs (PASS); SOL flagged (handling
-   decision required). State definition thresholds not yet locked. Cost floor:
-   9 bps. Next gate: Owner selects A/B/C/D (screening design lock, OHLCV source
-   feasibility, SOL handling, or hold).
+   **Funding Normalization** (SCREENING DESIGN LOCK / NO SCREENING EXECUTION
+   AUTHORIZED):
+   Pre-registration: `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
+   Design lock: `docs/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
+   BTC/ETH only; SOL excluded/retained-flagged; 70/30 chronological split locked
+   (rows 1–1502 discovery, rows 1503–2147 held-out); funding state: HIGH=≥p80,
+   LOW=≤p20, NEUTRAL=p30–p70, transitions excluded; sideways classifier: 5%
+   net move / 20-period lookback / 3-period min duration; cost floor: 9 bps;
+   primary blocker: OHLCV alignment confirmation required.
+   Next gate: Owner selects A/B/C/D/E (screening GO, review, patch, hold, or
+   OHLCV alignment first).
 
 2. **Setup D D1 analysis** (HOLD — two conditions unmet):
    - SOL interval policy decision (variable 2h/4h intervals during FTX stress period).
