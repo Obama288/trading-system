@@ -222,15 +222,20 @@ return patterns. Any observed pattern is consistent with noise.
 
 **Baseline:**
 Per the Continuous-State Family B harness template, the baseline is the
-neutral-state return distribution — observations where Condition 1 or
-Condition 2 is not met (funding is not displaced, or the regime is not
-sideways). The baseline captures "normal" periods and anchors the comparison.
+neutral-state return distribution. For this candidate, the baseline is
+restricted to observations where **Condition 1 = NEUTRAL AND Condition 2 =
+SIDEWAYS** (regime-matched baseline). Observations where Condition 1 = NEUTRAL
+but Condition 2 = NON_SIDEWAYS are excluded from the baseline and assigned
+NEUTRAL_NON_SIDEWAYS state (see screening design lock §5 and §7). This ensures
+the only differing variable between treatment and baseline is the funding state,
+not the regime mix.
 
 **Falsification criterion:**
 If the active-state distribution (both conditions met) is not statistically
-and economically distinguishable from the neutral-state baseline above the
-cost floor, the hypothesis is FALSIFIED at this screening level. An
-inconclusive result does not advance to implementation or paper readiness.
+and economically distinguishable from the regime-matched neutral-state baseline
+above the 9 bps normalization magnitude floor (see §10), the hypothesis is
+FALSIFIED at this screening level. An inconclusive result does not advance to
+implementation or paper readiness.
 
 ---
 
@@ -247,6 +252,14 @@ floor may be made more conservative if structural rationale (e.g., known
 execution costs for the specific pairs, wider spreads in stress periods)
 supports a higher floor. It cannot be revised downward after any data has been
 opened.
+
+**Application to this screen:** This screen's response variable is Δf(t, t+N) —
+a funding rate change, not a realized trade PnL. The 9 bps figure is applied
+here as a **normalization magnitude floor**: if |Δf| < 9 bps, the normalization
+magnitude is too small to be economically interesting at the screening stage,
+even if directionally consistent. This does not constitute a cost-coverage proof
+or evidence of tradeability. Any future trading or PnL cost model requires
+separate design and validation.
 
 **What the floor covers:**
 - Exchange taker fee (both legs).
@@ -278,14 +291,20 @@ adapted for Funding Normalization:
 | NORMALIZATION_SCREEN_INCONCLUSIVE | Sample too small, regime too rare, or data quality issues (e.g., SOL flagged gaps) prevent a clean determination; does not advance without resolving the underlying issue |
 | STRONG_ANOMALY_CANDIDATE | Result is unusually strong (all five mechanical harness conditions met); triggers mandatory HD3 forensic review by an independent reviewer; screener cannot self-clear |
 
-**STRONG_ANOMALY_CANDIDATE conditions (per harness §2.1):**
+**STRONG_ANOMALY_CANDIDATE conditions (per harness §2.1, applied here):**
 All five must be met to trigger the label:
-1. Raw edge estimate is large relative to the cost floor.
-2. Result is consistent across both discovery pairs (BTC and ETH) without
-   cherry-picking.
-3. Result does not cluster in a single calendar episode.
-4. Signal does not appear to be a data artifact or look-ahead.
-5. Result survives a basic robustness check (alternative threshold or window).
+1. **Effect-size condition:** observed Δf is at or above the 95th percentile of
+   the discovery BASELINE (NEUTRAL AND SIDEWAYS) distribution in the expected
+   direction.
+2. **Consistency condition:** directional sign condition holds in at least 2 of
+   3 pre-registered windows (W1, W3, W8).
+3. **Breadth condition:** directional sign condition holds in both BTCUSDT and
+   ETHUSDT (2 of 2 eligible instruments).
+4. **Economic floor condition:** median |Δf| exceeds 9 bps normalization
+   magnitude floor in the windows satisfying conditions 1–3.
+5. **Forensic sanity condition:** no data artifact, lookahead, timestamp
+   misalignment, held-out contamination, or post-hoc threshold selection is
+   present.
 
 **HD3 reminder:** A STRONG_ANOMALY_CANDIDATE result triggers mandatory
 independent forensic review. The screener cannot self-clear. Output of forensic

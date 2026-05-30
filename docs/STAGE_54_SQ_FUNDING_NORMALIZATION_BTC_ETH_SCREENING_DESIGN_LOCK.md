@@ -209,7 +209,7 @@ before screening is authorized.
 
 | Parameter | Locked value | Rationale |
 |---|---|---|
-| Input price field | Close price of aligned 4H bar at fundingTime | 4H bar close at 00:00, 08:00, 16:00 UTC aligns to 8H funding settlement times |
+| Input price field | Close price of the 4H kline whose interval ends at fundingTime t; Binance OHLCV CSV timestamps are kline open times, so the aligned CSV row has open timestamp t − 4H | Do not use any CSV row with open timestamp ≥ t as price context for observation at fundingTime t |
 | Lookback | 20 consecutive 8H funding periods (prior 20 observations) | ≈6.7 days of funding-interval-aligned price context; one week of carry structure |
 | Flatness threshold | \|close_t − close_{t−20}\| / close_{t−20} < 0.05 | 5% net price change over lookback; conservative flatness criterion for major crypto perps |
 | Minimum duration | 3 consecutive 8H observations where flatness condition holds at t | Prevents brief consolidations during active trends from classifying as sideways |
@@ -225,11 +225,19 @@ before screening is authorized.
 
 **OHLCV dependency:** The candidate OHLCV source is the Binance 4H kline data
 committed at `583e724` (Binance C7 replication artifact), covering BTCUSDT and
-ETHUSDT, Binance USDT-M perpetuals, window 2022-01-01 to 2023-12-17. Cadence
-alignment is structural: 8H funding settlement times (00:00, 08:00, 16:00 UTC)
-are 4H bar close boundaries. This path is consistent in principle but must be
-confirmed against actual committed file timestamps before screening is
-authorized. **If confirmation fails, screening is blocked (see §11).**
+ETHUSDT, Binance USDT-M perpetuals, window 2022-01-01 to 2023-12-17.
+
+**Timestamp convention (locked — timestamp convention patch; see §11):**
+Binance OHLCV CSV timestamps are kline open times. For fundingTime t, the
+aligned 4H OHLCV context row is the kline whose interval ends at t, represented
+in the CSV by open timestamp t − 4H. No CSV row with open timestamp at or after
+t may be used as price context for observation at t. For any lookback ending at
+t, all aligned close values are drawn from CSV rows with open timestamps
+strictly before t.
+
+Cadence alignment: 8H funding settlement times (00:00, 08:00, 16:00 UTC) are
+4H kline close boundaries; a kline opening at t − 4H closes exactly at t.
+**If OHLCV source or coverage confirmation fails, screening is blocked (see §11).**
 
 **Threshold rationale (no data inspection):**
 - A 5% net move threshold over 160H is conservative for BTC and ETH. These
@@ -253,7 +261,8 @@ Each discovery-slice observation row is assigned one combined state:
 |---|---|
 | ACTIVE_HIGH | Condition 1 = HIGH AND Condition 2 = SIDEWAYS |
 | ACTIVE_LOW | Condition 1 = LOW AND Condition 2 = SIDEWAYS |
-| BASELINE | Condition 1 = NEUTRAL (regardless of regime) |
+| BASELINE | Condition 1 = NEUTRAL AND Condition 2 = SIDEWAYS — regime-matched baseline |
+| NEUTRAL_NON_SIDEWAYS | Condition 1 = NEUTRAL AND Condition 2 = NON_SIDEWAYS — excluded from comparisons; reported as observational note |
 | EXCLUDED_TRANSITION | Condition 1 = TRANSITION_HIGH or TRANSITION_LOW |
 | EXCLUDED_UNDEFINED | Condition 2 = UNDEFINED (first 20 rows) |
 | INACTIVE_DISPLACED | Condition 1 = HIGH or LOW AND Condition 2 = NON_SIDEWAYS — displaced funding in a trending regime |
@@ -264,6 +273,14 @@ comparisons. These rows may belong to the Setup D directional stress or carry
 framing (trend-agnostic). Mixing them into the Funding Normalization sideways
 hypothesis would contaminate the sideways-specific signal test. Their count
 must be reported in screening output as an observational note.
+
+**Note on NEUTRAL_NON_SIDEWAYS:** rows where funding is neutral but the price
+regime is NON_SIDEWAYS are excluded from the regime-matched baseline. These
+rows are not INACTIVE_DISPLACED (funding is not displaced), but they are not
+comparable to the treatment group (which requires SIDEWAYS regime). Excluding
+them ensures that the only differing variable between ACTIVE and BASELINE groups
+is the funding state, not the regime mix. Their count must be reported in
+screening output as an observational note.
 
 ---
 
@@ -292,8 +309,10 @@ Expected sign by branch:
 - ACTIVE_HIGH branch: Δf < 0 (rate decreases toward neutral = normalization).
 - ACTIVE_LOW branch: Δf > 0 (rate increases toward neutral = normalization).
 
-For the economic floor check, the relevant magnitude is |Δf(t, t+N)| expressed
-in bps, compared against the 9 bps cost floor (§8).
+For the normalization magnitude floor check, the relevant magnitude is
+|Δf(t, t+N)| expressed in bps, compared against the 9 bps normalization
+magnitude floor (§8). This screen tests the funding-normalization phenomenon,
+not realized trade PnL; see §8 for the distinction.
 
 **State entry vs. state duration:** each observation row classified as
 ACTIVE_HIGH or ACTIVE_LOW is a candidate observation regardless of whether it
@@ -315,28 +334,35 @@ cross-window averaging or optimization.
 
 ## 7. Null and Baseline
 
-**Baseline group:** BASELINE observations — rows where Condition 1 = NEUTRAL,
-regardless of sideways/non-sideways regime — within the same symbol and
-discovery slice.
+**Baseline group:** BASELINE observations — rows where Condition 1 = NEUTRAL
+**AND** Condition 2 = SIDEWAYS — within the same symbol and discovery slice.
+Rows where Condition 1 = NEUTRAL and Condition 2 = NON_SIDEWAYS are assigned
+NEUTRAL_NON_SIDEWAYS and are excluded from the baseline (see §5 combined state
+table).
 
-**Rationale for this baseline construction:** The Continuous-State Family B
-harness specifies "NEUTRAL-state forward returns as within-instrument baseline."
-Using neutral-funding rows regardless of regime as the baseline captures the
-ambient distribution of funding changes in the absence of displacement, which
-is the natural comparison for the displacement-normalization hypothesis.
+**Rationale for regime-matched baseline:** The treatment group (ACTIVE_HIGH,
+ACTIVE_LOW) requires both funding displacement and SIDEWAYS regime. The baseline
+is restricted to SIDEWAYS rows so that the only differing variable between
+treatment and baseline is the funding state. Without regime matching, an observed
+Δf difference could reflect sideways mean-reversion behavior rather than funding
+normalization, creating an inseparable confound. This patch supersedes the prior
+unmatched baseline (NEUTRAL regardless of regime). Baseline sample size is
+smaller than under the prior construction but the comparison is clean.
+NEUTRAL_NON_SIDEWAYS row counts are reported as an observational note (see §10).
 
 **Null hypothesis:** Displaced funding in a statistically sideways price regime
 carries no additional information about subsequent funding normalization beyond
-what is observed in neutral-state periods for the same symbol and discovery
-slice. The distribution of Δf(t, t+N) for ACTIVE_HIGH and ACTIVE_LOW
-observations is identical to the distribution for BASELINE observations.
+what is observed in neutral-funding sideways-regime periods for the same symbol
+and discovery slice. The distribution of Δf(t, t+N) for ACTIVE_HIGH and
+ACTIVE_LOW observations is identical to the distribution for BASELINE
+(NEUTRAL AND SIDEWAYS) observations.
 
 **Falsification criterion:** If ACTIVE_HIGH or ACTIVE_LOW forward funding
 changes are not directionally separated from BASELINE changes above the 9 bps
-cost floor (§8), the hypothesis is FALSIFIED at this cheap-screening level for
-that branch and window. A NORMALIZATION_SCREEN_ABSENT or
-NORMALIZATION_SCREEN_WEAK result does not advance. An inconclusive result does
-not advance without resolving the underlying issue.
+normalization magnitude floor (§8), the hypothesis is FALSIFIED at this
+cheap-screening level for that branch and window. A NORMALIZATION_SCREEN_ABSENT
+or NORMALIZATION_SCREEN_WEAK result does not advance. An inconclusive result
+does not advance without resolving the underlying issue.
 
 **Baseline is fixed.** No alternate null or baseline construction may be
 introduced after screening begins.
@@ -352,10 +378,17 @@ revised downward after any data is opened.
 **Family-level floor:** 9 bps round-trip.
 **Candidate-level floor (this design lock):** 9 bps round-trip.
 
-**Application to funding-rate response variable:** a gross normalization of
-|Δf(t, t+N)| < 9 bps does not clear the economic floor condition, even if the
-direction is consistent. The candidate result cannot receive
-NORMALIZATION_SCREEN_POSITIVE if the economic floor condition fails.
+**Application to funding-rate response variable:** This screen's response
+variable is Δf(t, t+N) — a funding rate change, not a realized trade PnL. The
+9 bps figure is applied here as a **normalization magnitude floor**: if
+|Δf(t, t+N)| < 9 bps, the normalization magnitude is too small to be
+economically interesting at the screening stage, even if directionally
+consistent. This does not constitute a cost-coverage proof or evidence of
+tradeability. Any future trading or PnL cost model must be designed and
+validated separately. A gross normalization of |Δf(t, t+N)| < 9 bps does not
+clear the normalization magnitude floor condition. The candidate result cannot
+receive NORMALIZATION_SCREEN_POSITIVE if the normalization magnitude floor
+condition fails.
 
 **Floor lock statement:** This 9 bps floor is locked as of this design lock.
 Any request to lower it after any data has been opened is a governance
@@ -377,8 +410,8 @@ paper, probe, runtime, or live activity.
 
 | Label | Condition |
 |---|---|
-| NORMALIZATION_SCREEN_POSITIVE | ACTIVE state Δf is directionally consistent with normalization for this branch (sign condition met); median |Δf| exceeds 9 bps cost floor; and directional consistency holds in at least 2 of 3 pre-registered windows |
-| NORMALIZATION_SCREEN_WEAK | Directionally consistent in expected direction but median |Δf| is below 9 bps cost floor; or consistent in only 1 of 3 windows |
+| NORMALIZATION_SCREEN_POSITIVE | ACTIVE state Δf is directionally consistent with normalization for this branch (sign condition met); median |Δf| exceeds 9 bps normalization magnitude floor; and directional consistency holds in at least 2 of 3 pre-registered windows |
+| NORMALIZATION_SCREEN_WEAK | Directionally consistent in expected direction but median |Δf| is below 9 bps normalization magnitude floor; or consistent in only 1 of 3 windows |
 | NORMALIZATION_SCREEN_ABSENT | No directional normalization detected; ACTIVE state Δf distribution is indistinguishable from or opposite to BASELINE; hypothesis FALSIFIED at this screening level |
 | NORMALIZATION_SCREEN_INCONCLUSIVE | Fewer than 30 ACTIVE observations for this branch per symbol; SIDEWAYS regime too sparse; OHLCV alignment unresolved; held-out contamination risk; or any §11 blocker was triggered |
 | STRONG_ANOMALY_CANDIDATE | All five mechanical harness §2.1 conditions met (see below) |
@@ -403,11 +436,19 @@ A single summary label (per branch per symbol) may be reported as:
    3 pre-registered windows (W1, W3, W8).
 3. **Breadth condition:** directional sign condition holds in both BTCUSDT and
    ETHUSDT (2 of 2 eligible instruments).
-4. **Economic floor condition:** median |Δf| exceeds 9 bps cost floor in the
-   windows satisfying conditions 1–3.
+4. **Economic floor condition:** median |Δf| exceeds 9 bps normalization
+   magnitude floor in the windows satisfying conditions 1–3.
 5. **Forensic sanity condition:** no data artifact, lookahead, timestamp
    misalignment, held-out contamination, or post-hoc threshold selection is
    present.
+
+**Verified against harness §2.1:** These five conditions map directly to the
+harness §2.1 mechanical trigger — no candidate-specific divergence. The
+consistency condition maps W1/W3/W8 observation windows to the harness
+"sub-periods" concept for Continuous-State candidates; the breadth condition
+uses both eligible instruments (BTC and ETH); the economic floor condition
+applies the normalization magnitude floor (§8) as a proxy for economic
+significance.
 
 **STRONG_ANOMALY_CANDIDATE triggers mandatory HD3 independent forensic review.**
 The screener may not self-clear the forensic review. Forensic review output is
@@ -428,8 +469,8 @@ bounded:
 - Discovery row boundary confirmation: actual fundingTime values of rows 1502
   and 1503 for each symbol.
 - Observation counts per symbol: total discovery rows, ACTIVE_HIGH count,
-  ACTIVE_LOW count, BASELINE count, EXCLUDED_TRANSITION count,
-  EXCLUDED_UNDEFINED count, INACTIVE_DISPLACED count.
+  ACTIVE_LOW count, BASELINE count, NEUTRAL_NON_SIDEWAYS count,
+  EXCLUDED_TRANSITION count, EXCLUDED_UNDEFINED count, INACTIVE_DISPLACED count.
 - SIDEWAYS regime observation count per symbol (rows classified SIDEWAYS within
   discovery slice).
 - Interval check: confirmation that all loaded BTC and ETH discovery-slice rows
@@ -464,7 +505,7 @@ before any further screening computation proceeds:
 
 | Blocker flag | Trigger condition | Required action |
 |---|---|---|
-| SCREENING_BLOCKED_PENDING_OHLCV_ALIGNMENT_CONFIRMATION | Committed Binance 4H OHLCV (`583e724`) cannot be confirmed as covering BTCUSDT and ETHUSDT with 4H bar close timestamps coinciding with 8H funding settlement times (00:00, 08:00, 16:00 UTC) within the discovery window | Halt; Owner must authorize OHLCV alignment confirmation step before screening proceeds |
+| SCREENING_BLOCKED_PENDING_OHLCV_ALIGNMENT_CONFIRMATION | Committed Binance 4H OHLCV (`583e724`) cannot be confirmed as covering BTCUSDT and ETHUSDT within the discovery window; or the locked timestamp convention (open timestamp t − 4H = bar closing at fundingTime t) was not applied correctly | Halt; Owner must authorize OHLCV alignment confirmation before screening proceeds |
 | SCREENING_BLOCKED_RAW_DATA_EXTENDS_OUTSIDE_LOCKED_WINDOW | Any loaded funding or OHLCV row has a fundingTime or close-bar timestamp outside 2022-01-01T00:00:00Z to 2023-12-17T08:00:00Z | Halt; report contamination; do not proceed |
 | SCREENING_BLOCKED_NON_8H_INTERVALS_IN_BTC_ETH | Any BTC or ETH discovery-slice funding row has a non-8H interval (indicates data loading error or cross-contamination with SOLUSDT file) | Halt; report data integrity issue; do not proceed |
 | SCREENING_BLOCKED_THRESHOLD_APPLICATION_FAILURE | Funding percentile thresholds (p20, p30, p70, p80) cannot be computed cleanly from discovery rows due to format errors, NaN values, or missing records | Halt; report specific error; do not proceed |
@@ -483,16 +524,56 @@ documented:
    funding-aligned OHLCV.
 2. The data window covers at least 2022-01-01T00:00:00Z to 2023-05-15T08:00:00Z
    (the discovery slice end).
-3. 4H bar close timestamps coincide with 8H funding settlement timestamps at
-   00:00, 08:00, and 16:00 UTC (structural alignment — no timezone offset
-   or bar convention discrepancy).
+3. The locked timestamp convention is applied: for fundingTime t, the CSV row
+   with open timestamp t − 4H is used as the aligned price context row (its bar
+   closes at t); no CSV row with open timestamp ≥ t is used as context at t.
+   This convention is locked by the timestamp convention patch below; the
+   screener must confirm application, not re-derive the rule.
 
-If items 1–3 are confirmed, the OHLCV blocker is resolved. If any item fails,
-screening is BLOCKED pending a separate data sourcing or alignment decision.
-The SIDEWAYS_FAMILY_NOTE.md states that "OHLCV context exists from prior
-research artifacts," which refers to this C7 artifact. The structural alignment
-of 8H = 2 × 4H is consistent in principle, but explicit confirmation against
-the actual committed files is required before screening proceeds.
+Items 1 and 2 were confirmed by metadata-only inspection documented in
+`research/signal_observation/FUNDING_NORMALIZATION_BTC_ETH_ALIGNMENT_AND_REVIEW_PACKET.md`.
+Item 3 (timestamp convention) is locked by the timestamp convention patch below.
+The screener must confirm at execution time that the convention was applied
+correctly. If item 1 or 2 fails at execution, screening is BLOCKED pending a
+separate data sourcing decision.
+
+### Timestamp Convention Patch
+
+This patch replaces all prior design-lock wording that referred to "4H bar
+close timestamps" coinciding with 8H funding settlement times. This is a
+timestamp convention clarification only; it does not authorize screening
+execution.
+
+Locked convention:
+- Binance OHLCV CSV timestamps are kline open times (confirmed by DR1
+  downloader documentation in
+  `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_4H_FEASIBILITY_NOTE.md`).
+- For fundingTime t, use the CSV row with open timestamp t − 4H; that kline's
+  interval ends at t and its close price is the pre-funding context price.
+- Do not use any CSV row with open timestamp at or after t as price context
+  for observation at t.
+- For the 20-period lookback ending at t, all 20 aligned close values are
+  drawn from CSV rows with open timestamps strictly before t.
+
+Worked example:
+- fundingTime = 2023-05-15T08:00:00Z
+- Locate OHLCV row with timestamp 2023-05-15T04:00:00Z (= fundingTime − 4H)
+- Use the **close** field of that row
+- That close represents price as of 08:00:00Z (close of the 4H bar opening at
+  04:00 and closing at 08:00)
+
+First-usable-period rule:
+- If fundingTime t − 4H precedes the first OHLCV row timestamp, that funding
+  row has no aligned OHLCV context and must be excluded from any discovery
+  calculation requiring OHLCV context (e.g., sideways regime classification).
+  Do not backfill or substitute.
+- Given OHLCV starts 2022-01-01T00:00:00Z, the first usable fundingTime for
+  OHLCV-context screening is 2022-01-01T04:00:00Z. Any funding row at
+  2022-01-01T00:00:00Z is excluded from regime-classified rows. Estimated
+  impact: at most 1 funding row per symbol.
+
+This patch does not authorize screening execution. Owner GO decision for
+screening remains required (§12).
 
 ---
 
