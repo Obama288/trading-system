@@ -172,6 +172,12 @@ readiness. See `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`.
   Continuous-State.
 - Status:
   triage-ready / candidate-map only
+- Signal half-life: hours to days.
+- Maximum acceptable decision delay: hours to days; human-in-loop acceptable.
+- Human-in-loop allowed: yes.
+- Automation required before paper/live: not required for research phase.
+- Missed-signal impact: low to moderate; missed cycles are recoverable.
+- Operational fit: latency-tolerant.
 
 ### Basis / Cash-and-Carry
 
@@ -191,6 +197,13 @@ readiness. See `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`.
   Continuous-State or Cross-Venue Dislocation.
 - Status:
   triage-ready / candidate-map only
+- Signal half-life: hours to days.
+- Maximum acceptable decision delay: hours to days; human-in-loop likely
+  acceptable pending source and framing confirmation.
+- Human-in-loop allowed: likely yes pending framing.
+- Automation required before paper/live: not required for research phase.
+- Missed-signal impact: low to moderate.
+- Operational fit: latency-tolerant.
 
 ### Cross-Asset Spread Mean Reversion BTC/ETH/SOL
 
@@ -210,6 +223,13 @@ readiness. See `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`.
   Continuous-State.
 - Status:
   triage-ready / candidate-map only
+- Signal half-life: hours to days.
+- Maximum acceptable decision delay: hours to days; human-in-loop likely
+  acceptable pending framing confirmation.
+- Human-in-loop allowed: likely yes pending framing.
+- Automation required before paper/live: not required for research phase.
+- Missed-signal impact: low to moderate.
+- Operational fit: latency-tolerant to medium.
 
 ## Candidate: Options Expiry / Dealer Hedging Pressure
 

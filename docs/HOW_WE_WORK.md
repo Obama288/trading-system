@@ -97,6 +97,57 @@ readiness, promote/park/retire a setup, or make new research-direction
 decisions. The next owner touch point is result interpretation and next-step
 decision.
 
+## Owner-Away Productive Mode
+
+If Owner is away, disconnected, the session is compacted, the agent hits a
+context limit, or work is interrupted, the agent may continue productively only
+within the current explicitly authorized bounded scope.
+
+Allowed while Owner is away:
+- inspect docs;
+- verify repo status;
+- prepare drafts or diff reports;
+- perform explicitly authorized docs-only edits within the current scope;
+- prepare handoff or recovery notes;
+- complete a pre-authorized commit/push only if all specified checks pass exactly.
+
+Stop before:
+- moving to a new gate or new candidate;
+- widening scope beyond the current authorized task;
+- API calls or data downloads;
+- data acquisition;
+- screening, analysis, validation, or backtests;
+- raw or held-out data inspection;
+- readiness, runtime, paper, probe, or live changes;
+- stage, commit, or push unless explicitly pre-authorized in the prompt.
+
+If anything differs from expected repo state, stop and report.
+
+## Interrupted Work Recovery Checklist
+
+When resuming after an interruption, compaction, or session limit:
+
+1. Run: `git status --short --branch`
+2. Run: `git diff --name-only`
+3. Inspect changed files (read only; do not edit).
+4. Identify whether the prior task is partial or complete.
+5. Do not stage, commit, or push until Tower Control confirms recovery is clean,
+   unless the original prompt explicitly authorized complete-if-clean behavior
+   with exact check conditions stated.
+
+## Repo-Current Proof Rule
+
+An agent's verbal report is not repo fact until all of the following are
+confirmed:
+
+- Commit hash and commit subject line reported.
+- Push result (range and `origin/main` fast-forward) confirmed.
+- Final `git status --short --branch` shows main in sync with `origin/main`.
+- Known local-only files confirmed not committed.
+- Explicit confirmation that no forbidden action was performed.
+
+Until this proof exists, treat all push/commit status claims as UNVERIFIED.
+
 ## Candidate Intake And Triage Before Hypothesis Notes
 
 ### Candidate Intake

@@ -531,4 +531,21 @@ options. Absence of selection = Option D (hold).
 
 ---
 
+## Latency Classification
+
+- Operational fit: latency-tolerant.
+- Signal cadence: 8H funding cycle; changes observable on hours-to-days
+  timescale.
+- Signal half-life: hours to days; normalization pressure persists across
+  multiple 8H cycles.
+- Human-in-loop: acceptable for screening design, screening execution
+  decision, and result review.
+- Automation required: no; not required for research phase.
+- Intentional first-prototype rationale: Funding Normalization was selected
+  partly because its latency profile fits the current solo-operator stage
+  without requiring execution automation.
+- This section does not authorize screening execution.
+
+---
+
 *End of design lock.*

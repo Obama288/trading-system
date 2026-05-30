@@ -76,6 +76,8 @@ Main risk: structural break and path dependency.
 - Why included or deferred: included as the cleanest Branch A prototype; deferred
   from screening until harness methodology, SOLUSDT interval policy, and a
   separate D1 analysis design lock are authorized.
+- Latency classification: latency-tolerant; signal half-life hours to days;
+  human-in-loop acceptable; first-prototype selection partly due to operational fit.
 
 #### Basis / Cash-And-Carry
 
@@ -89,6 +91,8 @@ Main risk: structural break and path dependency.
 - Harness template assignment: Continuous-State or Cross-Venue Dislocation.
 - Why included or deferred: included as a core Branch A/B bridge; deferred until
   source feasibility and harness authorization exist.
+- Latency classification: latency-tolerant; signal half-life hours to days;
+  human-in-loop likely acceptable pending source and framing confirmation.
 
 #### Cross-Asset Spread Mean Reversion BTC/ETH/SOL
 
@@ -104,6 +108,8 @@ Main risk: structural break and path dependency.
 - Why included or deferred: included because it may reuse a familiar
   BTC/ETH/SOL universe while remaining structurally distinct from Setup C;
   deferred until pre-registration and harness authorization.
+- Latency classification: latency-tolerant to medium; spread signals typically
+  hours to days; human-in-loop likely acceptable pending framing confirmation.
 
 ### Tier 2
 
@@ -162,6 +168,8 @@ Main risk: structural break and path dependency.
   high-frequency scope; deferred.
 - Why included or deferred: included only as a map item; deferred because it is
   likely a separate high-frequency research scope, not a current harness target.
+- Latency classification: highly latency-sensitive; signal half-life seconds to
+  minutes; automation required; deferred until operational infrastructure exists.
 
 ## Harness Mapping
 
@@ -195,6 +203,28 @@ Every future sideways candidate entry should include:
 - Key failure modes:
 - Forbidden next actions:
 - Current status:
+- Signal half-life:
+- Maximum acceptable decision delay:
+- Human-in-loop allowed:
+- Automation required before paper/live:
+- Missed-signal impact:
+- Operational fit:
+
+## Latency Tolerance Guidance
+
+Latency-tolerant candidates (hours-days signal half-life; human-in-loop
+acceptable) fit the current solo-operator research stage better than
+latency-sensitive candidates. Latency-sensitive candidates should be deferred
+until automation and operational infrastructure are in place.
+
+Classification levels:
+- latency-tolerant: signal half-life hours to days; human-in-loop acceptable
+  for research and screening; automation not required for research phase.
+- medium: signal half-life minutes to hours; execution timing matters but
+  human review is still acceptable for research; automation required before
+  paper/live.
+- latency-sensitive: signal half-life seconds to minutes; automation required;
+  not appropriate for current solo-operator stage.
 
 ## Filled Example: Funding Normalization
 
@@ -229,6 +259,14 @@ Every future sideways candidate entry should include:
   validation, implementation, readiness, paper/probe/runtime/live activity, or
   capital use from this example.
 - Current status: PROPOSED / CANDIDATE MAP ONLY; D1 analysis HOLD.
+- Signal half-life: hours to days; funding normalization persists across
+  multiple 8H cycles.
+- Maximum acceptable decision delay: hours to days; human-in-loop acceptable.
+- Human-in-loop allowed: yes.
+- Automation required before paper/live: not required for research phase.
+- Missed-signal impact: low to moderate; missed cycles are recoverable.
+- Operational fit: latency-tolerant; intentionally selected as first prototype
+  for human-in-loop fit at current solo-operator stage.
 
 ## Relationship To Existing Candidates
 

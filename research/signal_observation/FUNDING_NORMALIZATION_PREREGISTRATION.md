@@ -382,4 +382,19 @@ begins. Absence of selection = Option D (hold).**
 
 ---
 
+## §16 Latency Classification
+
+- Operational fit: latency-tolerant.
+- Signal half-life: hours to days; normalization pressure persists across
+  multiple 8H funding cycles.
+- Human-in-loop: acceptable for research design, screening design review,
+  and result review.
+- Automation required: no; not required for research phase.
+- Intentional first-prototype rationale: Funding Normalization was selected
+  partly because its latency profile fits the current solo-operator stage
+  without requiring execution automation.
+- This section does not authorize screening, analysis, or data inspection.
+
+---
+
 *End of pre-registration design record.*

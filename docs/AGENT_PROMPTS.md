@@ -95,6 +95,31 @@ No agent may promote, claim, or imply runtime, paper-execution, probe, trading,
 or live readiness by inference. Readiness promotion requires explicit Owner
 authorization and evidence. Current safety state: paper only; live is NO-GO.
 
+**Owner-Away Productive Mode:**
+If Owner is away, disconnected, the session is compacted, the agent hits a
+context limit, or work is interrupted, the agent may continue productively only
+within the current explicitly authorized bounded scope.
+
+Allowed while Owner is away:
+- inspect docs;
+- verify repo status;
+- prepare drafts or diff reports;
+- perform explicitly authorized docs-only edits within the current scope;
+- prepare handoff or recovery notes;
+- complete a pre-authorized commit/push only if all specified checks pass exactly.
+
+Stop before:
+- moving to a new gate or new candidate;
+- widening scope beyond the current authorized task;
+- API calls or data downloads;
+- data acquisition;
+- screening, analysis, validation, or backtests;
+- raw or held-out data inspection;
+- readiness, runtime, paper, probe, or live changes;
+- stage, commit, or push unless explicitly pre-authorized in the prompt.
+
+If anything differs from expected repo state, stop and report.
+
 ---
 
 ## 1. TOWER CONTROL ARCHITECT
