@@ -471,6 +471,8 @@ bounded:
 - Observation counts per symbol: total discovery rows, ACTIVE_HIGH count,
   ACTIVE_LOW count, BASELINE count, NEUTRAL_NON_SIDEWAYS count,
   EXCLUDED_TRANSITION count, EXCLUDED_UNDEFINED count, INACTIVE_DISPLACED count.
+  NEUTRAL_NON_SIDEWAYS is an observational count only; it is not part of
+  treatment or baseline and cannot be used for result labels.
 - SIDEWAYS regime observation count per symbol (rows classified SIDEWAYS within
   discovery slice).
 - Interval check: confirmation that all loaded BTC and ETH discovery-slice rows

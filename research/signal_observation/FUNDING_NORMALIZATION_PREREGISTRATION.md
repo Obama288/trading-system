@@ -289,22 +289,12 @@ adapted for Funding Normalization:
 | NORMALIZATION_SCREEN_WEAK | Pattern is present but magnitude is below cost floor, or statistical separation is marginal; does not advance |
 | NORMALIZATION_SCREEN_ABSENT | No directional pattern detected; active state is indistinguishable from neutral baseline; hypothesis FALSIFIED at this screening level |
 | NORMALIZATION_SCREEN_INCONCLUSIVE | Sample too small, regime too rare, or data quality issues (e.g., SOL flagged gaps) prevent a clean determination; does not advance without resolving the underlying issue |
-| STRONG_ANOMALY_CANDIDATE | Result is unusually strong (all five mechanical harness conditions met); triggers mandatory HD3 forensic review by an independent reviewer; screener cannot self-clear |
+| STRONG_ANOMALY_CANDIDATE | Result is unusually strong under the governing patched design-lock trigger; triggers mandatory HD3 forensic review by an independent reviewer; screener cannot self-clear |
 
-**STRONG_ANOMALY_CANDIDATE conditions (per harness §2.1, applied here):**
-All five must be met to trigger the label:
-1. **Effect-size condition:** observed Δf is at or above the 95th percentile of
-   the discovery BASELINE (NEUTRAL AND SIDEWAYS) distribution in the expected
-   direction.
-2. **Consistency condition:** directional sign condition holds in at least 2 of
-   3 pre-registered windows (W1, W3, W8).
-3. **Breadth condition:** directional sign condition holds in both BTCUSDT and
-   ETHUSDT (2 of 2 eligible instruments).
-4. **Economic floor condition:** median |Δf| exceeds 9 bps normalization
-   magnitude floor in the windows satisfying conditions 1–3.
-5. **Forensic sanity condition:** no data artifact, lookahead, timestamp
-   misalignment, held-out contamination, or post-hoc threshold selection is
-   present.
+**STRONG_ANOMALY_CANDIDATE governing trigger:** The governing
+STRONG_ANOMALY_CANDIDATE trigger for screening execution is the patched design
+lock §9. If this pre-registration conflicts with design lock §9, design lock
+§9 governs.
 
 **HD3 reminder:** A STRONG_ANOMALY_CANDIDATE result triggers mandatory
 independent forensic review. The screener cannot self-clear. Output of forensic
