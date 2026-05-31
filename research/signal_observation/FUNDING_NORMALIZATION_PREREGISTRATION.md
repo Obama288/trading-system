@@ -1,25 +1,40 @@
 # Funding Normalization — Pre-Registration Design
 
-> **Status: PRE-REGISTRATION DESIGN / NO SCREENING AUTHORIZED**
-> This document is a design record only. It does not authorize screening execution,
-> data inspection, statistical analysis, backtesting, implementation, readiness,
-> paper, probe, runtime, or live activity. Owner authorization required for any
-> next gate action.
+> **Status: DISCOVERY DONE / NORMALIZATION_SCREEN_WEAK / HOLD_FOR_BROADER_PAIRS**
+> BTC/ETH discovery screening committed at `d770553`. Overall label:
+> NORMALIZATION_SCREEN_WEAK. Strong anomaly: false. Validation: NO-GO.
+> Held-out: protected. Future broader-pairs work requires new pre-registration
+> and separate Owner authorization. This document is a design record only. It
+> does not authorize screening execution, data inspection, statistical analysis,
+> backtesting, implementation, readiness, paper, probe, runtime, or live activity.
 
 ---
 
 ## 1. Status
 
-PRE-REGISTRATION DESIGN / NO SCREENING AUTHORIZED.
+DISCOVERY DONE / NORMALIZATION_SCREEN_WEAK / HOLD_FOR_BROADER_PAIRS.
+
+BTC/ETH discovery screening committed at `d770553`. Overall label:
+NORMALIZATION_SCREEN_WEAK. Strong anomaly: false. Blockers: none. Held-out
+rows 1503–2147 protected and unused. SOLUSDT not decoded or used. No PnL,
+returns, Sharpe, or trading metrics computed.
+
+Reviewer verdict: NO-GO for validation. HIGH branch cap-contaminated
+(p70=p80=0.0001; median Δf=0 for HIGH in all windows). LOW branch
+directionally coherent across BTC and ETH but all windows below 9 bps
+normalization magnitude floor (largest: ETH LOW W8 = 1.18 bps).
+
+Validation: NO-GO. Held-out: protected. Future broader-pairs work:
+candidate/source-feasibility only — requires new pre-registration and
+separate Owner authorization. No screening, acquisition, validation,
+readiness, or pair expansion authorized by this update.
 
 This file records the pre-registration design for the Funding Normalization
-candidate. It is a docs-only artifact. No screening has been run. No raw data
-has been opened or inspected for analysis. No thresholds, returns, edge
-estimates, or statistics have been calculated.
+candidate. It is a docs-only artifact.
 
 Harness methodology: AUTHORIZED METHODOLOGY (see
 `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`).
-Screening execution: NOT AUTHORIZED.
+Validation: NO-GO. Held-out: protected.
 
 ---
 

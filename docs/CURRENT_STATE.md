@@ -20,15 +20,16 @@ docs as needed.
 
 The commit list below records recent pushed milestones visible on `origin/main`.
 
+- `d770553` research: add funding normalization discovery screening output.
+- `c934946` docs: patch funding normalization screening design.
+- `fd80918` docs: add owner-away and latency tolerance rules.
 - `e355aff` docs: add C7 cross-venue design lock.
 - `775d739` research: add Binance C7 evidence report.
-- `583e724` research: add Binance cross-venue holdout data.
-- `d770a05` research: add Binance public kline downloader.
-- `bb6ab90` research: fix OKX bounded history pagination.
 
-Recent HEAD records the C7 cross-venue design lock (governance
-reconciliation; research-only); it does not alter the current
-paper-only / live NO-GO safety state.
+Recent HEAD records the Funding Normalization BTC/ETH discovery screening
+output (overall label NORMALIZATION_SCREEN_WEAK; validation NO-GO; held-out
+rows 1503–2147 protected). It does not alter the current paper-only / live
+NO-GO safety state.
 
 Do not claim remote visibility for local commits unless verified by GitHub or
 remote refs.
@@ -120,17 +121,22 @@ remote refs.
    remains HOLD — candidate pre-registration design may begin, screening
    execution is not authorized. Sideways acquisition/analysis is NO-GO.
 
-   **Funding Normalization** (SCREENING DESIGN LOCK / NO SCREENING EXECUTION
-   AUTHORIZED):
+   **Funding Normalization** (DISCOVERY DONE / WEAK / HOLD_FOR_BROADER_PAIRS):
+   Discovery screening committed at `d770553`. Overall label:
+   NORMALIZATION_SCREEN_WEAK. Strong anomaly: false. Blockers: none.
+   Held-out rows 1503–2147 protected and unused. SOLUSDT not decoded or
+   used. No PnL, returns, Sharpe, or trading metrics computed.
+   Reviewer verdict: NO-GO for validation. HIGH branch cap-contaminated
+   (p70=p80=0.0001; median Δf=0 in all HIGH windows). LOW branch
+   directionally coherent across BTC and ETH but all windows below the
+   9 bps normalization magnitude floor (largest: ETH LOW W8 = 1.18 bps).
+   Status: validation NO-GO; held-out protected; future broader-pairs work
+   is candidate/source-feasibility only — requires new pre-registration and
+   separate Owner authorization. No screening, acquisition, validation,
+   readiness, or pair expansion authorized.
    Pre-registration: `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
    Design lock: `docs/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
-   BTC/ETH only; SOL excluded/retained-flagged; 70/30 chronological split locked
-   (rows 1–1502 discovery, rows 1503–2147 held-out); funding state: HIGH=≥p80,
-   LOW=≤p20, NEUTRAL=p30–p70, transitions excluded; sideways classifier: 5%
-   net move / 20-period lookback / 3-period min duration; cost floor: 9 bps;
-   primary blocker: OHLCV alignment confirmation required.
-   Next gate: Owner selects A/B/C/D/E (screening GO, review, patch, hold, or
-   OHLCV alignment first).
+   Output: `research/signal_observation/output/funding_normalization/`.
 
 2. **Setup D D1 analysis** (HOLD — two conditions unmet):
    - SOL interval policy decision (variable 2h/4h intervals during FTX stress period).
@@ -244,6 +250,15 @@ remote refs.
   `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`. PROPOSED /
   CANDIDATE MAP ONLY; no screening, acquisition, analysis, EXPLORE,
   validation, implementation, readiness, or new stage authorized.
+- Funding Normalization screening design lock:
+  `docs/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
+  Pre-registration: `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
+- Funding Normalization BTC/ETH discovery screening output committed at `d770553`:
+  `research/signal_observation/output/funding_normalization/`.
+  Overall label: NORMALIZATION_SCREEN_WEAK. Strong anomaly: false. Blockers:
+  none. Held-out protected. Reviewer verdict: NO-GO for validation;
+  HOLD_FOR_BROADER_PAIRS. Future broader-pairs work: candidate/source-
+  feasibility only; requires new pre-registration and separate Owner authorization.
 - Signal idea generator:
   `research/signal_observation/SIGNAL_IDEA_GENERATOR.md`.
 - Setup D hypothesis note:

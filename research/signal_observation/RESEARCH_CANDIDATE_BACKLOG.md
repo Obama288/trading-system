@@ -171,7 +171,14 @@ readiness. See `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`.
 - Harness template:
   Continuous-State.
 - Status:
-  triage-ready / candidate-map only
+  DISCOVERY_DONE_WEAK_HOLD_FOR_BROADER_PAIRS
+- Discovery result:
+  Overall label NORMALIZATION_SCREEN_WEAK (commit d770553). Strong anomaly:
+  false. Blockers: none. Held-out protected. Reviewer verdict: NO-GO for
+  validation. HIGH branch cap-contaminated (p70=p80=0.0001; median Δf=0).
+  LOW branch directionally coherent but below 9 bps normalization magnitude
+  floor (largest: ETH LOW W8 = 1.18 bps). Future broader-pairs work requires
+  source feasibility, new pre-registration, and separate Owner authorization.
 - Signal half-life: hours to days.
 - Maximum acceptable decision delay: hours to days; human-in-loop acceptable.
 - Human-in-loop allowed: yes.
