@@ -1,0 +1,319 @@
+{
+  "blocker_flags": [],
+  "design_constraints": {
+    "baseline": "NEUTRAL_AND_SIDEWAYS",
+    "neutral_non_sideways": "observational_only_not_treatment_or_baseline_not_label_input",
+    "normalization_magnitude_floor_bps": 9.0,
+    "ohlcv_alignment": "fundingTime t -> OHLCV open timestamp t-4H -> close field",
+    "response": "delta_funding_rate_only",
+    "sideways_classifier": "5pct_net_move_20_funding_period_lookback_3_period_min_duration",
+    "treatment": "HIGH_OR_LOW_AND_SIDEWAYS",
+    "windows": {
+      "W1": 1,
+      "W3": 3,
+      "W8": 8
+    }
+  },
+  "overall_label": "NORMALIZATION_SCREEN_WEAK",
+  "scope": {
+    "discovery_rows": 1502,
+    "held_out_rows_excluded_per_symbol": 645,
+    "new_pairs_included": false,
+    "solusdt_included": false,
+    "symbols": [
+      "BTCUSDT",
+      "ETHUSDT"
+    ]
+  },
+  "status": "DISCOVERY_ONLY_CHEAP_FALSIFICATION_SCREENING",
+  "symbols": {
+    "BTCUSDT": {
+      "blocker_flags": [],
+      "first_discovery_funding_time": "2022-01-01T00:00:00Z",
+      "funding_rows_loaded": 1502,
+      "funding_state_counts": {
+        "HIGH": 513,
+        "LOW": 301,
+        "NEUTRAL": 539,
+        "TRANSITION_LOW": 149
+      },
+      "held_out_rows_excluded": 645,
+      "last_discovery_funding_time": "2023-05-16T08:00:00Z",
+      "ohlcv_alignment": {
+        "first_loaded": "2022-01-01T04:00:00Z",
+        "last_loaded": "2023-05-16T04:00:00Z",
+        "max_required": "2023-05-16T04:00:00Z",
+        "min_required": "2022-01-01T04:00:00Z",
+        "missing_count": 0,
+        "missing_examples": [],
+        "rows_loaded": 1501
+      },
+      "regime_counts": {
+        "NON_SIDEWAYS": 836,
+        "SIDEWAYS": 645,
+        "UNDEFINED": 21
+      },
+      "state_counts": {
+        "ACTIVE_HIGH": 183,
+        "ACTIVE_LOW": 103,
+        "BASELINE": 280,
+        "EXCLUDED_TRANSITION": 149,
+        "EXCLUDED_UNDEFINED": 21,
+        "INACTIVE_DISPLACED": 507,
+        "NEUTRAL_NON_SIDEWAYS": 259
+      },
+      "summary_labels": {
+        "HIGH": {
+          "strong_anomaly_candidate": false,
+          "summary_label": "NORMALIZATION_SCREEN_WEAK",
+          "window_labels": {
+            "W1": "NORMALIZATION_SCREEN_ABSENT",
+            "W3": "NORMALIZATION_SCREEN_ABSENT",
+            "W8": "NORMALIZATION_SCREEN_WEAK"
+          }
+        },
+        "LOW": {
+          "strong_anomaly_candidate": false,
+          "summary_label": "NORMALIZATION_SCREEN_WEAK",
+          "window_labels": {
+            "W1": "NORMALIZATION_SCREEN_WEAK",
+            "W3": "NORMALIZATION_SCREEN_WEAK",
+            "W8": "NORMALIZATION_SCREEN_WEAK"
+          }
+        }
+      },
+      "symbol": "BTCUSDT",
+      "threshold_method": "nearest-rank percentile on discovery rows only",
+      "thresholds": {
+        "p20": 3.18e-06,
+        "p30": 2.243e-05,
+        "p70": 0.0001,
+        "p80": 0.0001
+      },
+      "window_results": {
+        "HIGH_W1": {
+          "active_median_abs_delta_f_bps": 0.0,
+          "active_median_delta_f_bps": 0.0,
+          "active_n": 183,
+          "baseline_expected_direction_95pct_bps": -0.8679,
+          "baseline_median_delta_f_bps": -0.07289999999999999,
+          "baseline_n": 279,
+          "baseline_separation_pass": false,
+          "direction_pass": false,
+          "label": "NORMALIZATION_SCREEN_ABSENT",
+          "no_forward_rows": 1,
+          "normalization_magnitude_floor_pass": false
+        },
+        "HIGH_W3": {
+          "active_median_abs_delta_f_bps": 0.0,
+          "active_median_delta_f_bps": 0.0,
+          "active_n": 183,
+          "baseline_expected_direction_95pct_bps": -0.9698999999999999,
+          "baseline_median_delta_f_bps": -0.07264999999999999,
+          "baseline_n": 278,
+          "baseline_separation_pass": false,
+          "direction_pass": false,
+          "label": "NORMALIZATION_SCREEN_ABSENT",
+          "no_forward_rows": 3,
+          "normalization_magnitude_floor_pass": false
+        },
+        "HIGH_W8": {
+          "active_median_abs_delta_f_bps": 0.010200000000000004,
+          "active_median_delta_f_bps": -0.010200000000000004,
+          "active_n": 183,
+          "baseline_expected_direction_95pct_bps": -1.2958,
+          "baseline_median_delta_f_bps": 0.024500000000000088,
+          "baseline_n": 278,
+          "baseline_separation_pass": true,
+          "direction_pass": true,
+          "label": "NORMALIZATION_SCREEN_WEAK",
+          "no_forward_rows": 8,
+          "normalization_magnitude_floor_pass": false
+        },
+        "LOW_W1": {
+          "active_median_abs_delta_f_bps": 0.46109999999999995,
+          "active_median_delta_f_bps": 0.39999999999999997,
+          "active_n": 103,
+          "baseline_expected_direction_95pct_bps": 0.5784,
+          "baseline_median_delta_f_bps": -0.07289999999999999,
+          "baseline_n": 279,
+          "baseline_separation_pass": true,
+          "direction_pass": true,
+          "label": "NORMALIZATION_SCREEN_WEAK",
+          "no_forward_rows": 1,
+          "normalization_magnitude_floor_pass": false
+        },
+        "LOW_W3": {
+          "active_median_abs_delta_f_bps": 0.74675,
+          "active_median_delta_f_bps": 0.6578,
+          "active_n": 102,
+          "baseline_expected_direction_95pct_bps": 0.638,
+          "baseline_median_delta_f_bps": -0.07264999999999999,
+          "baseline_n": 278,
+          "baseline_separation_pass": true,
+          "direction_pass": true,
+          "label": "NORMALIZATION_SCREEN_WEAK",
+          "no_forward_rows": 3,
+          "normalization_magnitude_floor_pass": false
+        },
+        "LOW_W8": {
+          "active_median_abs_delta_f_bps": 0.8040999999999999,
+          "active_median_delta_f_bps": 0.6939,
+          "active_n": 101,
+          "baseline_expected_direction_95pct_bps": 0.7108,
+          "baseline_median_delta_f_bps": 0.024500000000000088,
+          "baseline_n": 278,
+          "baseline_separation_pass": true,
+          "direction_pass": true,
+          "label": "NORMALIZATION_SCREEN_WEAK",
+          "no_forward_rows": 8,
+          "normalization_magnitude_floor_pass": false
+        }
+      }
+    },
+    "ETHUSDT": {
+      "blocker_flags": [],
+      "first_discovery_funding_time": "2022-01-01T00:00:00Z",
+      "funding_rows_loaded": 1502,
+      "funding_state_counts": {
+        "HIGH": 476,
+        "LOW": 301,
+        "NEUTRAL": 576,
+        "TRANSITION_LOW": 149
+      },
+      "held_out_rows_excluded": 645,
+      "last_discovery_funding_time": "2023-05-16T08:00:00Z",
+      "ohlcv_alignment": {
+        "first_loaded": "2022-01-01T04:00:00Z",
+        "last_loaded": "2023-05-16T04:00:00Z",
+        "max_required": "2023-05-16T04:00:00Z",
+        "min_required": "2022-01-01T04:00:00Z",
+        "missing_count": 0,
+        "missing_examples": [],
+        "rows_loaded": 1501
+      },
+      "regime_counts": {
+        "NON_SIDEWAYS": 1013,
+        "SIDEWAYS": 468,
+        "UNDEFINED": 21
+      },
+      "state_counts": {
+        "ACTIVE_HIGH": 130,
+        "ACTIVE_LOW": 61,
+        "BASELINE": 219,
+        "EXCLUDED_TRANSITION": 149,
+        "EXCLUDED_UNDEFINED": 21,
+        "INACTIVE_DISPLACED": 574,
+        "NEUTRAL_NON_SIDEWAYS": 348
+      },
+      "summary_labels": {
+        "HIGH": {
+          "strong_anomaly_candidate": false,
+          "summary_label": "NORMALIZATION_SCREEN_ABSENT",
+          "window_labels": {
+            "W1": "NORMALIZATION_SCREEN_ABSENT",
+            "W3": "NORMALIZATION_SCREEN_ABSENT",
+            "W8": "NORMALIZATION_SCREEN_ABSENT"
+          }
+        },
+        "LOW": {
+          "strong_anomaly_candidate": false,
+          "summary_label": "NORMALIZATION_SCREEN_WEAK",
+          "window_labels": {
+            "W1": "NORMALIZATION_SCREEN_WEAK",
+            "W3": "NORMALIZATION_SCREEN_WEAK",
+            "W8": "NORMALIZATION_SCREEN_WEAK"
+          }
+        }
+      },
+      "symbol": "ETHUSDT",
+      "threshold_method": "nearest-rank percentile on discovery rows only",
+      "thresholds": {
+        "p20": -2.285e-05,
+        "p30": 8.57e-06,
+        "p70": 0.0001,
+        "p80": 0.0001
+      },
+      "window_results": {
+        "HIGH_W1": {
+          "active_median_abs_delta_f_bps": 0.0,
+          "active_median_delta_f_bps": 0.0,
+          "active_n": 130,
+          "baseline_expected_direction_95pct_bps": -0.9129,
+          "baseline_median_delta_f_bps": 0.03900000000000002,
+          "baseline_n": 218,
+          "baseline_separation_pass": true,
+          "direction_pass": false,
+          "label": "NORMALIZATION_SCREEN_ABSENT",
+          "no_forward_rows": 1,
+          "normalization_magnitude_floor_pass": false
+        },
+        "HIGH_W3": {
+          "active_median_abs_delta_f_bps": 0.0,
+          "active_median_delta_f_bps": 0.0,
+          "active_n": 130,
+          "baseline_expected_direction_95pct_bps": -0.9898,
+          "baseline_median_delta_f_bps": -0.04554999999999999,
+          "baseline_n": 218,
+          "baseline_separation_pass": false,
+          "direction_pass": false,
+          "label": "NORMALIZATION_SCREEN_ABSENT",
+          "no_forward_rows": 3,
+          "normalization_magnitude_floor_pass": false
+        },
+        "HIGH_W8": {
+          "active_median_abs_delta_f_bps": 0.0,
+          "active_median_delta_f_bps": 0.0,
+          "active_n": 130,
+          "baseline_expected_direction_95pct_bps": -1.5576,
+          "baseline_median_delta_f_bps": -0.0046499999999999805,
+          "baseline_n": 218,
+          "baseline_separation_pass": false,
+          "direction_pass": false,
+          "label": "NORMALIZATION_SCREEN_ABSENT",
+          "no_forward_rows": 8,
+          "normalization_magnitude_floor_pass": false
+        },
+        "LOW_W1": {
+          "active_median_abs_delta_f_bps": 0.6749,
+          "active_median_delta_f_bps": 0.34389999999999993,
+          "active_n": 61,
+          "baseline_expected_direction_95pct_bps": 0.6374000000000001,
+          "baseline_median_delta_f_bps": 0.03900000000000002,
+          "baseline_n": 218,
+          "baseline_separation_pass": true,
+          "direction_pass": true,
+          "label": "NORMALIZATION_SCREEN_WEAK",
+          "no_forward_rows": 1,
+          "normalization_magnitude_floor_pass": false
+        },
+        "LOW_W3": {
+          "active_median_abs_delta_f_bps": 1.029,
+          "active_median_delta_f_bps": 0.8915,
+          "active_n": 61,
+          "baseline_expected_direction_95pct_bps": 0.7648,
+          "baseline_median_delta_f_bps": -0.04554999999999999,
+          "baseline_n": 218,
+          "baseline_separation_pass": true,
+          "direction_pass": true,
+          "label": "NORMALIZATION_SCREEN_WEAK",
+          "no_forward_rows": 3,
+          "normalization_magnitude_floor_pass": false
+        },
+        "LOW_W8": {
+          "active_median_abs_delta_f_bps": 1.2255,
+          "active_median_delta_f_bps": 1.1829,
+          "active_n": 61,
+          "baseline_expected_direction_95pct_bps": 0.7774,
+          "baseline_median_delta_f_bps": -0.0046499999999999805,
+          "baseline_n": 218,
+          "baseline_separation_pass": true,
+          "direction_pass": true,
+          "label": "NORMALIZATION_SCREEN_WEAK",
+          "no_forward_rows": 8,
+          "normalization_magnitude_floor_pass": false
+        }
+      }
+    }
+  }
+}

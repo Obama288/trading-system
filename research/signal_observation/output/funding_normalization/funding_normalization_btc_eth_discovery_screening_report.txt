@@ -1,0 +1,58 @@
+Funding Normalization BTC/ETH Discovery Screening Report
+=======================================================
+
+Status: DISCOVERY-ONLY CHEAP-FALSIFICATION SCREENING.
+This report is non-evidence and does not authorize validation, readiness,
+paper/probe/runtime/live activity, trading, PnL claims, or capital use.
+
+Overall label: NORMALIZATION_SCREEN_WEAK
+Blocker flags: none
+
+Boundary confirmations:
+- BTCUSDT and ETHUSDT only.
+- SOLUSDT not decoded or included in computations.
+- Discovery rows only: rows 1-1502 in fundingTime ascending order.
+- Held-out rows 1503-2147 not decoded into row objects and not used.
+- No acquisition, download, API call, validation, PnL, returns, Sharpe, win rate, or readiness computation.
+
+Per-symbol summary:
+
+BTCUSDT:
+- Funding rows used: 1502
+- Held-out rows excluded: 645
+- Discovery funding window: 2022-01-01T00:00:00Z to 2023-05-16T08:00:00Z
+- OHLCV rows loaded for aligned context: 1501
+- OHLCV required window: 2022-01-01T04:00:00Z to 2023-05-16T04:00:00Z
+- OHLCV missing aligned rows: 0
+- Combined state counts: {'EXCLUDED_UNDEFINED': 21, 'INACTIVE_DISPLACED': 507, 'NEUTRAL_NON_SIDEWAYS': 259, 'ACTIVE_HIGH': 183, 'ACTIVE_LOW': 103, 'EXCLUDED_TRANSITION': 149, 'BASELINE': 280}
+- Regime counts: {'UNDEFINED': 21, 'NON_SIDEWAYS': 836, 'SIDEWAYS': 645}
+- Funding state counts: {'HIGH': 513, 'NEUTRAL': 539, 'LOW': 301, 'TRANSITION_LOW': 149}
+- HIGH summary label: NORMALIZATION_SCREEN_WEAK
+- LOW summary label: NORMALIZATION_SCREEN_WEAK
+- Symbol blocker flags: none
+  - HIGH_W1: NORMALIZATION_SCREEN_ABSENT (active_n=183, baseline_n=279); active_median_delta_f_bps=0.000000; baseline_median_delta_f_bps=-0.072900; active_median_abs_delta_f_bps=0.000000
+  - HIGH_W3: NORMALIZATION_SCREEN_ABSENT (active_n=183, baseline_n=278); active_median_delta_f_bps=0.000000; baseline_median_delta_f_bps=-0.072650; active_median_abs_delta_f_bps=0.000000
+  - HIGH_W8: NORMALIZATION_SCREEN_WEAK (active_n=183, baseline_n=278); active_median_delta_f_bps=-0.010200; baseline_median_delta_f_bps=0.024500; active_median_abs_delta_f_bps=0.010200
+  - LOW_W1: NORMALIZATION_SCREEN_WEAK (active_n=103, baseline_n=279); active_median_delta_f_bps=0.400000; baseline_median_delta_f_bps=-0.072900; active_median_abs_delta_f_bps=0.461100
+  - LOW_W3: NORMALIZATION_SCREEN_WEAK (active_n=102, baseline_n=278); active_median_delta_f_bps=0.657800; baseline_median_delta_f_bps=-0.072650; active_median_abs_delta_f_bps=0.746750
+  - LOW_W8: NORMALIZATION_SCREEN_WEAK (active_n=101, baseline_n=278); active_median_delta_f_bps=0.693900; baseline_median_delta_f_bps=0.024500; active_median_abs_delta_f_bps=0.804100
+
+ETHUSDT:
+- Funding rows used: 1502
+- Held-out rows excluded: 645
+- Discovery funding window: 2022-01-01T00:00:00Z to 2023-05-16T08:00:00Z
+- OHLCV rows loaded for aligned context: 1501
+- OHLCV required window: 2022-01-01T04:00:00Z to 2023-05-16T04:00:00Z
+- OHLCV missing aligned rows: 0
+- Combined state counts: {'EXCLUDED_UNDEFINED': 21, 'INACTIVE_DISPLACED': 574, 'NEUTRAL_NON_SIDEWAYS': 348, 'EXCLUDED_TRANSITION': 149, 'ACTIVE_HIGH': 130, 'BASELINE': 219, 'ACTIVE_LOW': 61}
+- Regime counts: {'UNDEFINED': 21, 'NON_SIDEWAYS': 1013, 'SIDEWAYS': 468}
+- Funding state counts: {'HIGH': 476, 'NEUTRAL': 576, 'LOW': 301, 'TRANSITION_LOW': 149}
+- HIGH summary label: NORMALIZATION_SCREEN_ABSENT
+- LOW summary label: NORMALIZATION_SCREEN_WEAK
+- Symbol blocker flags: none
+  - HIGH_W1: NORMALIZATION_SCREEN_ABSENT (active_n=130, baseline_n=218); active_median_delta_f_bps=0.000000; baseline_median_delta_f_bps=0.039000; active_median_abs_delta_f_bps=0.000000
+  - HIGH_W3: NORMALIZATION_SCREEN_ABSENT (active_n=130, baseline_n=218); active_median_delta_f_bps=0.000000; baseline_median_delta_f_bps=-0.045550; active_median_abs_delta_f_bps=0.000000
+  - HIGH_W8: NORMALIZATION_SCREEN_ABSENT (active_n=130, baseline_n=218); active_median_delta_f_bps=0.000000; baseline_median_delta_f_bps=-0.004650; active_median_abs_delta_f_bps=0.000000
+  - LOW_W1: NORMALIZATION_SCREEN_WEAK (active_n=61, baseline_n=218); active_median_delta_f_bps=0.343900; baseline_median_delta_f_bps=0.039000; active_median_abs_delta_f_bps=0.674900
+  - LOW_W3: NORMALIZATION_SCREEN_WEAK (active_n=61, baseline_n=218); active_median_delta_f_bps=0.891500; baseline_median_delta_f_bps=-0.045550; active_median_abs_delta_f_bps=1.029000
+  - LOW_W8: NORMALIZATION_SCREEN_WEAK (active_n=61, baseline_n=218); active_median_delta_f_bps=1.182900; baseline_median_delta_f_bps=-0.004650; active_median_abs_delta_f_bps=1.225500
