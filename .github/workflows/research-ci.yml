@@ -1,0 +1,16 @@
+name: Research Suite
+
+on: [push, pull_request]
+
+jobs:
+  research-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install pytest pydantic pydantic-settings pyyaml requests
+      - name: Run research suite
+        run: python -m pytest tests/research research/hypothesis_agent/tests -q
