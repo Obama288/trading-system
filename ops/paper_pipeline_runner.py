@@ -85,7 +85,12 @@ def parse_args() -> argparse.Namespace:
         ["BTC-USDT", "ETH-USDT", "BNB-USDT", "SOL-USDT", "AVAX-USDT", "LINK-USDT"],
     )
     default_timeframe = strategy_cfg.get("default_timeframe", "15m")
-    parser = argparse.ArgumentParser(description="Minimal live-market paper pipeline runner.")
+    parser = argparse.ArgumentParser(
+        description=(
+            "Infrastructure harness: validates plumbing only; signal_engine rules are "
+            "NOT research-validated and runner output is NOT strategy evidence."
+        )
+    )
     parser.add_argument("--symbols", nargs="+", default=default_symbols)
     parser.add_argument("--timeframes", nargs="+", default=[default_timeframe])
     parser.add_argument("--limit", type=int, default=100)
@@ -316,6 +321,11 @@ async def run_loop(
 
 
 def main() -> None:
+    print(
+        "Infrastructure harness: validates plumbing only; signal_engine rules are "
+        "NOT research-validated and runner output is NOT strategy evidence.",
+        flush=True,
+    )
     args = parse_args()
     asyncio.run(
         run_loop(

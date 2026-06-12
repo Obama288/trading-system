@@ -10,6 +10,7 @@ docs as needed.
 - Mode: paper trading only.
 - Live: NO-GO.
 - Runtime readiness: no new readiness promoted by this file.
+- Note: ops/paper_pipeline_runner.py is an infrastructure harness only; signal_engine rules are NOT research-validated and runner output is NOT strategy evidence.
 - Primary exchange planning lane: Stage 54-BG / Bitget Demo planning.
 - Primary research lane: Setup E / E1 held-out source-access decision; Setup C
   is parked from active progression after DR1 Binance recent rerun LOW.
@@ -137,6 +138,12 @@ remote refs.
    Pre-registration: `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
    Design lock: `docs/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
    Output: `research/signal_observation/output/funding_normalization/`.
+   LOW-side broader-pairs source feasibility:
+   `research/signal_observation/LOW_SIDE_FUNDING_NORMALIZATION_BROADER_PAIRS_FEASIBILITY.md`.
+   Label: BROADER_PAIRS_FEASIBILITY_PLAUSIBLE (qualified — new acquisition
+   required for any broader pair). Next gate: Owner selects A (data
+   availability design lock), B (hold / other candidate), C (park), or D
+   (independent review of feasibility note).
 
 2. **Setup D D1 analysis** (HOLD — two conditions unmet):
    - SOL interval policy decision (variable 2h/4h intervals during FTX stress period).
