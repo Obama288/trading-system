@@ -1,6 +1,6 @@
 # Research Constitution — Edge Discovery Pipeline
 
-Status: v1.0 — ADOPTED 2026-06-12 (owner decisions recorded in section 7)
+Status: v1.1 — ADOPTED 2026-06-13 (amendment: Stage 5 hardening; v1.0 adopted 2026-06-12)
 Scope: governs all edge research in this repository. Supersedes per-family ad-hoc
 process. Existing decision records (Setup A/B/C) remain valid history.
 Location when adopted: `docs/RESEARCH_CONSTITUTION.md`
@@ -52,7 +52,10 @@ Failing a gate parks or retires the family; restart requires a NEW pre-registrat
 
 ### Stage 5 — Paper
 - Entry requires: owner sign-off + frozen detector code (tag/commit hash in the
-  decision record).
+  decision record) + execution audit passed on the frozen commit
+  (docs/SYSTEM_MAP_AND_RISK_REGISTER.md §5 checklist) + runner logs its commit
+  hash at startup and refuses to trade if it differs from the decision record
+  (runtime hash check).
 - Kill criteria fixed at entry, defaults:
   - expectancy after 30 paper trades below −0.15R → kill;
   - peak-to-trough drawdown ≥ 10R → kill;
@@ -89,6 +92,8 @@ Each item is mandatory. Copy into `<FAMILY>_PREREGISTRATION.md`.
 - Discovery window: [start, end], locked.
 - Validation window: [start, end], locked, non-overlapping with discovery.
 - Recent-rerun length (default 12 months).
+- Pre-registration records the SHA-256 of each dataset file in the locked
+  windows; quality reports bind to that file hash.
 
 ### 2.4 Random baseline
 - Specification of the baseline (e.g., same entry timestamps with shuffled
@@ -230,3 +235,6 @@ dataset.
    a true +0.10R edge vs bounded time spent on dead strategies. Overridable
    per family at pre-registration only.
 5. Stage 4 recent-rerun default length: 12 months. ADOPTED as written.
+6. Stage 5 hardening (v1.1 amendment): execution audit (SYSTEM_MAP §5 checklist)
+   + runtime hash check + dataset SHA-256 binding are required at Stage 5 entry.
+   ADOPTED 2026-06-13.
