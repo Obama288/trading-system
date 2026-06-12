@@ -179,6 +179,10 @@ readiness. See `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`.
   LOW branch directionally coherent but below 9 bps normalization magnitude
   floor (largest: ETH LOW W8 = 1.18 bps). Future broader-pairs work requires
   source feasibility, new pre-registration, and separate Owner authorization.
+- LOW-side broader-pairs source feasibility:
+  `research/signal_observation/LOW_SIDE_FUNDING_NORMALIZATION_BROADER_PAIRS_FEASIBILITY.md`.
+  Label: BROADER_PAIRS_FEASIBILITY_PLAUSIBLE (qualified; new acquisition required
+  for any broader pair; per-pair coverage unconfirmed).
 - Signal half-life: hours to days.
 - Maximum acceptable decision delay: hours to days; human-in-loop acceptable.
 - Human-in-loop allowed: yes.

@@ -1,5 +1,10 @@
 # Signal Observation Skeleton
 
+Governing process: `docs/RESEARCH_CONSTITUTION.md` (v1.0, adopted 2026-06-12).
+The constitution defines the Stage 0–6 pipeline, pre-registration requirements,
+simulator contract, statistical standards, and data layer standards. All
+Stage 2–4 work in this package operates under that document.
+
 This package holds research-layer data models for Stage 54-SQ-A automated
 signal observation collection.
 

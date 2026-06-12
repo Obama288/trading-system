@@ -4,6 +4,14 @@ Purpose: compact current state for Stage 54-SQ signal-quality research. Full
 artifacts and historical docs remain available, but routine startup should begin
 here plus `docs/CURRENT_STATE.md` and `docs/BOUNDARIES.md`.
 
+## Governing Process
+
+All research in this repository is governed by `docs/RESEARCH_CONSTITUTION.md`
+(v1.0, adopted 2026-06-12). The constitution defines the Stage 0–6 pipeline,
+pre-registration requirements, simulator contract, statistical standards, and
+data layer standards. This state file records track-specific status; the
+constitution is the authoritative process document.
+
 ## Current Track
 
 - Stage 54-SQ is research-only signal-quality observation.
@@ -182,6 +190,11 @@ its own pre-registration and separate Owner authorization.
   Pre-registration: `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
   Design lock: `docs/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
   Output: `research/signal_observation/output/funding_normalization/`.
+  LOW-side broader-pairs feasibility note:
+  `research/signal_observation/LOW_SIDE_FUNDING_NORMALIZATION_BROADER_PAIRS_FEASIBILITY.md`.
+  Label: BROADER_PAIRS_FEASIBILITY_PLAUSIBLE (qualified; new acquisition required).
+  Next gate: Owner selects A/B/C/D (data availability design lock, hold, park,
+  or independent review).
 - **Setup D D1 analysis** (HOLD — two conditions unmet): SOL interval policy
   decision + separate D1 analysis design lock required. Harness authorization:
   MET. Do not run D1 analysis until all conditions resolved.
