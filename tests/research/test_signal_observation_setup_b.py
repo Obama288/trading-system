@@ -15,6 +15,7 @@ from research.signal_observation.setup_b import (
     SignalDirection,
     calculate_stop_buffer,
     detect_setup_b,
+    detect_setup_b_with_diagnostics,
     determine_trend_state,
     find_pivots,
     is_pullback_depth_valid,
@@ -302,6 +303,20 @@ def test_short_target_all_outcomes_resolve_win() -> None:
     assert observation.outcome_1r == "win"
     assert observation.outcome_1_5r == "win"
     assert observation.outcome_2r == "win"
+
+
+def test_invalid_trade_reason_counted_when_outcome_window_truncated() -> None:
+    # _long_setup_candles() has 25 candles (15 setup rows + 10 outcome bars).
+    # BOS is at index 14. Truncate to 16 candles (indices 0-15):
+    #   entry_index = bos_index + 1 = 15
+    #   outcome_window_bars = OUTCOME_WINDOW_CANDLES = 10
+    #   simcore check: 15 + 10 = 25 > 16 (len) → InvalidTrade(reason="incomplete_window")
+    # The reason must be recorded in counters.invalid_trade_reasons, not silently dropped.
+    candles = _long_setup_candles()[:16]
+    result = detect_setup_b_with_diagnostics(
+        candles, symbol="BTCUSDT", direction=SignalDirection.LONG
+    )
+    assert result.counters.invalid_trade_reasons.get("incomplete_window", 0) == 1
 
 
 def test_setup_b_does_not_import_network_or_runtime_libraries() -> None:

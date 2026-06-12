@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
@@ -32,7 +32,7 @@ VOLUME_LOOKBACK = 20
 PERCENT_BUFFER = Decimal("0.005")
 TARGET_R_VALUES = (Decimal("1"), Decimal("1.5"), Decimal("2"))
 
-_BAR_DUR = timedelta(hours=4)
+_BAR_DUR = timedelta(hours=4)  # hardcoded for Setup B; new families must use timeutil.bar_duration
 
 
 class SignalDirection(str, Enum):
@@ -136,6 +136,7 @@ class SetupBCounters:
     wins_2r: int = 0
     losses_2r: int = 0
     flats_2r: int = 0
+    invalid_trade_reasons: dict = field(default_factory=dict)
 
 
 @dataclass(frozen=True, slots=True)
@@ -324,6 +325,10 @@ def detect_setup_b_with_diagnostics(
                 bos_index=bos_index,
                 impulse_size=impulse_size,
             )
+            if isinstance(observation, _SimInvalidTrade):
+                _increment(failures, "stop_invalid_or_non_structural")
+                _increment(counters.invalid_trade_reasons, observation.reason)
+                continue
             if observation is None:
                 _increment(failures, "stop_invalid_or_non_structural")
                 continue
@@ -347,7 +352,7 @@ def _build_observation(
     pullback: Sequence[Candle],
     bos_index: int,
     impulse_size: Decimal,
-) -> SetupBObservation | None:
+) -> SetupBObservation | _SimInvalidTrade | None:
     bos_candle = candles[bos_index]
     atr_at_entry = atr_values[bos_index]
     if atr_at_entry is None:
@@ -387,7 +392,7 @@ def _build_observation(
     )
     sim_result = _simulate_trade(list(candles), spec, _BAR_DUR)
     if isinstance(sim_result, _SimInvalidTrade):
-        return None
+        return sim_result  # caller records reason in counters.invalid_trade_reasons
     sim = sim_result
 
     signal_time = sim.entry_time

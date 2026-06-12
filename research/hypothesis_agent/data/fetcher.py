@@ -7,6 +7,22 @@ from urllib.request import Request, urlopen
 
 from research.hypothesis_agent.analysis.sessions import classify_session
 
+# Map OKX timeframe strings to bar duration (for close-time session per constitution §3.1).
+# Raise ValueError on unknown timeframes to surface missing entries early.
+_TIMEFRAME_DURATIONS: dict[str, timedelta] = {
+    "1m": timedelta(minutes=1),
+    "3m": timedelta(minutes=3),
+    "5m": timedelta(minutes=5),
+    "15m": timedelta(minutes=15),
+    "30m": timedelta(minutes=30),
+    "1H": timedelta(hours=1),
+    "2H": timedelta(hours=2),
+    "4H": timedelta(hours=4),
+    "6H": timedelta(hours=6),
+    "12H": timedelta(hours=12),
+    "1D": timedelta(days=1),
+}
+
 try:
     import requests
 except ImportError:  # pragma: no cover - exercised only when requests is installed
@@ -45,6 +61,11 @@ class OkxMarketDataFetcher:
         limit: int = 100,
         after: str | None = None,
     ) -> list[dict]:
+        bar_duration = _TIMEFRAME_DURATIONS.get(timeframe)
+        if bar_duration is None:
+            raise ValueError(
+                f"unknown timeframe {timeframe!r}; add it to _TIMEFRAME_DURATIONS"
+            )
         params = {"instId": symbol, "bar": timeframe, "limit": str(limit)}
         if after is not None:
             params["after"] = after
@@ -65,7 +86,8 @@ class OkxMarketDataFetcher:
                 "volume": float(row[5]),
             }
             candle["body"] = abs(candle["close"] - candle["open"])
-            candle["session"] = classify_session(timestamp)
+            # session derived from bar CLOSE time per constitution §3.1
+            candle["session"] = classify_session(timestamp + bar_duration)
             candles.append(candle)
         candles.sort(key=lambda item: item["timestamp"])
         return candles

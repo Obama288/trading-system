@@ -40,7 +40,13 @@ def test_fetch_candles_parses_okx_payload():
     assert len(candles) == 2
     assert candles[0]["close"] == 100.0
     assert candles[1]["high"] == 110.0
-    assert candles[0]["session"] in {"asia", "london", "ny", "london_ny_overlap"}
+    # Hand-derived session from bar CLOSE time (constitution §3.1):
+    # candles[0]: open=1714607100 = 2024-05-01T23:45:00Z (hour 23 UTC)
+    #   close = open + 15min = 2024-05-02T00:00:00Z → hour 0 → classify_session → "asia"
+    # candles[1]: open=1714608000 = 2024-05-02T00:00:00Z (hour 0 UTC)
+    #   close = open + 15min = 2024-05-02T00:15:00Z → hour 0 → "asia"
+    assert candles[0]["session"] == "asia"
+    assert candles[1]["session"] == "asia"
 
 
 # --- confirm-flag filtering ---
