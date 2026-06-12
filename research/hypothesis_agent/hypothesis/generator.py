@@ -21,14 +21,14 @@ def generate_top_hypotheses(rows: list[dict], limit: int = 3) -> list[dict]:
                 "symbol": row["symbol"],
                 "timeframe": row["timeframe"],
                 "direction": row["direction"],
-                "best_session": row["best_session"],
+                "top_session": row["top_session"],
                 "win_rate": row["win_rate"],
                 "avg_rr": row["avg_rr"],
                 "sample_count": row["sample_count"],
-                "confidence": row["confidence"],
+                "candidate_tier": row["candidate_tier"],
                 "statement": (
-                    f"{row['pattern']} on {row['symbol']} {row['timeframe']} performs best in "
-                    f"{row['best_session']} with {row['win_rate']}% win_rate."
+                    f"Research candidate: {row['pattern']} on {row['symbol']} {row['timeframe']}"
+                    f" — sample_count={row['sample_count']} (Stage 0, unvalidated)."
                 ),
             }
         )

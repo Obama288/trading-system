@@ -48,17 +48,20 @@ class OkxMarketDataFetcher:
         timeframe: str,
         *,
         limit: int = 100,
-        before: str | None = None,
+        after: str | None = None,
     ) -> list[dict]:
         params = {"instId": symbol, "bar": timeframe, "limit": str(limit)}
-        if before is not None:
-            params["before"] = before
+        if after is not None:
+            params["after"] = after
 
         payload = self._request_json("/api/v5/market/candles", params)
         rows = payload.get("data", []) or []
 
         candles: list[dict] = []
         for row in rows:
+            # row[8] is the OKX confirm flag: "1" = closed bar, "0" = unclosed/live.
+            if len(row) > 8 and row[8] != "1":
+                continue
             timestamp = _utc_datetime_from_ms(row[0])
             candle = {
                 "timestamp": timestamp,

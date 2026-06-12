@@ -109,7 +109,7 @@ def _render_markdown(
     recommended_symbols = sorted({item["symbol"].replace("-", "") for item in hypotheses})
 
     lines = [
-        "# Trading Hypotheses",
+        "# Research Candidates (Stage 0)",
         f"Generated: {datetime.now(timezone.utc).isoformat()}",
         f"Mode: {mode}",
         f"Market regime: {market_regime}",
@@ -120,15 +120,14 @@ def _render_markdown(
     for index, hypothesis in enumerate(hypotheses, start=1):
         lines.extend(
             [
-                f"## Hypothesis {index} — {hypothesis['pattern']} on {hypothesis['symbol']} {hypothesis['timeframe']}",
+                f"## Candidate {index} — {hypothesis['pattern']} on {hypothesis['symbol']} {hypothesis['timeframe']}",
                 f"- Statement: {hypothesis['statement']}",
                 f"- Direction: {hypothesis['direction']}",
                 f"- Timeframe: {hypothesis['timeframe']}",
-                f"- Best session: {hypothesis['best_session']}",
-                f"- Win rate: {hypothesis['win_rate']}%",
+                f"- Top session (unvalidated): {hypothesis['top_session']}",
                 f"- Avg R:R: {hypothesis['avg_rr']}",
                 f"- Sample count: {hypothesis['sample_count']}",
-                f"- Confidence: {hypothesis['confidence']}",
+                f"- Tier: {hypothesis['candidate_tier']}",
                 "",
             ]
         )
@@ -136,15 +135,15 @@ def _render_markdown(
     lines.extend(
         [
             "## Full Statistics Table",
-            "| Pattern | Symbol | Timeframe | Direction | Best session | Win rate | Avg R:R | Avg duration | Sample count | Confidence | Sharpe |",
+            "| Pattern | Symbol | Timeframe | Direction | Top session | Win rate | Avg R:R | Avg duration | Sample count | Tier | Sharpe |",
             "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
         ]
     )
     for row in sorted(stats_rows, key=lambda item: (item["pattern"], item["symbol"], item["timeframe"])):
         lines.append(
             f"| {row['pattern']} | {row['symbol']} | {row['timeframe']} | {row['direction']} | "
-            f"{row['best_session']} | {row['win_rate']}% | {row['avg_rr']} | {row['avg_duration_candles']} | "
-            f"{row['sample_count']} | {row['confidence']} | {row['sharpe']} |"
+            f"{row['top_session']} | {row['win_rate']}% | {row['avg_rr']} | {row['avg_duration_candles']} | "
+            f"{row['sample_count']} | {row['candidate_tier']} | {row['sharpe']} |"
         )
 
     lines.extend(
@@ -217,8 +216,8 @@ def run_backtest(
 
     for hypothesis in hypotheses:
         alert_sender(
-            f"New hypothesis generated: {hypothesis['pattern']} on {hypothesis['symbol']} — "
-            f"win_rate {hypothesis['win_rate']}%",
+            f"Research candidate: {hypothesis['pattern']} on {hypothesis['symbol']} — "
+            f"sample_count={hypothesis['sample_count']} (Stage 0, unvalidated)",
             bot_token=config.telegram_bot_token,
             chat_id=config.telegram_chat_id,
         )

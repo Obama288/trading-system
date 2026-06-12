@@ -43,15 +43,18 @@ class OkxMarketDataFetcher:
         timeframe: str,
         *,
         limit: int = 100,
-        before: str | None = None,
+        after: str | None = None,
     ) -> list[dict]:
         params = {"instId": symbol, "bar": timeframe, "limit": str(limit)}
-        if before is not None:
-            params["before"] = before
+        if after is not None:
+            params["after"] = after
         payload = self._request_json("/api/v5/market/candles", params)
         rows = payload.get("data", [])
         candles: list[dict] = []
         for row in rows:
+            # row[8] is the OKX confirm flag: "1" = closed bar, "0" = unclosed/live.
+            if len(row) > 8 and row[8] != "1":
+                continue
             timestamp = _utc_datetime_from_ms(row[0])
             candle = {
                 "timestamp": timestamp,
@@ -71,33 +74,33 @@ class OkxMarketDataFetcher:
         if limit is not None:
             remaining = max(1, limit)
             all_candles: list[dict] = []
-            before: str | None = None
+            after: str | None = None
 
             while remaining > 0:
-                batch = self.fetch_candles(symbol, timeframe, limit=min(100, remaining), before=before)
+                batch = self.fetch_candles(symbol, timeframe, limit=min(100, remaining), after=after)
                 if not batch:
                     break
                 all_candles = batch + all_candles
                 remaining -= len(batch)
                 oldest = int(batch[0]["timestamp"].timestamp() * 1000)
-                before = str(oldest - 1)
+                after = str(oldest)  # returns records older than this timestamp
 
             all_candles.sort(key=lambda item: item["timestamp"])
             return all_candles[-limit:]
 
         cutoff = datetime.now(timezone.utc) - timedelta(days=days)
         all_candles: list[dict] = []
-        before: str | None = None
+        after: str | None = None
 
         while True:
-            batch = self.fetch_candles(symbol, timeframe, limit=100, before=before)
+            batch = self.fetch_candles(symbol, timeframe, limit=100, after=after)
             if not batch:
                 break
             all_candles = batch + all_candles
             if batch[0]["timestamp"] <= cutoff:
                 break
             oldest = int(batch[0]["timestamp"].timestamp() * 1000)
-            before = str(oldest - 1)
+            after = str(oldest)  # returns records older than this timestamp
 
         filtered = [item for item in all_candles if item["timestamp"] >= cutoff]
         filtered.sort(key=lambda item: item["timestamp"])

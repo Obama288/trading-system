@@ -56,14 +56,16 @@ def test_run_backtest_writes_hypothesis_output(tmp_path):
 
     assert result["mode"] == "backtest"
     content = config.hypothesis_output_path.read_text(encoding="utf-8")
-    assert "# Trading Hypotheses" in content
+    assert "# Research Candidates (Stage 0)" in content
     assert "## Full Statistics Table" in content
     assert isinstance(result["hypotheses"], list)
     if result["hypotheses"]:
-        assert "## Hypothesis 1" in content
+        assert "## Candidate 1" in content
         assert alerts
+        assert all("win_rate" not in msg for msg in alerts)
+        assert all("Stage 0" in msg for msg in alerts)
     else:
-        assert "## Hypothesis 1" not in content
+        assert "## Candidate 1" not in content
         assert alerts == []
 
 

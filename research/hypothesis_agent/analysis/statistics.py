@@ -33,12 +33,12 @@ def compute_sharpe(trades: list[dict]) -> float:
     return round(avg_return / (variance ** 0.5), 3)
 
 
-def classify_confidence(sample_count: int, win_rate: float) -> str:
+def classify_candidate_tier(sample_count: int, win_rate: float) -> str:
     if sample_count > 50 and win_rate > 55:
-        return "HIGH"
+        return "priority-candidate"
     if sample_count > 30 and win_rate > 50:
-        return "MEDIUM"
-    return "LOW"
+        return "candidate"
+    return "weak-candidate"
 
 
 def summarize_trades(trades: list[dict]) -> dict:
@@ -50,7 +50,7 @@ def summarize_trades(trades: list[dict]) -> dict:
             "win_rate": compute_win_rate(session_trades),
         }
 
-    best_session = max(
+    top_session = max(
         session_stats.items(),
         key=lambda item: (item[1]["win_rate"], item[1]["sample_count"]),
     )[0]
@@ -61,7 +61,7 @@ def summarize_trades(trades: list[dict]) -> dict:
         "avg_rr": compute_avg_rr(trades),
         "avg_duration_candles": compute_avg_duration_candles(trades),
         "sample_count": sample_count,
-        "best_session": best_session,
-        "confidence": classify_confidence(sample_count, win_rate),
+        "top_session": top_session,
+        "candidate_tier": classify_candidate_tier(sample_count, win_rate),
         "sharpe": compute_sharpe(trades),
     }
