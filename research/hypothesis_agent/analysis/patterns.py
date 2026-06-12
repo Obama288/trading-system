@@ -1,8 +1,18 @@
 from __future__ import annotations
 
+from datetime import timedelta
+from decimal import Decimal
 from statistics import mean
 
 from research.hypothesis_agent.analysis.market_regime import compute_atr, compute_ema
+from research.simcore.candles import Candle as _SimCandle
+from research.simcore.models import (
+    Direction as _SimDirection,
+    FillPolicy as _FillPolicy,
+    InvalidTrade as _SimInvalidTrade,
+    TradeSpec as _TradeSpec,
+)
+from research.simcore.simulator import simulate_trade as _simulate_trade_fn
 
 
 PATTERN_NAMES = (
@@ -10,72 +20,76 @@ PATTERN_NAMES = (
     "trend_continuation",
 )
 
-
-def _simulate_trade(
-    candles: list[dict],
-    signal_index: int,
-    *,
-    direction: str,
-    entry: float,
-    stop: float,
-    target: float,
-    max_bars: int | None = None,
-) -> dict | None:
-    if stop <= 0 or entry <= 0:
-        return None
-    risk = abs(entry - stop)
-    if risk <= 0:
-        return None
-
-    end_index = len(candles) - 1 if max_bars is None else min(len(candles) - 1, signal_index + max_bars)
-    for index in range(signal_index + 1, end_index + 1):
-        candle = candles[index]
-        if direction == "LONG":
-            if candle["low"] <= stop:
-                return {"win": False, "rr": -1.0, "duration_candles": index - signal_index}
-            if candle["high"] >= target:
-                return {"win": True, "rr": round((target - entry) / risk, 2), "duration_candles": index - signal_index}
-        else:
-            if candle["high"] >= stop:
-                return {"win": False, "rr": -1.0, "duration_candles": index - signal_index}
-            if candle["low"] <= target:
-                return {"win": True, "rr": round((entry - target) / risk, 2), "duration_candles": index - signal_index}
-
-    last_close = candles[end_index]["close"]
-    if direction == "LONG":
-        rr = round((last_close - entry) / risk, 2)
-        return {"win": rr > 0, "rr": rr, "duration_candles": end_index - signal_index}
-    rr = round((entry - last_close) / risk, 2)
-    return {"win": rr > 0, "rr": rr, "duration_candles": end_index - signal_index}
+_ZERO = Decimal("0")
+_TWO = Decimal("2")
 
 
-def _append_trade(
+def _dict_to_candle(d: dict) -> _SimCandle:
+    return _SimCandle(
+        timestamp=d["timestamp"],
+        open=Decimal(str(d["open"])),
+        high=Decimal(str(d["high"])),
+        low=Decimal(str(d["low"])),
+        close=Decimal(str(d["close"])),
+        volume=Decimal(str(d["volume"])),
+    )
+
+
+def _bar_duration(candles: list[dict]) -> timedelta:
+    if len(candles) < 2:
+        return timedelta(hours=1)
+    return candles[1]["timestamp"] - candles[0]["timestamp"]
+
+
+def _append_simcore_trade(
     trades: list[dict],
     candles: list[dict],
     signal_index: int,
     *,
     direction: str,
-    entry: float,
     stop: float,
-    target: float,
+    target_r: Decimal = _TWO,
+    max_bars: int | None = None,
 ) -> None:
-    outcome = _simulate_trade(
-        candles,
-        signal_index,
-        direction=direction,
-        entry=entry,
-        stop=stop,
-        target=target,
-    )
-    if outcome is None:
+    """Append a trade resolved via simcore (NEXT_BAR_OPEN from signal_index).
+
+    signal_index is the bar whose close completes the pattern.
+    Entry is at the open of candles[signal_index + 1] (NEXT_BAR_OPEN).
+    target_r defaults to 2R (all hypothesis patterns target 2R).
+    """
+    stop_d = Decimal(str(stop))
+    if stop_d <= _ZERO:
         return
-    trades.append(
-        {
-            "direction": direction,
-            "session": candles[signal_index]["session"],
-            **outcome,
-        }
+
+    remaining = len(candles) - signal_index - 1
+    outcome_window = remaining if max_bars is None else min(remaining, max_bars)
+    if outcome_window <= 0:
+        return
+
+    sim_candles = [_dict_to_candle(c) for c in candles]
+    duration = _bar_duration(candles)
+
+    spec = _TradeSpec(
+        symbol="hypothesis",
+        direction=_SimDirection(direction.lower()),
+        signal_index=signal_index,
+        stop_price=stop_d,
+        target_r_values=(target_r,),
+        outcome_window_bars=outcome_window,
+        fill=_FillPolicy.NEXT_BAR_OPEN,
     )
+    sim_result = _simulate_trade_fn(sim_candles, spec, duration)
+    if isinstance(sim_result, _SimInvalidTrade):
+        return
+
+    t = sim_result.targets[target_r]
+    trades.append({
+        "direction": direction,
+        "session": candles[signal_index]["session"],
+        "win": t.outcome == "win",
+        "rr": float(t.final_r_gross),
+        "duration_candles": t.bars_to_resolution,
+    })
 
 
 def analyze_breakout_retest(candles: list[dict]) -> list[dict]:
@@ -90,16 +104,12 @@ def analyze_breakout_retest(candles: list[dict]) -> list[dict]:
         atr = atr_values[index]
 
         if breakout["close"] > resistance and retest["low"] <= resistance <= retest["close"]:
-            entry = resistance
-            stop = entry - max(atr, 1e-6)
-            target = entry + (entry - stop) * 2
-            _append_trade(trades, candles, index + 1, direction="LONG", entry=entry, stop=stop, target=target)
+            stop = resistance - max(atr, 1e-6)
+            _append_simcore_trade(trades, candles, index + 1, direction="LONG", stop=stop)
 
         if breakout["close"] < support and retest["high"] >= support >= retest["close"]:
-            entry = support
-            stop = entry + max(atr, 1e-6)
-            target = entry - (stop - entry) * 2
-            _append_trade(trades, candles, index + 1, direction="SHORT", entry=entry, stop=stop, target=target)
+            stop = support + max(atr, 1e-6)
+            _append_simcore_trade(trades, candles, index + 1, direction="SHORT", stop=stop)
     return trades
 
 
@@ -116,16 +126,12 @@ def analyze_consolidation_breakout(candles: list[dict]) -> list[dict]:
         candle = candles[index]
 
         if box_range < atr * 1.5 and candle["close"] > box_high and candle["body"] > avg_body * 1.2:
-            entry = candle["close"]
             stop = box_low
-            target = entry + max(entry - stop, atr) * 2
-            _append_trade(trades, candles, index, direction="LONG", entry=entry, stop=stop, target=target)
+            _append_simcore_trade(trades, candles, index, direction="LONG", stop=stop)
 
         if box_range < atr * 1.5 and candle["close"] < box_low and candle["body"] > avg_body * 1.2:
-            entry = candle["close"]
             stop = box_high
-            target = entry - max(stop - entry, atr) * 2
-            _append_trade(trades, candles, index, direction="SHORT", entry=entry, stop=stop, target=target)
+            _append_simcore_trade(trades, candles, index, direction="SHORT", stop=stop)
     return trades
 
 
@@ -135,7 +141,6 @@ def analyze_trend_continuation(candles: list[dict]) -> list[dict]:
     ema20 = compute_ema(closes, 20)
     atr_values = compute_atr(candles, 14)
     for index in range(21, len(candles) - 1):
-        price = candles[index]["close"]
         atr = atr_values[index]
         ema = ema20[index]
         prev_ema = ema20[index - 3]
@@ -143,16 +148,12 @@ def analyze_trend_continuation(candles: list[dict]) -> list[dict]:
         candle = candles[index]
 
         if slope > 0 and candle["low"] <= ema <= candle["close"]:
-            entry = price
             stop = min(candle["low"], ema) - atr * 0.5
-            target = entry + max(entry - stop, atr) * 2
-            _append_trade(trades, candles, index, direction="LONG", entry=entry, stop=stop, target=target)
+            _append_simcore_trade(trades, candles, index, direction="LONG", stop=stop)
 
         if slope < 0 and candle["high"] >= ema >= candle["close"]:
-            entry = price
             stop = max(candle["high"], ema) + atr * 0.5
-            target = entry - max(stop - entry, atr) * 2
-            _append_trade(trades, candles, index, direction="SHORT", entry=entry, stop=stop, target=target)
+            _append_simcore_trade(trades, candles, index, direction="SHORT", stop=stop)
     return trades
 
 
@@ -165,18 +166,14 @@ def analyze_momentum(candles: list[dict]) -> list[dict]:
         if all(candle["close"] > candle["open"] and candle["body"] > atr * 0.3 for candle in seq):
             pullback = candles[index]
             if pullback["close"] < seq[-1]["close"]:
-                entry = seq[-1]["close"]
                 stop = min(pullback["low"], seq[-1]["low"]) - atr * 0.5
-                target = entry + max(entry - stop, atr) * 2
-                _append_trade(trades, candles, index, direction="LONG", entry=entry, stop=stop, target=target)
+                _append_simcore_trade(trades, candles, index, direction="LONG", stop=stop)
 
         if all(candle["close"] < candle["open"] and candle["body"] > atr * 0.3 for candle in seq):
             pullback = candles[index]
             if pullback["close"] > seq[-1]["close"]:
-                entry = seq[-1]["close"]
                 stop = max(pullback["high"], seq[-1]["high"]) + atr * 0.5
-                target = entry - max(stop - entry, atr) * 2
-                _append_trade(trades, candles, index, direction="SHORT", entry=entry, stop=stop, target=target)
+                _append_simcore_trade(trades, candles, index, direction="SHORT", stop=stop)
     return trades
 
 
