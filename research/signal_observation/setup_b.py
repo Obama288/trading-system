@@ -3,14 +3,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from enum import Enum
 from typing import Sequence
 
 from .candles import Candle
 from .indicators import atr, pivot_highs, pivot_lows
-from .sessions import session_label
+from research.simcore.models import (
+    Direction as _SimDirection,
+    FillPolicy as _FillPolicy,
+    InvalidTrade as _SimInvalidTrade,
+    TradeSpec as _TradeSpec,
+)
+from research.simcore.simulator import simulate_trade as _simulate_trade
 
 
 SETUP_NAME = "Trend Pullback BOS / Continuation"
@@ -25,6 +31,8 @@ OUTCOME_WINDOW_CANDLES = 10
 VOLUME_LOOKBACK = 20
 PERCENT_BUFFER = Decimal("0.005")
 TARGET_R_VALUES = (Decimal("1"), Decimal("1.5"), Decimal("2"))
+
+_BAR_DUR = timedelta(hours=4)
 
 
 class SignalDirection(str, Enum):
@@ -54,19 +62,6 @@ class Pivot:
 
 
 @dataclass(frozen=True, slots=True)
-class TargetOutcome:
-    """Outcome for one fixed R target."""
-
-    target_r: Decimal
-    target_price: Decimal
-    outcome: str
-    resolved: bool
-    bars_to_resolution: int | None
-    mae_r: Decimal | None
-    mfe_r: Decimal | None
-
-
-@dataclass(frozen=True, slots=True)
 class SetupBObservation:
     """Setup B research observation with no execution state."""
 
@@ -80,6 +75,7 @@ class SetupBObservation:
     session_label: str
     entry_time: datetime
     entry_price: Decimal
+    signal_close: Decimal     # BOS candle close — diagnostic; entry moved to next-bar-open
     next_bar_open: Decimal | None
     stop: Decimal
     target_1r: Decimal
@@ -357,9 +353,9 @@ def _build_observation(
     if atr_at_entry is None:
         return None
 
-    entry = bos_candle.close
+    signal_close = bos_candle.close  # diagnostic: BOS candle close (pre-migration entry)
     percent_buffer, atr_buffer, chosen_buffer = calculate_stop_buffer(
-        entry_price=entry,
+        entry_price=signal_close,
         atr_at_entry=atr_at_entry,
     )
     pullback_high = max(candle.high for candle in pullback)
@@ -367,37 +363,38 @@ def _build_observation(
 
     if direction is SignalDirection.LONG:
         stop = pullback_low - chosen_buffer
-        initial_r = entry - stop
         prior_swing_high = swing.price
         prior_swing_low = prior_opposite.price
         trend_direction = "uptrend"
         pullback_depth = (swing.price - pullback_low) / impulse_size
+        sim_direction = _SimDirection.LONG
     else:
         stop = pullback_high + chosen_buffer
-        initial_r = stop - entry
         prior_swing_high = prior_opposite.price
         prior_swing_low = swing.price
         trend_direction = "downtrend"
         pullback_depth = (pullback_high - swing.price) / impulse_size
+        sim_direction = _SimDirection.SHORT
 
-    if initial_r <= Decimal("0"):
-        return None
-
-    target_1r = _target_price(entry, initial_r, Decimal("1"), direction)
-    target_1_5r = _target_price(entry, initial_r, Decimal("1.5"), direction)
-    target_2r = _target_price(entry, initial_r, Decimal("2"), direction)
-    outcomes = evaluate_multi_r_outcomes(
-        candles,
-        entry_index=bos_index,
-        entry_price=entry,
-        stop=stop,
-        initial_r=initial_r,
-        direction=direction,
+    spec = _TradeSpec(
+        symbol=symbol,
+        direction=sim_direction,
+        signal_index=bos_index,
+        stop_price=stop,
+        target_r_values=TARGET_R_VALUES,
+        outcome_window_bars=OUTCOME_WINDOW_CANDLES,
+        fill=_FillPolicy.NEXT_BAR_OPEN,
     )
-    outcome_1 = outcomes[Decimal("1")]
-    outcome_1_5 = outcomes[Decimal("1.5")]
-    outcome_2 = outcomes[Decimal("2")]
-    signal_time = bos_candle.timestamp.astimezone(UTC)
+    sim_result = _simulate_trade(list(candles), spec, _BAR_DUR)
+    if isinstance(sim_result, _SimInvalidTrade):
+        return None
+    sim = sim_result
+
+    signal_time = sim.entry_time
+    entry_price = sim.entry_price
+    outcome_1 = sim.targets[Decimal("1")]
+    outcome_1_5 = sim.targets[Decimal("1.5")]
+    outcome_2 = sim.targets[Decimal("2")]
 
     return SetupBObservation(
         setup_name=SETUP_NAME,
@@ -407,14 +404,15 @@ def _build_observation(
         signal_direction=direction,
         signal_time=signal_time,
         signal_hour_utc=signal_time.hour,
-        session_label=session_label(signal_time),
+        session_label=sim.session,
         entry_time=signal_time,
-        entry_price=entry,
-        next_bar_open=candles[bos_index + 1].open if bos_index + 1 < len(candles) else None,
+        entry_price=entry_price,
+        signal_close=signal_close,
+        next_bar_open=entry_price,
         stop=stop,
-        target_1r=target_1r,
-        target_1_5r=target_1_5r,
-        target_2r=target_2r,
+        target_1r=outcome_1.target_price,
+        target_1_5r=outcome_1_5.target_price,
+        target_2r=outcome_2.target_price,
         percent_buffer=percent_buffer,
         atr_buffer=atr_buffer,
         chosen_buffer=chosen_buffer,
@@ -445,34 +443,6 @@ def _build_observation(
     )
 
 
-def evaluate_multi_r_outcomes(
-    candles: Sequence[Candle],
-    *,
-    entry_index: int,
-    entry_price: Decimal,
-    stop: Decimal,
-    initial_r: Decimal,
-    direction: SignalDirection,
-    outcome_window_candles: int = OUTCOME_WINDOW_CANDLES,
-) -> dict[Decimal, TargetOutcome]:
-    """Evaluate 1R, 1.5R, and 2R outcomes from local candles."""
-
-    window = candles[entry_index + 1 : entry_index + 1 + outcome_window_candles]
-    output: dict[Decimal, TargetOutcome] = {}
-    for target_r in TARGET_R_VALUES:
-        target = _target_price(entry_price, initial_r, target_r, direction)
-        output[target_r] = _resolve_target_outcome(
-            window=window,
-            entry_price=entry_price,
-            stop=stop,
-            target=target,
-            target_r=target_r,
-            initial_r=initial_r,
-            direction=direction,
-        )
-    return output
-
-
 def calculate_stop_buffer(
     *,
     entry_price: Decimal,
@@ -489,81 +459,6 @@ def is_pullback_depth_valid(depth: Decimal) -> bool:
     """Return whether pullback depth is inside the SQ_B_1.0 range."""
 
     return MIN_PULLBACK_DEPTH <= depth <= MAX_PULLBACK_DEPTH
-
-
-def _resolve_target_outcome(
-    *,
-    window: Sequence[Candle],
-    entry_price: Decimal,
-    stop: Decimal,
-    target: Decimal,
-    target_r: Decimal,
-    initial_r: Decimal,
-    direction: SignalDirection,
-) -> TargetOutcome:
-    if not window:
-        return TargetOutcome(target_r, target, "flat", False, None, None, None)
-
-    for offset, candle in enumerate(window, start=1):
-        resolution_window = window[:offset]
-        if direction is SignalDirection.LONG:
-            if candle.low <= stop:
-                mae_r, mfe_r = _excursions_for_window(
-                    resolution_window,
-                    entry_price=entry_price,
-                    initial_r=initial_r,
-                    direction=direction,
-                )
-                return TargetOutcome(target_r, target, "loss", True, offset, mae_r, mfe_r)
-            if candle.high >= target:
-                mae_r, mfe_r = _excursions_for_window(
-                    resolution_window,
-                    entry_price=entry_price,
-                    initial_r=initial_r,
-                    direction=direction,
-                )
-                return TargetOutcome(target_r, target, "win", True, offset, mae_r, mfe_r)
-        else:
-            if candle.high >= stop:
-                mae_r, mfe_r = _excursions_for_window(
-                    resolution_window,
-                    entry_price=entry_price,
-                    initial_r=initial_r,
-                    direction=direction,
-                )
-                return TargetOutcome(target_r, target, "loss", True, offset, mae_r, mfe_r)
-            if candle.low <= target:
-                mae_r, mfe_r = _excursions_for_window(
-                    resolution_window,
-                    entry_price=entry_price,
-                    initial_r=initial_r,
-                    direction=direction,
-                )
-                return TargetOutcome(target_r, target, "win", True, offset, mae_r, mfe_r)
-
-    mae_r, mfe_r = _excursions_for_window(
-        window,
-        entry_price=entry_price,
-        initial_r=initial_r,
-        direction=direction,
-    )
-    return TargetOutcome(target_r, target, "flat", True, len(window), mae_r, mfe_r)
-
-
-def _excursions_for_window(
-    window: Sequence[Candle],
-    *,
-    entry_price: Decimal,
-    initial_r: Decimal,
-    direction: SignalDirection,
-) -> tuple[Decimal, Decimal]:
-    if direction is SignalDirection.LONG:
-        mfe_r = max((candle.high - entry_price) / initial_r for candle in window)
-        mae_r = min((candle.low - entry_price) / initial_r for candle in window)
-    else:
-        mfe_r = max((entry_price - candle.low) / initial_r for candle in window)
-        mae_r = min((entry_price - candle.high) / initial_r for candle in window)
-    return mae_r, mfe_r
 
 
 def _swing_pivots_for_direction(
@@ -647,17 +542,6 @@ def _is_confirmed_bos(
     if direction is SignalDirection.LONG:
         return candle.close > pullback_high
     return candle.close < pullback_low
-
-
-def _target_price(
-    entry: Decimal,
-    initial_r: Decimal,
-    target_r: Decimal,
-    direction: SignalDirection,
-) -> Decimal:
-    if direction is SignalDirection.LONG:
-        return entry + (target_r * initial_r)
-    return entry - (target_r * initial_r)
 
 
 def _body_ratio(candle: Candle) -> Decimal | None:
