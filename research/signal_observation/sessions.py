@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime
 
 
-def session_label(timestamp: datetime) -> str:
+def _label_by_utc_hour(timestamp: datetime) -> str:
     """Return a coarse UTC trading-session label."""
 
     if timestamp.tzinfo is None:
@@ -23,3 +23,7 @@ def session_label(timestamp: datetime) -> str:
     if hour < 17:
         return "overlap"
     return "US"
+
+
+# simcore.timeutil.label_session imports this alias to avoid circular imports
+session_label = _label_by_utc_hour

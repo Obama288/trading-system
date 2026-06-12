@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from typing import Sequence
@@ -19,7 +19,6 @@ from .models import (
     SignalObservation,
 )
 from .outcomes import resolve_outcome
-from .sessions import session_label
 from .setup_a import (
     CONTEXT_TIMEFRAME,
     OUTCOME_WINDOW_CANDLES,
@@ -28,6 +27,9 @@ from .setup_a import (
     VOLUME_LOOKBACK,
 )
 from .summary import summarize_outcomes
+from research.simcore.timeutil import decision_time as _decision_time, label_session as _label_session
+
+_TRIGGER_BAR_DUR = timedelta(hours=1)
 
 
 @dataclass(frozen=True, slots=True)
@@ -384,8 +386,8 @@ def _detect_retest_observation(
             if initial_r <= Decimal("0"):
                 return None
             target = entry + (Decimal("2") * initial_r)
-            signal_time = candle.timestamp.astimezone(UTC)
-            compact_time = signal_time.strftime("%Y%m%dT%H%M%SZ")
+            signal_time = _decision_time(candle, _TRIGGER_BAR_DUR)
+            compact_time = signal_time.astimezone(UTC).strftime("%Y%m%dT%H%M%SZ")
             obs_id = f"setup-a-sens-{variant_name}-{symbol.lower()}-{compact_time}"
 
             return SignalObservation(
@@ -405,7 +407,7 @@ def _detect_retest_observation(
                 initial_r=initial_r,
                 btc_score=btc_score,
                 session_utc_hour=signal_time.hour,
-                session_label=session_label(signal_time),
+                session_label=_label_session(candle, _TRIGGER_BAR_DUR),
                 status=ObservationStatus.VALID,
                 outcome_window_candles=OUTCOME_WINDOW_CANDLES,
             )
