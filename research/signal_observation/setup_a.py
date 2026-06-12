@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Sequence
 
 from .candles import Candle
 from .indicators import atr
 from .models import BtcScore, Direction, ObservationStatus, SetupId, SignalObservation
-from .sessions import session_label
+from research.simcore.timeutil import decision_time as _decision_time, label_session as _label_session
+
+_TRIGGER_BAR_DUR = timedelta(hours=1)
 
 
 CONTEXT_TIMEFRAME = "4H"
@@ -143,7 +145,8 @@ def _detect_retest_observation(
             if initial_r <= Decimal("0"):
                 return None
             target = entry + (Decimal("2") * initial_r)
-            signal_time = candle.timestamp.astimezone(UTC)
+            # decision_time(candle, 1h) = bar close time per constitution §3.1
+            signal_time = _decision_time(candle, _TRIGGER_BAR_DUR)
 
             return SignalObservation(
                 observation_id=_observation_id(symbol, signal_time),
@@ -162,7 +165,7 @@ def _detect_retest_observation(
                 initial_r=initial_r,
                 btc_score=btc_score,
                 session_utc_hour=signal_time.hour,
-                session_label=session_label(signal_time),
+                session_label=_label_session(candle, _TRIGGER_BAR_DUR),
                 status=ObservationStatus.VALID,
                 outcome_window_candles=OUTCOME_WINDOW_CANDLES,
             )

@@ -124,6 +124,13 @@ def test_long_window_close_result_when_neither_target_nor_stop_hit() -> None:
 
 
 def test_long_mfe_and_mae_are_calculated_over_window() -> None:
+    # entry_price=100, stop=99, target=110, initial_r=1
+    # FLAT outcome (target 110 never reached):
+    #   Bar 1 (entry, no gap): h=101.50 < 110, l=99.25 > 99 → no exit
+    #   Bar 2: o=100.50 (no gap), h=101.80 < 110, l=99.50 > 99 → no exit → FLAT
+    # MAE over [entry..exit]: min_low=min(99.25,99.50)=99.25 → (100−99.25)/1=0.75
+    # MFE over [entry..exit]: max_high=max(101.50,101.80)=101.80 → (101.80−100)/1=1.80
+    # Note: mae_r is non-negative per simcore §5.4 (was −0.75 in pre-migration code)
     result = resolve_outcome(
         _observation(target="110", outcome_window_candles=2),
         [
@@ -133,7 +140,7 @@ def test_long_mfe_and_mae_are_calculated_over_window() -> None:
     )
 
     assert result.mfe_r == Decimal("1.80")
-    assert result.mae_r == Decimal("-0.75")
+    assert result.mae_r == Decimal("0.75")
 
 
 def test_short_target_hit_before_stop_returns_positive_r_and_target_flag() -> None:
