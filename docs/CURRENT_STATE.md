@@ -3,7 +3,8 @@
 Purpose: short current-status entry point for Tower Control, Codex, Claude, and
 Auditor sessions. Historical docs remain available, but routine startup should
 begin here, `docs/BOUNDARIES.md`, recent commits, and only then role-specific
-docs as needed.
+docs as needed. Research process is governed by `docs/RESEARCH_CONSTITUTION.md`
+(gates, pre-registration, simulator contract).
 
 ## Current Gate
 

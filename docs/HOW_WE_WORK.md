@@ -32,6 +32,7 @@ Before starting any new stage or new chat continuation, restore context from:
 1. `docs/CURRENT_STATE.md` — current state entry point
 2. `docs/BOUNDARIES.md` — hard constraints
 3. Current-stage design locks and role-specific docs as needed
+4. Research process is governed by `docs/RESEARCH_CONSTITUTION.md` (gates, pre-registration, simulator contract).
 
 Do not infer the current stage from memory alone.
 If docs conflict, `docs/CURRENT_STATE.md` wins for current state;
