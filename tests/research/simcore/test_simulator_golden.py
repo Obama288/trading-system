@@ -324,31 +324,25 @@ def test_g6_entry_gap_through_stop():
 
 
 # ---------------------------------------------------------------------------
-# G7 — Entry bar open at/beyond nearest target → InvalidTrade
-#       Uses SIGNAL_CLOSE so that entry_bar.open ≠ entry_price
+# G7 — SIGNAL_CLOSE when signal_index is the last candle → no_resolution_bars
+#       (v1.1 amendment: SIGNAL_CLOSE resolution starts at signal_index+1;
+#       the only fill-specific guard is that a resolution bar must exist)
 # ---------------------------------------------------------------------------
-# SIGNAL_CLOSE, LONG, stop=96, 1R target
-# candles[1] = signal/entry bar: o=110, h=112, l=98, c=100
-#   entry_price = close = 100
-#   initial_r = |100-96| = 4
-#   nearest_target = 100+1*4=104
-#   entry_bar.open=110 ≥ 104 → entry_gap_through_target
+# signal_index=0, only 1 candle in the array.
+# signal_index+1 = 1 >= len(candles)=1 → no_resolution_bars.
 
-def test_g7_entry_gap_through_nearest_target_signal_close():
+def test_g7_signal_close_no_resolution_bars():
     candles = [
-        _c(0, "99",  "100", "98",  "99"),    # placeholder
-        _c(1, "110", "112", "98",  "100"),   # signal bar; open=110 >> target=104
-        _c(2, "100", "104", "99",  "103"),
-        _c(3, "102", "105", "100", "104"),
+        _c(0, "99", "102", "98", "100"),  # only candle; signal bar
     ]
     result = simulate_trade(
         candles,
-        _spec(signal_index=1, fill=FillPolicy.SIGNAL_CLOSE),
+        _spec(signal_index=0, fill=FillPolicy.SIGNAL_CLOSE),
         H4,
     )
 
     assert isinstance(result, InvalidTrade)
-    assert result.reason == "entry_gap_through_target"
+    assert result.reason == "no_resolution_bars"
 
 
 # ---------------------------------------------------------------------------
@@ -499,58 +493,82 @@ def test_g12_select_non_overlapping_drops_overlap():
 
 
 # ---------------------------------------------------------------------------
-# G13 — SIGNAL_CLOSE result: gate_eligible must be False
+# G13 — SIGNAL_CLOSE: resolution window starts at signal_index+1
+#        (v1.1 amendment — updated)
 # ---------------------------------------------------------------------------
-# SIGNAL_CLOSE means diagnostic-only (spec §5.0 / constitution §3.2).
-# TradeSim.gate_eligible returns True only for NEXT_BAR_OPEN fills.
+# SIGNAL_CLOSE: entry_price = signal_bar.close; resolution starts at bar1.
+# gate_eligible must be False (diagnostic-only, constitution §3.2).
 #
-# Setup: signal bar closes at 100, stop=96, target=104
-# bar0 (signal/entry): o=99, h=102, l=98, c=100
-#   gap-stop check: o=99>96 ✓   gap-target: o=99<104 ✓
-#   intrabar: l=98>96 ✓, h=102<104 ✓ → no exit on entry bar
-# bar1: o=101, h=106, l=100, c=105  h=106≥104 → WIN
-# (Trade resolves normally; we just verify gate_eligible.)
+# signal_index=0, stop=96, 1R target=104
+# entry_price = candles[0].close = 100
+# entry_index = signal_index+1 = 1  ← v1.1: resolution at next bar
+# initial_r = |100-96| = 4, target = 100+1*4 = 104
+#
+# Resolution (window=1, only bar1, gap check applies since skip_first_gap=False):
+#   bar1: gap check: open=101, 101≤96? No; 101≥104? No → proceed intrabar
+#   bar1 intrabar: l=100>96 ✓, h=106≥104 → WIN
+#     exit_price=104, exit_index=1, bars_to_resolution=1
+#     final_r_gross=(104-100)/4=1
 
-def test_g13_signal_close_gate_eligible_false():
+def test_g13_signal_close_resolution_at_next_bar():
     candles = [
-        _c(0, "99",  "102", "98",  "100"),  # signal bar; entry_price=close=100
-        _c(1, "101", "106", "100", "105"),   # target hit (h=106≥104)
+        _c(0, "99",  "102", "98",  "100"),  # signal bar; close=100 → entry_price
+        _c(1, "101", "106", "100", "105"),  # first resolution bar; target hit
     ]
     result = simulate_trade(
         candles,
-        _spec(fill=FillPolicy.SIGNAL_CLOSE, window=2),
+        _spec(fill=FillPolicy.SIGNAL_CLOSE, window=1),
         H4,
     )
 
     assert isinstance(result, TradeSim)
-    # gate_eligible is False for SIGNAL_CLOSE fills
     assert result.gate_eligible is False
     assert result.spec.fill == FillPolicy.SIGNAL_CLOSE
-    # Confirmed trade resolved (not InvalidTrade)
+    assert result.entry_price == Decimal("100")   # signal bar close, not bar1.open
+    assert result.entry_index == 1                # v1.1: resolution starts at signal+1
     tr = result.targets[Decimal("1")]
     assert tr.outcome == "win"
+    assert tr.exit_price == Decimal("104")
+    assert tr.final_r_gross == Decimal("1")       # (104-100)/4
 
 
 # ---------------------------------------------------------------------------
-# G14 — bar_duration raises ValueError on mixed timeframes
+# G14 — bar_duration raises ValueError on truly mixed timeframes
+#        (v1.1 amendment — updated; threshold is now >5% of deltas bad)
 # ---------------------------------------------------------------------------
-# 4 candles: T, T+4h, T+8h, T+16h → deltas = [4h, 4h, 8h] in seconds
-#   = [14400, 14400, 28800]
-# median([14400, 14400, 28800]) = 14400
-# max deviation: |28800-14400|/14400 = 14400/14400 = 1.0 > 0.01 → ValueError
+# 6 candles at hours 0,4,5,9,10,14 → deltas: 4h,1h,4h,1h,4h (5 deltas)
+# sorted: [1h,1h,4h,4h,4h], median = 4h (3rd of 5 values)
+# bad deltas (deviation > 1%): the two 1h deltas
+#   deviation = |1h-4h|/4h = 3/4 = 75% > 1%  (×2)
+# bad_count=2, bad_fraction=2/5=40% > 5% → ValueError
 
-def test_g14_bar_duration_raises_on_mixed_timeframes():
+def test_g14_bar_duration_raises_on_truly_mixed_timeframes():
     candles = [
-        _c(0, "100", "101", "99", "100"),
-        _c(1, "101", "102", "100", "101"),
-        _c(2, "102", "103", "101", "102"),
-        # bar at offset 4 (T+16h) instead of T+12h — doubles the last interval
-        Candle(
-            timestamp=BASE_TS + timedelta(hours=16),
-            open=Decimal("102"), high=Decimal("104"),
-            low=Decimal("101"), close=Decimal("103"),
-            volume=Decimal("1000"),
-        ),
+        Candle(timestamp=BASE_TS + timedelta(hours=h),
+               open=Decimal("100"), high=Decimal("101"),
+               low=Decimal("99"),  close=Decimal("100"),
+               volume=Decimal("1000"))
+        for h in (0, 4, 5, 9, 10, 14)  # deltas: 4h,1h,4h,1h,4h
     ]
     with pytest.raises(ValueError, match="inconsistent"):
         bar_duration(candles)
+
+
+# ---------------------------------------------------------------------------
+# G15 — outcome window extends past end of candles → InvalidTrade
+#        (v1.1 amendment — new)
+# ---------------------------------------------------------------------------
+# NEXT_BAR_OPEN, signal_index=0, entry_index=1, window=5
+# need candles[1..5] but len=3 → entry_index+window_bars=1+5=6 > 3
+# → incomplete_window
+
+def test_g15_incomplete_window():
+    candles = [
+        _c(0, "99",  "100", "98",  "100"),  # signal bar
+        _c(1, "100", "101", "99",  "100"),  # entry bar
+        _c(2, "100", "101", "99",  "100"),  # only 1 resolution bar; need 5
+    ]
+    result = simulate_trade(candles, _spec(window=5), H4)
+
+    assert isinstance(result, InvalidTrade)
+    assert result.reason == "incomplete_window"

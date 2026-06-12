@@ -1,6 +1,6 @@
 # Unified Outcome Simulator — Technical Specification
 
-Status: v1.0 — implements Research Constitution section 3 (adopted 2026-06-12)
+Status: v1.1 — post-review amendments (2026-06-12); v1.0 implements Research Constitution section 3
 Target location: `research/simcore/`
 Audience: implementing agent (Claude Code). Constitution decisions are binding;
 where this spec and the constitution disagree, the constitution wins.
@@ -52,8 +52,10 @@ All 402 existing tests must keep passing through the shim.
 
 - `Candle.timestamp` is bar OPEN time (existing convention, now documented).
 - `bar_duration(candles) -> timedelta`: median of consecutive timestamp deltas;
-  raise if fewer than 2 candles or if >1% of deltas deviate from the median
-  (data-quality failure must be loud, not silent).
+  raise if fewer than 2 candles or if **>5% of deltas deviate >1% from the
+  median** (isolated missing bars are tolerated; truly mixed timeframes are
+  rejected). v1.1 amendment: the v1.0 rule (any deviation raises) was too
+  strict for production feeds with occasional dropped bars.
 - `decision_time(candle, duration) -> datetime`: `timestamp + duration` (UTC).
 - `label_session(candle, duration) -> str`: wraps the existing
   `signal_observation.sessions.session_label` but feeds it `decision_time`.
@@ -115,37 +117,46 @@ counters by counting `InvalidTrade.reason`.
 
 ## 5. Simulation semantics (`simulator.py`)
 
-### 5.0 Entry
+### 5.0 Entry  *(v1.1 amendment)*
 - `NEXT_BAR_OPEN` (default): `entry_index = signal_index + 1`,
   `entry_price = candles[entry_index].open`,
   `entry_time = decision_time(candles[signal_index])`.
-- `SIGNAL_CLOSE` (diagnostic): `entry_index = signal_index`,
-  `entry_price = candles[signal_index].close`, same `entry_time`. Any artifact
-  built from SIGNAL_CLOSE results MUST carry `"fill_policy": "signal_close",
-  "gate_eligible": false`. The simulator enforces this by including
-  `fill_policy` in every serialized result.
+- `SIGNAL_CLOSE` (diagnostic): `entry_price = candles[signal_index].close`,
+  same `entry_time`. **Resolution window starts at `signal_index + 1`**
+  (`entry_index = signal_index + 1`); the signal bar's own high/low range is
+  look-ahead for a close fill and must not be simulated. Any artifact built
+  from SIGNAL_CLOSE results MUST carry `"fill_policy": "signal_close",
+  "gate_eligible": false`.
 
-### 5.1 Entry validation (reasons for `InvalidTrade`)
+### 5.1 Entry validation (reasons for `InvalidTrade`)  *(v1.1 amendment)*
 - `no_entry_bar` — `signal_index + 1 >= len(candles)` (NEXT_BAR_OPEN only).
+- `no_resolution_bars` — `signal_index + 1 >= len(candles)` (SIGNAL_CLOSE only).
 - `non_positive_r` — `initial_r = |entry_price − stop_price| <= 0`.
 - `entry_gap_through_stop` — entry bar OPEN already at/beyond stop
-  (LONG: `open <= stop`; SHORT: `open >= stop`). The trade is NOT taken.
-- `entry_gap_through_target` — entry bar OPEN already at/beyond the NEAREST
-  target. The trade is NOT taken (the move already happened).
+  (LONG: `open <= stop`; SHORT: `open >= stop`). NEXT_BAR_OPEN only; for
+  SIGNAL_CLOSE, a gap on the first resolution bar is handled as a regular gap
+  exit inside the simulator.
+- `incomplete_window` — `entry_index + outcome_window_bars > len(candles)`.
+  Raised instead of silently truncating the window.
 - `window_non_positive` — `outcome_window_bars <= 0`.
 
-Rationale for gap rejections: live, the gap is visible before order placement;
-booking such fills either flatters (target gap) or punishes (stop gap) the
-hypothesis with outcomes the strategy would not actually take.
+Note: `entry_gap_through_target` is removed in v1.1. For NEXT_BAR_OPEN the
+check is mathematically unreachable (entry_price = open, target = entry_price +
+positive). For SIGNAL_CLOSE, a gapped-through-target first resolution bar is now
+correctly booked as a gapped win rather than rejected.
 
-### 5.2 Outcome window
-`window = candles[entry_index : entry_index + outcome_window_bars]`. The entry
-bar is bar 1 of the window and its full high/low range counts (entry is at its
-open, so this is causal, not look-ahead).
+### 5.2 Outcome window  *(v1.1 amendment)*
+`window = candles[entry_index : entry_index + outcome_window_bars]` where
+`entry_index = signal_index + 1` for both fill policies.
+- `NEXT_BAR_OPEN`: bar 1 of the window is the entry bar; its full high/low range
+  counts (entry is at its open, so this is causal, not look-ahead).
+- `SIGNAL_CLOSE`: bar 1 of the window is the first post-signal bar; its open
+  may gap from the signal-bar close, and that gap is checked (see 5.3).
 
-### 5.3 Per-bar resolution order (for each bar in window, in order)
-1. **Gap check on bar open** (skip for the entry bar — its open IS the entry,
-   already validated in 5.1):
+### 5.3 Per-bar resolution order (for each bar in window, in order)  *(v1.1 amendment)*
+1. **Gap check on bar open** (skip for bar 1 of a NEXT_BAR_OPEN window only —
+   its open IS the entry price, already validated in 5.1; SIGNAL_CLOSE windows
+   apply the gap check to all bars including bar 1):
    - open at/beyond stop → exit at `bar.open`, outcome `loss`, `gap_exit=True`,
      `final_r_gross = signed(open − entry)/initial_r` (may be below −1).
    - open at/beyond target → exit at `bar.open`, outcome `win`, `gap_exit=True`,
@@ -227,8 +238,9 @@ Mandatory golden cases:
 | G10 | MAE/MFE on G1 path | exact Decimal values |
 | G11 | cost_in_r: entry 100, stop 99.5, 8bps | cost_r = 0.32R exactly |
 | G12 | select_non_overlapping drops overlapping 2nd sim | survivor list |
-| G13 | SIGNAL_CLOSE result serialization | gate_eligible false present |
-| G14 | bar_duration raises on mixed timeframes | ValueError |
+| G13 | SIGNAL_CLOSE: resolution at signal+1, gate_eligible false | entry_index=signal+1, entry_price=signal.close (v1.1) |
+| G14 | bar_duration raises on truly mixed timeframes (≥40% bad) | ValueError (v1.1) |
+| G15 | window extends past end of candles | InvalidTrade incomplete_window (v1.1) |
 
 ### Phase 2 — setup_b
 - Replace `evaluate_multi_r_outcomes`, `_resolve_target_outcome`,

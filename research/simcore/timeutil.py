@@ -10,8 +10,9 @@ from research.simcore.candles import Candle
 def bar_duration(candles: Sequence[Candle]) -> timedelta:
     """Compute bar duration as the median of consecutive timestamp deltas.
 
-    Raises ValueError if fewer than 2 candles or if >1% of deltas deviate
-    from the median (data-quality failure is loud, not silent).
+    Isolated missing bars (a single doubled delta) are tolerated. Raises
+    ValueError if fewer than 2 candles or if >5% of deltas deviate >1% from
+    the median (truly inconsistent data is loud, not silent).
     """
     if len(candles) < 2:
         raise ValueError(
@@ -25,10 +26,12 @@ def bar_duration(candles: Sequence[Candle]) -> timedelta:
     if med <= 0:
         raise ValueError(f"median bar duration is non-positive: {med}s")
     deviations = [abs(d - med) / med for d in deltas_sec]
-    bad = max(deviations)
-    if bad > 0.01:
+    bad_count = sum(1 for dev in deviations if dev > 0.01)
+    bad_fraction = bad_count / len(deviations)
+    if bad_fraction > 0.05:
         raise ValueError(
-            f"bar duration inconsistent: max deviation {bad:.1%} > 1% from median {med}s"
+            f"bar duration inconsistent: {bad_count}/{len(deviations)} deltas "
+            f"({bad_fraction:.1%}) deviate >1% from median {med}s"
         )
     return timedelta(seconds=med)
 

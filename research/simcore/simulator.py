@@ -40,11 +40,13 @@ def _simulate_one_target(
     stop_price: Decimal,
     direction: Direction,
     outcome_window_bars: int,
+    skip_entry_bar_gap: bool = True,
 ) -> TargetSim:
     """Resolve a single target-R independently over the outcome window.
 
     Per spec §5.3:
-      - Step 1: gap check on bar open (skipped for the entry bar).
+      - Step 1: gap check on bar open (skipped for the entry bar when
+        skip_entry_bar_gap=True, i.e. NEXT_BAR_OPEN where bar open IS entry).
         Both beyond stop AND target (degenerate) → treat as stop.
       - Step 2: intrabar stop checked BEFORE target (constitution §3.4).
       - Step 3: window exhausted → flat, mark-to-market at last close.
@@ -60,7 +62,9 @@ def _simulate_one_target(
 
     for bar_offset, bar in enumerate(window):
         bar_index = entry_index + bar_offset
-        is_entry_bar = bar_offset == 0
+        # For NEXT_BAR_OPEN the entry bar's open IS the entry price (already validated).
+        # For SIGNAL_CLOSE all resolution bars get the gap check, including the first.
+        is_entry_bar = bar_offset == 0 and skip_entry_bar_gap
 
         if not is_entry_bar:
             # Step 1: gap check — entry bar is already validated in §5.1.
@@ -157,41 +161,44 @@ def simulate_trade(
     if spec.outcome_window_bars <= 0:
         return InvalidTrade(spec=spec, reason="window_non_positive")
 
-    # Validation 2: no_entry_bar (NEXT_BAR_OPEN only, §5.1).
+    # Fill-policy entry setup + fill-specific availability check.
     if spec.fill == FillPolicy.NEXT_BAR_OPEN:
         if spec.signal_index + 1 >= len(candles):
             return InvalidTrade(spec=spec, reason="no_entry_bar")
         entry_index = spec.signal_index + 1
         entry_price = candles[entry_index].open
+        skip_first_gap = True          # entry bar open IS the entry price
     else:  # SIGNAL_CLOSE
-        entry_index = spec.signal_index
-        entry_price = candles[entry_index].close
+        # Resolution window starts at signal_index+1; the signal bar's own
+        # range is look-ahead for a close fill (v1.1 amendment).
+        if spec.signal_index + 1 >= len(candles):
+            return InvalidTrade(spec=spec, reason="no_resolution_bars")
+        entry_index = spec.signal_index + 1
+        entry_price = candles[spec.signal_index].close
+        skip_first_gap = False         # first resolution bar gets the gap check
 
     entry_time = decision_time(candles[spec.signal_index], duration)
 
-    # Validation 3: non_positive_r.
+    # Validation: non_positive_r.
     initial_r = abs(entry_price - spec.stop_price)
     if initial_r <= _ZERO:
         return InvalidTrade(spec=spec, reason="non_positive_r")
 
-    # Validation 4: entry_gap_through_stop.
-    entry_bar = candles[entry_index]
-    if spec.direction == Direction.LONG:
-        if entry_bar.open <= spec.stop_price:
-            return InvalidTrade(spec=spec, reason="entry_gap_through_stop")
-    else:
-        if entry_bar.open >= spec.stop_price:
-            return InvalidTrade(spec=spec, reason="entry_gap_through_stop")
+    # Validation: entry_gap_through_stop (NEXT_BAR_OPEN only).
+    # For SIGNAL_CLOSE there is no entry bar open to compare; any gap on
+    # the first resolution bar is handled inside _simulate_one_target.
+    if spec.fill == FillPolicy.NEXT_BAR_OPEN:
+        entry_bar = candles[entry_index]
+        if spec.direction == Direction.LONG:
+            if entry_bar.open <= spec.stop_price:
+                return InvalidTrade(spec=spec, reason="entry_gap_through_stop")
+        else:
+            if entry_bar.open >= spec.stop_price:
+                return InvalidTrade(spec=spec, reason="entry_gap_through_stop")
 
-    # Validation 5: entry_gap_through_target (nearest = smallest target_r).
-    nearest_target_r = min(spec.target_r_values)
-    nearest_target_price = _target_price(entry_price, initial_r, nearest_target_r, spec.direction)
-    if spec.direction == Direction.LONG:
-        if entry_bar.open >= nearest_target_price:
-            return InvalidTrade(spec=spec, reason="entry_gap_through_target")
-    else:
-        if entry_bar.open <= nearest_target_price:
-            return InvalidTrade(spec=spec, reason="entry_gap_through_target")
+    # Validation: incomplete_window — candle array too short (v1.1 amendment).
+    if entry_index + spec.outcome_window_bars > len(candles):
+        return InvalidTrade(spec=spec, reason="incomplete_window")
 
     session = label_session(candles[spec.signal_index], duration)
 
@@ -208,6 +215,7 @@ def simulate_trade(
             stop_price=spec.stop_price,
             direction=spec.direction,
             outcome_window_bars=spec.outcome_window_bars,
+            skip_entry_bar_gap=skip_first_gap,
         )
 
     return TradeSim(

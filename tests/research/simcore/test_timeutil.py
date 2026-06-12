@@ -76,7 +76,7 @@ def test_bar_duration_empty_raises():
 
 
 def test_bar_duration_mixed_timeframes_raises():
-    # deltas: 4h, 4h, 8h → deviation = (8h-4h)/4h = 100% > 1%
+    # deltas: 4h, 4h, 8h → bad_count=1, bad_fraction=1/3≈33% > 5% → raises
     candles = [
         _c(0, hours_offset=0),
         _c(1, hours_offset=4),
@@ -85,6 +85,24 @@ def test_bar_duration_mixed_timeframes_raises():
     ]
     with pytest.raises(ValueError, match="inconsistent"):
         bar_duration(candles)
+
+
+def test_bar_duration_tolerates_single_missing_bar():
+    """100 bars at 4 h except one doubled gap — bad_fraction ≈ 1% < 5% — must not raise."""
+    # 99 deltas: 98 × 4h + 1 × 8h (bar 50 is one period late)
+    # bad_count=1, bad_fraction=1/99≈1.01% < 5% → returns 4h without raising
+    candles: list[Candle] = []
+    ts = BASE_TS
+    for i in range(100):
+        candles.append(Candle(
+            timestamp=ts,
+            open=Decimal("100"), high=Decimal("101"),
+            low=Decimal("99"),  close=Decimal("100"),
+            volume=Decimal("1000"),
+        ))
+        ts += timedelta(hours=8) if i == 49 else timedelta(hours=4)
+    result = bar_duration(candles)
+    assert result == timedelta(hours=4)
 
 
 def test_bar_duration_small_deviation_accepted():
