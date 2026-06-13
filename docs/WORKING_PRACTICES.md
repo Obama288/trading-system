@@ -106,6 +106,19 @@ paper, probe, runtime, or live readiness.
 - Large diffs are a scope smell — not a hard blocker, but explain why an
   unusually large diff is still one logical change.
 
+## How a setup family originates
+
+An idea becomes a candidate only at the intersection of three conditions:
+(a) mechanism with a named counterparty (who systematically loses and why);
+(b) a data class carrying information the crowd lacks OR a structural constraint
+others cannot exploit (colocated, paid data, capital requirement);
+(c) an effect that plausibly clears round-trip cost before any run is made.
+AND it must answer: "why won't this die like the prior families?" — not just
+"this is different" but a specific reason the prior-death mechanism does not
+apply here. Record how many ideas of the same class were considered-and-
+discarded, not only those that were locked — this ties to the cumulative budget
+tracking required by constitution §2.5 (v1.4).
+
 ## 9. Named procedures (replacing the old `!` hot-commands)
 
 These read live state rather than storing it (the old AI_COMMANDS rotted
@@ -120,3 +133,24 @@ extensible command registry. Core two:
 - **Pre-edit sync check** — before any edit: branch/HEAD, dirty files and their
   classification, what files are allowed vs blocked for the current scope, and
   a GO/HOLD verdict. Halt if blocked files are touched.
+
+## 10. Red reviewer (adversarial review)
+
+An independent pass whose job is to ATTACK the frame, not check correctness.
+Three required questions:
+1. What class or possibility are we NOT considering — blind spot or justified
+   exclusion? (The goal is to surface a category we ignored, not quibble about
+   a variant within a tested class.)
+2. Where is hidden look-ahead, selection bias, or comparison-budget inflation?
+   (What does the setup assume it does not declare? What "free looks" inflated
+   the apparent pass rate?)
+3. If I wanted to prove this edge is illusory, where would I start?
+
+Run the red-reviewer pass at TWO points: (a) before locking a pre-registration
+(the design is still changeable), and (b) before choosing the next research
+direction (the map is the attack surface, not the candidate).
+
+NOTE: the strongest version is an EXTERNAL model session that has not seen the
+design work — a same-model adversarial pass shares the designer's blind spots
+and is a weaker fallback. If using the same Claude chat, label the pass
+explicitly and treat its output more skeptically than an external review.

@@ -89,6 +89,19 @@ picked-over than OHLCV. Cost: real money + real engineering, BEFORE any edge is
 proven. Value: highest ceiling, highest risk. **Only justified if A and B both
 fail and you are willing to fund a speculative search.**
 
+**Before paying — required checklist (all five must be answered; missing = do not buy):**
+1. Does a specific pre-registered candidate require THIS paid data source (not
+   generic "better data" — a concrete pre-registration already written, naming
+   this source)?
+2. Is there a named mechanism AND a named counterparty (who loses and why)?
+3. Does the hypothesized effect clear round-trip cost using the data's own
+   realistic fills (not optimistic assumptions)?
+4. Why won't a colocated or better-capitalized player eat the edge before retail
+   latency can act on it?
+5. Is the data purchase scoped as a budgeted experiment with a kill date (not an
+   open-ended subscription)?
+If any answer is missing or unconvincing, do not buy. Resolve it first.
+
 ### Move D — Stop active search, harden what exists
 A legitimate choice: accept that no edge has cleared the pipeline, freeze
 research, and instead close the pre-paper audit items (R1 signal-source, R2
