@@ -15,8 +15,9 @@ Full docs index: `docs/README.md`. Research-process governance: `docs/RESEARCH_C
 - Runtime readiness: no new readiness promoted by this file.
 - Note: ops/paper_pipeline_runner.py is an infrastructure harness only; signal_engine rules are NOT research-validated and runner output is NOT strategy evidence.
 - Primary exchange planning lane: Stage 54-BG / Bitget Demo planning.
-- Primary research lane: Setup E / E1 held-out source-access decision; Setup C
-  is parked from active progression after DR1 Binance recent rerun LOW.
+- Primary research lane: Setup H Stage 2 PARK (2026-06-13, commit 4f33860);
+  Setup E / E1 held-out source-access decision on hold; Setup C parked after
+  DR1 Binance recent rerun LOW.
 - Source protocol: GitHub docs, commits, code, tests, and relevant PR metadata
   are primary; project memory is orientation only.
 
@@ -24,16 +25,14 @@ Full docs index: `docs/README.md`. Research-process governance: `docs/RESEARCH_C
 
 The commit list below records recent pushed milestones visible on `origin/main`.
 
+- `4f33860` research(setup-h): Stage 2 discovery — PARK
+- `dc35f63` research(setup-h): lock pre-registration (Stage 1 complete)
+- `0bc765a` docs: constitution v1.3 — default baseline seed
 - `d770553` research: add funding normalization discovery screening output.
 - `c934946` docs: patch funding normalization screening design.
-- `fd80918` docs: add owner-away and latency tolerance rules.
-- `e355aff` docs: add C7 cross-venue design lock.
-- `775d739` research: add Binance C7 evidence report.
 
-Recent HEAD records the Funding Normalization BTC/ETH discovery screening
-output (overall label NORMALIZATION_SCREEN_WEAK; validation NO-GO; held-out
-rows 1503–2147 protected). It does not alter the current paper-only / live
-NO-GO safety state.
+Recent HEAD is Setup H Stage 2 Discovery (GATE PARK). It does not alter the
+current paper-only / live NO-GO safety state.
 
 Do not claim remote visibility for local commits unless verified by GitHub or
 remote refs.
@@ -112,6 +111,12 @@ remote refs.
 - Escalation: **HOLD**.
 
 ## Currently Allowed Next Work
+
+0. **Setup H** (PARKED / Stage 2 Discovery): GATE PARK 2026-06-13, commit `4f33860`.
+   Gated exp +0.0370R (need ≥+0.05R); gated-minus-ungated −0.0481R (gate hurts);
+   shuffled 60.9th pct (need >95th). Key diagnostic: HIGH-VOL ungated exp
+   +0.1004R — mechanism inverted vs hypothesis. Family #6 tested on this data class.
+   Decision record: `SETUP_H_DISCOVERY_RESULT.md`. No Stage 3.
 
 1. **Harness methodology** (AUTHORIZED METHODOLOGY / NO SCREENING AUTHORIZED):
    `docs/archive/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.

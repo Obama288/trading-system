@@ -165,6 +165,14 @@ constitution is the authoritative process document.
 
 ## Current Research Gate
 
+- **Setup H** (PARKED / Stage 2 Discovery): GATE PARK 2026-06-13, commit `4f33860`.
+  Gated expectancy_R +0.0370R (need ≥+0.05R). Gated-minus-ungated −0.0481R
+  (gate hurts; need ≥+0.05R). Shuffled 60.9th pct (need >95th). Diagnostic:
+  HIGH-VOL ungated exp = +0.1004R — TSMOM works better in HIGH-VOL on this
+  alt-coin universe, opposite of hypothesis. Family #6 on this data class; no
+  Stage 3. Pre-registration: `SETUP_H_PREREGISTRATION.md`. Result:
+  `SETUP_H_DISCOVERY_RESULT.md`.
+
 Harness methodology is Owner-authorized for candidate pre-registration and
 bounded screening task design. No candidate screening is authorized without
 its own pre-registration and separate Owner authorization.
@@ -438,6 +446,22 @@ its own pre-registration and separate Owner authorization.
   liquidity, partial fills, fee tiers) remain deferred.
 - No paper, runtime, trading, probe, or live escalation from Setup C without
   explicit owner approval and additional gates.
+
+- Setup H pre-registration locked at `dc35f63` (2026-06-13):
+  `research/signal_observation/SETUP_H_PREREGISTRATION.md`. Signal: 40-bar
+  TSMOM gated to LOW-VOL regime (ATR20/close < trailing-180-bar median);
+  rebalance every 6 bars; 4H; 9-symbol alt-coin universe (SOL/BNB/XRP/DOGE/
+  ADA/AVAX/LINK/DOT/ZEC). Constitution v1.3; seed 69; cost 5/8/15 bps.
+- Setup H Stage 1 feasibility completed: FEASIBLE; 14,160 pooled discovery obs
+  / 5,640 validation obs; dataset SHA-256 30d2027f... (commit `7412f1a`).
+  `SETUP_H_FEASIBILITY_REPORT.md`.
+- Setup H Stage 2 discovery completed at `4f33860` (2026-06-13): **GATE PARK**.
+  Gated exp +0.0370R; ungated exp +0.0851R; difference −0.0481R (primary).
+  Shuffled p95 = +0.0470R; actual at 60.9th pct. All three gate conditions
+  unmet. Key finding: HIGH-VOL ungated exp = +0.1004R — mechanism inverted.
+  Family #6; constitutes strong evidence toward H1/H2 (data class exhausted or
+  regime-gating is harmful for these alts). No Stage 3.
+  `SETUP_H_DISCOVERY_RESULT.md`.
 
 - Setup E pre-registration locked at `0b71d9b` (2026-06-13):
   `research/signal_observation/SETUP_E_PREREGISTRATION.md`. Signal definition:
