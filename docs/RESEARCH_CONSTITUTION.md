@@ -1,6 +1,6 @@
 # Research Constitution — Edge Discovery Pipeline
 
-Status: v1.2 — ADOPTED 2026-06-13 (explicit baseline seed at lock; cumulative comparison budget). v1.1 Stage 5 hardening; v1.0 base.
+Status: v1.3 — ADOPTED 2026-06-13 (default baseline seed 69). v1.2 explicit baseline seed at lock; cumulative comparison budget. v1.1 Stage 5 hardening; v1.0 base.
 Scope: governs all edge research in this repository. Supersedes per-family ad-hoc
 process. Existing decision records (Setup A/B/C) remain valid history.
 Location when adopted: `docs/RESEARCH_CONSTITUTION.md`
@@ -99,7 +99,9 @@ Each item is mandatory. Copy into `<FAMILY>_PREREGISTRATION.md`.
 - Specification of the baseline (e.g., same entry timestamps with shuffled
   direction; or random entries matched on symbol/regime), the exact integer
   random seed value (fixed and written here at lock, not at first run), number
-  of resamples, and the required margin over baseline.
+  of resamples, and the required margin over baseline. Default seed value is 69
+  unless a family records a different integer at lock; this keeps baselines
+  reproducible without requiring a per-family choice.
 
 ### 2.5 Multiple-testing budget
 - List every variant that will be examined: symbols × timeframes × parameter
@@ -246,3 +248,5 @@ dataset.
    ADOPTED 2026-06-13.
 
 ## 7. Amendment v1.2 (2026-06-13): §2.4 integer seed at lock; §2.5 cumulative comparison budget.
+
+## 7. Amendment v1.3 (2026-06-13): default baseline seed = 69 unless overridden at lock.
