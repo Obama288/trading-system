@@ -6,6 +6,8 @@ begin here, `docs/BOUNDARIES.md`, recent commits, and only then role-specific
 docs as needed. Research process is governed by `docs/RESEARCH_CONSTITUTION.md`
 (gates, pre-registration, simulator contract).
 
+Full docs index: `docs/README.md`. Research-process governance: `docs/RESEARCH_CONSTITUTION.md`.
+
 ## Current Gate
 
 - Mode: paper trading only.
