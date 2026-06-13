@@ -1,6 +1,6 @@
 # Research Constitution — Edge Discovery Pipeline
 
-Status: v1.1 — ADOPTED 2026-06-13 (amendment: Stage 5 hardening; v1.0 adopted 2026-06-12)
+Status: v1.2 — ADOPTED 2026-06-13 (explicit baseline seed at lock; cumulative comparison budget). v1.1 Stage 5 hardening; v1.0 base.
 Scope: governs all edge research in this repository. Supersedes per-family ad-hoc
 process. Existing decision records (Setup A/B/C) remain valid history.
 Location when adopted: `docs/RESEARCH_CONSTITUTION.md`
@@ -97,7 +97,8 @@ Each item is mandatory. Copy into `<FAMILY>_PREREGISTRATION.md`.
 
 ### 2.4 Random baseline
 - Specification of the baseline (e.g., same entry timestamps with shuffled
-  direction; or random entries matched on symbol/regime), seed policy, number
+  direction; or random entries matched on symbol/regime), the exact integer
+  random seed value (fixed and written here at lock, not at first run), number
   of resamples, and the required margin over baseline.
 
 ### 2.5 Multiple-testing budget
@@ -107,6 +108,11 @@ Each item is mandatory. Copy into `<FAMILY>_PREREGISTRATION.md`.
 - Any non-primary variant may be promoted only via a new pre-registration in
   which it is the primary — and its discovery evidence is treated as Stage 0
   material (it was selected post-hoc out of V looks).
+- The comparison budget is cumulative across a research campaign, not
+  per-document: each additional locked pre-registration on the same data class
+  adds to the total independent looks. A candidate that clears its gate after
+  many prior families failed must be read in light of that cumulative count,
+  not in isolation.
 
 ### 2.6 Sample size minimums
 - Defaults: discovery N ≥ 80, validation N ≥ 40, counted as non-overlapping
@@ -238,3 +244,5 @@ dataset.
 6. Stage 5 hardening (v1.1 amendment): execution audit (SYSTEM_MAP §5 checklist)
    + runtime hash check + dataset SHA-256 binding are required at Stage 5 entry.
    ADOPTED 2026-06-13.
+
+## 7. Amendment v1.2 (2026-06-13): §2.4 integer seed at lock; §2.5 cumulative comparison budget.
