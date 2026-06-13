@@ -16,3 +16,4 @@ logs/
 
 # Research data — CSVs may exceed 20 MB; commit metadata only
 research/signal_observation/data/setup_e/
+research/signal_observation/data/setup_f/
