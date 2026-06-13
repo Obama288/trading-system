@@ -12,6 +12,7 @@ implementation.
 - triage-ready
 - rejected
 - advanced-to-hypothesis
+- parked-stage2 (Stage 2 discovery complete; gate miss; family parked per §2.7)
 
 ## Candidate: Funding Carry / Funding Stress
 
@@ -115,7 +116,15 @@ A mechanism-first hypothesis note may be created for this candidate:
   - plausible public-data path may exist, but must be verified later.
 
 - Status:
-  triage-ready
+  parked-stage2
+
+- Stage 2 result (2026-06-13):
+  Tested as "Setup E / Post-Liquidation Exhaustion Reversal" on Coinalyze 4H
+  liquidation data, 20-symbol universe, discovery window ≤ 2026-03-09T00:00Z.
+  GATE PARK: primary expectancy_R = −0.1085R at 1.5R (moderate 8 bps),
+  non-overlapping N=824. Both gate criteria unmet. Decision record:
+  `SETUP_E_DECISION_RECORD.md`. One re-registration permitted only with a
+  materially different mechanism statement (e.g. continuation, not reversal).
 
 ## Candidate: Basis / Cash-and-Carry Dislocation
 

@@ -17,9 +17,11 @@ constitution is the authoritative process document.
 - Stage 54-SQ is research-only signal-quality observation.
 - Data source: local/public OHLCV artifacts only unless a future owner-approved
   task explicitly authorizes download.
-- Active family: Setup E / Post-Liquidation Exhaustion Reversal source-access
-  decision. Setup C / TSMOM volatility-targeted is parked from active
-  progression.
+- Active family: none. Setup E / Post-Liquidation Exhaustion Reversal is
+  **PARKED at Stage 2** (Gate PARK, 2026-06-13, commit 6dae9a6). Setup C /
+  TSMOM volatility-targeted is parked from active progression. Research backlog
+  review in progress (Basis/Cash-and-Carry feasibility, Options Expiry
+  feasibility).
 - Current status: Setup C was **PASS_CANDIDATE research-only** through C7
   evidence; after DR1 Binance recent rerun LOW it remains historical research
   evidence only and is not a paper-candidate progression lane. C1–C5 diagnostics complete.
@@ -198,9 +200,14 @@ its own pre-registration and separate Owner authorization.
 - **Setup D D1 analysis** (HOLD — two conditions unmet): SOL interval policy
   decision + separate D1 analysis design lock required. Harness authorization:
   MET. Do not run D1 analysis until all conditions resolved.
-- **Setup E E1 source** (HOLD): Hyperliquid/The Graph free plan blocked.
-  Owner decision: upgrade plan or authorize Research Scout for alternative source.
-  Preferred contact: data@hydromancer.xyz (Hydromancer Reservoir).
+- **Setup E** (PARKED / Stage 2 Discovery): GATE PARK (2026-06-13).
+  Primary metric: expectancy_R = −0.1085R at 1.5R (moderate 8 bps),
+  non-overlapping N=824. Both gate criteria unmet (below +0.10R floor and
+  below baseline p95 −0.0776R). Family parked per §2.7. Decision record:
+  `SETUP_E_DECISION_RECORD.md`. One re-registration permitted only with a
+  materially different mechanism. Note: Setup E used the Coinalyze 4H
+  liquidation path (not Hyperliquid/The Graph); the E1 source access issue
+  was superseded by the Coinalyze pre-registration approach.
 - **OKX C7** (deferred): Cloudflare 1010 block on current host. Do not retry
   without Owner confirmation of reachability change.
 
@@ -431,6 +438,20 @@ its own pre-registration and separate Owner authorization.
   liquidity, partial fills, fee tiers) remain deferred.
 - No paper, runtime, trading, probe, or live escalation from Setup C without
   explicit owner approval and additional gates.
+
+- Setup E pre-registration locked at `0b71d9b` (2026-06-13):
+  `research/signal_observation/SETUP_E_PREREGISTRATION.md`. Signal definition:
+  cascade bar (long-liq > 95th pct trailing 30d + down bar), exhaustion bar
+  (long-liq < 25th pct trailing 30d), 20-symbol Coinalyze 4H universe,
+  discovery window ≤ 2026-03-09T00:00Z.
+- Setup E Stage 1 feasibility completed: 544 discovery / 410 validation
+  episodes (25th pct definition, both above minimums).
+  `SETUP_E_FEASIBILITY_REPORT.md` (commit f03bc6b).
+- Setup E Stage 2 discovery completed at `6dae9a6` (2026-06-13): **GATE PARK**.
+  Primary: expectancy_R = −0.1085R at 1.5R, moderate 8 bps, N=824
+  non-overlapping. Baseline (seed=42) p95 = −0.0776R; actual at 79th pct.
+  Both gate criteria unmet. Family parked per §2.7.
+  Decision record: `SETUP_E_DECISION_RECORD.md`.
 
 Deferred useful work is tracked only in the compact Deferred / Watchlist section
 of `docs/CURRENT_STATE.md`; those items are not authorization to implement.
