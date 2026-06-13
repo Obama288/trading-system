@@ -1,6 +1,6 @@
 # Setup E — Stage 1 Feasibility Report
 
-Generated: 2026-06-13T06:25Z
+Generated: 2026-06-13T06:39Z
 Constitution: `docs/RESEARCH_CONSTITUTION.md` v1.1
 Pre-registration: `research/signal_observation/SETUP_E_PREREGISTRATION.md` (DRAFT)
 Universe list: `research/signal_observation/_selected_symbols.json`
@@ -63,6 +63,71 @@ in the locked pre-registration before any Stage 2 run.
 | SUIUSDT_PERP.A | 2002 | 1557 | PASS | 2025-09-25T20:00Z | 2026-03-26T08:00Z | 2026-03-26T12:00Z | 2026-06-13T04:00Z | 52 | 32 | 20 |
 | TRXUSDT_PERP.A | 2002 | 1821 | PASS | 2025-07-29T20:00Z | 2026-03-08T12:00Z | 2026-03-08T16:00Z | 2026-06-13T04:00Z | 54 | 29 | 25 |
 | TONUSDT_PERP.A | 2002 | 1882 | PASS | 2025-07-14T16:00Z | 2026-03-05T12:00Z | 2026-03-05T16:00Z | 2026-06-13T04:00Z | 55 | 35 | 20 |
+
+---
+
+## Episode Structure Diagnostic
+
+**HARD RULE**: this section contains NO outcome metrics. All statistics
+describe signal-identification structure only (cascade→signal bar counts,
+lookback validity). No prices after the signal bar are read or reported.
+
+### 1. Cascade → Signal Lag Distribution (bars)
+
+Lag = number of bars from cascade bar to signal/exhaustion bar (minimum 1).
+A lag of 1 means exhaustion fires on the very next bar after the cascade
+(immediate exhaustion — flagged separately below as a potential degeneracy).
+
+| Window | N | min | p25 | median | p75 | p90 | max | mean | lag=1 (%) |
+|---|---|---|---|---|---|---|---|---|---|
+| Pooled (all) | 1146 | 1 | 1 | 2 | 4 | 6 | 24 | 3.21 | 30.4% |
+| Discovery (first 70%) | 644 | 1 | 1 | 2 | 4 | 8 | 24 | 3.48 | 26.6% |
+| Validation (last 30%) | 502 | 1 | 1 | 2 | 4 | 5 | 24 | 2.85 | 35.3% |
+
+### 2. Immediate Exhaustion (lag = 1 bar) — Degeneracy Flag
+
+An episode where the exhaustion signal fires on the bar immediately after
+the cascade bar may indicate that the median threshold is too easy to reach,
+or that cascade bars themselves suppress subsequent liquidation structurally.
+
+| Window | Episodes | lag=1 | lag=1 % |
+|---|---|---|---|
+| Pooled | 1146 | 348 | 30.4% |
+| Discovery | 644 | 171 | 26.6% |
+| Validation | 502 | 177 | 35.3% |
+
+### 3 & 4. Incomplete-Lookback Episodes
+
+The trailing 30-day lookback (180 × 4H bars) is FULLY accumulated starting
+at bar index 180. The cascade detection loop enforces this: it begins at
+`range(_TRAILING_BARS=180, n)`, so no cascade bar can have index < 180.
+Therefore the signal bar (cascade_idx + 1 at minimum) always has index ≥ 181,
+which is outside the first 180 bars (the lookback warmup period).
+
+| Window | Incomplete-lookback episodes | Total | Excluded count |
+|---|---|---|---|
+| Pooled | 0 | 1146 | 1146 episodes retained |
+| Discovery | 0 | 644 | 644 episodes retained |
+| Validation | 0 | 502 | 502 episodes retained |
+
+**Result**: 0 incomplete-lookback episodes. The implementation correctly
+prevents any episode from relying on a partial lookback window.
+Exclusion has no effect on episode counts.
+
+### 5. Stricter Exhaustion Definition (25th percentile vs median)
+
+Baseline definition: signal bar = first bar where long-liq < trailing-30d **median** (50th pct).
+Stricter definition: signal bar = first bar where long-liq < trailing-30d **25th percentile** (25th pct).
+A lower threshold means exhaustion fires only on more extreme liq drops,
+reducing episode count but potentially improving signal quality.
+
+| Window | Baseline (median, 50th pct) | Stricter (25th pct) | Reduction |
+|---|---|---|---|
+| Pooled | 1146 | 954 | −192 (16.8%) |
+| Discovery | 644 | 544 | −100 (15.5%) |
+| Validation | 502 | 410 | −92 (18.3%) |
+
+**Strict definition still meets minimums** (discovery ≥ 80, validation ≥ 40).
 
 ---
 
@@ -142,3 +207,5 @@ Record these in the pre-registration §2.6 TBD-F fields at lock time.
 4. **SHA-256 lock**: copy hashes from the table above into pre-registration §2.6.
 5. **Minimum confirmation**: discovery minimum is 80 (met). Validation minimum
    is 40 (met). No adjustment needed.
+6. **Exhaustion definition**: review §3 (immediate exhaustion fraction) and §5
+   (strict 25th-pct variant) in the diagnostic section above before locking §2.3.
