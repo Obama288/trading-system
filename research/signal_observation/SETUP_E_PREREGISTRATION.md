@@ -1,18 +1,10 @@
-# Setup E — Pre-Registration (DRAFT)
+# Setup E — Pre-Registration
 
 Family: Post-Liquidation Exhaustion Reversal (Setup E, branch per
 SETUP_E_HYPOTHESIS.md)
-Status: DRAFT — blocked on (a) owner source-access approval (Coinalyze free
-API key path), (b) feasibility pass fields marked TBD-F below.
-Governed by: docs/RESEARCH_CONSTITUTION.md v1.1. This document follows the
-section 2 template. Once both blockers clear and TBD-F fields are filled,
-this file is committed as SETUP_E_PREREGISTRATION.md and LOCKED — any change
-afterwards is a new pre-registration.
-
-Sequencing note (constitution 2.x + v1.1 amendment): feasibility-only data
-inspection (coverage, retention, quality report via research/simcore/quality)
-is permitted before locking; outcome metrics are not. Dataset SHA-256 hashes
-are recorded at lock time, before any Stage 2 run.
+Status: LOCKED 2026-06-13 — no changes permitted; any modification requires a
+new pre-registration (constitution Stage 1).
+Governed by: docs/RESEARCH_CONSTITUTION.md v1.1.
 
 ## 2.1 Hypothesis and mechanism
 
@@ -48,16 +40,28 @@ their own pre-registrations (per the hypothesis note's explicit separation).
 All parameters below are part of the lock; sensitivity values are listed in
 the variant budget (2.5), not tuned post hoc.
 
-- Universe: top-20 Coinalyze-supported liquid perpetuals (exact instrument
-  list resolved and frozen at lock — TBD-F).
+- Universe: the 20 symbols frozen in
+  `research/signal_observation/_selected_symbols.json` (Coinalyze perpetual
+  IDs): BTCUSDT_PERP.A, ETHUSDT_PERP.A, SOLUSDT_PERP.A, BNBUSDT_PERP.A,
+  XRPUSDT_PERP.A, DOGEUSDT_PERP.A, ADAUSDT_PERP.A, AVAXUSDT_PERP.A,
+  LINKUSDT_PERP.A, DOTUSDT_PERP.A, LTCUSDT_PERP.A, UNIUSDT_PERP.A,
+  ATOMUSDT_PERP.A, FILUSDT_PERP.A, ARBUSDT_PERP.A, OPUSDT_PERP.A,
+  APTUSDT_PERP.A, SUIUSDT_PERP.A, TRXUSDT_PERP.A, TONUSDT_PERP.A.
 - Timeframe: 4H (aligned with simcore conventions and Coinalyze retention).
 - Cascade bar (for LONG reversal signal): long-liquidation notional in the
   bar > 95th percentile of that symbol's trailing 30-day long-liquidation
   distribution, AND bar close < bar open (forced selling visible in price).
   SHORT reversal is the mirror (short-liquidation burst, up bar).
-- Exhaustion/signal bar: the first subsequent bar where liquidation notional
-  falls below the trailing 30-day median. signal_index = that bar; entry per
-  constitution at next bar open.
+- Exhaustion/signal bar (LONG): the first subsequent bar where long-liquidation
+  notional falls below the trailing 30-day **25th percentile** of that symbol's
+  long-liq distribution. signal_index = that bar; entry per constitution at
+  next bar open. SHORT mirror: short-liq notional falls below the trailing
+  30-day 25th percentile of that symbol's short-liq distribution.
+  Rationale: the hypothesis is about exhaustion of forced flow; a deeper liq
+  drop (25th pct) operationalizes the mechanism better than the median.
+  Feasibility diagnostic confirmed this retains 544 discovery / 410 validation
+  episodes, well above the 80/40 minimums
+  (SETUP_E_FEASIBILITY_REPORT.md §Episode Structure Diagnostic §5).
 - Stop: cascade extreme (lowest low of the cascade-to-signal span for LONG;
   mirror for SHORT) minus/plus the setup_b-style buffer
   min(0.1% of entry, 0.25×ATR20).
@@ -87,17 +91,26 @@ its evidence as Stage 0 (constitution 2.5).
 
 ## 2.6 Windows and sample minimums
 
-- Discovery window: [TBD-F start, TBD-F end] — earliest 70% of available
-  contiguous Coinalyze 4H history at lock time.
-- Validation window: [TBD-F] — the following 30%, non-overlapping.
-- Recent-rerun: last 12 months at rerun time (constitution default).
-- Dataset SHA-256 hashes: [TBD-F, recorded at lock per constitution v1.1].
-- Sample minimums: constitution defaults (discovery ≥ 80, validation ≥ 40
-  non-overlapping observations). Feasibility risk: cascade episodes may be
-  too rare on 20 symbols to reach 80. If the feasibility pass shows the
-  expected count is below minimums, the OWNER decides before lock: widen the
-  universe, lengthen history, or pre-register lower minimums with written
-  justification. Lowering minimums after seeing outcome metrics is prohibited.
+- Discovery window: signal bar timestamp ≤ 2026-03-09T00:00Z. Single
+  cross-symbol cutpoint (adopted over per-symbol 70/30 splits for cleaner
+  bookkeeping; represents the median of per-symbol 70% cutpoints across the
+  universe).
+- Validation window: signal bar timestamp > 2026-03-09T00:00Z, non-overlapping
+  with discovery.
+- Recent-rerun: the most recent ~3 months of Coinalyze 4H data available at
+  rerun time. KNOWN LIMITATION (decided by owner at lock): the constitution
+  default of 12 months is impossible — Coinalyze free-plan liquidation history
+  starts ~mid-2025, leaving only ~3 months of data beyond the validation window
+  at lock time. Because this is a weakened Stage 4, final out-of-regime
+  confirmation shifts additional weight onto Stage 5 paper trading results.
+- Dataset SHA-256 hashes: recorded in
+  `research/signal_observation/SETUP_E_FEASIBILITY_REPORT.md` §Dataset
+  SHA-256 Hashes (40 hashes, 20 symbols × 2 datasets), binding to commit
+  f03bc6b. Constitution v1.1 hash-binding requirement satisfied.
+- Sample minimums: discovery ≥ 80, validation ≥ 40 non-overlapping
+  observations (constitution defaults). Both met under the locked exhaustion
+  definition (25th pct): 544 discovery / 410 validation episodes. Lowering
+  minimums after seeing outcome metrics is prohibited.
 
 ## 2.7 Kill criteria
 
@@ -108,11 +121,3 @@ its evidence as Stage 0 (constitution 2.5).
   precedent).
 - Stage 5 (paper): constitution v1.1 defaults (−0.15R after 30 trades / 10R
   drawdown / 90 days) + execution audit on frozen commit + runtime hash check.
-
-## Owner decisions required before lock
-
-1. Source access: approve use of the free Coinalyze API key path for
-   liquidation history retrieval (gate from
-   SETUP_E_COINALYZE_EXPLORE_SOURCE_SELECTION.md).
-2. After feasibility pass: confirm universe list, windows, hashes, and the
-   2.6 sample-minimum decision if episode counts come up short.
