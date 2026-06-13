@@ -1,10 +1,10 @@
-# Setup H — Pre-Registration (DRAFT)
+# Setup H — Pre-Registration
 
 Family: Regime-Gated Time-Series Momentum (TSMOM restricted to low-volatility
 regime). Successor hypothesis to Setup C; NOT a restart of Setup C.
-Status: DRAFT — blocked on feasibility pass (alt-coin data availability +
-quality + per-symbol regime/observation counts; ZEC perp liquidity check).
-Governed by: docs/RESEARCH_CONSTITUTION.md v1.2. Follows §2 template.
+Status: LOCKED 2026-06-13 — no changes permitted; any modification requires
+a new pre-registration (constitution Stage 1).
+Governed by: docs/RESEARCH_CONSTITUTION.md v1.3. Follows §2 template.
 
 ## Campaign comparison-budget note (constitution §2.5, v1.2)
 This is the SIXTH hypothesis family tested on crypto-perp data in this campaign
@@ -62,11 +62,9 @@ Regime gate (the new, pre-registered element):
   on high-vol bars. Relative-to-own-median (not an absolute threshold) so the
   gate transfers across symbols of different baseline volatility.
 
-Universe (held-out — symbols Setup C never used): liquid USDT perpetuals
-EXCLUDING BTC and ETH. Proposed: SOL, BNB, XRP, DOGE, ADA, AVAX, LINK, DOT,
-plus ZEC (long history; INCLUDE only if feasibility confirms adequate perp
-liquidity — flag a cost caveat if thin). Final list frozen at lock from the
-feasibility pass.
+Universe (held-out — symbols Setup C never used): SOL, BNB, XRP, DOGE, ADA,
+AVAX, LINK, DOT, ZEC. Final. ZEC INCLUDED: avg daily quote vol $158.9M
+(feasibility commit 7412f1a confirmed adequate liquidity).
 
 Timeframe: 4H (matches Setup C and simcore conventions).
 Outcome handling: TSMOM is a continuous-exposure signal, not a stop/target
@@ -76,11 +74,17 @@ or flipping), so the gate's reduction in trade count is correctly credited/
 debited. (Implementation detail for the runner; the cost test below depends on
 it being correct.)
 
+Cost assumption: 8 bps/side moderate is taken as a written assumption (not a
+measured spread). Justified because TSMOM rebalances every 6 bars (~daily) and
+the regime gate further reduces trade count, so round-trip cost is amortized
+over multi-day holds — the intraday cost wall that sank Setup F does not apply
+here.
+
 ## 2.4 Random baseline
 Baseline = the UNGATED Setup C TSMOM on the same universe and period (this is
 the thing the gate must beat), PLUS a shuffled-regime control: the same number
 of "active" bars chosen at random instead of by the low-vol rule, 1000
-resamples, fixed integer seed recorded here at lock [TBD-LOCK]. The gate must
+resamples, fixed integer seed = 69 (constitution v1.3 default). The gate must
 beat BOTH: the ungated signal (shows the gate adds value) and the
 random-active-bar control at p95 (shows it's the *regime*, not just trading
 fewer bars).
@@ -93,26 +97,20 @@ diagnostic. Non-primary looks are diagnostic; promotion requires a fresh
 Stage-0 pre-registration AND adds to the campaign budget above.
 
 ## 2.6 Windows and sample minimums
-- Discovery: earliest ~70% of available 4H history for the frozen universe
-  [TBD-F at lock].
-- Validation: following ~30%, non-overlapping [TBD-F].
+- Discovery: bars with open_time ≤ 2024-09-24T04:00:00Z.
+- Validation: bars with open_time > 2024-09-24T04:00:00Z, non-overlapping.
 - Recent-rerun (Stage 4): last 12 months at rerun time (full history available
   for these alts, so the constitution default holds — unlike Setup E).
-- Dataset SHA-256: recorded at lock [TBD-F].
+- Dataset SHA-256: 30d2027f9af6f191dfa7ff0e572b60c28b91f0c68ea8f28ec021f292b5788d05
+  (combined hash of all 9 CSVs, sorted by symbol; bound to commit 7412f1a).
 - Minimums: constitution defaults, counted as non-overlapping rebalance
-  observations (discovery ≥ 80, validation ≥ 40). With 9 symbols and 6-bar
-  rebalance over years of history this is comfortable; feasibility confirms.
+  observations (discovery ≥ 80, validation ≥ 40). Feasibility confirmed:
+  pooled discovery 14,160 obs / pooled validation 5,640 obs; per-symbol
+  minimums all exceeded by ≥ 15×.
 
 ## 2.7 Kill criteria
 - Discovery gate miss → PARK. Given this is family #6, a miss is a strong
   signal toward H1/H2 (data class exhausted) — record that reading.
 - Validation: gated ≤ ungated, or sign flip → RETIRE.
 - Stage 4: recent-rerun gated expectancy < 0 → historical-only.
-- Stage 5: constitution v1.1/v1.2 defaults + execution audit + hash check.
-
-## Owner decisions required before lock
-1. Confirm universe after feasibility (esp. ZEC liquidity / cost caveat).
-2. Confirm the cost-test result: before locking, the feasibility/diagnostic
-   must show the gated signal's per-rebalance edge can plausibly exceed
-   round-trip cost — if not, do not lock (the Setup F lesson).
-3. Fix the integer baseline seed (2.4) at lock.
+- Stage 5: constitution v1.3 defaults + execution audit + hash check.
