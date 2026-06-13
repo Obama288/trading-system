@@ -133,6 +133,8 @@ def parse_zip_csv(data: bytes) -> list[list[str]]:
     for line in csv.reader(io.StringIO(raw)):
         if not line or not line[0].strip():
             continue
+        if not line[0].strip().lstrip("-").isdigit():
+            continue  # skip header row (some flat-file zips include one)
         if len(line) < _NCOLS:
             raise ValueError(
                 f"kline row has {len(line)} columns, expected >= {_NCOLS}"
