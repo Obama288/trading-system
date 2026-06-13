@@ -139,6 +139,18 @@ def test_parse_zip_csv_rejects_short_row():
         parse_zip_csv(buf.getvalue())
 
 
+def test_parse_zip_csv_skips_header_row():
+    """Some flat-file zips include a header row; it must be silently skipped."""
+    header = "open_time,open,high,low,close,volume,close_time,quote_vol,trades,taker_base,taker_quote,ignore"
+    data_row = ",".join(str(c) for c in _flatfile_row(1_700_000_000_000))
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as zf:
+        zf.writestr("data.csv", header + "\n" + data_row + "\n")
+    result = parse_zip_csv(buf.getvalue())
+    assert len(result) == 1
+    assert result[0][0] == str(1_700_000_000_000)
+
+
 def test_parse_zip_csv_rejects_zip_without_csv():
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w") as zf:
