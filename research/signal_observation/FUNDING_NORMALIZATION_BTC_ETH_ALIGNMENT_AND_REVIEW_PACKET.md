@@ -1,4 +1,4 @@
-# Funding Normalization BTC/ETH Alignment And Review Packet
+﻿# Funding Normalization BTC/ETH Alignment And Review Packet
 
 ## Status
 
@@ -26,9 +26,9 @@ HOLD pending Hydromancer. Readiness/runtime/live remains NO-GO.
 
 ## Documents Reviewed
 
-- `docs/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`
+- `docs/archive/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`
 - `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`
-- `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`
+- `docs/archive/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`
 - `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`
 - `research/signal_observation/setup_d_d1_funding_acquisition/d1_funding_acquisition_summary.txt`
 - `research/signal_observation/setup_d_d1_funding_acquisition/d1_funding_validation_report.json`

@@ -1,4 +1,4 @@
-# Funding Normalization — Pre-Registration Design
+﻿# Funding Normalization — Pre-Registration Design
 
 > **Status: DISCOVERY DONE / NORMALIZATION_SCREEN_WEAK / HOLD_FOR_BROADER_PAIRS**
 > BTC/ETH discovery screening committed at `d770553`. Overall label:
@@ -33,7 +33,7 @@ This file records the pre-registration design for the Funding Normalization
 candidate. It is a docs-only artifact.
 
 Harness methodology: AUTHORIZED METHODOLOGY (see
-`docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`).
+`docs/archive/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`).
 Validation: NO-GO. Held-out: protected.
 
 ---
@@ -110,7 +110,7 @@ that informed the hypothesis. This is not blind discovery.
 | `research/signal_observation/setup_d_d1_funding_acquisition/d1_funding_acquisition_summary.txt` | D1 data availability and quality metadata (PASS/FLAGGED status, row counts, interval audit, SOLUSDT flagged period). Not used for analysis — metadata only | DOC-ONLY |
 | `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md` | Sideways branch A / normalization framing, required context layers (regime confirmation, flow/positioning confirmation, regime-break risk), Tier 1 status, Continuous-State harness assignment | DOC-ONLY |
 | `research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md` | Sideways Candidate Map Addendum entry for Funding Normalization | DOC-ONLY |
-| `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md` | Continuous-State Family B template structure, 9 bps cost floor default, result label system, HD1-HD3 safeguards, STRONG_ANOMALY_CANDIDATE label and conditions | DOC-ONLY |
+| `docs/archive/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md` | Continuous-State Family B template structure, 9 bps cost floor default, result label system, HD1-HD3 safeguards, STRONG_ANOMALY_CANDIDATE label and conditions | DOC-ONLY |
 | Trader / QA design inputs from prior conversations | General mechanism framing, sideways-versus-trend distinction, cost-floor rationale | DOC-ONLY |
 
 No raw data was inspected. No statistical patterns from live or historical data

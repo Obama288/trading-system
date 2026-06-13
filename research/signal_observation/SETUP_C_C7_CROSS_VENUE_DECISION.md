@@ -1,9 +1,9 @@
-# Setup C C7 Cross-Venue Decision Record
+﻿# Setup C C7 Cross-Venue Decision Record
 
 ## Purpose
 
-Companion to `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`,
-`docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`, and
+Companion to `docs/archive/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`,
+`docs/archive/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`, and
 `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`. This
 record accepts the cross-venue C7 evidence (Bitget + Binance) as research
 evidence after the governance reconciliation at `e355aff`, lists the main

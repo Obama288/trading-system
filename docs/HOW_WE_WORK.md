@@ -1,4 +1,4 @@
-# How We Work
+﻿# How We Work
 
 ## Core Principle
 
@@ -39,12 +39,12 @@ If docs conflict, `docs/CURRENT_STATE.md` wins for current state;
 `docs/BOUNDARIES.md` wins for hard constraints. Report conflicts to Owner before acting.
 
 The following v1 docs are ARCHIVED historical references only — not active startup requirements:
-- `docs/PROGRESS.md`
-- `docs/AI_COMMANDS.md`
-- `docs/AI_HANDOFF.md`
-- `docs/STAGE_MAP.md`
-- `docs/PROJECT_ORIGIN.md`
-- `docs/CONTEXT.md`
+- `docs/archive/PROGRESS.md`
+- `docs/archive/AI_COMMANDS.md`
+- `docs/archive/AI_HANDOFF.md`
+- `docs/archive/STAGE_MAP.md`
+- `docs/archive/PROJECT_ORIGIN.md`
+- `docs/archive/CONTEXT.md`
 
 ## Task-Specific Context Discipline
 

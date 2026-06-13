@@ -1,4 +1,4 @@
-# Memory Policy
+﻿# Memory Policy
 PostgreSQL: authoritative
   - kill switch, candidates, executions, positions, operator_actions
 Redis: ephemeral only (cache, session, dedup)
@@ -11,7 +11,7 @@ docs/: project memory for AI continuity
 These rules govern how project agents (Tower Control, Codex Implementation
 Agent, Claude Independent Reviewer, Auditor) and the Human Owner maintain
 shared project memory across sessions. Role definitions live in
-`docs/AGENT_PROMPTS.md`.
+`docs/archive/AGENT_PROMPTS.md`.
 
 ### 1. Human memory vs project control memory
 - Human Owner memory is private and authoritative for owner intent.

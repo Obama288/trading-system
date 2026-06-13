@@ -1,8 +1,8 @@
-# Setup C C7 Post-Review Decision Record
+﻿# Setup C C7 Post-Review Decision Record
 
 ## Purpose
 
-Companion to `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`. This
+Companion to `docs/archive/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`. This
 record accepts the Stage 54-SQ C7 expanded validation evidence run, captures
 the independent post-C7 review verdict, lists the main residual caveats, and
 states the recommended next research gate.

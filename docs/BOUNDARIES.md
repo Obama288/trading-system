@@ -1,8 +1,8 @@
-# Hephaestus - Boundaries
+﻿# Hephaestus - Boundaries
 
 Purpose: compact safety boundary entry point. Canonical for hard constraints.
 `docs/CURRENT_STATE.md` is the current state entry point.
-`docs/PROGRESS.md` is ARCHIVED historical context; it does not override current state.
+`docs/archive/PROGRESS.md` is ARCHIVED historical context; it does not override current state.
 
 ## Source Rules
 
@@ -13,7 +13,7 @@ Purpose: compact safety boundary entry point. Canonical for hard constraints.
 - `docs/CURRENT_STATE.md` is the current state entry point for all agents.
   `docs/BOUNDARIES.md` is canonical for hard constraints.
   If they conflict, report to Owner before acting.
-- `docs/PROGRESS.md` is ARCHIVED and does not override `docs/CURRENT_STATE.md`.
+- `docs/archive/PROGRESS.md` is ARCHIVED and does not override `docs/CURRENT_STATE.md`.
 - Report conflicts before implementation.
 
 ## Document Lifecycle Taxonomy

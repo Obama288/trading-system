@@ -1,4 +1,4 @@
-# Hephaestus - Current State
+﻿# Hephaestus - Current State
 
 Purpose: short current-status entry point for Tower Control, Codex, Claude, and
 Auditor sessions. Historical docs remain available, but routine startup should
@@ -94,7 +94,7 @@ remote refs.
   Binance vs ~53% on Bitget.
 - Cross-venue both-PASS **math** is supported by the C7 gate replication
   on Bitget and Binance independently. The cross-venue design lock at
-  `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md` reconciled the prior
+  `docs/archive/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md` reconciled the prior
   governance gap.
 - C7 cross-venue decision record written:
   `research/signal_observation/SETUP_C_C7_CROSS_VENUE_DECISION.md`.
@@ -114,7 +114,7 @@ remote refs.
 ## Currently Allowed Next Work
 
 1. **Harness methodology** (AUTHORIZED METHODOLOGY / NO SCREENING AUTHORIZED):
-   `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
+   `docs/archive/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
    Authorized for candidate pre-registration and bounded screening task design.
    No candidate screening task is authorized. Each candidate requires its own
    pre-registration, data availability confirmation, held-out split, and separate
@@ -139,7 +139,7 @@ remote refs.
    separate Owner authorization. No screening, acquisition, validation,
    readiness, or pair expansion authorized.
    Pre-registration: `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
-   Design lock: `docs/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
+   Design lock: `docs/archive/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
    Output: `research/signal_observation/output/funding_normalization/`.
    LOW-side broader-pairs source feasibility:
    `research/signal_observation/LOW_SIDE_FUNDING_NORMALIZATION_BROADER_PAIRS_FEASIBILITY.md`.
@@ -166,9 +166,9 @@ remote refs.
 ## Research Artifact Index
 
 - Single-venue C7 design lock:
-  `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
 - Cross-venue C7 design lock:
-  `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`.
 - C7 single-venue (Bitget) evidence: data `16ae508`, evidence report
   `c108197`, decision `C7_PASS`. C7 post-review decision record:
   `research/signal_observation/SETUP_C_C7_POST_REVIEW_DECISION.md`.
@@ -177,7 +177,7 @@ remote refs.
 - C7 cross-venue decision record:
   `research/signal_observation/SETUP_C_C7_CROSS_VENUE_DECISION.md`.
 - C8 direction-call agreement design lock:
-  `docs/STAGE_54_SQ_C8_DIRECTION_CALL_AGREEMENT_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_C8_DIRECTION_CALL_AGREEMENT_DESIGN_LOCK.md`.
   Next step is independent review before any implementation, data processing,
   or analysis.
 - C8 direction-call agreement implementation/report exists:
@@ -190,11 +190,11 @@ remote refs.
   Verdict: PASS WITH NOTES; C8 closed; do not open C8b unless owner explicitly
   reopens it with a new decision gate.
 - Pre-DR1 Decision Gate:
-  `docs/PRE_DR1_DECISION_GATE.md`. Next step is
+  `docs/archive/PRE_DR1_DECISION_GATE.md`. Next step is
   independent review / owner decision before any Data Reconnaissance design
   lock or implementation.
 - DR1 data recency / predictability design lock:
-  `docs/STAGE_54_SQ_DR1_DATA_RECENCY_PREDICTABILITY_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_DATA_RECENCY_PREDICTABILITY_DESIGN_LOCK.md`.
   DR1 implementation/report exists:
   `research/signal_observation/output/recon/setup_c_dr1_data_recency_predictability_report.{txt,json}`.
   Result: `INCONCLUSIVE`; committed recent data fails the locked freshness
@@ -205,11 +205,11 @@ remote refs.
   DR1 is closed as `INCONCLUSIVE`; do not open a paper-candidate design lock.
   Next allowed work is defining the missing recent-data requirement.
 - DR1 missing recent-data requirement design lock:
-  `docs/STAGE_54_SQ_DR1_MISSING_RECENT_DATA_REQUIREMENT_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_MISSING_RECENT_DATA_REQUIREMENT_DESIGN_LOCK.md`.
   Governance only; next step is independent review before any acquisition
   decision gate, download, or DR1 rerun.
 - Pre-DR1 recent-data availability decision gate:
-  `docs/PRE_DR1_RECENT_DATA_AVAILABILITY_DECISION_GATE.md`.
+  `docs/archive/PRE_DR1_RECENT_DATA_AVAILABILITY_DECISION_GATE.md`.
   Review / owner decision is next; it does not authorize downloads or DR1
   rerun.
 - DR1 recent-data availability decision:
@@ -221,7 +221,7 @@ remote refs.
   Preferred candidate for next planning step: Binance public recent 4H
   feasibility clarification; no download or acquisition design is authorized.
 - DR1 Binance recent 4H feasibility design lock:
-  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_4H_FEASIBILITY_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_BINANCE_RECENT_4H_FEASIBILITY_DESIGN_LOCK.md`.
   Planning only; review is next before any feasibility check, network call,
   download, or DR1 rerun.
 - DR1 Binance recent 4H feasibility note:
@@ -229,7 +229,7 @@ remote refs.
   Outcome: `FEASIBLE` in principle for acquisition-design planning; no API
   call, download, DR1 rerun, or readiness promotion is authorized.
 - DR1 Binance recent-data acquisition design lock:
-  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_DATA_ACQUISITION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_BINANCE_RECENT_DATA_ACQUISITION_DESIGN_LOCK.md`.
   Planning only; independent review is next before any bounded acquisition
   implementation task.
 - DR1 Binance recent-data acquisition/validation:
@@ -238,7 +238,7 @@ remote refs.
   locked 2025-11-12T12:00:00+00:00 to 2026-05-12T12:00:00+00:00 window.
   No DR1 rerun, gate change, or readiness promotion.
 - DR1 Binance recent rerun design lock:
-  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_RERUN_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_BINANCE_RECENT_RERUN_DESIGN_LOCK.md`.
   Planning only; independent review is next before any bounded DR1 rerun
   implementation task.
 - DR1 Binance recent rerun:
@@ -261,7 +261,7 @@ remote refs.
   CANDIDATE MAP ONLY; no screening, acquisition, analysis, EXPLORE,
   validation, implementation, readiness, or new stage authorized.
 - Funding Normalization screening design lock:
-  `docs/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
   Pre-registration: `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
 - Funding Normalization BTC/ETH discovery screening output committed at `d770553`:
   `research/signal_observation/output/funding_normalization/`.
@@ -274,17 +274,17 @@ remote refs.
 - Setup D hypothesis note:
   `research/signal_observation/SETUP_D_HYPOTHESIS.md`.
 - Pre-D1 decision gate:
-  `docs/PRE_D1_DECISION_GATE.md`.
+  `docs/archive/PRE_D1_DECISION_GATE.md`.
 - D1 funding cheap-falsification design lock:
-  `docs/STAGE_54_SQ_D1_FUNDING_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_D1_FUNDING_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
   Independent review verdict: PASS.
 - Pre-D1 funding data path availability decision gate:
-  `docs/PRE_D1_FUNDING_DATA_PATH_AVAILABILITY_DECISION_GATE.md`.
+  `docs/archive/PRE_D1_FUNDING_DATA_PATH_AVAILABILITY_DECISION_GATE.md`.
   Gate recommendation: `PROCEED_TO_D1_PUBLIC_DATA_ACQUISITION_DESIGN` because
   repo inspection found no committed reusable D1-ready funding-rate history
   aligned with OHLCV. Owner has accepted this gate outcome.
 - D1 public funding data acquisition design lock:
-  `docs/STAGE_54_SQ_D1_FUNDING_DATA_ACQUISITION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_D1_FUNDING_DATA_ACQUISITION_DESIGN_LOCK.md`.
   Accepted and committed (`10617b7`). Selected candidate: Binance USDT-M public
   funding REST API, BTCUSDT/ETHUSDT/SOLUSDT, 8h interval, locked window
   2022-01-01T00:00:00Z to 2023-12-17T12:00:00Z. Reserved future formal
@@ -302,7 +302,7 @@ remote refs.
   SOLUSDT interval policy and harness design.
 - Reusable cheap-falsification harness proposal created (PROPOSED; requires
   independent review and Owner authorization before any screening task):
-  `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
+  `docs/archive/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
   Defines three template families (Event-Triggered, Continuous-State,
   Cross-Venue Dislocation), pre-registration and held-out discipline,
   multiple-comparisons policy, STRONG_ANOMALY_CANDIDATE escalation label,
@@ -337,25 +337,25 @@ remote refs.
   exhaustion-reversal-like structure at +12h and +24h. Exploratory only; not
   evidence and not a formal Setup E verdict.
 - Pre-E1 decision gate exists:
-  `docs/PRE_E1_DECISION_GATE.md`.
+  `docs/archive/PRE_E1_DECISION_GATE.md`.
 - E1 reversal cheap-falsification design lock exists:
-  `docs/STAGE_54_SQ_E1_REVERSAL_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_E1_REVERSAL_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
   Independent review verdict: `PASS WITH NOTES`. The reviewed design lock is
   accepted as the current formal research specification, but E1 implementation
   is blocked by held-out-window availability.
 - E1 held-out-window availability decision:
-  `docs/STAGE_54_SQ_E1_HELD_OUT_WINDOW_AVAILABILITY_DECISION.md`.
+  `docs/archive/STAGE_54_SQ_E1_HELD_OUT_WINDOW_AVAILABILITY_DECISION.md`.
   The Coinalyze 20-symbol 4h EXPLORE used the full available contiguous window
   (`2025-09-06T00:00:00Z` to `2026-05-15T12:00:00Z`), so the selected
   Coinalyze 4h path currently lacks an immediately usable non-overlapping
   formal held-out historical window. Post-hoc internal splitting of the already
   inspected window is rejected.
 - E1 alternative held-out source/window decision:
-  `docs/STAGE_54_SQ_E1_ALTERNATIVE_HELD_OUT_SOURCE_WINDOW_DECISION.md`.
+  `docs/archive/STAGE_54_SQ_E1_ALTERNATIVE_HELD_OUT_SOURCE_WINDOW_DECISION.md`.
   Outcome: `PROCEED_TO_NARROW_ALTERNATIVE_SOURCE_ACCESS_DEPTH_CHECK`.
   Preferred candidate: `The Graph / Hyperliquid liquidation event path`.
 - E1 Hyperliquid / The Graph access-depth verification:
-  `docs/STAGE_54_SQ_E1_HYPERLIQUID_THEGRAPH_ACCESS_DEPTH_VERIFICATION.md`.
+  `docs/archive/STAGE_54_SQ_E1_HYPERLIQUID_THEGRAPH_ACCESS_DEPTH_VERIFICATION.md`.
   Token-level check performed. JWT format confirmed correct; The Graph Token
   API endpoint is live. Blocker: FREE plan / nft-only endpoint group does not
   permit Hyperliquid markets/liquidations endpoint access. Outcome:
@@ -368,7 +368,7 @@ remote refs.
   paths for E1.
 - Process docs updated: Hard Research Boundaries and Research Integrity Rules
   added to `docs/BOUNDARIES.md` and `docs/HOW_WE_WORK.md`. Research Scout /
-  Data Source Investigator role added to `docs/AGENT_PROMPTS.md` and
+  Data Source Investigator role added to `docs/archive/AGENT_PROMPTS.md` and
   `docs/HOW_WE_WORK.md`.
 - Secondary next option: OKX C7 evidence if reachability is restored
   (currently blocked by Cloudflare 1010 ASN from this host).
@@ -393,6 +393,6 @@ Routine startup should not require reading full historical docs unless this file
 is missing, stale, or conflicting. If this file conflicts with latest commits/code,
 report the conflict before proposing work.
 
-`docs/PROGRESS.md` and `docs/STAGE_STATUS.md` are historical/deeper context. Use
+`docs/archive/PROGRESS.md` and `docs/archive/STAGE_STATUS.md` are historical/deeper context. Use
 them only when `docs/CURRENT_STATE.md` is missing, stale, conflicting with
 commits/code, or insufficient for the owner's question.

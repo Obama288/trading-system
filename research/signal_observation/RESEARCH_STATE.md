@@ -1,4 +1,4 @@
-# Signal Observation - Research State
+﻿# Signal Observation - Research State
 
 Purpose: compact current state for Stage 54-SQ signal-quality research. Full
 artifacts and historical docs remain available, but routine startup should begin
@@ -35,7 +35,7 @@ constitution is the authoritative process document.
   decision **C7_PASS**.
 - Cross-venue both-PASS math is supported (Bitget and Binance each
   independently satisfy the locked C7 gate). The cross-venue design lock
-  at `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md` reconciled the prior
+  at `docs/archive/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md` reconciled the prior
   governance gap; the cross-venue decision record at
   `research/signal_observation/SETUP_C_C7_CROSS_VENUE_DECISION.md`
   accepts cross-venue both-PASS as research evidence with caveats
@@ -107,7 +107,7 @@ constitution is the authoritative process document.
 ## C7 Design Lock, Analyzer, and Evidence
 
 - C7 expanded validation design lock written:
-  `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md`.
 - Design lock independent review verdict: PASS WITH NOTES. Reviewer fixes
   applied.
 - C7 design lock includes: future setup evaluation process principles and
@@ -139,7 +139,7 @@ constitution is the authoritative process document.
 
 - Cross-venue C7 design lock written to govern cross-venue evidence
   without altering data, code, gates, or evidence:
-  `docs/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_C7_CROSS_VENUE_DESIGN_LOCK.md`.
 - Authorized venues: Bitget (done), Binance USDT-M Futures (done), OKX
   (authorized but deferred — Cloudflare 1010 ASN block on current host).
 - Binance public kline downloader added at `d770a05`; Binance dev +
@@ -173,7 +173,7 @@ its own pre-registration and separate Owner authorization.
   authorized for pre-registration and screening task design; no candidate
   screening authorized. Each candidate requires pre-registration, data
   confirmation, held-out split, and separate Owner authorization.
-  `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`
+  `docs/archive/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`
 - **Sideways family note** (PROPOSED / CANDIDATE MAP ONLY): sideways screening
   remains HOLD — candidate pre-registration design may begin, screening
   execution is not authorized. Sideways acquisition/analysis is NO-GO.
@@ -190,7 +190,7 @@ its own pre-registration and separate Owner authorization.
   candidate/source-feasibility only — requires new pre-registration and
   separate Owner authorization.
   Pre-registration: `research/signal_observation/FUNDING_NORMALIZATION_PREREGISTRATION.md`.
-  Design lock: `docs/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
+  Design lock: `docs/archive/STAGE_54_SQ_FUNDING_NORMALIZATION_BTC_ETH_SCREENING_DESIGN_LOCK.md`.
   Output: `research/signal_observation/output/funding_normalization/`.
   LOW-side broader-pairs feasibility note:
   `research/signal_observation/LOW_SIDE_FUNDING_NORMALIZATION_BROADER_PAIRS_FEASIBILITY.md`.
@@ -218,7 +218,7 @@ its own pre-registration and separate Owner authorization.
   review before any follow-up research decision. Not runtime, paper, trading,
   probe, or live readiness.
 - C8 direction-call agreement design lock written:
-  `docs/STAGE_54_SQ_C8_DIRECTION_CALL_AGREEMENT_DESIGN_LOCK.md`. It locks
+  `docs/archive/STAGE_54_SQ_C8_DIRECTION_CALL_AGREEMENT_DESIGN_LOCK.md`. It locks
   Bitget/Binance only, BTCUSDT/ETHUSDT/SOLUSDT only, 4H only, the same C7
   development and expanded windows, frozen Setup C detector, primary 40-bar
   comparison, no new downloads/API calls/data mutation, and no gate/filter/
@@ -239,7 +239,7 @@ its own pre-registration and separate Owner authorization.
   new decision gate. Next fork: define paper-prerequisites docs-only, without
   approving paper trading.
 - Setup C paper-prerequisites design lock created:
-  `docs/STAGE_54_SQ_SETUP_C_PAPER_PREREQUISITES_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_SETUP_C_PAPER_PREREQUISITES_DESIGN_LOCK.md`.
   C8 remains closed; no C8b. Review is pending. The lock defines prerequisites
   only and does not approve paper, runtime, trading, probe, or live readiness.
 - Setup C paper-prerequisites proposal created:
@@ -247,11 +247,11 @@ its own pre-registration and separate Owner authorization.
   Review is pending. It defines prerequisites only and does not approve paper,
   runtime, trading, probe, or live readiness.
 - Pre-DR1 Decision Gate created:
-  `docs/PRE_DR1_DECISION_GATE.md`. Review / owner
+  `docs/archive/PRE_DR1_DECISION_GATE.md`. Review / owner
   decision is pending before any Data Recency / Predictability Reconnaissance
   design lock or implementation.
 - DR1 data recency / predictability design lock created:
-  `docs/STAGE_54_SQ_DR1_DATA_RECENCY_PREDICTABILITY_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_DATA_RECENCY_PREDICTABILITY_DESIGN_LOCK.md`.
   DR1 implementation/report written:
   `research/signal_observation/setup_c_dr1_data_recency_predictability.py`,
   `research/signal_observation/run_setup_c_dr1_data_recency_predictability.py`,
@@ -267,11 +267,11 @@ its own pre-registration and separate Owner authorization.
   and do not park Setup C yet. Next fork: define the missing recent-data
   requirement before any attempt to resolve DR1 freshness eligibility.
 - DR1 missing recent-data requirement design lock created:
-  `docs/STAGE_54_SQ_DR1_MISSING_RECENT_DATA_REQUIREMENT_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_MISSING_RECENT_DATA_REQUIREMENT_DESIGN_LOCK.md`.
   Review is next; it does not authorize downloads, data substitution, DR1
   rerun, paper-candidate design lock, or readiness promotion.
 - Pre-DR1 recent-data availability decision gate created:
-  `docs/PRE_DR1_RECENT_DATA_AVAILABILITY_DECISION_GATE.md`.
+  `docs/archive/PRE_DR1_RECENT_DATA_AVAILABILITY_DECISION_GATE.md`.
   Review / owner decision is next; no download, DR1 rerun, paper-candidate
   design lock, or readiness promotion is authorized.
 - DR1 recent-data availability decision record written:
@@ -284,7 +284,7 @@ its own pre-registration and separate Owner authorization.
   clarification. No data download, API probing, acquisition implementation,
   DR1 rerun, paper-candidate design lock, or readiness promotion is authorized.
 - DR1 Binance recent 4H feasibility design lock created:
-  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_4H_FEASIBILITY_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_BINANCE_RECENT_4H_FEASIBILITY_DESIGN_LOCK.md`.
   Planning only; review is next before any feasibility check, network call,
   download, data mutation, DR1 rerun, or readiness promotion.
 - DR1 Binance recent 4H feasibility note created:
@@ -293,7 +293,7 @@ its own pre-registration and separate Owner authorization.
   calls, endpoint probing, downloads, DR1 rerun, paper-candidate design lock,
   or readiness promotion are authorized.
 - DR1 Binance recent-data acquisition design lock created:
-  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_DATA_ACQUISITION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_BINANCE_RECENT_DATA_ACQUISITION_DESIGN_LOCK.md`.
   Planning only; independent review is next before any bounded acquisition
   implementation task.
 - DR1 Binance recent-data acquisition/validation completed:
@@ -302,7 +302,7 @@ its own pre-registration and separate Owner authorization.
   locked 2025-11-12T12:00:00+00:00 to 2026-05-12T12:00:00+00:00 window.
   No DR1 rerun, gate change, or readiness promotion.
 - DR1 Binance recent rerun design lock created:
-  `docs/STAGE_54_SQ_DR1_BINANCE_RECENT_RERUN_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_DR1_BINANCE_RECENT_RERUN_DESIGN_LOCK.md`.
   Planning only; independent review is next before any bounded DR1 rerun
   implementation task.
 - DR1 Binance recent rerun completed:
@@ -325,17 +325,17 @@ its own pre-registration and separate Owner authorization.
 - Setup D hypothesis note created:
   `research/signal_observation/SETUP_D_HYPOTHESIS.md`.
 - Pre-D1 decision gate created:
-  `docs/PRE_D1_DECISION_GATE.md`.
+  `docs/archive/PRE_D1_DECISION_GATE.md`.
 - D1 funding cheap-falsification design lock created:
-  `docs/STAGE_54_SQ_D1_FUNDING_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_D1_FUNDING_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
   Independent review verdict: PASS.
 - Pre-D1 funding data path availability decision gate created:
-  `docs/PRE_D1_FUNDING_DATA_PATH_AVAILABILITY_DECISION_GATE.md`.
+  `docs/archive/PRE_D1_FUNDING_DATA_PATH_AVAILABILITY_DECISION_GATE.md`.
   Gate recommendation: `PROCEED_TO_D1_PUBLIC_DATA_ACQUISITION_DESIGN` because
   repo inspection found no committed reusable D1-ready funding-rate history
   aligned with OHLCV. Owner has accepted this gate outcome.
 - D1 public funding data acquisition design lock:
-  `docs/STAGE_54_SQ_D1_FUNDING_DATA_ACQUISITION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_D1_FUNDING_DATA_ACQUISITION_DESIGN_LOCK.md`.
   Accepted and committed (`10617b7`). No download, API call, or D1 analysis
   authorized by design lock alone.
 - D1 funding data acquisition completed (`93f4d0f`):
@@ -350,7 +350,7 @@ its own pre-registration and separate Owner authorization.
   design lock remain HOLD pending SOLUSDT interval policy and harness design.
 - Reusable cheap-falsification harness proposal created (PROPOSED; requires
   independent review and Owner authorization):
-  `docs/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
+  `docs/archive/STAGE_54_SQ_REUSABLE_CHEAP_FALSIFICATION_HARNESS_PROPOSAL.md`.
   Defines Event-Triggered, Continuous-State, and Cross-Venue Dislocation
   template families; pre-registration; held-out discipline; multiple-comparisons
   policy; STRONG_ANOMALY_CANDIDATE escalation; grail/anomaly philosophy; and
@@ -391,25 +391,25 @@ its own pre-registration and separate Owner authorization.
   exhaustion-reversal-like structure at +12h and +24h. Exploratory only; not
   evidence and not a formal Setup E verdict.
 - Pre-E1 decision gate exists:
-  `docs/PRE_E1_DECISION_GATE.md`.
+  `docs/archive/PRE_E1_DECISION_GATE.md`.
 - E1 reversal cheap-falsification design lock exists:
-  `docs/STAGE_54_SQ_E1_REVERSAL_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
+  `docs/archive/STAGE_54_SQ_E1_REVERSAL_CHEAP_FALSIFICATION_DESIGN_LOCK.md`.
   Independent review verdict: `PASS WITH NOTES`. The reviewed design lock is
   accepted as the current formal research specification, but E1 implementation
   is blocked by held-out-window availability.
 - E1 held-out-window availability decision:
-  `docs/STAGE_54_SQ_E1_HELD_OUT_WINDOW_AVAILABILITY_DECISION.md`.
+  `docs/archive/STAGE_54_SQ_E1_HELD_OUT_WINDOW_AVAILABILITY_DECISION.md`.
   The Coinalyze 20-symbol 4h EXPLORE used the full available contiguous window
   (`2025-09-06T00:00:00Z` to `2026-05-15T12:00:00Z`), so the selected
   Coinalyze 4h path currently lacks an immediately usable non-overlapping
   formal held-out historical window. Post-hoc internal splitting of the already
   inspected window is rejected.
 - E1 alternative held-out source/window decision:
-  `docs/STAGE_54_SQ_E1_ALTERNATIVE_HELD_OUT_SOURCE_WINDOW_DECISION.md`.
+  `docs/archive/STAGE_54_SQ_E1_ALTERNATIVE_HELD_OUT_SOURCE_WINDOW_DECISION.md`.
   Outcome: `PROCEED_TO_NARROW_ALTERNATIVE_SOURCE_ACCESS_DEPTH_CHECK`.
   Preferred candidate: `The Graph / Hyperliquid liquidation event path`.
 - E1 Hyperliquid / The Graph access-depth verification:
-  `docs/STAGE_54_SQ_E1_HYPERLIQUID_THEGRAPH_ACCESS_DEPTH_VERIFICATION.md`.
+  `docs/archive/STAGE_54_SQ_E1_HYPERLIQUID_THEGRAPH_ACCESS_DEPTH_VERIFICATION.md`.
   Token-level check performed. JWT format confirmed correct; The Graph Token
   API endpoint is live. Blocker: FREE plan / nft-only endpoint group does not
   permit Hyperliquid markets/liquidations endpoint. Outcome:

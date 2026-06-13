@@ -1,4 +1,4 @@
-# Setup C Evidence Summary
+﻿# Setup C Evidence Summary
 
 Stage 54-SQ-C6 decision record. Consolidates C1–C5 research diagnostics.
 
@@ -141,5 +141,5 @@ decision.
 - Future setup evaluation should use a compressed path: pre-filter, Stage 1
   with all key metrics, at most one same-dataset diagnostic, then out-of-time
   or FAIL/PARK. Avoid repeating the C1–C6 diagnostic chain length.
-- See `docs/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md` §§ Future
+- See `docs/archive/STAGE_54_SQ_C7_EXPANDED_VALIDATION_DESIGN_LOCK.md` §§ Future
   Setup Evaluation Process Principles / Post-C7 Fork: Data Reconnaissance.
