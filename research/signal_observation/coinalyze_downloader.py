@@ -7,7 +7,8 @@ https://github.com/ivarurdalen/coinalyze (verified 2026-06-13):
   Auth             : request header  api_key  (lowercase); same name as query param
   4H interval      : "4hour"  (Interval.H4 = "4hour" in the reference enums)
   from / to params : POSIX seconds (int)
-  Response t field : POSIX milliseconds (t > 1e12 always; verified from test fixture)
+  Response t field : POSIX SECONDS (verified live 2026-06-13: diff between adjacent
+                     4H bars = 14400 s; reference-client test fixture used ms, misleading)
   OHLCV fields     : t, o, h, l (low price — NOT long), c, v, bv, tx, btx
   Liquidation      : t, l (long notional), s (short notional)
                      pass convert_to_usd=true for USD-denominated values
@@ -76,9 +77,9 @@ def require_api_key() -> str:
 # Internal HTTP
 # ---------------------------------------------------------------------------
 
-def _ms_to_iso(ts_ms: int) -> str:
-    """POSIX milliseconds → ISO 8601 UTC string (bar OPEN time)."""
-    return datetime.fromtimestamp(ts_ms / 1000, tz=UTC).isoformat().replace("+00:00", "Z")
+def _s_to_iso(ts_s: int) -> str:
+    """POSIX seconds → ISO 8601 UTC string (bar OPEN time)."""
+    return datetime.fromtimestamp(ts_s, tz=UTC).isoformat().replace("+00:00", "Z")
 
 
 def _throttle(n_symbols: int) -> None:
@@ -174,7 +175,7 @@ def _full_history(
         page = _fetch_history_page(endpoint, symbols, epoch_s, to_s, api_key, extra)
 
         new_count = 0
-        page_oldest_ms: int | None = None
+        page_oldest_s: int | None = None
 
         for sym_data in page:
             sym = sym_data.get("symbol", "")
@@ -186,13 +187,13 @@ def _full_history(
                     seen[sym].add(t)
                     bars[sym].append(bar)
                     new_count += 1
-                if page_oldest_ms is None or t < page_oldest_ms:
-                    page_oldest_ms = t
+                if page_oldest_s is None or t < page_oldest_s:
+                    page_oldest_s = t
 
-        if new_count == 0 or page_oldest_ms is None:
+        if new_count == 0 or page_oldest_s is None:
             break
 
-        next_to_s = page_oldest_ms // 1000 - 1
+        next_to_s = page_oldest_s - 1
         if next_to_s <= epoch_s or next_to_s >= to_s:
             break
         to_s = next_to_s
@@ -228,7 +229,7 @@ def write_ohlcv_csv(bars: list[dict], path: Path) -> Path:
         w = csv.writer(fh)
         w.writerow(OHLCV_CSV_HEADER)
         for b in bars:
-            w.writerow([_ms_to_iso(b["t"]), b["o"], b["h"], b["l"], b["c"], b["v"]])
+            w.writerow([_s_to_iso(b["t"]), b["o"], b["h"], b["l"], b["c"], b["v"]])
     return path
 
 
@@ -239,7 +240,7 @@ def write_liquidation_csv(bars: list[dict], path: Path) -> Path:
         w = csv.writer(fh)
         w.writerow(LIQUIDATION_CSV_HEADER)
         for b in bars:
-            w.writerow([_ms_to_iso(b["t"]), b["l"], b["s"]])
+            w.writerow([_s_to_iso(b["t"]), b["l"], b["s"]])
     return path
 
 

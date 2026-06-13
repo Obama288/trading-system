@@ -12,6 +12,7 @@ import pytest
 from research.signal_observation.coinalyze_downloader import (
     LIQUIDATION_CSV_HEADER,
     OHLCV_CSV_HEADER,
+    _s_to_iso,
     fetch_liquidation_4h_history,
     fetch_ohlcv_4h_history,
     require_api_key,
@@ -23,9 +24,9 @@ from research.signal_observation.coinalyze_downloader import (
 # Shared fixtures / helpers
 # ---------------------------------------------------------------------------
 
-_T1 = 1_700_000_000_000  # ms  (~2023-11-14)
-_T2 = _T1 + 4 * 3600 * 1000  # next 4H bar
-_T3 = _T2 + 4 * 3600 * 1000
+_T1 = 1_700_000_000  # seconds  (~2023-11-14) — API returns POSIX seconds, verified live
+_T2 = _T1 + 4 * 3600  # next 4H bar
+_T3 = _T2 + 4 * 3600
 
 _SYM = "BTCUSDT_PERP.A"
 
