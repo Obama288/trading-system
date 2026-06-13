@@ -28,7 +28,7 @@ If a HISTORY doc contradicts CURRENT_STATE, CURRENT_STATE wins.
 - [SYSTEM_MAP_AND_RISK_REGISTER.md](SYSTEM_MAP_AND_RISK_REGISTER.md) — architecture and risk register
 - [WORKING_PRACTICES.md](WORKING_PRACTICES.md) — working habits, roles, session startup procedure
 - [COMMANDS.md](COMMANDS.md) — `!`-command registry (read live state, never stores it)
-- [DATA_CLASS_DECISION_FRAMEWORK.md](DATA_CLASS_DECISION_FRAMEWORK.md) — when to acquire paid data vs stay free *(content pending)*
+- [DATA_CLASS_DECISION_FRAMEWORK.md](DATA_CLASS_DECISION_FRAMEWORK.md) — when to acquire paid data vs stay free; four moves ranked by cost and EV
 - [FREE_DATA_SOURCE_SURVEY.md](FREE_DATA_SOURCE_SURVEY.md) — free public data paths confirmed available *(content pending)*
 - [STRATEGIC_REVIEW_2026-06.md](STRATEGIC_REVIEW_2026-06.md) — strategic review after five families (2026-06-13)
 
