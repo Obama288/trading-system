@@ -30,6 +30,7 @@ If a HISTORY doc contradicts CURRENT_STATE, CURRENT_STATE wins.
 - [COMMANDS.md](COMMANDS.md) — `!`-command registry (read live state, never stores it)
 - [DATA_CLASS_DECISION_FRAMEWORK.md](DATA_CLASS_DECISION_FRAMEWORK.md) — when to acquire paid data vs stay free; four moves ranked by cost and EV
 - [FREE_DATA_SOURCE_SURVEY.md](FREE_DATA_SOURCE_SURVEY.md) — free public data paths confirmed available; flat-file frontier and paid wall mapped
+- [DATA_SOURCE_SURVEY_II.md](DATA_SOURCE_SURVEY_II.md) — paid/external data survey (order-book, on-chain, news, sessions); cost, mechanism, risk ranking
 - [STRATEGIC_REVIEW_2026-06.md](STRATEGIC_REVIEW_2026-06.md) — strategic review after five families (2026-06-13)
 
 ## History
