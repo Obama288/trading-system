@@ -18,6 +18,7 @@ Full docs index: `docs/README.md`. Research-process governance: `docs/RESEARCH_C
 - Primary research lane: Setup H Stage 2 PARK (2026-06-13, commit 4f33860);
   Setup E / E1 held-out source-access decision on hold; Setup C parked after
   DR1 Binance recent rerun LOW.
+- Open strategic question (raised by red review, decision deferred until after Setup I): is directional trading on free public data structurally unwinnable for us, and should we pivot to carry/liquidity-provision classes the current pipeline cannot yet measure? See docs/RED_REVIEW_2026-06-13.md.
 - Source protocol: GitHub docs, commits, code, tests, and relevant PR metadata
   are primary; project memory is orientation only.
 
