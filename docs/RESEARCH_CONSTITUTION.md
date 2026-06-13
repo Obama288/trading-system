@@ -1,6 +1,6 @@
 # Research Constitution — Edge Discovery Pipeline
 
-Status: v1.3 — ADOPTED 2026-06-13 (default baseline seed 69). v1.2 explicit baseline seed at lock; cumulative comparison budget. v1.1 Stage 5 hardening; v1.0 base.
+Status: v1.4 — ADOPTED 2026-06-13 (multiplicity hardening + pass-is-not-proof). v1.3 default seed; v1.2 cumulative budget; v1.1 Stage 5; v1.0 base.
 Scope: governs all edge research in this repository. Supersedes per-family ad-hoc
 process. Existing decision records (Setup A/B/C) remain valid history.
 Location when adopted: `docs/RESEARCH_CONSTITUTION.md`
@@ -49,6 +49,9 @@ Failing a gate parks or retires the family; restart requires a NEW pre-registrat
   (DR1 LOW). This filter is permanent.
 - Gate to Stage 5: post-cost expectancy non-negative on recent window; no
   pre-registered red flag triggered.
+- A PASS is never 'proven', only 'not-yet-rejected'. Confidence accrues only
+  through independent repeats (validation, recent-rerun, paper), never from a
+  single run, however strong.
 
 ### Stage 5 — Paper
 - Entry requires: owner sign-off + frozen detector code (tag/commit hash in the
@@ -115,6 +118,12 @@ Each item is mandatory. Copy into `<FAMILY>_PREREGISTRATION.md`.
   adds to the total independent looks. A candidate that clears its gate after
   many prior families failed must be read in light of that cumulative count,
   not in isolation.
+- The discovery gate threshold tightens with the number of locked attempts on
+  the same data class: apply a Bonferroni-style adjustment (effective
+  significance = base / N_attempts) so the Nth family must clear a higher bar
+  than the first. Record N_attempts at lock. Also record the count of ideas
+  CONSIDERED-AND-DISCARDED for the class, not only those locked — the true
+  comparison budget includes rejected looks.
 
 ### 2.6 Sample size minimums
 - Defaults: discovery N ≥ 80, validation N ≥ 40, counted as non-overlapping
@@ -250,3 +259,5 @@ dataset.
 ## 7. Amendment v1.2 (2026-06-13): §2.4 integer seed at lock; §2.5 cumulative comparison budget.
 
 ## 7. Amendment v1.3 (2026-06-13): default baseline seed = 69 unless overridden at lock.
+
+## 7. Amendment v1.4 (2026-06-13): multiplicity-adjusted gate, discarded-idea count, PASS-is-not-proof principle. Prompted by red-review of the campaign.
