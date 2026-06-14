@@ -288,3 +288,148 @@ readiness. See `research/signal_observation/SIDEWAYS_FAMILY_NOTE.md`.
 - Future Tower Control must triage before advancing any candidate.
 - This backlog edit does not authorize data work, network calls, EXPLORE runs,
   design locks, implementation, or readiness claims.
+
+---
+
+## Selected Candidate Set — 2026-06-14
+
+Status: owner-selected post-Setup-I plan. Four candidates advanced (#1, #4, #6,
+#7). Two considered-and-parked for the v1.4 comparison budget (see below). Total
+ideas considered this round: 7; plus 8 prior families = large cumulative look-count;
+gates must reflect it.
+
+Sequencing rationale: #6/#7 are fast (data mostly on hand, simcore nearly fits)
+and give an early read on whether the funding/leverage angle has any life. #1 is
+the deep bet with the real edge but needs an on-chain pipeline built first (weeks).
+#4 needs new measurement (continuous PnL). Proposed order: start #7 or #6 first;
+build #1's pipeline in parallel as background work; #4 after.
+
+### Considered-and-parked (v1.4 comparison budget)
+
+- **#2 Stablecoin emission / macro:** Parked — macro signal without a forced-flow
+  counterparty; mechanism too diffuse to distinguish from broad risk-off; no clean
+  falsification path available.
+- **#5 Listing front-run:** Parked — look-ahead contamination is structural; clean
+  point-in-time listing-date data is unavailable; edge is likely already arbitraged
+  by better-informed parties.
+
+### #1 — Vesting-wallet on-chain tracking (event-driven + on-chain)
+
+THE edge bet. Mechanism: track actual movement of tokens FROM vesting contracts TO
+exchange deposit addresses on-chain, ahead of the price effect of an unlock.
+Counterparty: early investor preparing to sell. Data: raw blockchain (Dune/nodes,
+free but laborious) + vesting-contract registry.
+
+**Difficulties, thought through before starting**
+
+- **Look-ahead in wallet labeling is the killer.** An address is "an exchange
+  deposit wallet" only as labeled TODAY. Using today's labels on past data embeds
+  knowledge that did not exist then. Must reconstruct labels as-of the decision
+  time — extremely easy to get wrong, extremely hard to detect once wrong. This
+  single issue can silently invalidate the whole family.
+- **Vesting schedules get revised retroactively.** Projects move vesting. A backtest
+  on current schedules trades on revised dates. Need point-in-time schedule
+  snapshots, which may not exist historically.
+- **Data engineering is the project, not a step.** Parsing, clustering, normalizing
+  raw chain data is weeks of work before the FIRST hypothesis test. Risk of sinking
+  time into a pipeline that then shows no edge.
+- **Chain coverage fragmentation.** Tokens live on Ethereum, BSC, Solana, Arbitrum,
+  Base — each a different data source. Scope to one chain (likely Ethereum) first.
+- **Free-tier limits.** Dune/RPC free tiers throttle hard; full historical queries
+  may hit limits or need paid tiers — re-introducing the cost question.
+- **Survivorship in the token set.** Backtesting only on tokens that still exist
+  ignores the ones that died — dead tokens are exactly where unlocks dumped hardest.
+  Must include delisted/dead tokens or the result is rosy-biased.
+
+### #4 — Funding harvest, delta-neutral carry (class #4)
+
+Portfolio stabilizer, not alpha. Mechanism: long spot / short perp (or inverse) to
+capture funding while staying direction-neutral. Counterparty: whoever pays for
+leveraged exposure. Data: funding + spot + perp (mostly on hand).
+
+**Difficulties, thought through before starting**
+
+- **simcore cannot measure this.** Continuous PnL + inventory + funding accrual, no
+  entry/stop/target. Needs a NEW measurement module, not a detector. Decide if it is
+  worth building before committing.
+- **The carry is not free money — it has a fat left tail.** Funding harvest looks like
+  steady income until a violent move blows out the basis or one leg gets liquidated.
+  The risk is rare large loss, exactly what a naive "collect funding" backtest
+  understates. Must model leg-liquidation and basis-blowout explicitly.
+- **Execution is two-legged.** Requires holding spot AND perp simultaneously,
+  rebalancing both, on possibly different venues — operationally heavier than a single
+  directional position. Slippage on both legs.
+- **Funding is already harvested by many.** The plain trade is crowded; residual yield
+  may be thin after costs. Edge, if any, is in selection (which instrument, when),
+  which reintroduces a search and its multiplicity cost.
+
+### #6 — Cash-and-carry basis on thin alts (class #3)
+
+Mechanism: carry (spot vs perp) as a hold on less-liquid alts where basis is wider
+than the cost-killed 4 bps of majors (Setup F). Counterparty: leveraged longs on an
+overheated thin-alt perp. Data: spot+perp alts (free).
+
+**Difficulties, thought through before starting**
+
+- **The cost wall moves WITH you on thin alts.** Wider basis is offset by wider spread
+  and worse slippage — the very thinness that gives edge also taxes entry/exit. The
+  cost test must use REALISTIC fills on thin books, not the 8 bps major assumption.
+  Likely the make-or-break issue.
+- **Capital ceiling is low.** Thin alts can absorb little size before you move the
+  market against yourself. Even a real edge may be uninvestable above a small notional.
+- **Liquidation / delisting risk on the alt itself.** Thin alts get delisted, have
+  funding spikes, exchange-specific halts. The "neutral" position is not neutral to
+  instrument-specific blowups.
+- **Same simcore-fit problem as #4** (continuous carry PnL).
+
+### #7 — Funding-extreme as contrarian squeeze signal (class #1, directional)
+
+Fast first test. Mechanism: at historical funding extremes one side of the perp is
+maximally overheated and squeeze-prone; catch the reversal. Counterparty: the
+over-leveraged crowd at peak positioning. Data: funding + OHLCV (on hand).
+
+**Difficulties, thought through before starting**
+
+- **It is the 9th directional family.** Red review applies in full: the class is under
+  heavy suspicion. The v1.4 multiplicity-adjusted gate will be strict — a modest edge
+  may not clear it. Go in expecting a high bar.
+- **"Funding extreme" is a tunable threshold.** Percentile choice is a
+  selection-bias surface. Must pre-register the threshold, not tune it.
+- **Overlaps conceptually with Setup E (liquidations).** Risk of re-testing the same
+  forced-flow reversal under a different trigger and calling it new. Be honest that
+  the mechanism family is adjacent; the budget counts it.
+- **Cheapest to run, so cheapest to mislead.** Easy data + easy signal = easy to fool
+  yourself with an overfit. The discipline (baseline, held-out) matters most exactly
+  where the test is easiest.
+
+### Cross-cutting difficulties (apply to all four)
+
+1. **Look-ahead is the recurring assassin.** It appears in every class: wallet labels
+   (#1), revised schedules (#1), tuned thresholds (#7), survivorship (#1, #6). It is
+   subtle, silent, and invalidates results after the fact. Every feasibility from now
+   on must include an explicit look-ahead audit step.
+2. **Cost/slippage realism breaks the cheap assumption.** The 8 bps flat is fine for
+   BTC/ETH majors and wrong everywhere else (#6 thin alts, #4 two-legged). Real fills
+   must replace the assumption once any of these advances.
+3. **simcore measures only signal-stop-target.** #4 and #6 (continuous carry) need new
+   measurement infrastructure. Choosing only what simcore fits would be
+   lamppost-searching (red review #3). Budget for building measurement, not just
+   detectors.
+4. **Crowdedness vs edge.** #4, #6, #7 are variations of known trades; their residual
+   edge after crowding may be thin. Only #1 has a structural edge (self-collected data)
+   and #1 is the most expensive to build. There is no free lunch here.
+5. **Time/attention is the real scarce resource.** Four candidates + an on-chain
+   pipeline is a lot. Running too many in parallel inflates the comparison budget AND
+   splits focus. Discipline: one fast track (#7 or #6) + one slow build (#1) at a
+   time; do not open all four at once.
+6. **The motivation trap (red review #6).** Building elaborate pipelines feels like
+   progress. A perfect on-chain pipeline that finds no edge is still no edge. Set a
+   kill-date on #1's build so love of the work does not become a sunk-cost trap.
+
+### Proposed order (owner decides after Setup I)
+
+1. **#7 first** — fastest, data on hand, early read on the funding/leverage angle.
+   Accept the strict v1.4 gate; expect possible PARK.
+2. **#1 pipeline build in parallel** — slow background, with a kill-date.
+3. **#6 after #7** — needs realistic thin-alt cost modeling built first.
+4. **#4 last** — needs continuous-PnL measurement; treat as portfolio stabilizer.

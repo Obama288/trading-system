@@ -1,6 +1,6 @@
 # Research Constitution — Edge Discovery Pipeline
 
-Status: v1.4 — ADOPTED 2026-06-13 (multiplicity hardening + pass-is-not-proof). v1.3 default seed; v1.2 cumulative budget; v1.1 Stage 5; v1.0 base.
+Status: v1.5 — ADOPTED 2026-06-13 (mandatory look-ahead audit in every feasibility pass). v1.4 multiplicity hardening + pass-is-not-proof; v1.3 default seed; v1.2 cumulative budget; v1.1 Stage 5; v1.0 base.
 Scope: governs all edge research in this repository. Supersedes per-family ad-hoc
 process. Existing decision records (Setup A/B/C) remain valid history.
 Location when adopted: `docs/RESEARCH_CONSTITUTION.md`
@@ -27,6 +27,10 @@ Failing a gate parks or retires the family; restart requires a NEW pre-registrat
   BEFORE any analysis run on the discovery window.
 - Feasibility-only data inspection is allowed (does the data exist, coverage,
   quality) — outcome metrics are not.
+- REQUIRED: every feasibility pass must include an explicit look-ahead audit —
+  list each place future information could leak (point-in-time labels, revised
+  schedules, survivorship bias, tuned thresholds) and confirm that the intended
+  backtest uses only information available as of the decision time.
 - Gate to Stage 2: pre-registration committed; data quality report (section 5)
   passes for all required datasets.
 
@@ -261,3 +265,5 @@ dataset.
 ## 7. Amendment v1.3 (2026-06-13): default baseline seed = 69 unless overridden at lock.
 
 ## 7. Amendment v1.4 (2026-06-13): multiplicity-adjusted gate, discarded-idea count, PASS-is-not-proof principle. Prompted by red-review of the campaign.
+
+## 7. Amendment v1.5 (2026-06-13): mandatory look-ahead audit in every feasibility pass.
