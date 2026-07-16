@@ -43,6 +43,8 @@ pointer.
 - [H1 funding-dispersion preregistration](../research/signal_observation/H1_CROSS_VENUE_FUNDING_DISPERSION_PREREGISTRATION.md)
 - [H1 data acquisition contract](../research/signal_observation/H1_DATA_ACQUISITION_CONTRACT.md)
 - [H1 Phase A transport result](../research/signal_observation/H1_PHASE_A_TRANSPORT_RESULT_2026_07_17.md)
+- [H1 Phase A coverage lock](../research/signal_observation/H1_PHASE_A_COVERAGE_LOCK_2026_07_17.md)
+- [H1 Phase A coverage result](../research/signal_observation/H1_PHASE_A_COVERAGE_RESULT_2026_07_17.md)
 - [Setup I draft](../research/signal_observation/SETUP_I_PREREGISTRATION.md)
 - [Free data source survey](FREE_DATA_SOURCE_SURVEY.md)
 - [Data source survey II](DATA_SOURCE_SURVEY_II.md)

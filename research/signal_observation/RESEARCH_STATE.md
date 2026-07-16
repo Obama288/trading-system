@@ -19,16 +19,15 @@ claims and wasted capital.
 
 - Active family: none.
 - Current planning artifact: `HYPOTHESIS_PORTFOLIO_2026_07.md`.
-- Recommended next family: H1 / Cross-Venue Perpetual Funding Dispersion.
-- H1 preregistration and data-acquisition contract: DRAFT / NOT LOCKED.
-- Owner authorization permits bounded public-data acquisition only after the
-  pre-outcome lock is committed. Blind quarantine and sealed holdout storage
-  do not authorize analysis or outcome inspection.
-- H1 Phase A transport/schema probe: PASS for Binance, Bitget, Bybit, and OKX.
-  This is current-schema evidence only; historical coverage and pair
-  eligibility are not established.
-- Fallback if free H1 data feasibility fails before outcome inspection: H3 /
-  Beta-Neutral Cross-Sectional Residual Reversion.
+- H1 / Cross-Venue Perpetual Funding Dispersion: PARKED / DATA FEASIBILITY /
+  NO OUTCOME INSPECTION.
+- Historical funding coverage passed for Binance and Bybit, but Binance is
+  ineligible after prior Setup D/F funding-outcome inspection. Bitget and OKX
+  had insufficient coverage; the clean `Bitget + Bybit` pair is unavailable.
+- H1 Phase B, source/window rescue, and outcome inspection are forbidden.
+- Recommended next preregistration candidate: H3 / Beta-Neutral
+  Cross-Sectional Residual Reversion. Active family remains none; H3 acquisition
+  and analysis are not authorized.
 - Setup I / Price-Flow Divergence Reversion remains DRAFT / deferred alternate.
 - Screening, analysis, validation, testnet actions, and paper progression are
   not authorized by this file.
@@ -55,6 +54,8 @@ Local untracked Setup I scripts are not repo evidence or authorization.
 
 | Family | Current verdict | Meaning |
 |---|---|---|
+| H1 / cross-venue funding dispersion | PARKED | Free-data feasibility failed before outcome inspection; no clean two-venue pair. |
+| H3 / beta-neutral residual reversion | NEXT PREREG CANDIDATE | Planning only; no acquisition or analysis authorization. |
 | Setup A / breakout-retest | RETIRED | Price-action continuation attempt; do not reopen without a new family decision. |
 | Setup B / pullback continuation | RETIRED | Cost/robustness evidence insufficient. |
 | Setup C / TSMOM volatility-targeted | PARKED | Historical C7 evidence existed, but recent DR1 Binance rerun was LOW. No paper lane. |
@@ -67,6 +68,9 @@ Local untracked Setup I scripts are not repo evidence or authorization.
 
 ## Evidence Summary
 
+- H1: Binance and Bybit passed structural coverage, but Binance was already
+  contaminated for H1 validation/holdout; Bitget and OKX lacked coverage. No
+  funding or trading outcome was inspected.
 - Setup C: cross-venue C7 results are historical research evidence only. The
   later recent-data DR1 result was LOW, so the family is parked.
 - Setup E: locked Stage 2 result was negative and below its baseline gate; the
@@ -103,12 +107,10 @@ purchase is a current next action.
 
 ## Next Decision
 
-Lock the H1 mechanism-first preregistration and immutable acquisition contract.
-Then acquire the bounded public dataset into blind quarantine, bind every raw
-artifact by SHA-256, and keep the recent holdout sealed. Do not inspect H1
-outcomes until the remaining signal, cost, capacity, baseline, and multiplicity
-fields are committed. If free H1 feasibility fails before outcome inspection,
-consider H3.
+Prepare a mechanism-first H3 preregistration and identify a free,
+contamination-safe discovery/validation/holdout path without acquiring or
+inspecting candidate data. H3 remains unauthorized beyond planning until a
+separate owner gate. H1 remains parked and Phase B is forbidden.
 
 ## Detailed Evidence Pointers
 
@@ -120,8 +122,12 @@ consider H3.
   `research/signal_observation/H1_CROSS_VENUE_FUNDING_DISPERSION_PREREGISTRATION.md`
 - H1 data contract:
   `research/signal_observation/H1_DATA_ACQUISITION_CONTRACT.md`
+- H1 Phase A coverage lock:
+  `research/signal_observation/H1_PHASE_A_COVERAGE_LOCK_2026_07_17.md`
+- H1 Phase A coverage result:
+  `research/signal_observation/H1_PHASE_A_COVERAGE_RESULT_2026_07_17.md`
 - H1 Phase A transport result:
-  research/signal_observation/H1_PHASE_A_TRANSPORT_RESULT_2026_07_17.md
+  `research/signal_observation/H1_PHASE_A_TRANSPORT_RESULT_2026_07_17.md`
 - Setup I draft: `research/signal_observation/SETUP_I_PREREGISTRATION.md`
 - Setup C final recent decision:
   `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_RERUN_POST_RESULT_DECISION.md`

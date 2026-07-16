@@ -24,6 +24,18 @@ H1_PHASE_A = (
     / "signal_observation"
     / "H1_PHASE_A_TRANSPORT_RESULT_2026_07_17.md"
 )
+H1_COVERAGE_LOCK = (
+    ROOT
+    / "research"
+    / "signal_observation"
+    / "H1_PHASE_A_COVERAGE_LOCK_2026_07_17.md"
+)
+H1_COVERAGE_RESULT = (
+    ROOT
+    / "research"
+    / "signal_observation"
+    / "H1_PHASE_A_COVERAGE_RESULT_2026_07_17.md"
+)
 
 CANONICAL_DOCS = (
     ROOT / "README.md",
@@ -37,6 +49,8 @@ CANONICAL_DOCS = (
     H1_PREREG,
     H1_DATA,
     H1_PHASE_A,
+    H1_COVERAGE_LOCK,
+    H1_COVERAGE_RESULT,
     ROOT / "AGENTS.md",
     ROOT / "CLAUDE.md",
 )
@@ -118,15 +132,37 @@ def test_h1_public_data_authorization_stays_bounded():
     prereg = _read(H1_PREREG)
     acquisition = _read(H1_DATA)
     phase_a = _read(H1_PHASE_A)
+    coverage_result = _read(H1_COVERAGE_RESULT)
 
     assert "Active family: none." in research
-    assert "bounded public-data acquisition" in current
-    assert "DRAFT / NOT LOCKED" in prereg
+    assert "DATA FEASIBILITY" in prereg
+    assert "NO OUTCOME INSPECTION" in prereg
+    assert "PARK" in prereg
     assert "DRAFT / NOT LOCKED" in acquisition
-    for text in (current, research, acquisition):
+    for text in (current, research, acquisition, prereg, coverage_result):
         normalized = re.sub(r"\s+", " ", text)
-        assert "outcome inspection" in normalized
+        assert "outcome inspection" in normalized.lower()
     assert "private" in acquisition.lower()
+
+    assert "DATA FEASIBILITY" in coverage_result
+    assert "NO OUTCOME INSPECTION" in coverage_result
+    assert "| Bitget | FAIL |" in coverage_result
+    assert "| Bybit | PASS |" in coverage_result
+    assert "H1:" in coverage_result
+    assert "PARK / DATA FEASIBILITY" in coverage_result
+    assert "No funding rate, price, spread, return, fee, or PnL value was inspected" in (
+        coverage_result
+    )
+
+    normalized_research = re.sub(r"\s+", " ", research)
+    assert re.search(r"Recommended next.{0,80}H3 /", normalized_research)
+    assert re.search(
+        r"H3.{0,160}(?:not active|not authorized)",
+        normalized_research,
+        re.IGNORECASE,
+    )
+
+    # The earlier latest-page probe remains transport evidence only.
     assert "PASS / TRANSPORT AND CURRENT SCHEMA ONLY" in phase_a
     assert "outcome inspection remain unauthorized" in phase_a
 

@@ -40,24 +40,22 @@ paper, runtime, trading, probe, or live readiness by inference.
 
 - Project-control lane: memory and reproducible test baseline completed.
 - Research lane: no active family.
-- Research planning: H1 / Cross-Venue Perpetual Funding Dispersion is the
-  recommended next family. Its preregistration, public-data acquisition
-  contract, carry-accounting design, and testnet acceptance plan are DRAFT.
-- Owner authorization: bounded public-data acquisition for H1 is allowed only
-  after the acquisition contract and pre-outcome lock are committed. Blind raw
-  download and sealed holdout storage do not authorize outcome inspection.
-- H1 Phase A transport/schema probe: PASS on all four frozen public endpoints.
-  Historical coverage, venue eligibility, pair selection, Phase B, and outcome
-  inspection remain unverified and unauthorized.
-- H3 / Beta-Neutral Cross-Sectional Residual Reversion remains the free-data
-  fallback if H1 feasibility fails before outcome inspection.
+- H1 / Cross-Venue Perpetual Funding Dispersion: PARKED / DATA FEASIBILITY /
+  NO OUTCOME INSPECTION.
+- H1 Phase A historical coverage: Binance and Bybit PASS; Binance is ineligible
+  because prior Setup D/F work inspected its funding outcomes. Bitget and OKX
+  have insufficient coverage, so the required clean `Bitget + Bybit` pair is
+  unavailable. Phase B is forbidden.
+- H3 / Beta-Neutral Cross-Sectional Residual Reversion is the recommended next
+  preregistration candidate. Active family remains none; H3 acquisition and
+  analysis are not authorized.
 - Setup I / Price-Flow Divergence Reversion: DRAFT / feasibility candidate only.
 - Setup C, Setup E, and Setup H: parked from active progression.
 - Exchange lane: Stage 54-BG / Bitget Demo remains planning only.
 
-No H1 outcome screening or validation is authorized until its preregistration
-and acquisition contract are locked. No paper progression or private exchange
-work is authorized.
+H1 Phase B, outcome inspection, pair substitution, and rescue acquisition are
+forbidden. H3 is not authorized beyond preregistration work. No paper
+progression or private exchange work is authorized.
 
 ## Verified Repository Facts
 
@@ -114,8 +112,8 @@ PnL is not implemented. This is intentional safety behavior, not readiness.
 - Compare and preregister trading hypotheses using only existing knowledge and
   free-data feasibility criteria.
 - Docs-only paper-accounting authority design.
-- H1 metadata inventory and blind public-data acquisition under a committed,
-  immutable, no-outcome-inspection contract.
+- H3 mechanism-first preregistration and free-data/holdout planning without
+  acquisition or analysis.
 - Focused test, type, lint, and paper-safety work that does not cross Protected
   Lane boundaries.
 - Classification of existing untracked files without deleting owner work.
@@ -129,14 +127,15 @@ PnL is not implemented. This is intentional safety behavior, not readiness.
 - Paper/live readiness promotion.
 - Data screening or rescue variants of parked research families without a new
   decision gate.
-- H1 outcome inspection before its pre-outcome lock is complete.
+- H1 Phase B, outcome inspection, or source/window rescue under the parked
+  attempt.
 
 ## Current Decision
 
-The memory and reproducibility baseline is complete. The July portfolio
-recommends H1 / Cross-Venue Perpetual Funding Dispersion for a mechanism-first
-preregistration decision, with H3 as fallback only if free H1 data feasibility
-fails before outcome inspection.
+The H1 free-data feasibility attempt is parked before outcome inspection because
+the locked clean venue pair is unavailable. H3 / Beta-Neutral Cross-Sectional
+Residual Reversion is the recommended next preregistration candidate, but the
+active family remains none and no H3 acquisition or analysis is authorized.
 
 Authoritative paper accounting remains required before any claim about economic
 paper performance. Neither research planning nor the green CI authorizes

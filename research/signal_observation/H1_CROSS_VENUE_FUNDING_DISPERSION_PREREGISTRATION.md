@@ -1,6 +1,6 @@
 # H1 Cross-Venue Funding Dispersion Preregistration
 
-Status: DRAFT / NOT LOCKED / NO DATA AUTHORIZATION
+Status: PARKED / DATA FEASIBILITY / NO OUTCOME INSPECTION
 
 Family: H1 / cross-venue perpetual funding dispersion
 Research class: delta-neutral carry / relative value
@@ -8,11 +8,19 @@ Governing law: `docs/RESEARCH_CONSTITUTION.md` and `docs/BOUNDARIES.md`
 Current gate: `docs/CURRENT_STATE.md` and
 `research/signal_observation/RESEARCH_STATE.md`
 
-This document defines the intended test before candidate outcomes are acquired
-or inspected. It does not authorize data download, exchange access, testnet
-activity, implementation, paper progression, or trading. Fields marked
-`LOCK REQUIRED` must be resolved, independently reviewed, and committed before
-Stage 1 can pass.
+This preregistration stopped at metadata-only data feasibility. The locked
+coverage result found no admissible clean venue pair: Binance and Bybit passed
+structural coverage, but Binance is ineligible because prior Setup D/F work
+inspected its funding outcomes; Bitget and OKX had insufficient coverage. No H1
+funding, spread, return, fee, or PnL outcome was inspected.
+
+Coverage lock:
+`research/signal_observation/H1_PHASE_A_COVERAGE_LOCK_2026_07_17.md`.
+Coverage result:
+`research/signal_observation/H1_PHASE_A_COVERAGE_RESULT_2026_07_17.md`.
+Phase B and further H1 acquisition or analysis are forbidden under this record.
+Unresolved `LOCK REQUIRED` fields are retained as historical preregistration
+placeholders; they do not authorize reopening.
 
 ## 1. Hypothesis And Mechanism
 
@@ -109,7 +117,11 @@ selection. If fewer than two venues qualify, H1 is PARKED before outcome
 inspection. A runner-up pair is holdout metadata only and cannot become a rescue
 variant after the primary result.
 
-The exact selected pair and eligibility artifact are **LOCK REQUIRED**.
+The metadata-only coverage decision selected no pair. Bybit was the only clean
+venue with full structural coverage. Binance passed coverage but was already
+contaminated for H1 validation/holdout; Bitget and OKX lacked coverage. The
+required clean `Bitget + Bybit` pair was therefore unavailable and H1 was
+parked before outcome inspection.
 
 ## 4. Contract Equivalence
 
@@ -452,25 +464,17 @@ readiness until corrected.
 
 Any testnet credential use, private endpoint call, order, cancel, runtime wiring,
 or smoke run requires a separate explicit Protected Lane owner authorization.
-Current Bybit testnet and Bitget demo gates remain unchanged by this draft.
+Current Bybit testnet and Bitget demo gates remain unchanged by this parked record.
 
-## 16. Lock Checklist And Decision Boundary
+## 16. Data-Feasibility Decision Boundary
 
-Before this document can become `LOCKED / STAGE 1`, commit all of the following:
+H1 is `PARKED / DATA FEASIBILITY / NO OUTCOME INSPECTION`. Binance and Bybit
+passed structural coverage, but Binance cannot supply untouched validation or
+holdout evidence after prior funding-outcome inspection. Bitget and OKX had
+insufficient historical coverage, so the locked clean `Bitget + Bybit` pair is
+unavailable.
 
-- metadata-only eligibility table and selected venue pair;
-- underlying and point-in-time contract mapping;
-- exact discovery, validation, and recent-holdout UTC ranges;
-- named free source/path for each required dataset and holdout;
-- signal estimator, threshold, cadence, entry, exit, and holding rules;
-- delta tolerance, leverage, collateral, rebalance, and unhedged-time limits;
-- primary numeric gate and random-baseline margin/resample count;
-- basis-tail limits and `C_min` capacity floor;
-- recent-holdout minimum episode count;
-- complete cumulative multiplicity ledger and adjusted threshold;
-- acquisition manifest, quality-report schema, and expected SHA-256 binding;
-- independent look-ahead and accounting review;
-- owner authorization for one bounded acquisition/feasibility pass.
-
-Until then the only valid decision is `DRAFT`. H1 has no evidence, no PASS,
-and no paper, testnet, runtime, or trading readiness claim.
+Phase B, H1 analysis, pair substitution, shifted windows, shortened holdout,
+paper progression, and readiness claims are forbidden. Reopening H1 requires a
+genuinely new contamination-safe free source or a new owner decision changing
+the no-spend constraint, followed by a new preregistration gate.
