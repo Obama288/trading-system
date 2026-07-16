@@ -274,7 +274,7 @@ def test_cli_without_authorization_does_not_call_smoke_or_require_credentials(
 
 def test_direct_cli_without_authorization_exits_3_without_traceback_or_import_error():
     completed = subprocess.run(
-        [sys.executable, "scripts\\smoke_server_time.py"],
+        [sys.executable, str(REPO_ROOT / "scripts" / "smoke_server_time.py")],
         cwd=REPO_ROOT,
         check=False,
         capture_output=True,
@@ -297,7 +297,7 @@ def test_direct_cli_without_authorization_exits_3_without_traceback_or_import_er
 
 def test_direct_cli_without_authorization_ignores_fake_bybit_env_aliases():
     completed = subprocess.run(
-        [sys.executable, "scripts\\smoke_server_time.py"],
+        [sys.executable, str(REPO_ROOT / "scripts" / "smoke_server_time.py")],
         cwd=REPO_ROOT,
         check=False,
         capture_output=True,
