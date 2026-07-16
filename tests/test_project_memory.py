@@ -11,6 +11,13 @@ MEMORY = ROOT / "docs" / "MEMORY_POLICY.md"
 RUNBOOK = ROOT / "docs" / "OPERATOR_RUNBOOK.md"
 WORKFLOW = ROOT / ".github" / "workflows" / "research-ci.yml"
 PORTFOLIO = ROOT / "research" / "signal_observation" / "HYPOTHESIS_PORTFOLIO_2026_07.md"
+H1_PREREG = (
+    ROOT
+    / "research"
+    / "signal_observation"
+    / "H1_CROSS_VENUE_FUNDING_DISPERSION_PREREGISTRATION.md"
+)
+H1_DATA = ROOT / "research" / "signal_observation" / "H1_DATA_ACQUISITION_CONTRACT.md"
 
 CANONICAL_DOCS = (
     ROOT / "README.md",
@@ -21,6 +28,8 @@ CANONICAL_DOCS = (
     ROOT / "docs" / "MEMORY_POLICY.md",
     ROOT / "research" / "signal_observation" / "RESEARCH_STATE.md",
     PORTFOLIO,
+    H1_PREREG,
+    H1_DATA,
     ROOT / "AGENTS.md",
     ROOT / "CLAUDE.md",
 )
@@ -94,6 +103,22 @@ def test_hypothesis_shortlist_and_testnet_evidence_boundary_are_consistent():
 
     assert "Testnet/demo results are implementation evidence, not evidence of edge." in portfolio
     assert "Active family: none." in research
+
+
+def test_h1_public_data_authorization_stays_bounded():
+    current = _read(CURRENT)
+    research = _read(RESEARCH)
+    prereg = _read(H1_PREREG)
+    acquisition = _read(H1_DATA)
+
+    assert "Active family: none." in research
+    assert "bounded public-data acquisition" in current
+    assert "DRAFT / NOT LOCKED" in prereg
+    assert "DRAFT / NOT LOCKED" in acquisition
+    for text in (current, research, acquisition):
+        normalized = re.sub(r"\s+", " ", text)
+        assert "outcome inspection" in normalized
+    assert "private" in acquisition.lower()
 
 
 def test_agent_startup_files_are_identical_and_snapshot_free():

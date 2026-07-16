@@ -30,6 +30,8 @@ See `MEMORY_POLICY.md` for the complete rule.
 - [Simulator specification](SIMCORE_SPEC.md)
 - [Strategy class map](STRATEGY_CLASS_MAP.md)
 - [Data-class decision framework](DATA_CLASS_DECISION_FRAMEWORK.md)
+- [Carry accounting specification](CARRY_ACCOUNTING_SPEC.md)
+- [Testnet carry acceptance plan](TESTNET_CARRY_ACCEPTANCE_PLAN.md)
 
 `WORKING_PRACTICES.md` is superseded by `HOW_WE_WORK.md` and retained only as a
 pointer.
@@ -38,6 +40,8 @@ pointer.
 
 - [Candidate backlog](../research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md)
 - [July hypothesis portfolio](../research/signal_observation/HYPOTHESIS_PORTFOLIO_2026_07.md)
+- [H1 funding-dispersion preregistration](../research/signal_observation/H1_CROSS_VENUE_FUNDING_DISPERSION_PREREGISTRATION.md)
+- [H1 data acquisition contract](../research/signal_observation/H1_DATA_ACQUISITION_CONTRACT.md)
 - [Setup I draft](../research/signal_observation/SETUP_I_PREREGISTRATION.md)
 - [Free data source survey](FREE_DATA_SOURCE_SURVEY.md)
 - [Data source survey II](DATA_SOURCE_SURVEY_II.md)

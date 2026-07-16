@@ -19,13 +19,16 @@ claims and wasted capital.
 
 - Active family: none.
 - Current planning artifact: `HYPOTHESIS_PORTFOLIO_2026_07.md`.
-- Recommended next preregistration decision: H1 / Cross-Venue Perpetual
-  Funding Dispersion.
+- Recommended next family: H1 / Cross-Venue Perpetual Funding Dispersion.
+- H1 preregistration and data-acquisition contract: DRAFT / NOT LOCKED.
+- Owner authorization permits bounded public-data acquisition only after the
+  pre-outcome lock is committed. Blind quarantine and sealed holdout storage
+  do not authorize analysis or outcome inspection.
 - Fallback if free H1 data feasibility fails before outcome inspection: H3 /
   Beta-Neutral Cross-Sectional Residual Reversion.
 - Setup I / Price-Flow Divergence Reversion remains DRAFT / deferred alternate.
-- Screening, analysis, validation, data acquisition, testnet actions, and paper
-  progression are not authorized by this file.
+- Screening, analysis, validation, testnet actions, and paper progression are
+  not authorized by this file.
 - Paid data and paid source upgrades: not allowed under the current owner
   constraint.
 
@@ -97,11 +100,12 @@ purchase is a current next action.
 
 ## Next Decision
 
-Prepare an H1 mechanism-first preregistration decision without downloading or
-inspecting candidate outcomes. First require a free aligned-data inventory,
-protected holdout, four-leg cost equation, capacity floor, and testnet acceptance
-plan. If H1 data feasibility fails before outcome inspection, consider H3.
-Neither path becomes active without a separate bounded owner authorization.
+Lock the H1 mechanism-first preregistration and immutable acquisition contract.
+Then acquire the bounded public dataset into blind quarantine, bind every raw
+artifact by SHA-256, and keep the recent holdout sealed. Do not inspect H1
+outcomes until the remaining signal, cost, capacity, baseline, and multiplicity
+fields are committed. If free H1 feasibility fails before outcome inspection,
+consider H3.
 
 ## Detailed Evidence Pointers
 
@@ -109,6 +113,10 @@ Neither path becomes active without a separate bounded owner authorization.
 - Candidate backlog: `research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md`
 - July hypothesis portfolio:
   `research/signal_observation/HYPOTHESIS_PORTFOLIO_2026_07.md`
+- H1 preregistration:
+  `research/signal_observation/H1_CROSS_VENUE_FUNDING_DISPERSION_PREREGISTRATION.md`
+- H1 data contract:
+  `research/signal_observation/H1_DATA_ACQUISITION_CONTRACT.md`
 - Setup I draft: `research/signal_observation/SETUP_I_PREREGISTRATION.md`
 - Setup C final recent decision:
   `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_RERUN_POST_RESULT_DECISION.md`

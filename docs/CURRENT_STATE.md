@@ -2,9 +2,9 @@
 
 Status: ACTIVE / STATE
 
-Evidence baseline: local and remote verification on 2026-07-17 at
-`2e60ef015b270d53915f36db32dff10cc3f01527`. Local `main` matched
-`origin/main`; GitHub `Project Test Suite` run `29535778871` succeeded.
+Evidence baseline: local and remote verification on 2026-07-17 through
+`5b3907060a93ce98a8b3a3a2e14262dbc4591c5c`. Local `main` matched
+`origin/main`; GitHub `Project Test Suite` run `29536915514` succeeded.
 
 ## Objective
 
@@ -41,18 +41,24 @@ paper, runtime, trading, probe, or live readiness by inference.
 - Project-control lane: memory and reproducible test baseline completed.
 - Research lane: no active family.
 - Research planning: H1 / Cross-Venue Perpetual Funding Dispersion is the
-  recommended next preregistration decision; H3 / Beta-Neutral Cross-Sectional
-  Residual Reversion is the free-data fallback.
+  recommended next family. Its preregistration, public-data acquisition
+  contract, carry-accounting design, and testnet acceptance plan are DRAFT.
+- Owner authorization: bounded public-data acquisition for H1 is allowed only
+  after the acquisition contract and pre-outcome lock are committed. Blind raw
+  download and sealed holdout storage do not authorize outcome inspection.
+- H3 / Beta-Neutral Cross-Sectional Residual Reversion remains the free-data
+  fallback if H1 feasibility fails before outcome inspection.
 - Setup I / Price-Flow Divergence Reversion: DRAFT / feasibility candidate only.
 - Setup C, Setup E, and Setup H: parked from active progression.
 - Exchange lane: Stage 54-BG / Bitget Demo remains planning only.
 
-No data screening, validation, paper progression, or exchange work is authorized
-until a hypothesis has an explicit preregistration and owner gate.
+No H1 outcome screening or validation is authorized until its preregistration
+and acquisition contract are locked. No paper progression or private exchange
+work is authorized.
 
 ## Verified Repository Facts
 
-- Local and remote `main` matched at `2e60ef0` on 2026-07-17.
+- Local and remote `main` matched at `5b39070` on 2026-07-17.
 - GitHub `Project Test Suite` passed on Python 3.12: 1103 passed with one
   third-party FastAPI/Starlette deprecation warning.
 - The test suite is self-contained; tracked tests do not require a root
@@ -105,6 +111,8 @@ PnL is not implemented. This is intentional safety behavior, not readiness.
 - Compare and preregister trading hypotheses using only existing knowledge and
   free-data feasibility criteria.
 - Docs-only paper-accounting authority design.
+- H1 metadata inventory and blind public-data acquisition under a committed,
+  immutable, no-outcome-inspection contract.
 - Focused test, type, lint, and paper-safety work that does not cross Protected
   Lane boundaries.
 - Classification of existing untracked files without deleting owner work.
@@ -118,6 +126,7 @@ PnL is not implemented. This is intentional safety behavior, not readiness.
 - Paper/live readiness promotion.
 - Data screening or rescue variants of parked research families without a new
   decision gate.
+- H1 outcome inspection before its pre-outcome lock is complete.
 
 ## Current Decision
 
