@@ -1,6 +1,6 @@
 # H1 Public Data Acquisition Contract
 
-Status: DRAFT / NOT LOCKED / NO NETWORK EXECUTION
+Status: DRAFT / NOT LOCKED FOR PHASE B / PHASE A TRANSPORT LOCKED
 
 Contract version: `h1-acquisition-contract/0.1-draft`
 Family: H1 / cross-venue perpetual funding dispersion
@@ -18,7 +18,39 @@ transfers, withdrawals, runtime wiring, deployment, or paper/live trading.
 
 No network call is made by this document. Exact public source paths, underlying,
 contract identifiers, and UTC windows remain `LOCK REQUIRED`; until they are
-filled and committed, this contract cannot authorize an acquisition run.
+filled and committed, this contract cannot authorize Phase B. The explicit narrow Phase A lock below is the only current network exception.
+
+## Phase A Transport Lock - 2026-07-17
+
+This lock authorizes one schema-and-transport probe only. It does not establish
+historical coverage, venue eligibility, the selected pair, or Phase B
+readiness.
+
+- acquisition ID: h1_phase_a_transport_20260717_v1;
+- implementation commit: 39ba91f;
+- implementation: research/signal_observation/h1_phase_a_probe.py;
+- operator and structural reviewer: Codex;
+- owner authorization: the owner's 2026-07-17 instruction permits parallel
+  acquisition of free public data under the locked no-outcome controls;
+- underlying: BTC;
+- contracts: Binance BTCUSDT, Bitget BTCUSDT, Bybit BTCUSDT, and OKX
+  BTC-USDT-SWAP, all intended as linear USDT perpetuals;
+- requests: exactly the four frozen REQUEST_SPECS in implementation commit
+  39ba91f; no pagination, alternate parameters, fallback hosts, or redirects;
+- resource bounds: four sequential requests, one attempt each, 15-second
+  timeout each, 2 MiB maximum response each, 8 MiB maximum raw body total;
+- output root:
+  research/signal_observation/data/h1/phase_a/h1_phase_a_transport_20260717_v1/;
+- Git storage: raw and metadata output remain ignored by the committed
+  research/signal_observation/data/h1/ rule;
+- allowed human-readable result: envelope status, byte and row counts, field
+  names, contract identity, and minimum/maximum returned funding timestamps;
+- forbidden result: funding values, prices, spreads, returns, PnL, rankings, or
+  any outcome-based venue decision.
+
+This latest-page probe is deliberately insufficient for the intended 2023-2026
+research windows. A successful result permits a separately committed bounded
+coverage/pagination lock; it does not permit Phase B or outcome inspection.
 
 ## 1. Purpose And Non-Purpose
 
