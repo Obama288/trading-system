@@ -46,6 +46,9 @@ paper, runtime, trading, probe, or live readiness by inference.
 - Owner authorization: bounded public-data acquisition for H1 is allowed only
   after the acquisition contract and pre-outcome lock are committed. Blind raw
   download and sealed holdout storage do not authorize outcome inspection.
+- H1 Phase A transport/schema probe: PASS on all four frozen public endpoints.
+  Historical coverage, venue eligibility, pair selection, Phase B, and outcome
+  inspection remain unverified and unauthorized.
 - H3 / Beta-Neutral Cross-Sectional Residual Reversion remains the free-data
   fallback if H1 feasibility fails before outcome inspection.
 - Setup I / Price-Flow Divergence Reversion: DRAFT / feasibility candidate only.

@@ -18,6 +18,12 @@ H1_PREREG = (
     / "H1_CROSS_VENUE_FUNDING_DISPERSION_PREREGISTRATION.md"
 )
 H1_DATA = ROOT / "research" / "signal_observation" / "H1_DATA_ACQUISITION_CONTRACT.md"
+H1_PHASE_A = (
+    ROOT
+    / "research"
+    / "signal_observation"
+    / "H1_PHASE_A_TRANSPORT_RESULT_2026_07_17.md"
+)
 
 CANONICAL_DOCS = (
     ROOT / "README.md",
@@ -30,6 +36,7 @@ CANONICAL_DOCS = (
     PORTFOLIO,
     H1_PREREG,
     H1_DATA,
+    H1_PHASE_A,
     ROOT / "AGENTS.md",
     ROOT / "CLAUDE.md",
 )
@@ -110,6 +117,7 @@ def test_h1_public_data_authorization_stays_bounded():
     research = _read(RESEARCH)
     prereg = _read(H1_PREREG)
     acquisition = _read(H1_DATA)
+    phase_a = _read(H1_PHASE_A)
 
     assert "Active family: none." in research
     assert "bounded public-data acquisition" in current
@@ -119,6 +127,8 @@ def test_h1_public_data_authorization_stays_bounded():
         normalized = re.sub(r"\s+", " ", text)
         assert "outcome inspection" in normalized
     assert "private" in acquisition.lower()
+    assert "PASS / TRANSPORT AND CURRENT SCHEMA ONLY" in phase_a
+    assert "outcome inspection remain unauthorized" in phase_a
 
 
 def test_agent_startup_files_are_identical_and_snapshot_free():

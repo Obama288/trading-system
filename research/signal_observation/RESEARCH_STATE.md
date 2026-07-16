@@ -24,6 +24,9 @@ claims and wasted capital.
 - Owner authorization permits bounded public-data acquisition only after the
   pre-outcome lock is committed. Blind quarantine and sealed holdout storage
   do not authorize analysis or outcome inspection.
+- H1 Phase A transport/schema probe: PASS for Binance, Bitget, Bybit, and OKX.
+  This is current-schema evidence only; historical coverage and pair
+  eligibility are not established.
 - Fallback if free H1 data feasibility fails before outcome inspection: H3 /
   Beta-Neutral Cross-Sectional Residual Reversion.
 - Setup I / Price-Flow Divergence Reversion remains DRAFT / deferred alternate.
@@ -117,6 +120,8 @@ consider H3.
   `research/signal_observation/H1_CROSS_VENUE_FUNDING_DISPERSION_PREREGISTRATION.md`
 - H1 data contract:
   `research/signal_observation/H1_DATA_ACQUISITION_CONTRACT.md`
+- H1 Phase A transport result:
+  research/signal_observation/H1_PHASE_A_TRANSPORT_RESULT_2026_07_17.md
 - Setup I draft: `research/signal_observation/SETUP_I_PREREGISTRATION.md`
 - Setup C final recent decision:
   `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_RERUN_POST_RESULT_DECISION.md`
