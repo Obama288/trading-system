@@ -1,16 +1,15 @@
 # H1 Phase A Historical Funding Coverage Lock - 2026-07-17
 
-Status: DRAFT / NOT EXECUTABLE / NO NETWORK AUTHORIZATION
+Status: LOCKED / BOUNDED PUBLIC RUN AUTHORIZED / NO ANALYSIS
 
 Family: H1 / Cross-Venue Perpetual Funding Dispersion
 Purpose: blind structural coverage acquisition for historical funding records
 Scope: BTC linear USDT perpetual contracts only
 
-This document is a pre-execution lock draft. It does not authorize a network
-call, Phase B, outcome inspection, venue substitution, analysis, testnet use,
-paper trading, or live trading. Execution remains prohibited until every
-`LOCK REQUIRED` field in Section 12 is replaced and the completed lock is
-committed before the first request.
+This document authorizes exactly one bounded unauthenticated public-data run
+under acquisition ID h1_phase_a_coverage_20260717_v1. It does not authorize
+Phase B, outcome inspection, venue substitution, analysis, testnet use, paper
+trading, or live trading.
 
 ## 1. Allowed Question
 
@@ -265,25 +264,27 @@ Allowed verdicts are limited to:
 No verdict authorizes analysis. A coverage pass only permits a separate owner
 decision after the remaining H1 preregistration fields are locked.
 
-## 12. Execution Lock Checklist
+## 12. Execution Lock
 
-The following fields intentionally remain unresolved:
+- acquisition implementation:
+  research/signal_observation/h1_phase_a_coverage.py;
+- implementation commit: 620edab;
+- final acquisition ID: h1_phase_a_coverage_20260717_v1;
+- focused synthetic evidence: 32 passed covering pagination, budgets, no-leak
+  sentinels, create-only quarantine, SHA-256, content type, chronology, gaps,
+  and failure behavior;
+- full repository evidence at the implementation commit: 1163 passed;
+- Ruff on implementation and tests: all checks passed;
+- structural reviewer: primary Codex agent, separate from the implementation
+  worker;
+- owner authorization: the owner's 2026-07-17 instruction go, issued after
+  the Phase A transport result and the stated historical-coverage next step;
+- execution command:
+  python research/signal_observation/h1_phase_a_coverage.py --acquisition-id h1_phase_a_coverage_20260717_v1.
 
-- acquisition implementation path: `LOCK REQUIRED`;
-- acquisition implementation commit/hash: `LOCK REQUIRED`;
-- synthetic pagination, budget, no-leak, quarantine, SHA, and access-control
-  tests with exact results: `LOCK REQUIRED`;
-- independent structural reviewer: `LOCK REQUIRED`;
-- final acquisition ID: `LOCK REQUIRED`.
-
-All placeholders must be replaced, independently reviewed, and committed in
-this file before execution. The final acquisition ID must identify a fresh,
-nonexistent create-only directory. Filling these fields is necessary but does
-not self-authorize execution: the Human Owner must then explicitly authorize
-the exact bounded network run against the committed lock.
-
-Until that point: **do not run the acquisition implementation and do not make
-any network request under this draft.**
+The acquisition directory must not exist before execution. Any code, source,
+window, parameter, budget, or acquisition-ID change requires a new lock commit.
+The authorized command may run once after this completed lock is committed.
 
 ## 13. Official Documentation References
 
