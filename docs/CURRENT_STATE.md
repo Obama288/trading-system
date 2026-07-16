@@ -49,11 +49,13 @@ paper, runtime, trading, probe, or live readiness by inference.
 - Local `main` and `origin/main` matched at `402f342` on 2026-07-16.
 - GitHub CI succeeded at that commit, but the workflow runs only the research
   subset and is not a full project gate.
-- The full local suite passes when the untracked root `conftest.py` injects a
-  test internal token.
-- Without that local fixture, six protected risk-route tests fail because their
-  token setup is not self-contained. CI does not currently run those tests.
-- Ruff: 162 findings. Mypy: 50 errors in 19 files.
+- The full tracked-tree test suite passes without the local root `conftest.py`.
+- Protected risk-route tests now configure their own token for each test.
+- Local CI configuration runs the full project suite on Python 3.12; remote CI
+  confirmation is pending push.
+- Deterministic in-process paper lifecycle passes through close and a new DB
+  session; see `docs/VERIFICATION_BASELINE.md` for scope and accounting gaps.
+- Ruff: 145 findings. Mypy for `apps libs ops`: 50 errors in 19 files.
 - Local interpreter observed: Python 3.14.4. Canonical project/CI target remains
   Python 3.12 until deliberately changed.
 - Alembic head in code: `0009_create_paper_account_authority`.

@@ -1,33 +1,47 @@
 from __future__ import annotations
 
-from collections.abc import Generator
 from datetime import datetime, timedelta, timezone
+from uuid import UUID
 
 import pytest
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from apps.execution_service.application.place_order_dry_run import place_order_dry_run_use_case
 from apps.execution_service.application.place_order import place_order_use_case
 from apps.execution_service.infrastructure.local_clients import DbJournalClient as ExecutionDbJournalClient
 from apps.execution_service.infrastructure.local_clients import NoopAlertClient as ExecutionNoopAlertClient
 from apps.execution_service.infrastructure.position_admission_repo import DbPositionAdmissionRepo
 from apps.execution_service.infrastructure.execution_store_db import DbExecutionStore
 from apps.orchestrator.application.approve_candidate import approve_candidate_use_case
+from apps.orchestrator.application.evaluate_pipeline import evaluate_pipeline_use_case
 from apps.orchestrator.infrastructure.candidate_repo import TradeCandidateRepository
+from apps.position_manager.application.close_position import close_position_use_case
 from apps.position_manager.application.open_position import open_position_use_case
 from apps.position_manager.infrastructure.position_repo import PositionRepository
-from apps.position_manager.schemas.requests import PositionOpenRequest
+from apps.position_manager.schemas.requests import PositionCloseRequest, PositionOpenRequest
 from libs.clients.kill_switch_client import StubKillSwitchClient
 from libs.db.base import Base
 from libs.db.models.execution import ExecutionModel
 from libs.db.models.journal_event import JournalEventModel
 from libs.db.models.operator_action import OperatorActionModel
 from libs.db.models.position import PositionModel
+from libs.db.models.position_event import PositionEventModel
 from libs.db.models.trade_candidate import TradeCandidateModel
 from libs.db.repositories.operator_action_repo import OperatorActionRepository
-from libs.schemas.common import ExecutionCandidate, ExecutionStatus, OrderSide, TradeDirection
+from ops.paper_pipeline_runner import PaperHarnessAccountState, run_cycle
+from libs.schemas.common import (
+    EntryZone,
+    ExecutionCandidate,
+    OrderSide,
+    PositionCloseReason,
+    ReviewDecision,
+    RiskDecision,
+    RiskReasonCode,
+    SignalDecision,
+    SignalStatus,
+    TradeDirection,
+)
 
 
 def make_session_factory() -> sessionmaker[Session]:
@@ -228,7 +242,6 @@ async def test_pipeline_execution_failure_rolls_back_candidate_and_writes_journa
         correlation_id = "corr_e2e_fail"
         candidate_repo = TradeCandidateRepository(db)
         operator_action_repo = OperatorActionRepository(db)
-        journal_client = DbJournalClient(db)
         execution_client = DummyExecutionClient(ok=False, execution_id=None)
         kill_switch_client = StubKillSwitchClient(trading_enabled=True)
 
@@ -266,7 +279,6 @@ async def test_pipeline_kill_switch_active_blocks_approve_without_side_effects()
         correlation_id = "corr_e2e_kill_switch"
         candidate_repo = TradeCandidateRepository(db)
         operator_action_repo = OperatorActionRepository(db)
-        journal_client = DbJournalClient(db)
         execution_client = DummyExecutionClient(ok=True, execution_id="exe_001")
         kill_switch_client = StubKillSwitchClient(trading_enabled=False, incident_code="manual_halt")
 
@@ -304,7 +316,6 @@ async def test_pipeline_expired_candidate_blocks_approve_before_execution():
         correlation_id = "corr_e2e_expired"
         candidate_repo = TradeCandidateRepository(db)
         operator_action_repo = OperatorActionRepository(db)
-        journal_client = DbJournalClient(db)
         execution_client = DummyExecutionClient(ok=True, execution_id="exe_001")
         kill_switch_client = StubKillSwitchClient(trading_enabled=True)
 
@@ -384,3 +395,211 @@ async def test_pipeline_paper_trading_opens_position():
         assert position is not None
         assert paper_event is not None
         assert execution_client.calls == 1
+
+
+class InProcessEvaluateClient:
+    def __init__(self, repo: TradeCandidateRepository) -> None:
+        self.repo = repo
+
+    async def evaluate(self, payload) -> dict:
+        result = evaluate_pipeline_use_case(
+            repo=self.repo,
+            signal=payload.signal,
+            risk=payload.risk,
+            review=payload.review,
+            correlation_id=payload.correlation_id,
+        )
+        return {"ok": result["ok"], "data": result, "error": None}
+
+
+class StaticMarketFetcher:
+    def __init__(self, candles: list[dict]) -> None:
+        self.candles = candles
+
+    def fetch_candles(self, symbol: str, timeframe: str, limit: int) -> list[dict]:
+        _ = (symbol, timeframe)
+        return self.candles[:limit]
+
+
+def deterministic_candles() -> list[dict]:
+    end = datetime.now(timezone.utc) - timedelta(seconds=5)
+    start = end - timedelta(minutes=15 * 59)
+    return [
+        {
+            "timestamp": start + timedelta(minutes=15 * index),
+            "open": 100.0 + index,
+            "high": 101.0 + index,
+            "low": 99.0 + index,
+            "close": 100.5 + index,
+            "session": "paper_e2e",
+        }
+        for index in range(60)
+    ]
+
+
+def deterministic_signal() -> SignalDecision:
+    return SignalDecision(
+        signal_id="sig_deterministic_e2e",
+        status=SignalStatus.CANDIDATE,
+        symbol="BTCUSDT",
+        side=TradeDirection.LONG,
+        setup_type="deterministic_fixture",
+        entry_zone=EntryZone(min=100.0, max=102.0),
+        stop_loss=95.0,
+        take_profit=[110.0],
+        confidence=0.75,
+        invalidation=None,
+        reasoning_summary="fixed integration fixture",
+    )
+
+
+def deterministic_risk() -> RiskDecision:
+    return RiskDecision(
+        risk_id="risk_deterministic_e2e",
+        signal_id="sig_deterministic_e2e",
+        symbol="BTCUSDT",
+        approved=True,
+        position_size=1.0,
+        notional_usdt=101.0,
+        max_loss_usdt=6.0,
+        risk_pct_of_equity=0.6,
+        entry_price=101.0,
+        leverage=1.0,
+        portfolio_exposure_pct=10.1,
+        daily_loss_limit_status="ok",
+        drawdown_lock=False,
+        kill_switch_required=False,
+        reason_codes=[RiskReasonCode.RISK_OK],
+    )
+
+
+def deterministic_review() -> ReviewDecision:
+    return ReviewDecision(
+        review_id="review_deterministic_e2e",
+        signal_id="sig_deterministic_e2e",
+        risk_id="risk_deterministic_e2e",
+        passed=True,
+        anomaly_flags=[],
+        review_notes="fixed integration fixture",
+        execution_candidate=ExecutionCandidate(
+            symbol="BTCUSDT",
+            side=OrderSide.BUY,
+            order_type="limit",
+            entry_price=101.0,
+            quantity=1.0,
+            stop_loss=95.0,
+            take_profit=[110.0],
+            time_in_force="GTC",
+        ),
+    )
+
+
+@pytest.mark.asyncio
+async def test_deterministic_paper_lifecycle_persists_closed_position(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr("ops.paper_pipeline_runner.uuid4", lambda: UUID(int=1))
+    monkeypatch.setattr("apps.orchestrator.application.create_candidate.uuid4", lambda: UUID(int=2))
+    monkeypatch.setattr("apps.execution_service.application.place_order_dry_run.uuid4", lambda: UUID(int=3))
+    position_ids = iter(UUID(int=value) for value in range(4, 12))
+    monkeypatch.setattr(
+        "apps.position_manager.infrastructure.position_repo.uuid4",
+        lambda: next(position_ids),
+    )
+
+    session_factory = make_session_factory()
+    with session_factory() as db:
+        candidate_repo = TradeCandidateRepository(db)
+        position_repo = PositionRepository(db)
+        journal_client = DbJournalClient(db)
+        kill_switch_client = StubKillSwitchClient(trading_enabled=True)
+        execution_client = ExecutionServiceClient(
+            DbExecutionStore(db),
+            kill_switch_client,
+            DbPositionAdmissionRepo(db),
+            InProcPositionManagerClient(
+                repo=position_repo,
+                journal_client=journal_client,
+                alert_client=NoopAlertClient(),
+            ),
+            db,
+        )
+
+        cycle = await run_cycle(
+            symbol="BTCUSDT",
+            timeframe="15m",
+            candle_limit=60,
+            kill_switch_client=kill_switch_client,
+            market_fetcher=StaticMarketFetcher(deterministic_candles()),
+            evaluate_client=InProcessEvaluateClient(candidate_repo),
+            account_state=PaperHarnessAccountState(
+                equity_usdt=1000.0,
+                daily_pnl_usdt=0.0,
+                portfolio_exposure_pct=0.0,
+                open_positions=0,
+            ),
+            signal_evaluator=lambda snapshot: deterministic_signal(),
+            risk_evaluator=lambda request: deterministic_risk().model_dump(
+                mode="python",
+                exclude={"risk_id", "signal_id", "symbol"},
+            ),
+            review_evaluator=lambda signal, risk, snapshot, stale_threshold_seconds: deterministic_review(),
+        )
+
+        assert cycle["candidate_created"] is True
+        assert cycle["correlation_id"] == "corr_paper_pipeline_00000000000000000000000000000001"
+
+        candidate = candidate_repo.get_by_signal_id("sig_deterministic_e2e")
+        assert candidate is not None
+
+        approval = await approve_candidate_use_case(
+            repo=candidate_repo,
+            kill_switch_client=kill_switch_client,
+            execution_client=execution_client,
+            operator_action_repo=OperatorActionRepository(db),
+            candidate_id=candidate.candidate_id,
+            telegram_user_id=123,
+            correlation_id=cycle["correlation_id"],
+        )
+        assert approval["ok"] is True
+
+        position = position_repo.get_by_execution_id(approval["execution_id"])
+        assert position is not None
+        close_result = await close_position_use_case(
+            repo=position_repo,
+            journal_client=journal_client,
+            alert_client=NoopAlertClient(),
+            req=PositionCloseRequest(
+                position_id=position.position_id,
+                reason=PositionCloseReason.TAKE_PROFIT,
+                close_price=110.0,
+                closed_at=datetime.now(timezone.utc),
+                correlation_id=cycle["correlation_id"],
+            ),
+        )
+        assert close_result["ok"] is True
+
+        candidate_id = candidate.candidate_id
+        execution_id = approval["execution_id"]
+        position_id = position.position_id
+
+    with session_factory() as restarted_db:
+        persisted_candidate = restarted_db.get(TradeCandidateModel, candidate_id)
+        persisted_execution = restarted_db.get(ExecutionModel, execution_id)
+        persisted_position = restarted_db.get(PositionModel, position_id)
+        position_events = restarted_db.execute(
+            select(PositionEventModel).where(PositionEventModel.position_id == position_id)
+        ).scalars().all()
+
+        assert persisted_candidate is not None
+        assert persisted_candidate.status == "submitted"
+        assert persisted_execution is not None
+        assert persisted_execution.status == "position_opened"
+        assert persisted_position is not None
+        assert persisted_position.status == "closed"
+        assert persisted_position.close_reason == "take_profit"
+        assert persisted_position.close_price == 110.0
+        assert [event.event_type for event in position_events] == [
+            "position_opened",
+            "position_closed",
+        ]

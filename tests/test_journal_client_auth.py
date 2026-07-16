@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-import asyncio
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
@@ -12,8 +11,7 @@ class TestHttpJournalClientAuth:
     @pytest.mark.asyncio
     async def test_sends_internal_token_header(self):
         with patch("libs.messaging.journal_client.httpx.AsyncClient") as mock_client_class:
-            mock_response = AsyncMock()
-            mock_response.raise_for_status = AsyncMock()
+            mock_response = Mock()
             mock_client = AsyncMock()
             mock_client.__aenter__ = AsyncMock(return_value=mock_client)
             mock_client.__aexit__ = AsyncMock(return_value=None)
@@ -30,8 +28,6 @@ class TestHttpJournalClientAuth:
                 assert call_kwargs["headers"]["X-Internal-Token"] == "test-internal-token"
 
     def test_raises_when_token_missing(self):
-        import os
-
         with patch.dict("os.environ", {}, clear=True):
             with pytest.raises(RuntimeError) as exc_info:
                 HttpJournalClient(base_url="http://test:8000")

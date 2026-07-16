@@ -128,15 +128,22 @@ def test_uppercase_archive_tree_is_removed_or_pending_deletion():
     assert uppercase_tracked <= pending_deletions
 
 
-def test_local_agent_settings_are_declared_local_only():
+def test_local_only_test_and_agent_settings_are_not_tracked():
+    tracked = set(_git_lines("ls-files"))
     gitignore = _read(ROOT / ".gitignore")
+
     assert ".claude/settings.local.json" in gitignore
+    assert ".claude/settings.local.json" not in tracked
+    assert "conftest.py" not in tracked
     assert "editor or agent local settings" in _read(MEMORY)
 
 
-def test_ci_runs_memory_integrity_check():
+def test_ci_installs_project_and_runs_full_suite():
     workflow = _read(WORKFLOW)
+
+    assert 'pip install -e ".[dev,research]"' in workflow
     assert "python -m pytest tests/test_project_memory.py -q" in workflow
+    assert "python -m pytest -q" in workflow
 
 
 def test_entry_point_markdown_links_resolve():

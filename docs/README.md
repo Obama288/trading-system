@@ -24,6 +24,7 @@ See `MEMORY_POLICY.md` for the complete rule.
 
 - [Commands](COMMANDS.md)
 - [Operator runbook](OPERATOR_RUNBOOK.md)
+- [Verification baseline](VERIFICATION_BASELINE.md)
 - [Security](SECURITY.md)
 - [System map and risk register](SYSTEM_MAP_AND_RISK_REGISTER.md)
 - [Simulator specification](SIMCORE_SPEC.md)

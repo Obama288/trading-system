@@ -70,7 +70,10 @@ class TradeCandidateRepository:
         return list(self.db.execute(stmt).scalars().all())
 
     def expire_if_needed(self, model: TradeCandidateModel) -> TradeCandidateModel:
-        if model.status == "pending" and model.ttl_expires_at <= datetime.now(timezone.utc):
+        expires_at = model.ttl_expires_at
+        if expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        if model.status == "pending" and expires_at <= datetime.now(timezone.utc):
             model.status = "expired"
             self.db.commit()
             self.db.refresh(model)

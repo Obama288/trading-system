@@ -1,9 +1,9 @@
-name: Research and Memory Suite
+name: Project Test Suite
 
 on: [push, pull_request]
 
 jobs:
-  research-and-memory:
+  project-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -11,8 +11,8 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install dependencies
-        run: pip install pytest pydantic pydantic-settings pyyaml requests
+        run: pip install -e ".[dev,research]"
       - name: Verify project memory
         run: python -m pytest tests/test_project_memory.py -q
-      - name: Run research suite
-        run: python -m pytest tests/research research/hypothesis_agent/tests -q
+      - name: Run full project suite
+        run: python -m pytest -q

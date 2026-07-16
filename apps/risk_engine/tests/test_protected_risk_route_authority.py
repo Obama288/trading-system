@@ -1,15 +1,13 @@
 from __future__ import annotations
 
-import os
 from collections.abc import Generator
 from datetime import datetime, timezone
 
+import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
-
-os.environ.setdefault("INTERNAL_SERVICE_TOKEN", "test-internal-token-risk-route-0001")
 
 from apps.risk_engine import main as risk_main  # noqa: E402
 from libs.db.base import Base  # noqa: E402
@@ -18,6 +16,11 @@ from libs.db.models.position import PositionModel  # noqa: E402
 from libs.db.session import get_db  # noqa: E402
 
 _TOKEN = "test-internal-token-risk-route-0001"
+
+
+@pytest.fixture(autouse=True)
+def _configure_internal_service_token(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("INTERNAL_SERVICE_TOKEN", _TOKEN)
 
 
 def _session_factory() -> sessionmaker[Session]:
