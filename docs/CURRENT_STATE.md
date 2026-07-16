@@ -2,9 +2,9 @@
 
 Status: ACTIVE / STATE
 
-Evidence baseline: local audit on 2026-07-16 against
-`402f342d95d6a9a4e39d629d0a22d620cd5cbd02`; `HEAD` matched `origin/main`
-after `git fetch --prune origin`.
+Evidence baseline: local and remote verification on 2026-07-17 at
+`2e60ef015b270d53915f36db32dff10cc3f01527`. Local `main` matched
+`origin/main`; GitHub `Project Test Suite` run `29535778871` succeeded.
 
 ## Objective
 
@@ -28,8 +28,9 @@ claim a proven edge. This is the present evidence state, not a change of goal.
 - Mode: paper only.
 - Live trading: NO-GO.
 - Exchange/private API readiness: not verified.
-- Runtime readiness: not verified in this audit.
-- Paper end-to-end readiness: not established.
+- Runtime and VPS readiness: not verified in this work.
+- In-process paper lifecycle: verified as infrastructure plumbing.
+- Paper-economic readiness: not established.
 - Trading profitability: not established.
 
 No document, test pass, research verdict, or infrastructure harness may promote
@@ -37,32 +38,38 @@ paper, runtime, trading, probe, or live readiness by inference.
 
 ## Current Gates
 
-- Project-control lane: memory and reproducibility cleanup.
-- Exchange lane: Stage 54-BG / Bitget Demo remains planning only.
+- Project-control lane: memory and reproducible test baseline completed.
 - Research lane: no active family.
-- Setup I / Price-Flow Divergence Reversion: DRAFT / feasibility candidate
-  only. No screening, analysis, validation, or paper progression is authorized.
+- Research planning: compare Setup I with additional hypothesis families;
+  docs and preregistration only.
+- Setup I / Price-Flow Divergence Reversion: DRAFT / feasibility candidate only.
 - Setup C, Setup E, and Setup H: parked from active progression.
+- Exchange lane: Stage 54-BG / Bitget Demo remains planning only.
+
+No data screening, validation, paper progression, or exchange work is authorized
+until a hypothesis has an explicit preregistration and owner gate.
 
 ## Verified Repository Facts
 
-- Local `main` and `origin/main` matched at `402f342` on 2026-07-16.
-- GitHub CI succeeded at that commit, but the workflow runs only the research
-  subset and is not a full project gate.
-- The full tracked-tree test suite passes without the local root `conftest.py`.
-- Protected risk-route tests now configure their own token for each test.
-- Local CI configuration runs the full project suite on Python 3.12; remote CI
-  confirmation is pending push.
-- Deterministic in-process paper lifecycle passes through close and a new DB
-  session; see `docs/VERIFICATION_BASELINE.md` for scope and accounting gaps.
+- Local and remote `main` matched at `2e60ef0` on 2026-07-17.
+- GitHub `Project Test Suite` passed on Python 3.12: 1103 passed with one
+  third-party FastAPI/Starlette deprecation warning.
+- The test suite is self-contained; tracked tests do not require a root
+  `conftest.py`.
+- Protected risk-route tests configure their own token for each test.
+- Deterministic in-process lifecycle covers fixed market input, signal, risk,
+  review, candidate, approval, paper fill, position open, close, journaling,
+  and persistence across a new SQLAlchemy session.
+- The lifecycle does not account for fees, funding, slippage, or net realized
+  PnL. It is plumbing evidence, not economic evidence.
 - Ruff: 145 findings. Mypy for `apps libs ops`: 50 errors in 19 files.
 - Local interpreter observed: Python 3.14.4. Canonical project/CI target remains
   Python 3.12 until deliberately changed.
 - Alembic head in code: `0009_create_paper_account_authority`.
 - Dependency consistency check: `python -m pip check` passed.
 
-These are test/code facts only. They are not runtime or trading-readiness
-claims.
+Detailed commands, counts, and limitations are in
+`docs/VERIFICATION_BASELINE.md`.
 
 ## Architecture State
 
@@ -80,41 +87,46 @@ PnL is not implemented. This is intentional safety behavior, not readiness.
 
 ## Quality-Critical Backlog
 
-Before reliable paper progression:
-
-1. Make the tracked repository test suite reproducible on Python 3.12 and make
-   CI run the relevant core suites.
-2. Resolve async-mock warnings and establish enforceable lint/type baselines.
+1. Design authoritative paper accounting for fees, funding, slippage, gross/net
+   realized PnL, and equity movement. Schema work requires explicit Protected
+   Lane authorization.
+2. Fix high-risk mypy findings in orphan detection, risk input typing, recovery,
+   nullable execution payloads, and auth headers.
 3. Fix duplicate approval for `submitted` candidates and transaction ownership.
 4. Require safe recovery data, preserve `signal_id`, and make reconcile absence
    fail closed without creating false closes.
 5. Clarify multi-target take-profit behavior.
 6. Remove cross-app production imports and reduce float use in money state.
-7. Revisit protected risk/account authority only under explicit Protected Lane
-   authorization.
+7. Reduce Ruff findings by mechanical category without behavior changes.
 
 ## Allowed Next Work
 
-- Docs/test-only project-memory normalization and integrity checks.
-- Clean test/CI baseline work that does not alter runtime behavior.
-- Classification of existing dirty and untracked files without deleting them.
-- Focused paper-safety fixes only after separate scope approval.
-- Setup I preregistration/feasibility planning only; no data inspection or
-  screening until its research prerequisites and owner gate are explicit.
+- Compare and preregister trading hypotheses using only existing knowledge and
+  free-data feasibility criteria.
+- Docs-only paper-accounting authority design.
+- Focused test, type, lint, and paper-safety work that does not cross Protected
+  Lane boundaries.
+- Classification of existing untracked files without deleting owner work.
 
 ## Not Authorized
 
 - Paid data or paid-plan upgrades.
 - Private exchange calls, orders, cancels, leverage, transfers, or withdrawals.
-- Service/runtime wiring, deployments, real smoke tests, or VPS changes.
+- Migrations, service/runtime wiring, deployments, real smoke tests, or VPS
+  changes without explicit Protected Lane approval.
 - Paper/live readiness promotion.
-- Rescue variants of parked research families without a new decision gate.
+- Data screening or rescue variants of parked research families without a new
+  decision gate.
 
 ## Current Decision
 
-First restore truthful project memory and a reproducible repository baseline.
-Then decide between focused paper-safety hardening and one bounded, free-data
-Setup I feasibility gate. Neither choice authorizes trading.
+The memory and reproducibility baseline is complete. The next research task is
+to compare several distinct hypothesis families, reject weak or duplicate ideas,
+and preregister one bounded free-data candidate before inspecting outcomes.
+
+Authoritative paper accounting remains required before any claim about economic
+paper performance. Neither research planning nor the green CI authorizes
+trading.
 
 Detailed history remains in Git, accepted decision records, research result
 artifacts, and `docs/archive/`.

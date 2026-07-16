@@ -16,10 +16,15 @@ not promote runtime, paper-economic, exchange, or live readiness.
 
 - The tracked-tree suite is self-contained; no tracked root `conftest.py` is
   required.
-- Full local tracked-tree result: `1111 passed` with no warnings.
+- Clean GitHub checkout on Python 3.12: `1103 passed`, with one third-party
+  FastAPI/Starlette deprecation warning.
+- Local workspace on Python 3.14.4, including eight untracked experimental tests:
+  `1111 passed` with no warnings.
 - GitHub Actions is configured to install `.[dev,research]` and run the full
   project suite.
-- Remote CI confirmation remains pending push.
+- Remote `Project Test Suite` passed for `2e60ef0` in run `29535778871`.
+- The preceding run exposed six Windows-only subprocess paths; commit `2e60ef0`
+  replaced them with `pathlib` paths and closed the cross-platform gap.
 - Deterministic lifecycle command:
 
 ```powershell
