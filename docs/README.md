@@ -1,39 +1,50 @@
-# docs/ — Index and Navigation
+# Documentation Index
 
-Precedence rule: **LAW > STATE > REFERENCE > HISTORY**.
-If a HISTORY doc contradicts CURRENT_STATE, CURRENT_STATE wins.
+Status: ACTIVE / INDEX
 
----
+Precedence: `LAW > STATE > IMPLEMENTATION FACT > DECISION > REFERENCE > HISTORY`.
+See `MEMORY_POLICY.md` for the complete rule.
 
-## START HERE
+## Start Here
 
-- [CURRENT_STATE.md](CURRENT_STATE.md) — current gate, active work, exchange and research track status
+- [Current state](CURRENT_STATE.md) - objective, owner constraints, current
+  gate, blockers, and allowed next work.
+- [Boundaries](BOUNDARIES.md) - canonical hard safety constraints.
+- [How we work](HOW_WE_WORK.md) - active working protocol.
+- [Research state](../research/signal_observation/RESEARCH_STATE.md) - compact
+  research gate and family verdicts.
 
-## Research State
+## Law
 
-- [../research/signal_observation/RESEARCH_STATE.md](../research/signal_observation/RESEARCH_STATE.md) — active family, stage, progression log
-- [../research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md](../research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md) — candidate queue and verdicts
+- [Memory policy](MEMORY_POLICY.md)
+- [Research constitution](RESEARCH_CONSTITUTION.md)
+- [Boundaries](BOUNDARIES.md)
 
-## Process Law
+## Active Reference
 
-- [RESEARCH_CONSTITUTION.md](RESEARCH_CONSTITUTION.md) — research pipeline, pre-registration, simulator contract, gates
-- [HOW_WE_WORK.md](HOW_WE_WORK.md) — working protocol
-- [BOUNDARIES.md](BOUNDARIES.md) — hard safety constraints (canonical)
-- [MEMORY_POLICY.md](MEMORY_POLICY.md) — memory and persistence rules
-- [SECURITY.md](SECURITY.md) — security policy
+- [Commands](COMMANDS.md)
+- [Operator runbook](OPERATOR_RUNBOOK.md)
+- [Security](SECURITY.md)
+- [System map and risk register](SYSTEM_MAP_AND_RISK_REGISTER.md)
+- [Simulator specification](SIMCORE_SPEC.md)
+- [Strategy class map](STRATEGY_CLASS_MAP.md)
+- [Data-class decision framework](DATA_CLASS_DECISION_FRAMEWORK.md)
 
-## Reference
+`WORKING_PRACTICES.md` is superseded by `HOW_WE_WORK.md` and retained only as a
+pointer.
 
-- [SIMCORE_SPEC.md](SIMCORE_SPEC.md) — simulator API contract
-- [SYSTEM_MAP_AND_RISK_REGISTER.md](SYSTEM_MAP_AND_RISK_REGISTER.md) — architecture and risk register
-- [WORKING_PRACTICES.md](WORKING_PRACTICES.md) — working habits, roles, session startup procedure
-- [COMMANDS.md](COMMANDS.md) — `!`-command registry (read live state, never stores it)
-- [DATA_CLASS_DECISION_FRAMEWORK.md](DATA_CLASS_DECISION_FRAMEWORK.md) — when to acquire paid data vs stay free; four moves ranked by cost and EV
-- [FREE_DATA_SOURCE_SURVEY.md](FREE_DATA_SOURCE_SURVEY.md) — free public data paths confirmed available; flat-file frontier and paid wall mapped
-- [DATA_SOURCE_SURVEY_II.md](DATA_SOURCE_SURVEY_II.md) — paid/external data survey (order-book, on-chain, news, sessions); cost, mechanism, risk ranking
-- [STRATEGY_CLASS_MAP.md](STRATEGY_CLASS_MAP.md) — strategy class taxonomy; seven attempts all directional; unexplored columns ranked
-- [STRATEGIC_REVIEW_2026-06.md](STRATEGIC_REVIEW_2026-06.md) — strategic review after five families (2026-06-13)
+## Research Reference
+
+- [Candidate backlog](../research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md)
+- [Setup I draft](../research/signal_observation/SETUP_I_PREREGISTRATION.md)
+- [Free data source survey](FREE_DATA_SOURCE_SURVEY.md)
+- [Data source survey II](DATA_SOURCE_SURVEY_II.md)
+- [Strategic review](STRATEGIC_REVIEW_2026-06.md)
+
+Research notes and surveys are not authorization and do not establish edge.
 
 ## History
 
-Design locks, gate records, and superseded docs: [docs/archive/](archive/)
+Closed design locks, gate records, handoffs, and superseded documents live in
+[`docs/archive/`](archive/). History is not loaded during normal startup and
+cannot override current STATE or LAW.

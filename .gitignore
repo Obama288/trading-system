@@ -21,3 +21,6 @@ research/signal_observation/data/setup_d/
 research/signal_observation/data/setup_e_coinalyze/
 research/signal_observation/data/setup_h/
 research/signal_observation/data/setup_i/
+
+# Local agent settings are not project memory
+.claude/settings.local.json

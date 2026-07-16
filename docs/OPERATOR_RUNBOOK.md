@@ -1,5 +1,7 @@
 # Operator Runbook
 
+Status: ACTIVE / REFERENCE - runtime procedures unverified in the 2026-07-16 local audit.
+
 System: trading-system
 Mode: paper (live path defined below)
 Last updated: 2026-04-25
@@ -34,7 +36,7 @@ Trigger an immediate kill-switch halt for any of the following. When in doubt, h
 - Position size on exchange does not match `quantity` in `positions` table
 
 ### DB state
-- Alembic migration head is not `0008_unique_tc_signal_id` (schema mismatch)
+- Alembic migration head is not `0009_create_paper_account_authority` (schema mismatch)
 - Orphan executions detected: execution status `filled` with no corresponding position row
 - Candidate stuck in `approved` status for more than 5 minutes without execution_id attached
 - Candidate stuck in `submitted` status for more than 2 minutes
@@ -239,7 +241,7 @@ cd E:\trading-system
 python -m alembic current
 ```
 
-Expected: `0008_unique_tc_signal_id (head)`. Any other value = schema mismatch, do not resume until fixed.
+Expected: `0009_create_paper_account_authority (head)`. Any other value = schema mismatch, do not resume until fixed.
 
 ### Phase 4: Recover
 

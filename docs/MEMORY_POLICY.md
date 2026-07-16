@@ -1,88 +1,150 @@
-﻿# Memory Policy
-PostgreSQL: authoritative
-  - kill switch, candidates, executions, positions, operator_actions
-Redis: ephemeral only (cache, session, dedup)
-LLM output: advisory only
-Research output: advisory only
-docs/: project memory for AI continuity
+# Project Memory Policy
 
-## Agent and Process Memory
+Status: ACTIVE / LAW
 
-These rules govern how project agents (Tower Control, Codex Implementation
-Agent, Claude Independent Reviewer, Auditor) and the Human Owner maintain
-shared project memory across sessions. Role definitions live in
-`docs/archive/AGENT_PROMPTS.md`.
+Purpose: keep Hephaestus recoverable across people, agents, machines, and
+sessions without turning stale narrative into authority.
 
-### 1. Human memory vs project control memory
-- Human Owner memory is private and authoritative for owner intent.
-- Project control memory lives in repo docs, code, tests, runtime evidence,
-  commits, and PR / review threads. It is shared, auditable, and the basis
-  for any agent claim about project state.
-- Agent session / chat memory is not project control memory.
+## Economic Objective
 
-### 2. Memory is orientation, not authority
-- Project memory orients agents to context. It does not authorize action.
-- Stage transitions, GO / NO-GO, scope grants, and risk acceptance are owner
-  decisions. Memory cannot substitute for them.
+The project exists to build a system capable of producing repeatable net
+trading profit after fees, slippage, funding, operational failures, and risk.
+Infrastructure and research process serve that objective; they are not the
+objective themselves.
 
-### 3. Source of facts
-- Important claims must come from one of: repo docs, code, tests, runtime
-  evidence, commits, or explicit current-session owner instruction.
-- A claim that cannot be traced to one of those sources is inference or
-  unknown and must be labeled as such.
+The current absence of a proven edge is an evidence statement, not a change of
+goal. Profit may be claimed only after the relevant evidence gate is met.
 
-### 4. Self-contained role prompts
-- Every role prompt must be self-contained. No "as above", "see previous",
-  "continue from yesterday", or cross-session assumptions.
-- Bounds, symbols, gates, lookback, timeframe, mode, and authorization scope
-  must be restated in each prompt that depends on them.
+## Current Owner Constraints
 
-### 5. Project roles
-- Tower Control coordinates, scopes, challenges assumptions, and drafts
-  proposals; does not implement.
-- Codex Implementation Agent implements only owner-approved tasks and
-  reports exact commands, files, and verification.
-- Claude Independent Reviewer reviews diffs, scope, and safety independently.
-- Auditor performs structural / periodic review of repo state and safety
-  boundaries.
-- Roles do not collapse. The same agent must not play more than one role in
-  a single decision.
+- No new project spending: no paid data, paid API plans, new subscriptions, or
+  infrastructure upgrades unless the Human Owner explicitly reverses this.
+- Correctness and reproducibility take priority over speed.
+- Paper-only remains in force. Live trading remains NO-GO.
+- The next phase is preparation: truthful state, reproducible tests, safe paper
+  behavior, and disciplined research.
 
-### 6. No unnecessary fragmentation
-- Default: one goal -> one self-contained prompt -> one report -> one
-  decision.
-- Split only when risk requires it (Protected Lane, multi-stage approval,
-  large blast radius, or owner-requested staging).
-- Do not split a single approved task into many micro-prompts that each
-  require fresh approval; do not bundle unrelated changes either.
+Current owner instructions in the active session override older planning notes.
+Material owner constraints must then be recorded in `docs/CURRENT_STATE.md` in
+the same accepted change set.
 
-### 7. Source labeling for important claims
-- Important claims about project state, gate, readiness, safety, scope,
-  architecture, role, existence, or absence must be labeled or clearly
-  separated as one of: fact, memory, inference, unknown, blocked.
-- "Verified" requires an observable check (commit SHA, test output, runtime
-  response, GitHub ref). Without that, label memory or inference, not fact.
+## Memory Layers And Precedence
 
-### 8. Compact state maintenance
-- After significant remote-visible project changes, update the compact state
-  docs (`docs/CURRENT_STATE.md`, `research/signal_observation/RESEARCH_STATE.md`,
-  and `docs/BOUNDARIES.md` where relevant) when status meaningfully changes.
-- A change is significant if it alters the gate, mode, lane, escalation
-  state, or recorded research verdict.
-- Wording fixes and typo passes do not require compact-state updates.
+Use the first applicable layer. Report conflicts; do not silently reconcile
+them.
 
-### 9. Secrets policy
-- Never store, log, paste, or echo secrets, tokens, passwords, API keys,
-  account IDs, private exchange-endpoint output, signed payloads, or values
-  derived from secrets (key prefixes / suffixes, hashes, partial keys, or
-  signed request samples) in repo files, docs, prompts, comments, commit
-  messages, PRs, issue text, or chat.
-- If a secret is exposed by mistake, treat the secret as compromised and
-  rotate it; do not merely delete the message.
+1. **Current owner instruction** - intent, budget, and explicit authorization.
+2. **LAW** - `docs/BOUNDARIES.md`, `docs/RESEARCH_CONSTITUTION.md`, and this
+   policy.
+3. **STATE** - `docs/CURRENT_STATE.md` and, for research work,
+   `research/signal_observation/RESEARCH_STATE.md`.
+4. **IMPLEMENTATION FACT** - current Git history, code, migrations, tests, CI,
+   and runtime evidence tied to a commit or environment.
+5. **DECISION / DESIGN** - accepted decision records and design locks.
+6. **REFERENCE** - maps, runbooks, working practices, and surveys.
+7. **HISTORY** - `docs/archive/` and closed research artifacts.
+8. **SESSION MEMORY / INFERENCE** - orientation only; never project fact.
 
-### 10. Research evidence is not readiness
-- C7_PASS or any other research verdict is research evidence only.
-- It does not promote paper trading, runtime wiring, trading readiness,
-  probe readiness, or live readiness.
-- Promotion to any of those lanes requires a separate explicit Human Owner
-  decision, recorded in repo docs and supported by additional gates.
+Code beats docs for implemented behavior. Runtime evidence beats assumptions
+about deployment. STATE beats HISTORY for the current gate. LAW beats every
+other repo document for constraints.
+
+## Compact State Contract
+
+`docs/CURRENT_STATE.md` must contain only:
+
+- objective and current owner constraints;
+- mode, gate, active lane, and readiness claims;
+- current blockers and allowed next work;
+- a short research snapshot;
+- the latest decision needed.
+
+`research/signal_observation/RESEARCH_STATE.md` must contain only:
+
+- active family and current research gate;
+- compact verdicts for parked/retired families;
+- current candidate and its prerequisites;
+- allowed next research decision;
+- pointers to detailed evidence.
+
+Neither state file is a progression log. Detailed chronology belongs in Git,
+decision records, result reports, or `docs/archive/`. Target limits:
+
+- `CURRENT_STATE.md`: at most 150 lines;
+- `RESEARCH_STATE.md`: at most 180 lines.
+
+## Update Transaction
+
+A change that alters a gate, verdict, owner constraint, mode, readiness claim,
+migration head, active family, or allowed next action must update the relevant
+STATE file in the same accepted change set.
+
+Before reporting completion:
+
+1. Read current STATE and LAW.
+2. Verify Git HEAD and dirty files.
+3. Verify changed facts from code/tests/runtime rather than memory.
+4. Update only the affected state fields.
+5. Run the project-memory integrity test.
+6. Report docs/code/test/runtime readiness separately.
+
+Do not copy recent commit lists, test counts, service-health claims, or model
+names into multiple startup files. Volatile facts have one canonical home.
+
+## Fact Labels
+
+- **Verified**: supported by an observable check tied to a commit/environment.
+- **Recorded**: accepted owner decision or repo decision record.
+- **Unverified**: plausible but not checked in the current environment.
+- **Blocked**: required check cannot currently be performed.
+- **Inference**: reasoned conclusion, explicitly labeled.
+
+Never write "healthy", "ready", "working", or "green" without stating what was
+checked and whether the claim applies to docs, code, tests, or runtime.
+
+## Durable State Ownership
+
+PostgreSQL is authoritative for durable operational state, including:
+
+- kill-switch/system state;
+- trade candidates and operator actions;
+- executions;
+- positions and position events;
+- paper account authority;
+- incidents and journal events.
+
+Redis is ephemeral only: cache, session, transport, and deduplication support.
+It must not become the source of truth for candidate, execution, position,
+account authority, or kill-switch state.
+
+LLM output and research output are advisory. They become project decisions only
+through an explicit owner decision and the appropriate repo record.
+
+## Document Lifecycle
+
+Every active or reference document must declare one status near the top:
+`ACTIVE`, `DRAFT`, `PARKED`, `RETIRED`, `SUPERSEDED`, `HISTORICAL`, or
+`ARCHIVED`.
+
+There is one archive path: `docs/archive/` (lowercase). Archived content is not
+loaded during normal startup.
+
+## Local-Only State
+
+The following are not project memory and must not be used as evidence:
+
+- chat/session memory;
+- editor or agent local settings;
+- untracked reports, scripts, fixtures, or review packets;
+- local `.env` contents;
+- local runtime state not tied to an explicit verification report.
+
+Useful local artifacts must be classified and accepted before becoming repo
+fact.
+
+## Secrets
+
+Never store or echo secrets, account identifiers, balances, signed payloads,
+private-endpoint output, secret prefixes/suffixes/hashes, or derived secret
+values in docs, prompts, logs, commits, issues, or chat. An exposed secret is
+treated as compromised and rotated.

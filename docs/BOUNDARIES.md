@@ -1,4 +1,6 @@
-﻿# Hephaestus - Boundaries
+# Hephaestus - Boundaries
+
+Status: ACTIVE / LAW
 
 Purpose: compact safety boundary entry point. Canonical for hard constraints.
 `docs/CURRENT_STATE.md` is the current state entry point.
