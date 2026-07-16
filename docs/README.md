@@ -37,6 +37,7 @@ pointer.
 ## Research Reference
 
 - [Candidate backlog](../research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md)
+- [July hypothesis portfolio](../research/signal_observation/HYPOTHESIS_PORTFOLIO_2026_07.md)
 - [Setup I draft](../research/signal_observation/SETUP_I_PREREGISTRATION.md)
 - [Free data source survey](FREE_DATA_SOURCE_SURVEY.md)
 - [Data source survey II](DATA_SOURCE_SURVEY_II.md)

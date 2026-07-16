@@ -18,10 +18,14 @@ claims and wasted capital.
 ## Current Gate
 
 - Active family: none.
-- Current candidate: Setup I / Price-Flow Divergence Reversion.
-- Setup I status: DRAFT / feasibility candidate only.
-- Screening, analysis, validation, data acquisition, and paper progression:
-  not authorized by this file.
+- Current planning artifact: `HYPOTHESIS_PORTFOLIO_2026_07.md`.
+- Recommended next preregistration decision: H1 / Cross-Venue Perpetual
+  Funding Dispersion.
+- Fallback if free H1 data feasibility fails before outcome inspection: H3 /
+  Beta-Neutral Cross-Sectional Residual Reversion.
+- Setup I / Price-Flow Divergence Reversion remains DRAFT / deferred alternate.
+- Screening, analysis, validation, data acquisition, testnet actions, and paper
+  progression are not authorized by this file.
 - Paid data and paid source upgrades: not allowed under the current owner
   constraint.
 
@@ -93,15 +97,18 @@ purchase is a current next action.
 
 ## Next Decision
 
-After project-memory and repository-baseline cleanup, decide whether Setup I
-has a valid free, contamination-safe feasibility path. If any prerequisite is
-missing, PARK it without rescue variants. If all prerequisites are explicit,
-prepare one bounded owner decision; do not run it by implication.
+Prepare an H1 mechanism-first preregistration decision without downloading or
+inspecting candidate outcomes. First require a free aligned-data inventory,
+protected holdout, four-leg cost equation, capacity floor, and testnet acceptance
+plan. If H1 data feasibility fails before outcome inspection, consider H3.
+Neither path becomes active without a separate bounded owner authorization.
 
 ## Detailed Evidence Pointers
 
 - Constitution: `docs/RESEARCH_CONSTITUTION.md`
 - Candidate backlog: `research/signal_observation/RESEARCH_CANDIDATE_BACKLOG.md`
+- July hypothesis portfolio:
+  `research/signal_observation/HYPOTHESIS_PORTFOLIO_2026_07.md`
 - Setup I draft: `research/signal_observation/SETUP_I_PREREGISTRATION.md`
 - Setup C final recent decision:
   `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_RERUN_POST_RESULT_DECISION.md`

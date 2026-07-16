@@ -10,6 +10,7 @@ RESEARCH = ROOT / "research" / "signal_observation" / "RESEARCH_STATE.md"
 MEMORY = ROOT / "docs" / "MEMORY_POLICY.md"
 RUNBOOK = ROOT / "docs" / "OPERATOR_RUNBOOK.md"
 WORKFLOW = ROOT / ".github" / "workflows" / "research-ci.yml"
+PORTFOLIO = ROOT / "research" / "signal_observation" / "HYPOTHESIS_PORTFOLIO_2026_07.md"
 
 CANONICAL_DOCS = (
     ROOT / "README.md",
@@ -19,6 +20,7 @@ CANONICAL_DOCS = (
     ROOT / "docs" / "HOW_WE_WORK.md",
     ROOT / "docs" / "MEMORY_POLICY.md",
     ROOT / "research" / "signal_observation" / "RESEARCH_STATE.md",
+    PORTFOLIO,
     ROOT / "AGENTS.md",
     ROOT / "CLAUDE.md",
 )
@@ -78,6 +80,20 @@ def test_research_gate_is_consistent_across_state_files():
     assert "Active family: none." in research
     assert "Setup I / Price-Flow Divergence Reversion" in current
     assert "Setup I / Price-Flow Divergence Reversion" in research
+
+
+def test_hypothesis_shortlist_and_testnet_evidence_boundary_are_consistent():
+    current = _read(CURRENT)
+    research = _read(RESEARCH)
+    portfolio = _read(PORTFOLIO)
+
+    for text in (current, research, portfolio):
+        normalized = re.sub(r"\s+", " ", text)
+        assert "Cross-Venue Perpetual Funding Dispersion" in normalized
+        assert "Beta-Neutral Cross-Sectional Residual Reversion" in normalized
+
+    assert "Testnet/demo results are implementation evidence, not evidence of edge." in portfolio
+    assert "Active family: none." in research
 
 
 def test_agent_startup_files_are_identical_and_snapshot_free():

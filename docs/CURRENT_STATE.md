@@ -40,8 +40,9 @@ paper, runtime, trading, probe, or live readiness by inference.
 
 - Project-control lane: memory and reproducible test baseline completed.
 - Research lane: no active family.
-- Research planning: compare Setup I with additional hypothesis families;
-  docs and preregistration only.
+- Research planning: H1 / Cross-Venue Perpetual Funding Dispersion is the
+  recommended next preregistration decision; H3 / Beta-Neutral Cross-Sectional
+  Residual Reversion is the free-data fallback.
 - Setup I / Price-Flow Divergence Reversion: DRAFT / feasibility candidate only.
 - Setup C, Setup E, and Setup H: parked from active progression.
 - Exchange lane: Stage 54-BG / Bitget Demo remains planning only.
@@ -120,9 +121,10 @@ PnL is not implemented. This is intentional safety behavior, not readiness.
 
 ## Current Decision
 
-The memory and reproducibility baseline is complete. The next research task is
-to compare several distinct hypothesis families, reject weak or duplicate ideas,
-and preregister one bounded free-data candidate before inspecting outcomes.
+The memory and reproducibility baseline is complete. The July portfolio
+recommends H1 / Cross-Venue Perpetual Funding Dispersion for a mechanism-first
+preregistration decision, with H3 as fallback only if free H1 data feasibility
+fails before outcome inspection.
 
 Authoritative paper accounting remains required before any claim about economic
 paper performance. Neither research planning nor the green CI authorizes
