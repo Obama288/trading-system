@@ -36,6 +36,12 @@ H1_COVERAGE_RESULT = (
     / "signal_observation"
     / "H1_PHASE_A_COVERAGE_RESULT_2026_07_17.md"
 )
+H3_PREREG = (
+    ROOT
+    / "research"
+    / "signal_observation"
+    / "H3_BETA_NEUTRAL_RESIDUAL_REVERSION_PREREGISTRATION.md"
+)
 
 CANONICAL_DOCS = (
     ROOT / "README.md",
@@ -51,6 +57,7 @@ CANONICAL_DOCS = (
     H1_PHASE_A,
     H1_COVERAGE_LOCK,
     H1_COVERAGE_RESULT,
+    H3_PREREG,
     ROOT / "AGENTS.md",
     ROOT / "CLAUDE.md",
 )
@@ -129,6 +136,7 @@ def test_hypothesis_shortlist_and_testnet_evidence_boundary_are_consistent():
 def test_h1_public_data_authorization_stays_bounded():
     current = _read(CURRENT)
     research = _read(RESEARCH)
+    h3_prereg = _read(H3_PREREG)
     prereg = _read(H1_PREREG)
     acquisition = _read(H1_DATA)
     phase_a = _read(H1_PHASE_A)
@@ -155,12 +163,15 @@ def test_h1_public_data_authorization_stays_bounded():
     )
 
     normalized_research = re.sub(r"\s+", " ", research)
-    assert re.search(r"Recommended next.{0,80}H3 /", normalized_research)
+    assert re.search(r"H3 / Beta-Neutral.{0,120}planning-only", normalized_research)
     assert re.search(
-        r"H3.{0,160}(?:not active|not authorized)",
+        r"H3.{0,220}(?:not active|not authorized|analysis are not authorized)",
         normalized_research,
         re.IGNORECASE,
     )
+    assert "Status: DRAFT / PLANNING ONLY" in h3_prereg
+    assert "does not authorize data acquisition" in h3_prereg
+    assert "Active family: none." in research
 
     # The earlier latest-page probe remains transport evidence only.
     assert "PASS / TRANSPORT AND CURRENT SCHEMA ONLY" in phase_a

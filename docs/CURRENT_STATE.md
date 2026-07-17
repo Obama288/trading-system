@@ -46,9 +46,10 @@ paper, runtime, trading, probe, or live readiness by inference.
   because prior Setup D/F work inspected its funding outcomes. Bitget and OKX
   have insufficient coverage, so the required clean `Bitget + Bybit` pair is
   unavailable. Phase B is forbidden.
-- H3 / Beta-Neutral Cross-Sectional Residual Reversion is the recommended next
-  preregistration candidate. Active family remains none; H3 acquisition and
-  analysis are not authorized.
+- H3 / Beta-Neutral Cross-Sectional Residual Reversion has a planning-only
+  draft preregistration:
+  `research/signal_observation/H3_BETA_NEUTRAL_RESIDUAL_REVERSION_PREREGISTRATION.md`.
+  Active family remains none; H3 acquisition and analysis are not authorized.
 - Setup I / Price-Flow Divergence Reversion: DRAFT / feasibility candidate only.
 - Setup C, Setup E, and Setup H: parked from active progression.
 - Exchange lane: Stage 54-BG / Bitget Demo remains planning only.
@@ -112,8 +113,7 @@ PnL is not implemented. This is intentional safety behavior, not readiness.
 - Compare and preregister trading hypotheses using only existing knowledge and
   free-data feasibility criteria.
 - Docs-only paper-accounting authority design.
-- H3 mechanism-first preregistration and free-data/holdout planning without
-  acquisition or analysis.
+- H3 preregistration review/lock planning without acquisition or analysis.
 - Focused test, type, lint, and paper-safety work that does not cross Protected
   Lane boundaries.
 - Classification of existing untracked files without deleting owner work.

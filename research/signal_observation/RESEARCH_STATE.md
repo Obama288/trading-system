@@ -25,9 +25,10 @@ claims and wasted capital.
   ineligible after prior Setup D/F funding-outcome inspection. Bitget and OKX
   had insufficient coverage; the clean `Bitget + Bybit` pair is unavailable.
 - H1 Phase B, source/window rescue, and outcome inspection are forbidden.
-- Recommended next preregistration candidate: H3 / Beta-Neutral
-  Cross-Sectional Residual Reversion. Active family remains none; H3 acquisition
-  and analysis are not authorized.
+- H3 / Beta-Neutral Cross-Sectional Residual Reversion has a planning-only
+  draft preregistration:
+  `research/signal_observation/H3_BETA_NEUTRAL_RESIDUAL_REVERSION_PREREGISTRATION.md`.
+  Active family remains none; H3 acquisition and analysis are not authorized.
 - Setup I / Price-Flow Divergence Reversion remains DRAFT / deferred alternate.
 - Screening, analysis, validation, testnet actions, and paper progression are
   not authorized by this file.
@@ -107,10 +108,9 @@ purchase is a current next action.
 
 ## Next Decision
 
-Prepare a mechanism-first H3 preregistration and identify a free,
-contamination-safe discovery/validation/holdout path without acquiring or
-inspecting candidate data. H3 remains unauthorized beyond planning until a
-separate owner gate. H1 remains parked and Phase B is forbidden.
+Review and lock, or revise, the planning-only H3 preregistration without
+acquiring or inspecting candidate data. H3 remains unauthorized beyond planning
+until a separate owner gate. H1 remains parked and Phase B is forbidden.
 
 ## Detailed Evidence Pointers
 
@@ -128,6 +128,8 @@ separate owner gate. H1 remains parked and Phase B is forbidden.
   `research/signal_observation/H1_PHASE_A_COVERAGE_RESULT_2026_07_17.md`
 - H1 Phase A transport result:
   `research/signal_observation/H1_PHASE_A_TRANSPORT_RESULT_2026_07_17.md`
+- H3 draft preregistration:
+  `research/signal_observation/H3_BETA_NEUTRAL_RESIDUAL_REVERSION_PREREGISTRATION.md`
 - Setup I draft: `research/signal_observation/SETUP_I_PREREGISTRATION.md`
 - Setup C final recent decision:
   `research/signal_observation/SETUP_C_DR1_BINANCE_RECENT_RERUN_POST_RESULT_DECISION.md`
