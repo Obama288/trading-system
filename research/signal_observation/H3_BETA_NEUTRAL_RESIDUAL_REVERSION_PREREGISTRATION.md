@@ -1,244 +1,247 @@
 # H3 - Beta-Neutral Residual Reversion Pre-Registration
 
-Status: DRAFT / PLANNING ONLY
+Status: DRAFT / PLANNING ONLY / LOCK CANDIDATE
 Family: Beta-neutral cross-sectional residual reversion
 Governed by: `docs/RESEARCH_CONSTITUTION.md` and `docs/BOUNDARIES.md`
 
-This document is a planning draft only. It does not authorize data acquisition,
-data inspection, discovery, validation, testnet activity, paper trading, or live
-trading.
+This document is a lock candidate, not an active research authorization. It
+does not authorize data acquisition, data inspection, discovery, validation,
+testnet activity, paper trading, or live trading.
 
 ## Gate State
 
 H3 is the next preregistration candidate after H1 was parked at the free-data
 feasibility gate with no outcome inspection. The active research family remains
-none until this draft is reviewed, locked, committed as an active
-pre-registration, and separately authorized by the Owner.
+none until the Owner explicitly accepts a locked pre-registration and separately
+authorizes a bounded coverage/acquisition step.
+
+This candidate is not lockable until a coverage-only data path confirms
+non-overlapping discovery, validation, and recent-rerun windows without
+computing H3 residuals, returns, spreads, fees, PnL, or trade outcomes.
 
 ## Campaign Comparison-Budget Note
 
-This campaign has already inspected or parked multiple crypto-perp families:
-Setup A, Setup B, Setup C, funding/carry variants, Setup E, Setup H, and H1.
-H3 must therefore be treated as a late-campaign attempt, not as a fresh
-statistical slate.
+This is a late-campaign crypto-perp attempt after multiple failed, parked, or
+ineligible families: Setup A, Setup B, Setup C, funding/carry variants, Setup
+E, Setup H, and H1. A positive result must be interpreted against that full
+comparison budget.
 
-H3 is still worth preregistering because it is mechanism-first and uses a
-different effect framing from simple trend, liquidation, funding carry, and
-venue-funding dispersion: it asks whether asset-specific displacement remains
-after removing common crypto-market beta.
-
-Any PASS would be evidence only, not proof, and must be read against the full
-campaign comparison budget.
+The reason H3 remains worth one tightly bounded attempt is that it targets a
+relative-value residual after removing BTC market beta. It is not allowed to
+become another broad price-action search over assets, thresholds, windows, and
+regimes.
 
 ## 2.1 Hypothesis And Mechanism
 
-Hypothesis: after removing common crypto-market beta, a large idiosyncratic
-displacement in a liquid perp asset partially reverts over the next holding
-window when the displacement is not confirmed by persistent asset-specific flow
-or relative-strength continuation.
+Hypothesis: when ETH or SOL makes a large positive or negative return residual
+versus BTC market beta on a closed 4h bar, that residual partially reverts over
+the next 12 hours after two-leg costs.
 
-Mechanism / who pays: short-horizon relative-value participants and hedgers
-trade the common crypto factor, while single-asset price dislocations can be
-created by temporary inventory pressure, stop-runs, liquidations, or crowded
-single-name attention. The counterparty is the trader extrapolating the
-single-asset move as asset-specific information when it is mostly transient
-residual noise after the market factor has been removed.
+Mechanism / who pays: single-asset attention, forced inventory pressure,
+stop-runs, and local liquidations can temporarily move ETH or SOL more than the
+common crypto factor justifies. The counterparty is the trader extrapolating a
+single-name move as durable information while relative-value traders and hedgers
+continue to anchor exposure to the common BTC factor.
 
-Mechanism risk: this can easily become disguised mean reversion or overfit
-cross-sectional price action. The final lock must name the residual estimator,
-holding rule, cost model, and baseline tightly enough that no post-hoc
-"relative value" interpretation can rescue a weak result.
+Required falsifiable claim: the edge must exist in the beta-hedged residual leg,
+not in the outright direction of ETH, SOL, or BTC. If the result depends on
+unhedged directional drift, H3 fails.
 
-## 2.2 Primary Metric And Gate
+## 2.2 Primary Variant
 
-Primary metric: post-cost expectancy_R using the canonical simulator where a
-trade outcome can be represented as a two-leg beta-neutral position with costs
-charged on both legs.
+Only one primary variant is eligible to promote the family:
 
-Primary gate: LOCK REQUIRED.
+- signal assets: ETHUSDT perpetual and SOLUSDT perpetual;
+- market factor and hedge: BTCUSDT perpetual;
+- bar interval: 4h;
+- returns: log returns from closed candles only;
+- beta estimator: rolling OLS of asset log return on BTC log return;
+- beta lookback: 180 calendar days of 4h bars;
+- minimum beta-fit history: 900 closed bars;
+- residual scale: rolling median absolute deviation of residuals over 90
+  calendar days, using only bars closed before the signal bar;
+- signal threshold: absolute residual z-score at the signal bar close is at
+  least 2.25;
+- direction: contrarian to the residual;
+- entry: next 4h bar open after the signal bar close;
+- hedge: BTC notional equals locked beta times asset notional, opposite the
+  estimated market exposure;
+- exit: mark both legs at the open 3 bars after entry, giving a 12h holding
+  window;
+- overlap: per asset, no new observation may enter before the prior H3
+  observation exits.
 
-The lock must define one numeric discovery pass threshold before any H3 data
-inspection. The threshold must include:
+No stop, target, residual mean-cross exit, per-regime split, session split,
+alternative threshold, alternative lookback, alternative market basket, or
+single-asset-only result is primary.
 
-- moderate cost scenario;
-- two-leg taker/slippage costs;
-- funding treatment if the holding window crosses funding timestamps;
-- non-overlapping observations;
-- a required margin over the random or matched baseline.
+## 2.3 Primary Metric And Gate
 
-No win-rate, Sharpe, spread chart, regression coefficient, per-symbol split, or
-best-regime result may promote H3 unless it is the single locked primary metric.
+Primary metric: post-cost mean `expectancy_R` over all non-overlapping primary
+observations.
 
-## 2.3 Candidate Signal Definition
+`1R` is the pre-cost absolute adverse move that would occur if the residual
+z-score widens by another 1.0 z unit from entry while beta is held fixed. The
+trade PnL is the two-leg beta-hedged mark-to-market return from entry to exit,
+converted to R with this initial risk denominator.
 
-Primary universe: LOCK REQUIRED.
+Cost model:
 
-Initial candidate universe for review:
+- moderate primary cost: 8 bps per side per leg for taker fee plus slippage;
+- round trip charges four sides: asset entry, BTC hedge entry, asset exit, BTC
+  hedge exit;
+- funding is included if any holding interval crosses a funding timestamp;
+- zero-cost and optimistic-cost runs are diagnostic only.
 
-- BTCUSDT perpetual;
-- ETHUSDT perpetual;
-- SOLUSDT perpetual.
+Discovery pass gate:
 
-Candidate interval: 4h bars, subject to final lock.
+- primary expectancy_R at least +0.07R after moderate costs;
+- primary expectancy_R exceeds the matched random baseline p95;
+- at least 80 non-overlapping observations pooled across ETH and SOL;
+- both ETH and SOL must have at least 25 observations and non-negative
+  expectancy_R after moderate costs.
 
-Candidate beta model:
+Validation pass gate:
 
-- market factor: BTCUSDT return, or an equal-weight BTC/ETH/SOL market basket;
-- rolling lookback: LOCK REQUIRED;
-- estimator: LOCK REQUIRED, with no future bars and no centered windows;
-- residual: actual asset return minus beta-implied market return.
+- expectancy_R is non-negative after moderate costs;
+- effect direction matches discovery;
+- at least 40 non-overlapping observations pooled across ETH and SOL;
+- neither asset is worse than -0.05R expectancy_R after moderate costs.
 
-Candidate entry rule:
+Stage 4 recent-rerun gate:
 
-- compute trailing normalized residual displacement per asset;
-- enter contrarian to the largest absolute residual only when it exceeds the
-  locked threshold;
-- hedge with the locked market factor or matched asset leg to target beta
-  neutrality;
-- no position may open while a prior H3 observation for that asset is unresolved.
+- last 12 months available at run time;
+- expectancy_R is non-negative after moderate costs;
+- no pre-registered kill criterion is triggered.
 
-Candidate exit rule:
+These thresholds are intentionally strict because H3 is a late-campaign price
+data-class attempt and uses two legs.
 
-- fixed holding window: LOCK REQUIRED;
-- optional residual mean-cross exit: diagnostic only unless selected as primary
-  before lock;
-- stop, target, and mark-to-market convention: LOCK REQUIRED.
+## 2.4 Windows And Data Path
 
-The final lock must decide whether H3 is expressed as:
+No H3 data path is accepted yet.
 
-- single residual asset versus beta hedge;
-- pair trade against the most beta-matched peer;
-- basket residual trade.
+Before lock, a coverage-only contract must identify a free, contamination-safe
+source for BTCUSDT, ETHUSDT, and SOLUSDT perpetual 4h OHLCV and must bind raw
+or normalized files by SHA-256. The coverage-only step may check only:
 
-Only one expression may be primary.
+- source, venue, symbol, interval, and file/request availability;
+- timestamp order, duplicate bars, missing bars, zero-volume bars, and OHLC
+  sanity;
+- date bounds and dataset hashes.
 
-## 2.4 Free-Data And Holdout Path
+It must not compute H3 beta, residuals, z-scores, trade entries, trade exits,
+costs, returns, PnL, expectancy, Sharpe, drawdown, or baseline metrics.
 
-No H3 acquisition or analysis is authorized by this draft.
+Candidate windows for Owner review, subject to coverage-only confirmation:
 
-Candidate free path to review before lock:
+- discovery: `[2022-01-01, 2024-01-01)`;
+- validation: `[2024-01-01, 2025-01-01)`;
+- recent rerun: `[2025-07-01, 2026-07-01)` or the latest full 12 calendar
+  months available at lock time.
 
-- use already committed local OHLCV only for source inventory and hash binding,
-  not for outcome inspection during draft work;
-- if existing local data is contaminated by prior same-window price-action
-  research, identify a clean venue/source/window before Stage 2;
-- if public exchange downloads are needed, first create a coverage-only
-  acquisition contract that checks availability, chronology, gaps, and hashes
-  without computing residuals, returns, spreads, fees, or PnL.
+If these exact windows cannot be confirmed cleanly before H3 outcome
+inspection, H3 parks or returns to the Owner for a new pre-registration. The
+windows must not be moved after any H3-relevant result is observed.
 
-Candidate windows: LOCK REQUIRED.
+## 2.5 Matched Random Baseline
 
-The final pre-registration must name non-overlapping discovery, validation, and
-recent-rerun windows before any H3-relevant data is opened for signal or outcome
-analysis. A plausible split is not enough under `docs/BOUNDARIES.md`; the path
-must be confirmed and named.
+Primary baseline: matched timestamp-and-volatility random residual trades.
 
-## 2.5 Random Or Matched Baseline
+For each real signal asset, direction, and window, draw random entry timestamps
+from bars where:
 
-Baseline: LOCK REQUIRED.
+- the same asset has enough beta and residual-scale history;
+- no real H3 signal is active;
+- the 30-day realized volatility bucket matches the real signal bucket;
+- the BTC 4h return sign matches the real signal bar's BTC return sign.
 
-Candidate baseline options for review:
+Each baseline trade uses the same asset, the same locked beta estimator, the
+same 12h holding window, the same two-leg cost model, and the same non-overlap
+rule. Direction is shuffled within the matched sample while preserving the
+long/short count by asset.
 
-- same timestamps with shuffled trade direction while preserving symbol and
-  holding window;
-- same number of entries sampled from matched volatility and market-return
-  regimes;
-- residual-threshold timestamps with residual signs randomized.
-
-The lock must choose exactly one primary baseline, seed, resample count, and
-required margin. Default seed should remain 69 unless a different integer is
-recorded at lock.
+Seed: 69. Resamples: 1000. Discovery must beat baseline p95. Validation must
+report the same baseline summary but promotes only by the validation gate in
+section 2.3.
 
 ## 2.6 Multiple-Testing Budget
 
-Primary variant: LOCK REQUIRED.
+Primary variant count for this lock candidate: 1.
 
-All of the following are potential variants and must be counted before lock if
-examined:
+The following are declared diagnostic only and cannot promote H3:
 
-- universe choices;
-- interval choices;
-- beta estimator choices;
-- beta lookback lengths;
-- residual normalization windows;
-- residual thresholds;
-- holding windows;
-- exit rules;
-- hedge expression;
-- cost and funding assumptions;
-- market-regime splits.
+- per-asset ETH and SOL splits;
+- residual threshold sensitivity around 2.0, 2.5, and 3.0;
+- beta lookback sensitivity at 90 and 365 calendar days;
+- holding-window sensitivity at 1, 2, 6, and 12 bars;
+- alternative BTC/ETH/SOL equal-weight market basket;
+- volatility-regime and session summaries;
+- zero-cost, optimistic-cost, and conservative-cost tables.
 
-Any non-primary variant that looks better after inspection must return to
-Stage 1 as a new pre-registration and cannot inherit H3 discovery evidence as a
-confirmation result.
+Any diagnostic result selected after inspection requires a new
+pre-registration and treats the inspected evidence as Stage 0 material only.
 
-## 2.7 Sample Size Minimums
+## 2.7 Look-Ahead Audit
 
-Defaults from the constitution:
+The implementation must prove these points before any Stage 2 result is
+accepted:
 
-- discovery: at least 80 non-overlapping observations;
-- validation: at least 40 non-overlapping observations.
+- beta uses only bars closed before the signal bar;
+- residual scale excludes the current signal residual and all future residuals;
+- entry is next-bar open, never signal-bar close;
+- recent data excludes unclosed candles;
+- all symbol joins use only timestamps present for all required legs;
+- funding, if charged, is applied only by timestamps known at or before the
+  trade interval;
+- no universe member is added or removed after seeing H3 results;
+- local contaminated Setup C/H price-action outputs are not used to choose H3
+  thresholds or windows;
+- quality gaps inside a locked window either park the attempt or are documented
+  before analysis.
 
-If H3 cannot reach these counts under a realistic cost-aware signal definition,
-it should be parked before discovery rather than loosened after inspection.
+## 2.8 Cheap STOP / PARK Criteria Before Discovery
 
-## 2.8 Look-Ahead Audit
+H3 parks before discovery if any condition is true:
 
-The final lock must explicitly audit at least these leak paths:
-
-- beta estimated with future bars or centered windows;
-- residual z-score using future distribution data;
-- universe selected after seeing which asset mean-reverts best;
-- thresholds chosen after inspecting residual/outcome plots;
-- funding charged with information unavailable at entry time;
-- using candle close as fill when the signal is defined by that same close;
-- unclosed candles included in recent data;
-- validation windows influenced by earlier Setup C/H price-action results;
-- survivorship bias from only keeping currently liquid symbols.
+- no free coverage-only path confirms all three required symbols and all three
+  windows;
+- fewer than 80 discovery or 40 validation observations are plausible under
+  the locked signal without changing the threshold;
+- the required two-leg cost model cannot be represented in the simulator or
+  result artifact without ambiguity;
+- beta estimates are unstable enough that hedge notional becomes operationally
+  unrealistic under a pre-run beta-quality report;
+- any candidate data file needed for H3 has already been opened for
+  H3-relevant residual, return, spread, or outcome inspection before lock.
 
 ## 2.9 Testnet Role
 
-Testnet can validate mechanics only:
+Testnet can validate only implementation mechanics:
 
 - two-leg order construction;
-- hedge sizing drift;
-- rebalance behavior;
-- cancel/replace safety;
-- accounting of fees, funding, and realized PnL in paper infrastructure.
+- hedge sizing and drift;
+- cancel/replace behavior;
+- partial-fill recovery;
+- fee, funding, and realized-PnL accounting in paper infrastructure.
 
-Testnet cannot validate H3 edge because fills and order-book behavior are not a
-held-out economic outcome sample. A testnet pass must not promote research
-readiness or trading readiness.
+Testnet cannot validate H3 edge because it is not a held-out economic sample of
+mainnet fills, liquidity, funding, and participant behavior. A testnet pass must
+not promote research, paper, runtime, trading, or live readiness.
 
-## 2.10 Kill And Park Criteria
+## 2.10 Owner Decisions Required Before Lock
 
-Park before discovery if:
+The Owner must explicitly decide:
 
-- no clean free-data path exists for discovery, validation, and recent rerun;
-- existing local windows are too contaminated for a defensible H3 test;
-- the locked signal cannot produce the minimum observation counts;
-- realistic two-leg costs dominate the expected residual movement;
-- beta neutrality cannot be defined without broad implementation risk.
+1. Accept or reject this single primary variant.
+2. Authorize a coverage-only data contract for the candidate windows, or park
+   H3 before acquisition.
+3. Confirm that no H3 outcome inspection may occur until coverage passes and a
+   separate Stage 2 run is authorized.
+4. Confirm that diagnostics cannot rescue H3 after a primary gate miss.
 
-Park or retire after discovery if the locked primary metric misses its gate or
-does not beat the locked baseline by the required margin.
+## Current Recommendation
 
-Retire after validation if expectancy is negative, effect direction flips, or
-the result depends on one symbol, one regime, or one unstable estimator.
-
-Stage 5 paper entry remains forbidden until the constitution's paper-entry
-requirements, authoritative paper accounting, owner sign-off, and execution
-audit are satisfied.
-
-## Owner Decisions Required Before Lock
-
-1. Select the primary H3 expression: residual asset versus beta hedge, pair
-   trade, or basket residual.
-2. Lock universe, interval, beta estimator, lookback, residual normalization,
-   threshold, holding window, exit rule, and costs.
-3. Confirm a free, contamination-safe discovery/validation/holdout path without
-   opening H3 outcome data.
-4. Confirm baseline, seed, resample count, primary gate, and multiplicity
-   budget.
-5. Authorize any acquisition contract separately if new data is needed.
-
+Proceed only to a coverage-only H3 data contract if the Owner accepts the
+single primary variant above. Do not start discovery, validation, testnet, paper
+execution, or implementation work from this document.
